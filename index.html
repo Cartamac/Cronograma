@@ -1164,6 +1164,7 @@ input[type="file"]{display:none;}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAlSFh4QVAZd2eIIhmJXBrT8yhIiH92pkM",
@@ -1178,6 +1179,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const functions = getFunctions(app, "southamerica-east1");
+const calcularCustoMaxiprodRemoto = httpsCallable(functions, "calcularCustoMaxiprod", {timeout:310000});
 const DB_REF   = doc(db, "cartamac", "db");
 const FILE_REF = doc(db, "cartamac", "files");
 
@@ -1755,10 +1758,11 @@ function getCostEntry(orderId){
   if(!DB.costsData)DB.costsData={};
   const key=String(orderId);
   if(!DB.costsData[key]){
-    DB.costsData[key]={client:'',saleValue:0,budgetCost:0,months:{}};
+    DB.costsData[key]={client:'',saleValue:0,budgetCost:0,months:{},maxiprod:{itemCode:''}};
   }
   if(!DB.costsData[key].months)DB.costsData[key].months={};
   if(!DB.costsData[key].installmentPlans)DB.costsData[key].installmentPlans=[];
+  if(!DB.costsData[key].maxiprod)DB.costsData[key].maxiprod={itemCode:''};
   return DB.costsData[key];
 }
 // Soma, por mês, os valores oriundos de planos de parcelamento (gerados pela % gasta)
@@ -1853,13 +1857,14 @@ function renderCostsContent(){
   const master=isMaster(loggedUser);
 
   // estatísticas gerais
-  let totalSale=0,totalBudget=0,totalSpent=0,overCount=0;
+  let totalSale=0,totalBudget=0,totalSpent=0,totalMaxiprod=0,overCount=0;
   ORDERS.forEach(o=>{
     const e=getCostEntry(o.id);
     totalSale+=Number(e.saleValue)||0;
     totalBudget+=Number(e.budgetCost)||0;
     const spent=calcSpent(e);
     totalSpent+=spent;
+    totalMaxiprod+=Number(e.maxiprod?.custoTotal)||0;
     if(e.budgetCost>0&&spent>Number(e.budgetCost))overCount++;
   });
 
@@ -1868,6 +1873,7 @@ function renderCostsContent(){
       <div class="stat-card"><div class="stat-val" style="font-size:22px;">${fmtBRL(totalSale)}</div><div class="stat-lbl">Valor Total Vendido</div></div>
       <div class="stat-card"><div class="stat-val" style="font-size:22px;">${fmtBRL(totalBudget)}</div><div class="stat-lbl">Custo Orçado Total</div></div>
       <div class="stat-card"><div class="stat-val" style="font-size:22px;color:${totalSpent>totalBudget&&totalBudget>0?'var(--red)':'var(--text)'}">${fmtBRL(totalSpent)}</div><div class="stat-lbl">Gasto Realizado Total</div></div>
+      <div class="stat-card"><div class="stat-val" style="font-size:22px;color:var(--gold)">${fmtBRL(totalMaxiprod)}</div><div class="stat-lbl">Custo MaxiProd — Última NF</div></div>
       <div class="stat-card"><div class="stat-val" style="color:${overCount>0?'var(--red)':'var(--green)'}">${overCount}</div><div class="stat-lbl">Pedidos Acima do Orçado</div></div>
     </div>`;
 
@@ -1992,6 +1998,29 @@ function buildCostCard(order,master){
       ${plansHTML}
     </div>`;
 
+  const mp=e.maxiprod||{itemCode:''};
+  const mpWhen=mp.calculadoEm?new Date(mp.calculadoEm).toLocaleString('pt-BR'):'Ainda não calculado';
+  const mpSummary=mp.calculadoEm
+    ?`<div class="cost-pct-result" style="margin-top:14px;">
+        <div><div class="ppv" style="color:var(--gold)">${fmtBRL(mp.custoTotal)}</div><div class="ppl">Custo da estrutura</div></div>
+        <div><div class="ppv">${Number(mp.itensComCusto)||0}</div><div class="ppl">Itens com preço</div></div>
+        <div><div class="ppv" style="color:${Number(mp.itensSemCusto)>0?'var(--warn)':'var(--green)'}">${Number(mp.itensSemCusto)||0}</div><div class="ppl">Pendências sem custo</div></div>
+      </div>
+      <div class="form-hint" style="margin-top:12px;">Atualizado: ${mpWhen}. Base: último preço de compra registrado no MaxiProd, aplicado à estrutura do item.</div>`
+    :`<div class="form-hint" style="margin-top:12px;">Informe o código raiz do item no MaxiProd (ex.: DS2832) para calcular a estrutura com os últimos preços de compra.</div>`;
+  const maxiprodBoxHTML=`
+    <div class="cost-pct-box" style="border-color:rgba(212,160,23,.55);">
+      <div class="section-title"><span class="msi msi-sm">sync</span> Custo MaxiProd — estrutura e última nota fiscal</div>
+      <div class="cost-pct-row">
+        <div class="form-group">
+          <label>Código raiz do item no MaxiProd</label>
+          <input type="text" id="maxiprodCode-${order.id}" value="${escapeHTML(mp.itemCode||'')}" placeholder="Ex.: DS2832" ${master?'':'disabled'} onchange="updateMaxiprodCode(${order.id},this.value)">
+        </div>
+        ${master?`<button class="btn btn-gold btn-sm" id="maxiprodBtn-${order.id}" onclick="consultMaxiprodCost(${order.id})"><span class="msi msi-sm">sync</span> Atualizar pelo MaxiProd</button>`:''}
+      </div>
+      ${mpSummary}
+    </div>`;
+
   return `<div class="cost-card ${statusCls}" id="cost-card-${order.id}" data-search="${(order.name+' '+codeLabel+' '+opLabel+' '+(e.client||'')).toLowerCase()}">
     <div class="cost-head" onclick="toggleCostCard(${order.id})">
       <span class="order-code" title="${codeLabel}">${codeLabel}</span>
@@ -2030,9 +2059,11 @@ function buildCostCard(order,master){
         <div class="cost-summary-card"><div class="csv" style="color:${barColor}">${fmtBRL(spent)}</div><div class="csl">Gasto Realizado (${pctUsed}%)</div></div>
         <div class="cost-summary-card"><div class="csv" style="color:${remaining<0?'var(--red)':'var(--green)'}">${fmtBRL(remaining)}</div><div class="csl">Saldo do Orçamento</div></div>
         <div class="cost-summary-card"><div class="csv" style="color:${margin<0?'var(--red)':'var(--green)'}">${fmtBRL(margin)}</div><div class="csl">Margem Prevista (Venda-Orçado)</div></div>
+        <div class="cost-summary-card"><div class="csv" style="color:var(--gold)">${mp.calculadoEm?fmtBRL(mp.custoTotal):'—'}</div><div class="csl">Custo MaxiProd</div></div>
       </div>
       <div class="cost-progress-bar"><div class="cost-progress-fill" style="width:${Math.min(100,pctUsed)}%;background:${barColor}"></div></div>
 
+      ${maxiprodBoxHTML}
       ${pctBoxHTML}
 
       <div class="section-title" style="margin-top:20px;"><span class="msi msi-sm">calendar_month</span> Gasto Realizado por Mês</div>
@@ -2061,6 +2092,47 @@ function updateCostField(orderId,field,val){
   persist();
   openCostCardId=orderId;
   renderCostsContent();
+}
+function updateMaxiprodCode(orderId,value){
+  if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
+  const e=getCostEntry(orderId);
+  e.maxiprod=e.maxiprod||{};
+  e.maxiprod.itemCode=String(value||'').trim().toUpperCase();
+  persist();
+  openCostCardId=orderId;
+}
+async function consultMaxiprodCost(orderId){
+  if(!isMaster(loggedUser)){showToast('Somente mestres podem atualizar pelo MaxiProd','err');return;}
+  const e=getCostEntry(orderId);
+  const input=document.getElementById(`maxiprodCode-${orderId}`);
+  const itemCode=String(input?.value||e.maxiprod?.itemCode||'').trim().toUpperCase();
+  if(!itemCode){showToast('Informe o código do item no MaxiProd','err');return;}
+  if(!/^[A-Z0-9._+\-]+$/.test(itemCode)){showToast('Código MaxiProd inválido','err');return;}
+  const button=document.getElementById(`maxiprodBtn-${orderId}`);
+  if(button){button.disabled=true;button.innerHTML='<span class="msi msi-sm">hourglass_top</span> Consultando MaxiProd...';}
+  try{
+    const response=await calcularCustoMaxiprodRemoto({itemCode});
+    const result=response.data||{};
+    e.maxiprod={
+      itemCode,
+      custoTotal:Number(result.custoTotal)||0,
+      itensComCusto:Number(result.itensComCusto)||0,
+      itensSemCusto:Number(result.itensSemCusto)||0,
+      calculadoEm:result.calculadoEm||new Date().toISOString(),
+      criterio:result.criterio||'',
+      pendencias:(result.pendencias||[]).slice(0,50).map(p=>({codigo:p.codigo||'',descricao:p.descricao||'',motivo:p.motivo||''))
+    };
+    await persist();
+    openCostCardId=orderId;
+    renderCostsContent();
+    const suffix=e.maxiprod.itensSemCusto?` (${e.maxiprod.itensSemCusto} pendência(s))`:'';
+    showToast(`Custo MaxiProd atualizado: ${fmtBRL(e.maxiprod.custoTotal)}${suffix}`);
+  }catch(error){
+    console.error('MaxiProd:',error);
+    const message=String(error?.message||'Não foi possível consultar o MaxiProd.');
+    showToast(message.replace(/^.*?:\s*/,''),'err');
+    if(button){button.disabled=false;button.innerHTML='<span class="msi msi-sm">sync</span> Atualizar pelo MaxiProd';}
+  }
 }
 function updateCostMonth(orderId,key,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
@@ -3220,7 +3292,7 @@ Object.assign(window,{
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,
   importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
-  unlockCosts,relockCosts,toggleCostCard,updateCostField,updateCostMonth,
+  unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,
   filterCostCards,saveCostsPassword,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
