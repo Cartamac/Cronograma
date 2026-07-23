@@ -477,8 +477,7 @@ input[type="file"]{display:none;}
 .uname{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .uemail{font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .user-info{flex:1;min-width:0;overflow:hidden;}
-.user-badge-wrap{flex-shrink:0;margin-left:6px;display:flex;align-items:center;gap:8px;}
-.online-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2px rgba(74,222,128,.25);flex-shrink:0;}
+.user-badge-wrap{flex-shrink:0;margin-left:6px;}
 .user-detail{padding:24px;}
 .section-title{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .divider{height:1px;background:var(--border);margin:20px 0;}
@@ -585,7 +584,16 @@ input[type="file"]{display:none;}
 .role-badge-master{background:rgba(200,168,75,.15);border:1px solid rgba(200,168,75,.3);color:var(--gold);font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;}
 .role-badge-admin{background:rgba(240,240,240,.08);border:1px solid var(--border2);color:var(--text2);font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;}
 .role-badge-client{background:rgba(92,184,92,.1);border:1px solid rgba(92,184,92,.2);color:var(--green);font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;}
+.role-badge-engineering{background:rgba(94,151,205,.13);border:1px solid rgba(94,151,205,.35);color:#9bc7f4;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;}
 .readonly-notice{background:rgba(46,134,171,.08);border:1px solid rgba(46,134,171,.25);border-radius:var(--radius);padding:12px 14px;font-size:14px;color:#6ab0c8;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* MACRO ENGENHARIA */
+.macro-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px;}.macro-head h2{font-size:24px;margin:0 0 6px;}.macro-head p{font-size:14px;color:var(--text3);margin:0;max-width:760px;}
+.macro-tabs{display:flex;gap:8px;border-bottom:1px solid var(--border);margin-bottom:18px;padding-bottom:12px;flex-wrap:wrap;}.macro-tabs button{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:9px 14px;border-radius:7px;font-weight:600;cursor:pointer;}.macro-tabs button.active{color:var(--gold);border-color:var(--gold);background:rgba(200,168,75,.09);}
+.macro-order{background:var(--bg2);border:1px solid var(--border2);border-left:4px solid var(--gold);border-radius:var(--radius2);margin-bottom:16px;overflow:hidden;}.macro-order.done{border-left-color:var(--green);opacity:.88;}.macro-order-summary{display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;}.macro-order-summary:hover{background:rgba(255,255,255,.018);}.macro-op{font-family:monospace;color:var(--gold);font-weight:700;background:rgba(200,168,75,.09);padding:5px 8px;border-radius:5px;white-space:nowrap;}.macro-order-title{font-size:16px;font-weight:700;flex:1;min-width:0;}.macro-order-sub{font-size:12px;color:var(--text3);margin-top:3px;}.macro-deadline{font-size:13px;color:var(--text2);white-space:nowrap;}.macro-deadline.warn{color:var(--warn);}.macro-deadline.bad{color:var(--red);}.macro-detail{border-top:1px solid var(--border);padding:18px;display:none;}.macro-order.open .macro-detail{display:block;}.macro-order.open .macro-chevron{transform:rotate(180deg);}
+.macro-info-grid{display:grid;grid-template-columns:repeat(5,minmax(135px,1fr));gap:10px;margin-bottom:16px;}.macro-field{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 10px;}.macro-field label{display:block;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-size:10px;font-weight:700;margin-bottom:5px;}.macro-field input,.macro-field select,.macro-field textarea{width:100%;background:transparent;border:0;color:var(--text);font:inherit;outline:0;padding:0;}.macro-field input:disabled{color:var(--text2);opacity:1;}.macro-field textarea{resize:vertical;min-height:48px;}.macro-field.observations{grid-column:span 2;}
+.macro-block{border:1px solid var(--border2);border-radius:9px;margin-top:14px;overflow:hidden;}.macro-block-title{padding:10px 14px;background:rgba(200,168,75,.10);color:var(--gold);text-align:center;font-size:12px;letter-spacing:.07em;font-weight:800;text-transform:uppercase;}.macro-block.machine .macro-block-title{background:rgba(99,141,171,.11);color:#b7d8ec;}.macro-block.verify .macro-block-title{background:rgba(116,156,112,.10);color:#9cd19a;}.macro-block.validate .macro-block-title{background:rgba(155,124,183,.11);color:#d1b5ea;}.macro-stage-grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:0;}.macro-stage{padding:11px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}.macro-stage:nth-child(4n){border-right:0;}.macro-stage-name{font-size:11px;font-weight:800;color:var(--text2);min-height:30px;}.macro-stage-inputs{display:grid;grid-template-columns:1fr 72px;gap:7px;}.macro-stage input{min-width:0;width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:7px;font-size:12px;}.macro-stage input[type=number]{text-align:center;}
+.macro-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:17px;}.macro-revision-list{margin-top:14px;border-top:1px solid var(--border);padding-top:11px;font-size:12px;color:var(--text3);}.macro-revision-list strong{color:var(--text2);}.macro-person-box{max-width:650px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2);padding:18px;}.macro-person-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}.macro-person-row:last-child{border-bottom:0;}.macro-person-row span{flex:1;font-weight:600;}
 
 /* STATS mobile */
 @media(max-width:640px){
@@ -598,6 +606,7 @@ input[type="file"]{display:none;}
   .toast{bottom:16px;right:10px;left:10px;max-width:unset;}
   .login-box{padding:24px 20px;}
   .user-detail{padding:16px;}
+  .macro-head{display:block;}.macro-head .btn{margin-top:12px;width:100%;}.macro-order-summary{padding:13px;align-items:flex-start;flex-wrap:wrap;}.macro-order-title{min-width:calc(100% - 90px);font-size:14px;}.macro-deadline{width:calc(100% - 28px);padding-left:0;}.macro-detail{padding:12px;}.macro-info-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.macro-field.observations{grid-column:span 2;}.macro-stage-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.macro-stage:nth-child(4n){border-right:1px solid var(--border);}.macro-stage:nth-child(2n){border-right:0;}.macro-stage{padding:9px;}.macro-stage-name{font-size:10px;min-height:27px;}.macro-stage-inputs{grid-template-columns:1fr 58px;gap:5px;}.macro-stage input{padding:6px 4px;font-size:11px;}.macro-actions .btn{flex:1;justify-content:center;}
 }
 
 /* ═══ LOGOS ═══ */
@@ -801,6 +810,20 @@ input[type="file"]{display:none;}
   .cost-head .order-code{grid-column:1 / -1;max-width:100%;justify-self:start;}
 }
 
+.macro-field select option{color:#111;background:#fff;}
+.macro-revision-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.macro-revision-tab{background:rgba(92,184,92,.12);border:1px solid rgba(92,184,92,.45);color:#9cdb9c;border-radius:5px;padding:6px 9px;font-weight:800;font-size:11px;cursor:pointer;}
+.macro-revision-tab:hover,.macro-revision-tab.active{background:rgba(92,184,92,.26);border-color:var(--green);}
+.macro-revision-viewer{margin-top:12px;background:rgba(92,184,92,.05);border:1px solid rgba(92,184,92,.35);border-radius:8px;padding:14px;}
+.macro-revision-viewer h4{margin:0 0 4px;color:#9cdb9c;font-size:14px;}.macro-revision-viewer p{margin:0 0 12px;font-size:12px;color:var(--text3);}
+.macro-revision-grid{display:grid;grid-template-columns:repeat(3,minmax(140px,1fr));gap:8px;}.macro-revision-value{background:var(--bg4);border:1px solid var(--border);border-radius:5px;padding:8px;font-size:12px;}.macro-revision-value b{display:block;color:var(--text3);font-size:10px;text-transform:uppercase;margin-bottom:3px;}
+@media(max-width:640px){.macro-revision-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+.macro-block{margin-top:22px;}.macro-stage{padding:15px 13px;}.macro-stage-name{margin-bottom:7px;}.macro-revision-list{margin-top:22px;padding-top:15px;}
+@media(max-width:640px){.macro-block{margin-top:18px;}.macro-stage{padding:12px 10px;}}
+.macro-stage input[type="date"],.macro-stage input[data-macro-date],.macro-field input[data-macro-date]{font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.01em;}
+.macro-filter-row{display:flex;align-items:center;gap:10px;margin:-6px 0 18px;color:var(--text2);font-size:13px;font-weight:700;}.macro-filter-row select{min-width:210px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:8px 10px;}.macro-filter-row option{color:#111;background:#fff;}
+.macro-summary-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto;}.macro-summary-chip{border:1px solid var(--border2);background:var(--bg3);border-radius:6px;padding:6px 8px;font-size:11px;color:var(--text2);white-space:nowrap;}.macro-summary-chip b{color:var(--green);margin-right:4px;}.macro-summary-chip.final b{color:var(--gold);}.macro-engineering-summary{margin-top:20px;border:1px solid rgba(92,184,92,.38);background:rgba(92,184,92,.06);border-radius:8px;padding:13px 15px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;}.macro-engineering-summary .sum-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:800;}.macro-engineering-summary .sum-value{font-size:17px;font-weight:800;color:#9cdb9c;margin-top:3px;}.macro-block-title{cursor:pointer;user-select:none;position:relative;}.macro-block-title::after{content:'⌃';position:absolute;right:14px;font-size:15px;line-height:12px;}.macro-block.collapsed .macro-stage-grid{display:none;}.macro-block.collapsed .macro-block-title::after{content:'⌄';}
+@media(max-width:640px){.macro-filter-row{align-items:stretch;flex-direction:column;gap:5px;}.macro-filter-row select{width:100%;}.macro-summary-chips{margin:4px 0 0;width:100%;}.macro-summary-chip{font-size:10px;}.macro-engineering-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;}.macro-order-summary{gap:7px;}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -864,6 +887,7 @@ input[type="file"]{display:none;}
       <button class="dev-tab" id="tabCustos" onclick="switchDevTab('custos',this)"><span class="msi msi-sm">payments</span> Custos</button>
       <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">settings</span> Peças de Reposição</button>
       <button class="dev-tab" id="tabSimulador" onclick="switchDevTab('simulador',this)"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
+      <button class="dev-tab" id="tabMacroEngenharia" onclick="switchDevTab('macro-engenharia',this)"><span class="msi msi-sm">architecture</span> Macro Engenharia</button>
     </nav>
     <div class="header-actions">
       <div class="admin-user-badge"><span class="msi msi-sm">person</span> <strong id="adminNameBadge">Admin</strong></div>
@@ -995,6 +1019,14 @@ input[type="file"]{display:none;}
     <div id="simulatorContent"></div>
   </div>
 
+  <!-- MACRO ENGENHARIA -->
+  <div class="page" id="page-macro-engenharia">
+    <div class="macro-head"><div><h2><span class="msi">architecture</span> Macro Engenharia</h2><p>OP, descrição, emissão e entrega proposta vêm do cronograma importado. As demais informações e as etapas da engenharia são preenchidas pela equipe.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-gold" onclick="exportEngineeringMacroPDF('open')"><span class="msi msi-sm">picture_as_pdf</span> Relatório OPs abertas</button><button class="btn btn-ghost" onclick="exportEngineeringMacroPDF('completed')"><span class="msi msi-sm">picture_as_pdf</span> Relatório finalizadas</button></div></div>
+    <div class="macro-tabs"><button id="macroTabActive" class="active" onclick="switchMacroView('active')">OPs abertas</button><button id="macroTabCompleted" onclick="switchMacroView('completed')">Finalizadas</button><button id="macroTabPeople" onclick="switchMacroView('people')">Responsáveis</button></div>
+    <div class="macro-filter-row"><label for="macroResponsibleFilter"><span class="msi msi-sm">filter_alt</span> Filtrar responsável</label><select id="macroResponsibleFilter" onchange="setMacroResponsibleFilter(this.value)"></select></div>
+    <div id="macroEngineeringContent"></div>
+  </div>
+
   <!-- CLIENTES -->
   <div class="page" id="page-clientes">
     <div class="admin-grid">
@@ -1105,6 +1137,7 @@ input[type="file"]{display:none;}
       <select id="naRole">
         <option value="viewer">Visualizador (somente leitura)</option>
         <option value="seller">Vendedor (cronograma, Gantt e peças)</option>
+        <option value="engineering">Engenharia (cronograma, Gantt e Macro Engenharia)</option>
         <option value="master">Mestre (acesso total)</option>
       </select>
     </div>
@@ -1133,13 +1166,12 @@ import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstat
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAlSFh4QVAZd2eIIhmJXBrT8yhIiH92pkM",
-  authDomain: "cartamac-cronogramas.firebaseapp.com",
-  projectId: "cartamac-cronogramas",
-  storageBucket: "cartamac-cronogramas.firebasestorage.app",
-  messagingSenderId: "439003938929",
-  appId: "1:439003938929:web:ec76a3c650efcc63ba9bd0",
-  measurementId: "G-L2NXC1FTFR"
+  apiKey: "AIzaSyBFZ6HohhFTBxzoUlqooRPzjqbaAd81jE8",
+  authDomain: "cartamac-app.firebaseapp.com",
+  projectId: "cartamac-app",
+  storageBucket: "cartamac-app.firebasestorage.app",
+  messagingSenderId: "59657142601",
+  appId: "1:59657142601:web:b65d0f061fe7ceba375a98"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -1166,7 +1198,9 @@ const DEFAULT_DB = {
   partsData:        [],
   partsLastImport:  null,
   simulatorDraft:   null,
-  simulatorTemplateVersion: 2
+  simulatorTemplateVersion: 2,
+  engineeringPeople: [],
+  engineeringMacros: {}
 };
 
 let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
@@ -1181,29 +1215,7 @@ let openCostCardId = null;
 
 // ─────────── HELPERS ───────────
 const isMaster = u => u && (u.type==='master' || MASTER_EMAILS.includes(u.ref?.email));
-// ── Presença online (heartbeat) ──
-const ONLINE_THRESHOLD_MS = 45000; // considera "online" se o heartbeat foi há menos de 45s
-const HEARTBEAT_INTERVAL_MS = 20000; // atualiza o próprio lastSeen a cada 20s
-let _heartbeatTimer=null;
-const isAdminOnline = a => !!(a && a.lastSeen && (Date.now()-a.lastSeen)<ONLINE_THRESHOLD_MS);
-async function pingOwnPresence(){
-  if(!loggedUser?.ref)return;
-  const own=DB.admins.find(x=>x.id===loggedUser.ref.id);
-  if(!own)return;
-  own.lastSeen=Date.now();
-  await persist();
-}
-function startHeartbeat(){
-  stopHeartbeat();
-  pingOwnPresence();
-  _heartbeatTimer=setInterval(()=>{
-    pingOwnPresence();
-    if(document.getElementById('page-admins')?.classList.contains('active'))renderAdminsPanel();
-  },HEARTBEAT_INTERVAL_MS);
-}
-function stopHeartbeat(){
-  if(_heartbeatTimer){clearInterval(_heartbeatTimer);_heartbeatTimer=null;}
-}
+const isEngineering = u => u && ['engineering','engenharia'].includes(String(u.type||'').toLowerCase());
 const TODAY    = new Date();
 const fmtDate  = d => { if(!d) return '—'; const[y,m,dd]=d.split('-'); return `${dd}/${m}/${y}`; };
 const daysDiff = d => Math.floor((new Date(d) - TODAY) / 86400000);
@@ -1279,11 +1291,6 @@ function showScreen(id){
   requestAnimationFrame(()=>el.classList.add('active'));
 }
 function backToLogin(){
-  if(loggedUser?.ref&&loggedUser.type!=='client'){
-    stopHeartbeat();
-    const own=DB.admins.find(x=>x.id===loggedUser.ref.id);
-    if(own){own.lastSeen=0;persist();}
-  }
   loggedUser=null;
   document.getElementById('loginUser').value='';
   document.getElementById('loginPass').value='';
@@ -1412,24 +1419,26 @@ function doAdminLogin(){
   const admin=DB.admins.find(a=>a.email===email&&a.pass===pass);
   if(!admin){document.getElementById('adminLoginError').style.display='block';return;}
   closeAdminLogin();
-  const role=MASTER_EMAILS.includes(admin.email)?'master':(admin.role||'viewer');
+  let role=MASTER_EMAILS.includes(admin.email)?'master':String(admin.role||'viewer').toLowerCase();
+  if(role==='engenharia')role='engineering';
   loggedUser={type:role,ref:admin};
   costsUnlocked=false;
   document.getElementById('adminNameBadge').textContent=admin.name;
   const master=isMaster(loggedUser);
   const seller=loggedUser.type==='seller';
+  const engineering=isEngineering(loggedUser);
   document.getElementById('btnNewAdmin').style.display=master?'':'none';
   document.getElementById('btnNewClient').style.display=master?'':'none';
   document.getElementById('tabImportar').style.display=master?'':'none';
   document.getElementById('tabCustos').style.display=master?'':'none';
   document.getElementById('tabPecas').style.display=(master||seller)?'flex':'none';
-  document.getElementById('tabSimulador').style.display=master?'flex':'none';
+  document.getElementById('tabSimulador').style.display=(master||seller)?'flex':'none';
+  document.getElementById('tabMacroEngenharia').style.display=(master||engineering)?'flex':'none';
   document.getElementById('tabClientes').style.display=seller?'none':'flex';
   document.getElementById('tabAdmins').style.display=seller?'none':'flex';
   document.getElementById('costsSettingsPanel').style.display=master?'':'none';
   showScreen('dev');
   renderDevAll();
-  startHeartbeat();
   showToast(`Bem-vindo, ${admin.name}!`);
 }
 function doLogin(){
@@ -1447,8 +1456,9 @@ function doLogin(){
 function switchDevTab(id,btn){
   if((id==='importar'||id==='custos')&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
   if(id==='pecas'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a vendedores e administradores mestres','err');return;}
-  if(id==='simulador'&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
-  if((id==='clientes'||id==='admins')&&loggedUser?.type==='seller'){showToast('Acesso não disponível para o perfil de vendedor','err');return;}
+  if(id==='simulador'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a vendedores e administradores mestres','err');return;}
+  if(id==='macro-engenharia'&&!(isMaster(loggedUser)||isEngineering(loggedUser))){showToast('Acesso restrito à Engenharia e administradores mestres','err');return;}
+  if((id==='clientes'||id==='admins')&&loggedUser?.type==='seller'){showToast('Acesso não disponível para este perfil','err');return;}
   if(document.getElementById('page-simulador')?.classList.contains('active'))saveSimulatorDraft(true);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.dev-tab').forEach(t=>t.classList.remove('active'));
@@ -1459,6 +1469,7 @@ function switchDevTab(id,btn){
   if(id==='custos')    renderCostsPage();
   if(id==='pecas')     renderPartsPage();
   if(id==='simulador') renderSimulator();
+  if(id==='macro-engenharia') renderMacroEngineering();
   if(id==='clientes')  renderClientsPanel();
   if(id==='admins')    renderAdminsPanel();
   if(id==='importar')  renderImportHistory();
@@ -2428,10 +2439,12 @@ function renderAdminsPanel(){
     <div class="user-item ${selectedAdminId===a.id?'active':''}" onclick="selectAdmin('${a.id}')">
       <div class="user-av" style="background:#555;">${getInit(a.name)}</div>
       <div class="user-info"><div class="uname">${a.name}</div><div class="uemail">${a.email}</div></div>
-      <div class="user-badge-wrap">${isAdminOnline(a)?'<span class="online-dot" title="Online agora"></span>':''}<span class="${a.role==='master'?'role-badge-master':'role-badge-admin'}">${a.role==='master'?'MESTRE':a.role==='seller'?'VENDEDOR':'VISUAL.'}</span></div>
+       <div class="user-badge-wrap"><span class="${roleBadgeClass(a.role)}">${roleLabel(a.role,true)}</span></div>
     </div>`).join('');
   document.getElementById('costsSettingsPanel').style.display=isMaster(loggedUser)?'':'none';
 }
+function roleLabel(role,short=false){return role==='master'?'MESTRE':role==='seller'?'VENDEDOR':role==='engineering'?(short?'ENGENHARIA':'ENGENHARIA'):'VISUALIZADOR';}
+function roleBadgeClass(role){return role==='master'?'role-badge-master':role==='engineering'?'role-badge-engineering':'role-badge-admin';}
 function openOwnPasswordModal(){
   if(!loggedUser?.ref)return;
   document.getElementById('ownPass').value='';
@@ -2462,11 +2475,12 @@ function selectAdmin(id){
   document.getElementById('adminDetailPanel').innerHTML=`<div class="user-detail">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
       <div class="user-av" style="background:#555;width:50px;height:50px;font-size:18px;">${getInit(a.name)}</div>
-      <div><div style="font-size:18px;font-weight:700;">${a.name}</div><div style="display:flex;align-items:center;gap:8px;margin-top:4px;">${isAdminOnline(a)?'<span class="online-dot" title="Online agora"></span>':''}<span class="${isMU?'role-badge-master':'role-badge-admin'}">${isMU?'ADMINISTRADOR MESTRE':a.role==='seller'?'VENDEDOR':'VISUALIZADOR'}</span></div></div>
+      <div><div style="font-size:18px;font-weight:700;">${a.name}</div><span class="${isMU?'role-badge-master':roleBadgeClass(a.role)}">${isMU?'ADMINISTRADOR MESTRE':roleLabel(a.role)}</span></div>
     </div>
     ${!canManage?(isSelf?'<div class="readonly-notice"><span class="msi msi-sm">lock</span> Você pode alterar somente a sua própria senha.</div>':'<div class="readonly-notice"><span class="msi msi-sm">visibility</span> Somente o próprio administrador pode alterar sua senha.</div>'):''}
     <div class="form-group"><label>Nome</label><input type="text" id="ea-name" value="${a.name}" ${!canEditIdentity?'disabled':''}></div>
     <div class="form-group"><label>E-mail</label><input type="email" id="ea-email" value="${a.email}" ${!canEditIdentity?'disabled':''}></div>
+    ${canManage&&!isMU?`<div class="form-group"><label>Nível de acesso</label><select id="ea-role"><option value="viewer" ${a.role==='viewer'?'selected':''}>Visualizador</option><option value="seller" ${a.role==='seller'?'selected':''}>Vendedor</option><option value="engineering" ${a.role==='engineering'?'selected':''}>Engenharia</option><option value="master" ${a.role==='master'?'selected':''}>Mestre</option></select></div>`:''}
     <div class="form-group"><label>Nova Senha</label><div class="password-wrap"><input type="password" id="ea-pass" placeholder="••••••••" ${!canEditPassword?'disabled':''}><button type="button" class="password-toggle" onclick="togglePassword('ea-pass',this)" title="Mostrar senha" ${!canEditPassword?'disabled':''}><span class="msi msi-sm">visibility</span></button></div></div>
     <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
       ${canEditPassword?`<button class="btn btn-gold btn-sm" onclick="saveAdminChanges('${id}')"><span class="msi msi-sm">save</span> Salvar</button>`:''}
@@ -2489,6 +2503,7 @@ function saveAdminChanges(id){
   const email=document.getElementById('ea-email').value.trim();
   if(!name||!email){showToast('Nome e e-mail obrigatórios','err');return;}
   a.name=name;a.email=email;
+  if(!MASTER_EMAILS.includes(a.email)&&document.getElementById('ea-role'))a.role=document.getElementById('ea-role').value;
   if(pass.length>=6)a.pass=pass;
   else if(pass.length>0){showToast('Senha mínimo 6 caracteres','err');return;}
   persist();document.getElementById('adminNameBadge').textContent=loggedUser.ref.name;renderAdminsPanel();showToast('Administrador atualizado!');
@@ -3014,6 +3029,84 @@ function renderImportHistory(){
 }
 
 // ─────────── MODALS ───────────
+// ────────── MACRO ENGENHARIA ──────────
+const MACRO_GROUPS=[
+  {id:'basic',name:'Engenharia Básica',stages:['LEVAN.','FLUXO.','LAYOUT','LISTAS CLIENTE','CIVIL']},
+  {id:'machine',name:'Engenharia Máquina',stages:['ESTUDO','MODELO','CORTE','PLANO DE DOBRA','LISTA CP','DETALHA','EMBALAGEM','MANUAL']},
+  {id:'verify',name:'Verificação',stages:['APROVAÇÃO DE DESENHOS','TESTE DE ACIONAMENTO','PRÉ MONTAGEM']},
+  {id:'validate',name:'Validação',stages:['ENTREGA TÉCNICA']}
+];
+let macroView='active',macroSaveTimer=null;
+const macroEsc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+function macroKey(o){return String(o.op||o.code||o.id);}
+function macroPhaseDefaults(){const r={};MACRO_GROUPS.forEach(g=>{r[g.id]={};g.stages.forEach(s=>r[g.id][s]={date:'',pct:''});});return r;}
+function macroBlank(o){return {key:macroKey(o),op:o.op||o.code||'',code:o.code||'',description:o.name||'',issuedAt:o.start||'',proposedAt:o.finish||'',effectiveAt:'',qf:'',qe:'',client:'',responsible:'',observations:'',phases:macroPhaseDefaults(),revisions:[],finalized:false,finalizedAt:'',finalizedBy:''};}
+function macroRecord(o){const base=macroBlank(o),saved=(DB.engineeringMacros||{})[base.key]||{},r={...base,...saved,op:o.op||saved.op||base.op,code:o.code||saved.code||base.code,description:o.name||saved.description||base.description,issuedAt:o.start||saved.issuedAt||'',proposedAt:o.finish||saved.proposedAt||'',phases:macroPhaseDefaults()};MACRO_GROUPS.forEach(g=>g.stages.forEach(s=>r.phases[g.id][s]={...r.phases[g.id][s],...((saved.phases||{})[g.id]?.[s]||{})}));return r;}
+function macroOrderByKey(key){return ORDERS.find(o=>macroKey(o)===key);}
+function macroEnsure(key){const o=macroOrderByKey(key);if(!o)return null;const r=macroRecord(o);DB.engineeringMacros[key]=r;return r;}
+function macroPersist(){clearTimeout(macroSaveTimer);macroSaveTimer=setTimeout(()=>persist(),350);}
+function macroSaveField(key,field,value){const r=macroEnsure(key);if(r){r[field]=value;macroPersist();}}
+function macroSavePhase(key,g,s,f,v){const r=macroEnsure(key);if(r){r.phases[g][s][f]=v;macroPersist();}}
+function macroDeadline(r){const d=daysDiff(r.proposedAt);return d<0?`${Math.abs(d)} dia(s) em atraso`:d===0?'Vence hoje':`${d} dia(s) restantes`;}
+function macroDeadlineClass(r){const d=daysDiff(r.proposedAt);return d<0?'bad':d<30?'warn':'';}
+function macroStageMarkup(r,g,disabled){return `<div class="macro-block ${g.id}"><div class="macro-block-title">${g.name} — data e % manual</div><div class="macro-stage-grid">${g.stages.map(s=>{const p=r.phases[g.id][s];return `<div class="macro-stage"><div class="macro-stage-name">${s}</div><div class="macro-stage-inputs"><input type="date" value="${p.date||''}" ${disabled?'disabled':''} onchange="macroSavePhase('${r.key}','${g.id}','${s}','date',this.value)"><input type="number" min="0" max="100" step="1" value="${p.pct??''}" placeholder="%" ${disabled?'disabled':''} onchange="macroSavePhase('${r.key}','${g.id}','${s}','pct',this.value)"></div></div>`;}).join('')}</div></div>`;}
+function macroCard(o,done=false){const r=macroRecord(o),people=DB.engineeringPeople||[],status=done?`Concluída em ${fmtDate(r.effectiveAt)}`:macroDeadline(r);return `<article class="macro-order ${done?'done':''}" id="macro-${r.key}"><div class="macro-order-summary" onclick="toggleMacroCard('${r.key}')"><span class="macro-op">${macroEsc(r.code||r.op)}</span><div class="macro-order-title">${macroEsc(r.description)}<div class="macro-order-sub">OP: ${macroEsc(r.op||'não identificada')} · emissão ${fmtDate(r.issuedAt)} · proposta ${fmtDate(r.proposedAt)}</div></div><span class="macro-deadline ${done?'':macroDeadlineClass(r)}">${status}</span><span class="msi macro-chevron">expand_more</span></div><div class="macro-detail"><div class="macro-info-grid"><div class="macro-field"><label>Emissão</label><input type="date" disabled value="${r.issuedAt||''}"></div><div class="macro-field"><label>Entrega proposta</label><input type="date" disabled value="${r.proposedAt||''}"></div><div class="macro-field"><label>Entrega efetiva</label><input type="date" value="${r.effectiveAt||''}" ${done?'disabled':''} onchange="macroSaveField('${r.key}','effectiveAt',this.value);renderMacroEngineering()"></div><div class="macro-field"><label>Prazo</label><input disabled value="${macroDeadline(r)}"></div><div class="macro-field"><label>OP</label><input disabled value="${macroEsc(r.op||r.code)}"></div><div class="macro-field"><label>Q.F</label><input value="${macroEsc(r.qf)}" ${done?'disabled':''} onchange="macroSaveField('${r.key}','qf',this.value)"></div><div class="macro-field"><label>Q.E</label><input value="${macroEsc(r.qe)}" ${done?'disabled':''} onchange="macroSaveField('${r.key}','qe',this.value)"></div><div class="macro-field"><label>Cliente</label><input value="${macroEsc(r.client)}" ${done?'disabled':''} onchange="macroSaveField('${r.key}','client',this.value)"></div><div class="macro-field"><label>Descrição</label><input disabled value="${macroEsc(r.description)}"></div><div class="macro-field"><label>Responsável</label><select ${done?'disabled':''} onchange="macroSaveField('${r.key}','responsible',this.value)"><option value="">Selecionar…</option>${people.map(p=>`<option value="${macroEsc(p)}" ${p===r.responsible?'selected':''}>${macroEsc(p)}</option>`).join('')}</select></div><div class="macro-field observations"><label>Observações da OP</label><textarea ${done?'disabled':''} onchange="macroSaveField('${r.key}','observations',this.value)">${macroEsc(r.observations)}</textarea></div></div>${MACRO_GROUPS.map(g=>macroStageMarkup(r,g,done)).join('')}<div class="macro-actions">${done?(isMaster(loggedUser)?`<button class="btn btn-ghost btn-sm" onclick="reopenMacro('${r.key}')"><span class="msi msi-sm">restart_alt</span> Reabrir OP</button>`:'<span style="font-size:12px;color:var(--text3);">OP concluída — somente mestre pode reabrir.</span>'):`<button class="btn btn-ghost btn-sm" onclick="saveMacroRevision('${r.key}')"><span class="msi msi-sm">history</span> Salvar revisão</button><button class="btn btn-gold btn-sm" ${r.effectiveAt?'':'disabled title="Informe a entrega efetiva antes de finalizar"'} onclick="finalizeMacro('${r.key}')"><span class="msi msi-sm">task_alt</span> Finalizar OP</button>`}</div><div class="macro-revision-list"><strong>Revisões:</strong> ${r.revisions.length?r.revisions.map(x=>`Revisão ${String(x.number).padStart(2,'0')} · ${x.date} · ${macroEsc(x.by)}`).join(' &nbsp;|&nbsp; '):'Nenhuma revisão registrada.'}</div></div></article>`;}
+function renderMacroEngineering(){const el=document.getElementById('macroEngineeringContent');if(!el)return;['active','completed','people'].forEach(v=>document.getElementById('macroTab'+v[0].toUpperCase()+v.slice(1))?.classList.toggle('active',macroView===v));if(macroView==='people'){const p=DB.engineeringPeople||[];el.innerHTML=`<div class="macro-person-box"><div class="section-title"><span class="msi msi-sm">group</span> Responsáveis de engenharia</div><p style="font-size:13px;color:var(--text3);margin:0 0 14px;">Esta lista alimenta a cascata “Responsável” em cada OP. Não cria acesso de login.</p><div style="display:flex;gap:8px;margin-bottom:12px;"><input id="macroNewPerson" placeholder="Nome do responsável" style="flex:1"><button class="btn btn-gold btn-sm" onclick="addEngineeringPerson()">Adicionar</button></div>${p.length?p.map((x,i)=>`<div class="macro-person-row"><span>${macroEsc(x)}</span><button class="btn btn-danger btn-sm" onclick="removeEngineeringPerson(${i})"><span class="msi msi-sm">delete</span></button></div>`).join(''):'<div style="font-size:13px;color:var(--text3);padding:10px 0;">Nenhum responsável cadastrado.</div>'}</div>`;return;}const rows=ORDERS.filter(o=>macroRecord(o).finalized===(macroView==='completed'));el.innerHTML=rows.length?rows.map(o=>macroCard(o,macroView==='completed')).join(''):`<div class="empty-state"><div class="ei"><span class="msi msi-xl">${macroView==='completed'?'task_alt':'architecture'}</span></div><h3>${macroView==='completed'?'Nenhuma OP finalizada':'Nenhuma OP disponível'}</h3><p>Importe o cronograma do Project para carregar as OPs.</p></div>`;}
+function switchMacroView(v){macroView=v;renderMacroEngineering();}function toggleMacroCard(k){document.getElementById('macro-'+k)?.classList.toggle('open');}
+function addEngineeringPerson(){const i=document.getElementById('macroNewPerson'),n=i?.value.trim();if(!n)return;DB.engineeringPeople=DB.engineeringPeople||[];if(DB.engineeringPeople.some(p=>p.toLocaleLowerCase('pt-BR')===n.toLocaleLowerCase('pt-BR'))){showToast('Responsável já cadastrado','err');return;}DB.engineeringPeople.push(n);persist().then(renderMacroEngineering);}
+function removeEngineeringPerson(i){if(!confirm('Remover este responsável da lista?'))return;DB.engineeringPeople.splice(i,1);persist().then(renderMacroEngineering);}
+function saveMacroRevision(k){const r=macroEnsure(k);if(!r)return;r.revisions.push({number:r.revisions.length,date:new Date().toLocaleString('pt-BR'),by:loggedUser?.ref?.name||'Usuário',snapshot:JSON.parse(JSON.stringify({...r,revisions:[]}))});persist().then(()=>{renderMacroEngineering();showToast(`Revisão ${String(r.revisions.length-1).padStart(2,'0')} salva.`);});}
+function finalizeMacro(k){const r=macroEnsure(k);if(!r?.effectiveAt){showToast('Informe a entrega efetiva antes de finalizar','err');return;}if(!confirm(`Finalizar a OP ${r.code||r.op}? Ela ficará bloqueada para edição.`))return;r.finalized=true;r.finalizedAt=new Date().toLocaleString('pt-BR');r.finalizedBy=loggedUser?.ref?.name||'Usuário';persist().then(()=>{renderMacroEngineering();showToast('OP finalizada e arquivada no Macro Engenharia.');});}
+function reopenMacro(k){if(!isMaster(loggedUser)){showToast('Somente mestre pode reabrir uma OP','err');return;}const r=macroEnsure(k);if(!r)return;r.finalized=false;r.finalizedAt='';r.finalizedBy='';persist().then(()=>{macroView='active';renderMacroEngineering();showToast('OP reaberta para edição.');});}
+function exportEngineeringMacroPDF(){const js=window.jspdf?.jsPDF;if(!js){showToast('Biblioteca de PDF indisponível','err');return;}const pdf=new js({unit:'mm',format:'a4'}),records=ORDERS.map(macroRecord);let y=16;const line=(t,s=9,b=false)=>{if(y>278){pdf.addPage();y=16;}pdf.setFont('helvetica',b?'bold':'normal');pdf.setFontSize(s);pdf.text(String(t),12,y,{maxWidth:186});y+=s*.55+2;};line('CARTAMAC — Macro Engenharia',16,true);line(`Relatório emitido em ${new Date().toLocaleString('pt-BR')} · ${records.length} OP(s)`);y+=3;records.forEach(r=>{if(y>240){pdf.addPage();y=16;}pdf.setFillColor(200,168,75);pdf.rect(10,y-5,190,7,'F');pdf.setTextColor(20,20,20);pdf.setFontSize(11);pdf.setFont('helvetica','bold');pdf.text(`${r.code||r.op} — ${r.description}`,12,y);y+=7;pdf.setTextColor(35,35,35);line(`OP: ${r.op||'—'} | Emissão: ${fmtDate(r.issuedAt)} | Entrega proposta: ${fmtDate(r.proposedAt)} | Entrega efetiva: ${fmtDate(r.effectiveAt)}`,8);line(`Q.F: ${r.qf||'—'} | Q.E: ${r.qe||'—'} | Cliente: ${r.client||'—'} | Responsável: ${r.responsible||'—'}`,8);line(`Observações: ${r.observations||'—'}`,8);MACRO_GROUPS.forEach(g=>line(`${g.name}: ${g.stages.map(s=>{const p=r.phases[g.id][s];return `${s}: ${p.date?fmtDate(p.date):'—'} / ${p.pct!==''?p.pct+'%':'—'}`;}).join(' · ')}`,7));line(`Revisões: ${r.revisions.length} | Situação: ${r.finalized?'Finalizada':'Aberta'}`,8,true);y+=3;});pdf.save(`Macro_Engenharia_${new Date().toISOString().slice(0,10)}.pdf`);}
+
+// Ajustes de interação e cópia local do Macro Engenharia.
+// A cópia local evita perda de dados quando o arquivo ainda não está conectado ao Firebase.
+const MACRO_LOCAL_KEY='cartamac_macro_engenharia_v1';
+let macroSuppressNextRender=false;
+const macroOpenCards=new Set();
+const macroViewedRevisions={};
+function saveMacroLocal(){try{localStorage.setItem(MACRO_LOCAL_KEY,JSON.stringify({engineeringPeople:DB.engineeringPeople||[],engineeringMacros:DB.engineeringMacros||{}}));}catch(e){console.warn('Cache local do Macro:',e);}}
+function restoreMacroLocal(){try{const raw=localStorage.getItem(MACRO_LOCAL_KEY);if(!raw)return;const local=JSON.parse(raw);if(!Object.keys(DB.engineeringMacros||{}).length&&Object.keys(local.engineeringMacros||{}).length){DB.engineeringMacros=local.engineeringMacros;DB.engineeringPeople=Array.isArray(local.engineeringPeople)?local.engineeringPeople:DB.engineeringPeople;}}catch(e){console.warn('Leitura do cache do Macro:',e);}}
+const originalPersist=persist;
+persist=async function(){saveMacroLocal();return originalPersist();};
+const originalNormalizeDB=normalizeDB;
+normalizeDB=function(data){const result=originalNormalizeDB(data);restoreMacroLocal();return result;};
+const originalMacroSaveField=macroSaveField;
+macroSaveField=function(key,field,value){if(field==='effectiveAt')macroSuppressNextRender=true;return originalMacroSaveField(key,field,value);};
+const originalSwitchDevTab=switchDevTab;
+switchDevTab=function(id,btn){if(document.getElementById('page-macro-engenharia')?.classList.contains('active')){clearTimeout(macroSaveTimer);saveMacroLocal();persist();}return originalSwitchDevTab(id,btn);};
+function macroSnapshotMarkup(revision){const r=revision.snapshot;const fields=[['Emissão',fmtDate(r.issuedAt)],['Entrega proposta',fmtDate(r.proposedAt)],['Entrega efetiva',fmtDate(r.effectiveAt)],['Q.F',r.qf||'—'],['Q.E',r.qe||'—'],['Cliente',r.client||'—'],['Responsável',r.responsible||'—'],['Observações',r.observations||'—']];return `<div class="macro-revision-viewer"><h4>Revisão ${String(revision.number).padStart(2,'0')}</h4><p>Salva em ${revision.date} por ${macroEsc(revision.by)}. Estes são os dados registrados nesta revisão.</p><div class="macro-revision-grid">${fields.map(f=>`<div class="macro-revision-value"><b>${f[0]}</b>${macroEsc(f[1])}</div>`).join('')}</div>${MACRO_GROUPS.map(g=>`<div class="macro-block ${g.id}" style="margin-top:10px;"><div class="macro-block-title">${g.name}</div><div class="macro-revision-grid" style="padding:8px;">${g.stages.map(s=>{const p=r.phases?.[g.id]?.[s]||{};return `<div class="macro-revision-value"><b>${s}</b>${p.date?fmtDate(p.date):'—'} · ${p.pct!==''&&p.pct!=null?p.pct+'%':'—'}</div>`;}).join('')}</div></div>`).join('')}</div>`;}
+function decorateMacroRevisionTabs(){if(!['active','completed'].includes(macroView))return;ORDERS.forEach(o=>{const r=macroRecord(o),card=document.getElementById('macro-'+r.key);if(!card)return;const list=card.querySelector('.macro-revision-list');if(!list)return;const selected=macroViewedRevisions[r.key];list.innerHTML=`<div class="macro-revision-tabs"><strong>Revisões salvas:</strong>${r.revisions.length?r.revisions.map(x=>`<span style="display:inline-flex;gap:4px;align-items:center;"><button class="macro-revision-tab ${selected===x.number?'active':''}" onclick="showMacroRevision('${r.key}',${x.number},event)">Revisão ${String(x.number).padStart(2,'0')}</button>${isMaster(loggedUser)?`<button class="btn btn-danger btn-sm" style="padding:4px 6px;min-height:0;" title="Excluir revisão" onclick="removeMacroRevision('${r.key}',${x.number},event)"><span class="msi msi-sm">delete</span></button>`:''}</span>`).join(''):'<span>Nenhuma revisão registrada.</span>'}</div>`;const old=card.querySelector('.macro-revision-viewer');if(old)old.remove();if(selected!==undefined){const revision=r.revisions.find(x=>x.number===selected);if(revision)list.insertAdjacentHTML('afterend',macroSnapshotMarkup(revision));}});}
+function showMacroRevision(key,number,event){event?.stopPropagation();macroViewedRevisions[key]=number;macroOpenCards.add(key);decorateMacroRevisionTabs();}
+function removeMacroRevision(key,number,event){event?.stopPropagation();if(!isMaster(loggedUser)){showToast('Somente mestres podem excluir revisões','err');return;}const r=macroEnsure(key);if(!r)return;if(!confirm(`Excluir a Revisão ${String(number).padStart(2,'0')} desta OP?`))return;r.revisions=r.revisions.filter(x=>x.number!==number);if(macroViewedRevisions[key]===number)delete macroViewedRevisions[key];saveMacroLocal();persist().then(()=>{macroOpenCards.add(key);renderMacroEngineering();showToast('Revisão excluída.');});}
+saveMacroRevision=function(key){const r=macroEnsure(key);if(!r)return;const next=Math.max(-1,...r.revisions.map(x=>Number(x.number)||0))+1;r.revisions.push({number:next,date:new Date().toLocaleString('pt-BR'),by:loggedUser?.ref?.name||'Usuário',snapshot:JSON.parse(JSON.stringify({...r,revisions:[]}))});saveMacroLocal();macroOpenCards.add(key);persist().then(()=>{renderMacroEngineering();showToast(`Revisão ${String(next).padStart(2,'0')} salva.`);});};
+const originalRenderMacroEngineering=renderMacroEngineering;
+renderMacroEngineering=function(){if(macroSuppressNextRender){macroSuppressNextRender=false;return;}originalRenderMacroEngineering();if(['active','completed'].includes(macroView)){macroOpenCards.forEach(key=>document.getElementById('macro-'+key)?.classList.add('open'));decorateMacroRevisionTabs();}};
+toggleMacroCard=function(key){const card=document.getElementById('macro-'+key);if(!card)return;card.classList.toggle('open');card.classList.contains('open')?macroOpenCards.add(key):macroOpenCards.delete(key);};
+function macroDateDisplay(value){if(/^\d{4}-\d{2}-\d{2}$/.test(value||''))return fmtDate(value);return value||'';}
+function macroDateToISO(value){const v=String(value||'').trim();if(!v)return '';if(/^\d{4}-\d{2}-\d{2}$/.test(v))return v;const m=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(!m)return null;const iso=`${m[3]}-${m[2]}-${m[1]}`,d=new Date(`${iso}T12:00:00`);return !isNaN(d)&&d.getFullYear()===+m[3]&&d.getMonth()+1===+m[2]&&d.getDate()===+m[1]?iso:null;}
+function prepareMacroDateInputs(){document.querySelectorAll('#macroEngineeringContent .macro-stage input[type="date"],#macroEngineeringContent .macro-field input[type="date"]:not([disabled])').forEach(input=>{input.type='text';input.inputMode='numeric';input.placeholder='dd/mm/aaaa';input.dataset.macroDate='1';input.value=macroDateDisplay(input.value);});}
+const macroSavePhaseBeforeDateText=macroSavePhase;
+macroSavePhase=function(key,group,stage,field,value){if(field==='date'){const iso=macroDateToISO(value);if(iso===null)return;value=iso;}return macroSavePhaseBeforeDateText(key,group,stage,field,value);};
+const macroSaveFieldBeforeDateText=macroSaveField;
+macroSaveField=function(key,field,value){if(field==='effectiveAt'){const iso=macroDateToISO(value);if(iso===null)return;value=iso;}return macroSaveFieldBeforeDateText(key,field,value);};
+const renderMacroEngineeringBeforeDateText=renderMacroEngineering;
+renderMacroEngineering=function(){renderMacroEngineeringBeforeDateText();prepareMacroDateInputs();};
+let macroResponsibleFilter='';
+const macroBlockState={};
+function macroProjection(record){const source=record.revisions?.length?record.revisions[record.revisions.length-1].snapshot:record;const dates=[];MACRO_GROUPS.forEach(g=>g.stages.forEach(s=>{const d=source.phases?.[g.id]?.[s]?.date;if(/^\d{4}-\d{2}-\d{2}$/.test(d||''))dates.push(d);}));if(!dates.length)return {date:'',days:null,fromRevision:record.revisions?.length>0};const last=dates.sort().at(-1),start=new Date(`${source.issuedAt||record.issuedAt}T12:00:00`),end=new Date(`${last}T12:00:00`);return {date:last,days:source.issuedAt?Math.max(0,Math.round((end-start)/86400000)):null,fromRevision:record.revisions?.length>0};}
+function populateMacroResponsibleFilter(){const select=document.getElementById('macroResponsibleFilter');if(!select)return;const names=[...new Set([...(DB.engineeringPeople||[]),...ORDERS.map(o=>macroRecord(o).responsible).filter(Boolean)])].sort((a,b)=>a.localeCompare(b,'pt-BR'));select.innerHTML=`<option value="">Todos os responsáveis</option>${names.map(n=>`<option value="${macroEsc(n)}" ${n===macroResponsibleFilter?'selected':''}>${macroEsc(n)}</option>`).join('')}`;select.parentElement.style.display=macroView==='people'?'none':'flex';}
+function setMacroResponsibleFilter(value){macroResponsibleFilter=value;renderMacroEngineering();}
+function decorateMacroCards(){if(!['active','completed'].includes(macroView))return;ORDERS.forEach(order=>{const r=macroRecord(order),card=document.getElementById('macro-'+r.key);if(!card)return;card.style.display=macroResponsibleFilter&&r.responsible!==macroResponsibleFilter?'none':'';const summary=card.querySelector('.macro-order-summary'),deadline=summary?.querySelector('.macro-deadline');if(summary&&deadline){summary.querySelector('.macro-summary-chips')?.remove();const p=macroProjection(r),chips=document.createElement('div');chips.className='macro-summary-chips';chips.innerHTML=`<span class="macro-summary-chip"><b>Responsável:</b>${macroEsc(r.responsible||'Não definido')}</span><span class="macro-summary-chip"><b>Engenharia:</b>${p.date?fmtDate(p.date):'Sem data'}${p.days!==null?` · ${p.days} dia(s)`:''}</span><span class="macro-summary-chip final"><b>Entrega final:</b>${fmtDate(r.proposedAt)}</span>`;summary.insertBefore(chips,deadline);}const detail=card.querySelector('.macro-detail');if(detail){detail.querySelector('.macro-engineering-summary')?.remove();const p=macroProjection(r),sum=document.createElement('div');sum.className='macro-engineering-summary';sum.innerHTML=`<div><div class="sum-label">Entrega estimada da Engenharia${p.fromRevision?' · última revisão':''}</div><div class="sum-value">${p.date?fmtDate(p.date):'Informe as datas das etapas'}</div></div><div><div class="sum-label">Tempo total desde a emissão</div><div class="sum-value">${p.days===null?'—':p.days+' dia(s)'}</div></div><div><div class="sum-label">Entrega final do projeto</div><div class="sum-value">${fmtDate(r.proposedAt)}</div></div>`;const revisionList=detail.querySelector('.macro-revision-list');if(revisionList)detail.insertBefore(sum,revisionList);detail.querySelectorAll(':scope > .macro-block').forEach((block,index)=>{const key=`${r.key}-${index}`,title=block.querySelector('.macro-block-title');if(!title)return;block.classList.toggle('collapsed',!!macroBlockState[key]);title.onclick=()=>{macroBlockState[key]=!block.classList.contains('collapsed');block.classList.toggle('collapsed');};});}});}
+const renderMacroEngineeringForEnhancements=renderMacroEngineering;
+renderMacroEngineering=function(){renderMacroEngineeringForEnhancements();populateMacroResponsibleFilter();decorateMacroCards();};
+// Cada linha do Project pode compartilhar a mesma OP textual. O código numérico
+// exibido antes do nome (ex.: 0135.1) é o identificador único da Macro.
+macroKey=function(order){return String(order.code||order.id||order.op);};
+const macroRecordBeforeUniqueKey=macroRecord;
+macroRecord=function(order){const key=macroKey(order),legacyKey=String(order.op||'');const direct=DB.engineeringMacros?.[key];const legacy=legacyKey?DB.engineeringMacros?.[legacyKey]:null;if(!direct&&legacy&&String(legacy.code||'')===String(order.code||'')){DB.engineeringMacros[key]={...legacy,key};delete DB.engineeringMacros[legacyKey];saveMacroLocal();}return macroRecordBeforeUniqueKey(order);};
+
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 
@@ -3032,6 +3125,8 @@ function normalizeDB(data){
   DB.partsLastImport=DB.partsLastImport||null;
   if(DB.simulatorTemplateVersion!==2){DB.simulatorDraft={equipment:'',durations:{}};DB.simulatorTemplateVersion=2;}
   else DB.simulatorDraft=DB.simulatorDraft||{equipment:'',durations:{}};
+  DB.engineeringPeople=Array.isArray(DB.engineeringPeople)?DB.engineeringPeople:[];
+  DB.engineeringMacros=DB.engineeringMacros&&typeof DB.engineeringMacros==='object'?DB.engineeringMacros:{};
   DB.clients=(DB.clients||[]);
   DB.clients.forEach(c=>{if(!c.archivedOrders)c.archivedOrders=[];});
   if(!DB.costsPassword)DB.costsPassword='000000';
@@ -3123,6 +3218,7 @@ Object.assign(window,{
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,
   importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
+  renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,updateCostField,updateCostMonth,
   filterCostCards,saveCostsPassword,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
