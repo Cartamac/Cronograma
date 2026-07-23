@@ -2120,7 +2120,7 @@ async function consultMaxiprodCost(orderId){
       itensSemCusto:Number(result.itensSemCusto)||0,
       calculadoEm:result.calculadoEm||new Date().toISOString(),
       criterio:result.criterio||'',
-      pendencias:(result.pendencias||[]).slice(0,50).map(p=>({codigo:p.codigo||'',descricao:p.descricao||'',motivo:p.motivo||''))
+      pendencias:(result.pendencias||[]).slice(0,50).map(p=>({codigo:p.codigo||'',descricao:p.descricao||'',motivo:p.motivo||''}))
     };
     await persist();
     openCostCardId=orderId;
