@@ -2141,9 +2141,17 @@ async function consultMaxiprodCost(orderId){
   const button=document.getElementById(`maxiprodBtn-${orderId}`);
   if(button){button.disabled=true;button.innerHTML='<span class="msi msi-sm">hourglass_top</span> Consultando estrutura e OP...';}
   try{
-    const [structureResponse,productionResponse]=await Promise.all([calcularCustoMaxiprodRemoto({itemCode}),consultarOrdemProducaoMaxiprodRemoto({itemCode})]);
+    // A estrutura e a OP são consultas independentes. Assim, se ainda não existir
+    // uma OP para o código informado, a estrutura continua sendo atualizada.
+    const structureResponse=await calcularCustoMaxiprodRemoto({itemCode});
     const result=structureResponse.data||{};
-    const production=productionResponse.data||{};
+    let production={itemCode,ordemProducao:null,outrasOrdens:[],insumos:[],operacoes:[]};
+    try{
+      const productionResponse=await consultarOrdemProducaoMaxiprodRemoto({itemCode});
+      production=productionResponse.data||production;
+    }catch(productionError){
+      console.warn('MaxiProd OP:',productionError);
+    }
     MAXIPROD_STRUCTURES[orderId]=Array.isArray(result.estrutura)?result.estrutura:[];
     const savedRates=e.maxiprod?.production?.operationRates||{};
     e.maxiprod={
