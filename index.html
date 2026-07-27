@@ -1802,6 +1802,9 @@ function fmtBRL(v){
 
 // ───────────────── FINANCEIRO / FISCAL ─────────────────
 // Os nomes de campo do MaxiProd podem variar entre contas. Por isso a tela
+// A tela Financeiro/Fiscal também usa a função de escape do restante do app.
+// Mantemos este atalho aqui para evitar que uma falha de renderização deixe a página vazia.
+const esc=escapeHTML;
 // localiza cada informação por alternativas de nome, sem depender de um único schema.
 const FINANCE_VIEWS={
   receber:{title:'Contas a receber',source:'contaAReceber',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Descrição',['descricao','historico']],['Empresa',['empresaNome','empresa']],['Parcela',['parcela','numeroParcela']],['Nº parcelas',['numeroTotalParcelas','quantidadeParcelas']],['Referente a',['referenteA','referencia','referente']],['Valor',['valor','valorOriginal']],['Valor original',['valorOriginal']],['Valor recebido',['valorRecebido','valorBaixado']],['Valor a receber',['valorAReceber','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
@@ -3748,6 +3751,7 @@ Object.assign(window,{
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
+  renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
 </script>
