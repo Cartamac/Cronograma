@@ -986,6 +986,8 @@ input[type="file"]{display:none;}
       <div class="price-inputs"><div class="price-cost-row">
         <div class="form-group"><label>Custo do equipamento (R$)</label><input class="price-cost-input" id="priceCost" type="text" inputmode="decimal" value="25.867,08" oninput="calculatePartsPrice()"></div>
         <div class="price-discount"><span>Margem de desconto (%)</span><input id="priceDiscount" type="number" min="0" max="99" step="0.01" value="5" oninput="calculatePartsPrice()"></div>
+        <div class="form-group" style="min-width:270px;"><label>Nome da peça / equipamento</label><input id="priceItemName" type="text" placeholder="Ex.: Rotor Hidrapulper" oninput="calculatePartsPrice()"></div>
+        <button class="btn btn-gold btn-sm" type="button" onclick="exportPartsPriceReport()"><span class="msi msi-sm">picture_as_pdf</span> Gerar relatório</button>
       </div>
       </div>
       <div class="price-section-title">ÍNDICES FORMAÇÃO DE PREÇO</div>
@@ -1924,13 +1926,19 @@ function renderCostsContent(){
     ?visibleOrders.map(o=>buildCostCard(o,master,costsView==='closed')).join('')
     :'<div class="empty-state"><div class="ei"><span class="msi msi-xl">payments</span></div><h3>Nenhum pedido disponível</h3><p>Importe um arquivo XML na aba Importar para começar.</p></div>';
 
-  const selectedStructureOrder=costsView==='structure'&&selectedStructureOrderId!==null
+  const selectedStructureOrder=['structure','closed'].includes(costsView)&&selectedStructureOrderId!==null
     ?ORDERS.find(o=>String(o.id)===String(selectedStructureOrderId))
     :null;
-  const visibleStatsHTML=selectedStructureOrder?buildOrderTotalsSummary(selectedStructureOrder):statsHTML;
-  content.innerHTML=costsView==='structure'
-    ?`${visibleStatsHTML}${subtabsHTML}${buildCostStructuresView(master)}`
-    :`${statsHTML}${toolbar}${subtabsHTML}${costsView==='orders'?buildCostsGanttSection():''}<div class="orders-list" id="costsCardsList">${cardsHTML}</div>`;
+  // A aba Estrutura Multinível sempre usa sua própria tela: sem item selecionado,
+  // ela mostra a lista de equipamentos; ao abrir um item, mostra cálculo e tabelas.
+  // Nunca deve cair na lista/cartão genérico de "Custos dos pedidos".
+  const isStructureView=costsView==='structure';
+  const isClosedDetail=costsView==='closed'&&!!selectedStructureOrder;
+  content.innerHTML=isStructureView
+    ?`${subtabsHTML}${buildCostStructuresView(master,false)}`
+    :isClosedDetail
+      ?`${subtabsHTML}${buildCostStructuresView(master,true)}`
+      :`${costsView==='orders'?statsHTML:''}${toolbar}${subtabsHTML}${costsView==='orders'?buildCostsGanttSection():''}<div class="orders-list" id="costsCardsList">${cardsHTML}</div>`;
 
   // restaura card aberto, se houver, e religa os listeners dos inputs
   if(costsView==='orders'&&openCostCardId!==null){
@@ -2107,7 +2115,6 @@ function buildCostCard(order,master,closed=false){
         <div class="cost-summary-card"><div class="csv" style="color:${margin<0?'var(--red)':'var(--green)'}">${fmtBRL(margin)}</div><div class="csl">Margem Prevista (Venda-Orçado)</div></div>
         <div class="cost-summary-card"><div class="csv" style="color:var(--gold)">${mp.calculadoEm?fmtBRL(mp.custoTotal):'—'}</div><div class="csl">Custo MaxiProd</div></div>
       </div>
-      ${closed?`<div style="margin-top:16px;">${buildOrderTotalsSummary(order)}</div>`:''}
       <div class="cost-progress-bar"><div class="cost-progress-fill" style="width:${Math.min(100,pctUsed)}%;background:${barColor}"></div></div>
 
       ${closed?`<div class="readonly-notice"><span class="msi msi-sm">lock</span> Projeto fechado em ${new Date(e.closedAt).toLocaleString('pt-BR')} — valores travados.</div>`:pctBoxHTML}
@@ -2125,6 +2132,7 @@ function buildCostCard(order,master,closed=false){
   </div>`;
 }
 function toggleCostCard(orderId){
+  if(costsView==='closed'){selectedStructureOrderId=orderId;renderCostsContent();return;}
   const card=document.getElementById('cost-card-'+orderId);
   if(!card)return;
   const willOpen=!card.classList.contains('open');
@@ -2144,6 +2152,7 @@ async function closeCostProject(orderId){
   entry.closedBy=loggedUser?.name||loggedUser?.ref?.name||'Mestre';
   await persist();
   openCostCardId=null;
+  selectedStructureOrderId=orderId;
   costsView='closed';
   renderCostsContent();
   showToast('OP fechada e valores travados.');
@@ -2226,7 +2235,7 @@ async function consultMaxiprodCost(orderId){
 }
 function switchCostsView(view){
   costsView=['structure','closed'].includes(view)?view:'orders';
-  if(costsView==='orders')selectedStructureOrderId=null;
+  selectedStructureOrderId=null;
   renderCostsContent();
 }
 function fmtStructureNumber(value){
@@ -2327,26 +2336,31 @@ function buildProductionBlocks(order,master){
       </div></div>`;
 }
 async function clearCostStructure(orderId){if(!isMaster(loggedUser))return;if(!confirm('Limpar a estrutura carregada e o custo MaxiProd deste equipamento?'))return;const entry=getCostEntry(orderId);delete entry.maxiprod;delete MAXIPROD_STRUCTURES[orderId];await persist();renderCostsContent();showToast('Estrutura removida.');}
-function buildCostStructuresView(master){
+function buildCostStructuresView(master,readOnly=false){
   if(selectedStructureOrderId!==null){
     const order=ORDERS.find(o=>String(o.id)===String(selectedStructureOrderId));
-    if(!order){selectedStructureOrderId=null;return buildCostStructuresView(master);}
+    if(!order){selectedStructureOrderId=null;return buildCostStructuresView(master,readOnly);}
     const entry=getCostEntry(order.id), mp=entry.maxiprod||{itemCode:''};
     const tree=MAXIPROD_STRUCTURES[order.id]||mp.estrutura||[];
     const titleCode=order.code||'—';
     const rootNode={codigo:mp.itemCode||titleCode,descricao:order.name||'Equipamento',categoria:'Desenho final',unidade:'PC',quantidade:1,custoUnitario:null,filhos:tree||[]};
-    const productionBlocks=buildProductionBlocks(order,master);
+    const locked=readOnly||isClosedCostEntry(entry);
+    const productionBlocks=buildProductionBlocks(order,master&&!locked);
+    // Resumo específico do equipamento: estrutura + insumos + operações.
+    // Também é usado para a visualização travada em Projetos fechados.
+    const totalsSummary=buildOrderTotalsSummary(order);
     const structureOpen=productionBlockOpen[`${order.id}:estrutura`]!==false;
     const content=tree?.length
       ?`<div class="production-block ${structureOpen?'':'is-collapsed'}"><button type="button" class="production-block-head production-toggle" onclick="toggleProductionBlock(${order.id},'estrutura')">Estrutura multinível <span>${structureOpen?'Retrair':'Expandir'}</span></button><div class="production-block-content"><div class="production-filter structure-block-filter"><input type="search" placeholder="Filtrar estrutura por código, item ou categoria..." oninput="filterStructureRows(this.value)"></div><div class="structure-tree"><div class="structure-tree-head"><div>Cód.</div><div>Item / descrição</div><div>Unid.</div><div>Qtd. (G)</div><div>Preço (P)</div><div>Total P × G</div></div>${renderStructureRows([rootNode],0,true)}</div></div></div>`
       :`<div class="production-block"><div class="production-block-head">Estrutura multinível</div><div class="structure-empty">${mp.itemCode?'Clique em “Atualizar pelo MaxiProd” para consultar todos os níveis.':'Informe o código raiz do equipamento no MaxiProd para carregar a estrutura.'}</div></div>`;
     return `<div class="structure-view-head">
-      <div><button class="btn btn-ghost btn-sm structure-return" onclick="closeCostStructure()"><span class="msi msi-sm">arrow_back</span> Todos os equipamentos</button><h3>${escapeHTML(titleCode)} — ${escapeHTML(order.name||'')}</h3><div class="structure-intro">Estrutura vinculada ao pedido do Project. São exibidos os níveis, a quantidade aplicada (G), o último preço do MaxiProd (P) e o total calculado por linha (P × G).</div></div>
+      <div><button class="btn btn-ghost btn-sm structure-return" onclick="closeCostStructure()"><span class="msi msi-sm">arrow_back</span> Todos os equipamentos</button><h3>${escapeHTML(titleCode)} — ${escapeHTML(order.name||'')}</h3><div class="structure-intro">${locked?'Projeto fechado — valores extraídos do MaxiProd e travados.':'Estrutura vinculada ao pedido do Project. São exibidos os níveis, a quantidade aplicada (G), o último preço do MaxiProd (P) e o total calculado por linha (P × G).'}</div></div>
       <div class="structure-summary">${mp.calculadoEm?`<span class="cost-client-tag"><span class="msi msi-sm">payments</span> Total: ${fmtBRL(mp.custoTotal)}</span>`:''}<span class="cost-client-tag"><span class="msi msi-sm">tag</span> Código: ${escapeHTML(mp.itemCode||'não definido')}</span></div>
     </div>
+    <div class="structure-order-totals">${totalsSummary}</div>
     <div class="cost-pct-box" style="margin-top:0;margin-bottom:16px;">
-      <div class="cost-pct-row"><div class="form-group"><label>Código raiz MaxiProd</label><input type="text" id="maxiprodCode-${order.id}" value="${escapeHTML(mp.itemCode||'')}" placeholder="Ex.: DS2832" ${master?'':'disabled'} onchange="updateMaxiprodCode(${order.id},this.value)"></div>${master?`<button class="btn btn-gold btn-sm" id="maxiprodBtn-${order.id}" onclick="consultMaxiprodCost(${order.id})"><span class="msi msi-sm">sync</span> Carregar estrutura</button><button class="btn btn-ghost btn-sm" onclick="clearCostStructure(${order.id})"><span class="msi msi-sm">delete_sweep</span> Limpar estrutura</button>`:''}</div>
-    </div>${content}${productionBlocks}${master?`<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="closeCostProject(${order.id})"><span class="msi msi-sm">lock</span> Fechar OP</button></div>`:''}`;
+      <div class="cost-pct-row"><div class="form-group"><label>Código raiz MaxiProd</label><input type="text" id="maxiprodCode-${order.id}" value="${escapeHTML(mp.itemCode||'')}" placeholder="Ex.: DS2832" ${master&&!locked?'':'disabled'} onchange="updateMaxiprodCode(${order.id},this.value)"></div>${master&&!locked?`<button class="btn btn-gold btn-sm" id="maxiprodBtn-${order.id}" onclick="consultMaxiprodCost(${order.id})"><span class="msi msi-sm">sync</span> Carregar estrutura</button><button class="btn btn-ghost btn-sm" onclick="clearCostStructure(${order.id})"><span class="msi msi-sm">delete_sweep</span> Limpar estrutura</button>`:''}<button class="btn btn-ghost btn-sm" onclick="exportCostStructurePDF(${order.id})"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" onclick="exportCostStructureExcel(${order.id})"><span class="msi msi-sm">table_chart</span> Excel</button></div>
+    </div>${content}${productionBlocks}${master&&!locked?`<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="closeCostProject(${order.id})"><span class="msi msi-sm">lock</span> Fechar OP</button></div>`:''}`;
   }
   const list=ORDERS.length?ORDERS.map(order=>{
     const e=getCostEntry(order.id),mp=e.maxiprod||{itemCode:''};
@@ -2360,6 +2374,52 @@ function openCostStructure(orderId){
   renderCostsContent();
 }
 function closeCostStructure(){selectedStructureOrderId=null;renderCostsContent();}
+function safeReportFileName(value){return String(value||'Relatório').replace(/[\\/:*?"<>|]/g,'-').replace(/\s+/g,' ').trim();}
+function buildStructureReportData(orderId){
+  const order=ORDERS.find(o=>String(o.id)===String(orderId));
+  if(!order)return null;
+  const entry=getCostEntry(order.id),mp=entry.maxiprod||{};
+  const tree=MAXIPROD_STRUCTURES[order.id]||mp.estrutura||[];
+  const rows=[];
+  const visit=(nodes,level=1)=>{
+    (nodes||[]).forEach(node=>{
+      const values=getStructureNodeValues(node),drawing=/^DS/i.test(String(node.codigo||''));
+      rows.push({nivel:level,codigo:node.codigo||'—',descricao:node.descricao||'—',categoria:node.categoria||'',unidade:node.unidade||'',quantidade:values.quantity,preco:values.price,total:drawing?getStructureAggregateTotal(node):values.total});
+      visit(node.filhos,level+1);
+    });
+  };
+  visit(tree);
+  const production=mp.production||{};
+  const insumos=(production.insumos||[]).filter(row=>!/^DS/i.test(String(row.codigo||'').trim()));
+  const rates=production.operationRates||{};
+  const operacoes=(production.operacoes||[]).map(row=>({descricao:row.descricao||'—',estacao:row.estacao||'Não definida',horas:Number(row.tempoRealizadoEmHoras)||0,valorHora:Number(rates[String(row.id)])||0,total:(Number(row.tempoRealizadoEmHoras)||0)*(Number(rates[String(row.id)])||0)}));
+  return {order,mp,rows,insumos,operacoes,totals:getOrderProductionTotals(order)};
+}
+function exportCostStructureExcel(orderId){
+  const report=buildStructureReportData(orderId);
+  if(!report){showToast('OP não encontrada.','err');return;}
+  if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const wb=XLSX.utils.book_new(), add=(name,data)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(data),name);
+  const title=`${report.order.code||report.order.op||'OP'} — ${report.order.name||'Equipamento'}`;
+  add('Resumo',[['Estrutura Multinível'],['OP',report.order.code||report.order.op||'—'],['Equipamento',report.order.name||'—'],['Código MaxiProd',report.mp.itemCode||'—'],['Total estrutura',report.totals.estruturaTotal],['Total insumos',report.totals.insumosTotal],['Total operações',report.totals.operacoesTotal],['TOTAL DA OP',report.totals.total]]);
+  add('Estrutura',[['Nível','Código','Item / descrição','Categoria','Unid.','Qtd. (G)','Preço (P)','Total P x G'],...report.rows.map(r=>[r.nivel,r.codigo,r.descricao,r.categoria,r.unidade,r.quantidade,r.preco==null?'':r.preco,r.total])]);
+  add('Insumos',[['Código','Descrição','Qtd. baixada','Valor unitário','Valor total'],...report.insumos.map(r=>[r.codigo||'—',r.descricao||'—',Number(r.quantidadeBaixada)||0,Number(r.valorUnitario)||0,Number(r.valorTotal)||0])]);
+  add('Operações',[['Descrição','Estação','Tempo realizado (h)','Valor (R$/h)','Valor total'],...report.operacoes.map(r=>[r.descricao,r.estacao,r.horas,r.valorHora,r.total])]);
+  XLSX.writeFile(wb,`${safeReportFileName(`Estrutura Multinivel - ${title}`)}.xlsx`);
+}
+function exportCostStructurePDF(orderId){
+  const report=buildStructureReportData(orderId), js=window.jspdf?.jsPDF;
+  if(!report){showToast('OP não encontrada.','err');return;}
+  if(!js){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const pdf=new js({unit:'mm',format:'a4'});let y=16;
+  const line=(text,size=8,bold=false)=>{if(y>280){pdf.addPage();y=16;}pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(size);const lines=pdf.splitTextToSize(String(text),185);pdf.text(lines,12,y);y+=lines.length*(size*.48+1.4)+1.5;};
+  line('CARTAMAC — Estrutura Multinível',15,true);line(`${report.order.code||report.order.op||'—'} — ${report.order.name||'Equipamento'}`,11,true);line(`Código MaxiProd: ${report.mp.itemCode||'—'} · Emitido em ${new Date().toLocaleString('pt-BR')}`);y+=2;
+  line(`TOTAL DA ESTRUTURA MULTINÍVEL: ${fmtBRL(report.totals.estruturaTotal)}`,10,true);line(`TOTAL INSUMOS: ${fmtBRL(report.totals.insumosTotal)}`,10,true);line(`TOTAL OPERAÇÕES: ${fmtBRL(report.totals.operacoesTotal)}`,10,true);line(`TOTAL DA OP: ${fmtBRL(report.totals.total)}`,11,true);y+=3;
+  line('ESTRUTURA MULTINÍVEL',11,true);report.rows.forEach(r=>line(`${'  '.repeat(Math.max(0,r.nivel-1))}${r.codigo} — ${r.descricao} | ${r.quantidade} ${r.unidade} | ${r.preco==null?'—':fmtBRL(r.preco)} | ${fmtBRL(r.total)}`));
+  y+=2;line('INSUMOS',11,true);report.insumos.forEach(r=>line(`${r.codigo||'—'} — ${r.descricao||'—'} | Qtd.: ${r.quantidadeBaixada||0} | Unit.: ${fmtBRL(r.valorUnitario)} | Total: ${fmtBRL(r.valorTotal)}`));
+  y+=2;line('OPERAÇÕES',11,true);report.operacoes.forEach(r=>line(`${r.descricao} — ${r.estacao} | ${fmtStructureNumber(r.horas)} h | ${fmtBRL(r.valorHora)}/h | ${fmtBRL(r.total)}`));
+  pdf.save(`${safeReportFileName(`Estrutura Multinivel - ${report.order.code||report.order.op||'OP'} — ${report.order.name||'Equipamento'}`)}.pdf`);
+}
 function updateCostMonth(orderId,key,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
   const e=getCostEntry(orderId);
@@ -3015,6 +3075,29 @@ function calculatePartsPrice(){
   const note=document.getElementById('priceCalcNote');
   if(note)note.textContent=`Markup do equipamento: ${(remaining*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% · Tributos sem IPI: ${taxes.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% · IPI informado: ${ipi.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%. Os índices comerciais estão disponíveis como referência da planilha e só se aplicam quando houver custo comercial adicional.`;
 }
+function getPartsPriceReportData(){
+  const collect=selector=>Array.from(document.querySelectorAll(selector)).map(input=>({nome:input.closest('.price-row')?.querySelector('span')?.textContent||'Índice',valor:parseBRNumber(input.value)}));
+  const cost=parseBRNumber(document.getElementById('priceCost')?.value),discount=parseBRNumber(document.getElementById('priceDiscount')?.value);
+  const equipment=collect('.price-equipment-index'),commercial=collect('.price-commercial-index'),taxes=collect('.price-tax');
+  const ipi=parseBRNumber(document.querySelector('.price-tax-ipi')?.value);
+  const equipmentSum=equipment.reduce((sum,x)=>sum+x.valor,0),taxSum=taxes.reduce((sum,x)=>sum+x.valor,0),remaining=(100-equipmentSum-taxSum)/100,discountBase=1-discount/100;
+  const sale=remaining>0?cost/remaining:0,discounted=discountBase>0?sale/discountBase:0;
+  return {name:document.getElementById('priceItemName')?.value.trim()||'Peça sem nome',cost,discount,equipment,commercial,taxes,ipi,markup:remaining*100,taxSum,sale,discounted,withoutTax:discounted*(1-taxSum/100),saleWithIpi:sale*(1+ipi/100),discountedWithIpi:discounted*(1+ipi/100)};
+}
+function exportPartsPriceReport(){
+  const report=getPartsPriceReportData(),js=window.jspdf?.jsPDF;
+  if(!js){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const pdf=new js({unit:'mm',format:'a4'});let y=16;
+  const line=(text,size=9,bold=false)=>{if(y>280){pdf.addPage();y=16;}pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(size);const lines=pdf.splitTextToSize(String(text),185);pdf.text(lines,12,y);y+=lines.length*(size*.5+1.5)+2;};
+  const pct=value=>`${Number(value||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+  line('CARTAMAC — Custo / Formação de preço',15,true);line(report.name,12,true);line(`Emitido em ${new Date().toLocaleString('pt-BR')}`);y+=2;
+  line(`Custo do equipamento: ${fmtPartsCost(report.cost)}`,10,true);line(`Margem de desconto: ${pct(report.discount)}`);line(`Markup calculado do equipamento: ${pct(report.markup)}`,10,true);line(`Tributos sem IPI: ${pct(report.taxSum)} | IPI: ${pct(report.ipi)}`);y+=2;
+  line('ÍNDICES DO EQUIPAMENTO',11,true);report.equipment.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));
+  line('ÍNDICES COMERCIAIS',11,true);report.commercial.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));
+  line('IMPOSTOS',11,true);report.taxes.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));line(`IPI: ${pct(report.ipi)}`);y+=2;
+  line('RESUMO PREÇO DE VENDA',11,true);line(`Preço de venda: ${fmtPartsCost(report.sale)} | Com IPI: ${fmtPartsCost(report.saleWithIpi)}`,10,true);line(`Preço com margem de desconto: ${fmtPartsCost(report.discounted)} | Com IPI: ${fmtPartsCost(report.discountedWithIpi)}`,10,true);line(`Preço com margem sem imposto: ${fmtPartsCost(report.withoutTax)}`,10,true);
+  pdf.save(`${safeReportFileName(`Custo - ${report.name}`)}.pdf`);
+}
 function fmtPartsDate(value){
   if(!value)return '—';
   if(typeof value?.toDate==='function')value=value.toDate();
@@ -3520,9 +3603,9 @@ Object.assign(window,{
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,
-  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
+  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
-  unlockCosts,relockCosts,toggleCostCard,closeCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
+  unlockCosts,relockCosts,toggleCostCard,closeCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
