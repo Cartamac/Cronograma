@@ -2117,7 +2117,7 @@ function buildCostCard(order,master,closed=false){
       </div>
       <div class="cost-progress-bar"><div class="cost-progress-fill" style="width:${Math.min(100,pctUsed)}%;background:${barColor}"></div></div>
 
-      ${closed?`<div class="readonly-notice"><span class="msi msi-sm">lock</span> Projeto fechado em ${new Date(e.closedAt).toLocaleString('pt-BR')} — valores travados.</div>`:pctBoxHTML}
+      ${closed?`<div class="readonly-notice"><span class="msi msi-sm">lock</span> Projeto fechado em ${new Date(e.closedAt).toLocaleString('pt-BR')} por ${escapeHTML(e.closedBy||'Mestre')} — valores travados.</div>`:pctBoxHTML}
 
       <div class="section-title" style="margin-top:20px;"><span class="msi msi-sm">calendar_month</span> Gasto Realizado por Mês</div>
       <div class="cost-months-wrap">
@@ -2143,19 +2143,41 @@ async function closeCostProject(orderId){
   if(!isMaster(loggedUser)){showToast('Somente mestres podem fechar uma OP','err');return;}
   if(!confirm('Fechar esta OP? Os valores serão congelados na subaba Projetos fechados.'))return;
   const entry=getCostEntry(orderId);
+  const changedAt=new Date().toISOString();
+  const changedBy=loggedUser?.name||loggedUser?.ref?.name||'Mestre';
   entry.closedSnapshot=JSON.parse(JSON.stringify({
     client:entry.client||'',saleValue:entry.saleValue||0,budgetCost:entry.budgetCost||0,
     months:entry.months||{},installmentPlans:entry.installmentPlans||[],
-    maxiprod:entry.maxiprod||null,closedAt:new Date().toISOString()
+    maxiprod:entry.maxiprod||null,closedAt:changedAt,closedBy:changedBy
   }));
-  entry.closedAt=new Date().toISOString();
-  entry.closedBy=loggedUser?.name||loggedUser?.ref?.name||'Mestre';
+  entry.closedAt=changedAt;
+  entry.closedBy=changedBy;
+  entry.statusHistory=entry.statusHistory||[];
+  entry.statusHistory.push({action:'Fechada',at:changedAt,by:changedBy});
   await persist();
   openCostCardId=null;
   selectedStructureOrderId=orderId;
   costsView='closed';
   renderCostsContent();
   showToast('OP fechada e valores travados.');
+}
+async function reopenCostProject(orderId){
+  if(!isMaster(loggedUser)){showToast('Somente mestres podem reabrir uma OP','err');return;}
+  if(!confirm('Reabrir esta OP? Ela voltará para Estrutura Multinível e poderá ser atualizada novamente.'))return;
+  const entry=getCostEntry(orderId);
+  const changedAt=new Date().toISOString();
+  const changedBy=loggedUser?.name||loggedUser?.ref?.name||'Mestre';
+  delete entry.closedAt;
+  delete entry.closedBy;
+  entry.reopenedAt=changedAt;
+  entry.reopenedBy=changedBy;
+  entry.statusHistory=entry.statusHistory||[];
+  entry.statusHistory.push({action:'Reaberta',at:changedAt,by:changedBy});
+  await persist();
+  selectedStructureOrderId=orderId;
+  costsView='structure';
+  renderCostsContent();
+  showToast('OP reaberta e devolvida à Estrutura Multinível.');
 }
 function updateCostField(orderId,field,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
@@ -2345,6 +2367,9 @@ function buildCostStructuresView(master,readOnly=false){
     const titleCode=order.code||'—';
     const rootNode={codigo:mp.itemCode||titleCode,descricao:order.name||'Equipamento',categoria:'Desenho final',unidade:'PC',quantidade:1,custoUnitario:null,filhos:tree||[]};
     const locked=readOnly||isClosedCostEntry(entry);
+    const statusNotice=locked
+      ?`<div class="readonly-notice" style="margin:0 0 14px;"><span class="msi msi-sm">lock</span> OP fechada em ${new Date(entry.closedAt).toLocaleString('pt-BR')} por ${escapeHTML(entry.closedBy||'Mestre')} — valores travados.</div>`
+      :(entry.reopenedAt?`<div class="readonly-notice" style="margin:0 0 14px;"><span class="msi msi-sm">restart_alt</span> OP reaberta em ${new Date(entry.reopenedAt).toLocaleString('pt-BR')} por ${escapeHTML(entry.reopenedBy||'Mestre')}.</div>`:'');
     const productionBlocks=buildProductionBlocks(order,master&&!locked);
     // Resumo específico do equipamento: estrutura + insumos + operações.
     // Também é usado para a visualização travada em Projetos fechados.
@@ -2357,15 +2382,17 @@ function buildCostStructuresView(master,readOnly=false){
       <div><button class="btn btn-ghost btn-sm structure-return" onclick="closeCostStructure()"><span class="msi msi-sm">arrow_back</span> Todos os equipamentos</button><h3>${escapeHTML(titleCode)} — ${escapeHTML(order.name||'')}</h3><div class="structure-intro">${locked?'Projeto fechado — valores extraídos do MaxiProd e travados.':'Estrutura vinculada ao pedido do Project. São exibidos os níveis, a quantidade aplicada (G), o último preço do MaxiProd (P) e o total calculado por linha (P × G).'}</div></div>
       <div class="structure-summary">${mp.calculadoEm?`<span class="cost-client-tag"><span class="msi msi-sm">payments</span> Total: ${fmtBRL(mp.custoTotal)}</span>`:''}<span class="cost-client-tag"><span class="msi msi-sm">tag</span> Código: ${escapeHTML(mp.itemCode||'não definido')}</span></div>
     </div>
+    ${statusNotice}
     <div class="structure-order-totals">${totalsSummary}</div>
     <div class="cost-pct-box" style="margin-top:0;margin-bottom:16px;">
       <div class="cost-pct-row"><div class="form-group"><label>Código raiz MaxiProd</label><input type="text" id="maxiprodCode-${order.id}" value="${escapeHTML(mp.itemCode||'')}" placeholder="Ex.: DS2832" ${master&&!locked?'':'disabled'} onchange="updateMaxiprodCode(${order.id},this.value)"></div>${master&&!locked?`<button class="btn btn-gold btn-sm" id="maxiprodBtn-${order.id}" onclick="consultMaxiprodCost(${order.id})"><span class="msi msi-sm">sync</span> Carregar estrutura</button><button class="btn btn-ghost btn-sm" onclick="clearCostStructure(${order.id})"><span class="msi msi-sm">delete_sweep</span> Limpar estrutura</button>`:''}<button class="btn btn-ghost btn-sm" onclick="exportCostStructurePDF(${order.id})"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" onclick="exportCostStructureExcel(${order.id})"><span class="msi msi-sm">table_chart</span> Excel</button></div>
-    </div>${content}${productionBlocks}${master&&!locked?`<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="closeCostProject(${order.id})"><span class="msi msi-sm">lock</span> Fechar OP</button></div>`:''}`;
+    </div>${content}${productionBlocks}${locked&&master?`<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="reopenCostProject(${order.id})"><span class="msi msi-sm">restart_alt</span> Reabrir OP</button></div>`:master?`<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="closeCostProject(${order.id})"><span class="msi msi-sm">lock</span> Fechar OP</button></div>`:''}`;
   }
-  const list=ORDERS.length?ORDERS.map(order=>{
+  const structureOrders=ORDERS.filter(order=>!isClosedCostEntry(getCostEntry(order.id)));
+  const list=structureOrders.length?structureOrders.map(order=>{
     const e=getCostEntry(order.id),mp=e.maxiprod||{itemCode:''};
     return `<div class="structure-order"><div class="structure-order-main" onclick="openCostStructure(${order.id})"><div class="structure-order-name">${escapeHTML(order.code||'—')} — ${escapeHTML(order.name||'')}</div><div class="structure-order-meta">${order.op?`OP: ${escapeHTML(order.op)} · `:''}${mp.calculadoEm?`Estrutura atualizada: ${new Date(mp.calculadoEm).toLocaleString('pt-BR')}`:'Estrutura ainda não carregada'}</div></div><div class="form-group"><label>Código raiz MaxiProd</label><input type="text" value="${escapeHTML(mp.itemCode||'')}" placeholder="Ex.: DS2832" ${master?'':'disabled'} onchange="updateMaxiprodCode(${order.id},this.value)"></div><button class="btn btn-ghost btn-sm" onclick="openCostStructure(${order.id})"><span class="msi msi-sm">account_tree</span> Ver estrutura</button></div>`;
-  }).join(''):'<div class="structure-empty">Importe o Project para listar automaticamente os equipamentos nesta área.</div>';
+  }).join(''):'<div class="structure-empty">Não há OPs abertas nesta área. As OPs fechadas ficam disponíveis em <b>Projetos fechados</b>.</div>';
   return `<div class="structure-intro">Cada equipamento importado pelo arquivo Project aparece automaticamente abaixo. Para consultar sua estrutura, informe uma única vez o código raiz correspondente no MaxiProd e abra o equipamento.</div><div class="structure-order-list">${list}</div>`;
 }
 function openCostStructure(orderId){
@@ -3090,6 +3117,20 @@ function exportPartsPriceReport(){
   const pdf=new js({unit:'mm',format:'a4'});let y=16;
   const line=(text,size=9,bold=false)=>{if(y>280){pdf.addPage();y=16;}pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(size);const lines=pdf.splitTextToSize(String(text),185);pdf.text(lines,12,y);y+=lines.length*(size*.5+1.5)+2;};
   const pct=value=>`${Number(value||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+  // Relatório em tabelas: impressão mais limpa para envio comercial.
+  const premium=new js({unit:'mm',format:'a4'}),gold=[197,161,50],dark=[35,35,35],light=[246,246,246];let py=15;
+  const nextPage=()=>{premium.addPage();py=15;};
+  const header=text=>{if(py>266)nextPage();premium.setFillColor(...dark);premium.rect(12,py,186,8,'F');premium.setTextColor(...gold);premium.setFont('helvetica','bold');premium.setFontSize(10);premium.text(text,16,py+5.3);py+=10;};
+  const table=(heading,items)=>{header(heading);items.forEach((item,index)=>{if(py>274)nextPage(),header(`${heading} (continuação)`);premium.setFillColor(...(index%2?[250,250,250]:light));premium.rect(12,py,186,7,'F');premium.setDrawColor(220,220,220);premium.rect(12,py,186,7,'S');premium.setTextColor(35,35,35);premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(String(item[0]),16,py+4.7);premium.setFont('helvetica','bold');premium.text(String(item[1]),190,py+4.7,{align:'right'});py+=7;});py+=3;};
+  premium.setFillColor(...dark);premium.rect(0,0,210,36,'F');premium.setTextColor(...gold);premium.setFont('helvetica','bold');premium.setFontSize(17);premium.text('CARTAMAC',12,16);premium.setFontSize(12);premium.setTextColor(255,255,255);premium.text('CUSTO / FORMAÇÃO DE PREÇO',12,24);premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(report.name,12,31);py=44;
+  table('DADOS PRINCIPAIS',[['Custo do equipamento',fmtPartsCost(report.cost)],['Margem de desconto',pct(report.discount)],['Markup calculado',pct(report.markup)],['Tributos sem IPI',pct(report.taxSum)],['IPI',pct(report.ipi)]]);
+  table('ÍNDICES DO EQUIPAMENTO',report.equipment.map(x=>[x.nome,pct(x.valor)]));
+  table('ÍNDICES COMERCIAIS',report.commercial.map(x=>[x.nome,pct(x.valor)]));
+  table('IMPOSTOS',report.taxes.map(x=>[x.nome,pct(x.valor)]).concat([['IPI',pct(report.ipi)]]));
+  table('RESUMO PREÇO DE VENDA',[['Preço de venda',fmtPartsCost(report.sale)],['Preço de venda com IPI',fmtPartsCost(report.saleWithIpi)],['Preço com margem de desconto',fmtPartsCost(report.discounted)],['Preço com desconto e IPI',fmtPartsCost(report.discountedWithIpi)],['Preço com margem sem imposto',fmtPartsCost(report.withoutTax)]]);
+  premium.setTextColor(100,100,100);premium.setFont('helvetica','normal');premium.setFontSize(7);premium.text(`Emitido em ${new Date().toLocaleString('pt-BR')}`,12,291);
+  premium.save(`${safeReportFileName(`Custo - ${report.name}`)}.pdf`);
+  return;
   line('CARTAMAC — Custo / Formação de preço',15,true);line(report.name,12,true);line(`Emitido em ${new Date().toLocaleString('pt-BR')}`);y+=2;
   line(`Custo do equipamento: ${fmtPartsCost(report.cost)}`,10,true);line(`Margem de desconto: ${pct(report.discount)}`);line(`Markup calculado do equipamento: ${pct(report.markup)}`,10,true);line(`Tributos sem IPI: ${pct(report.taxSum)} | IPI: ${pct(report.ipi)}`);y+=2;
   line('ÍNDICES DO EQUIPAMENTO',11,true);report.equipment.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));
@@ -3605,7 +3646,7 @@ Object.assign(window,{
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,
   importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
-  unlockCosts,relockCosts,toggleCostCard,closeCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
+  unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
