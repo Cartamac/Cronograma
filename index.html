@@ -173,6 +173,7 @@ input[type="file"]{display:none;}
 .finance-table-wrap{border:1px solid var(--border);border-radius:10px;overflow:auto;background:var(--panel);}
 .finance-table{width:100%;min-width:900px;border-collapse:collapse;font-size:12px;}.finance-table th{background:var(--panel2);color:var(--text3);font-size:10px;letter-spacing:.4px;text-transform:uppercase;text-align:left;padding:12px;border-bottom:1px solid var(--border);white-space:nowrap;}.finance-table td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text2);}.finance-table tr:last-child td{border-bottom:0;}.finance-table .money{font-family:'JetBrains Mono',monospace;font-weight:700;color:#fff;white-space:nowrap;}.finance-table .muted{color:var(--text3);}.finance-empty{padding:28px;color:var(--text3);text-align:center;}
 .finance-card-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}.finance-card{border:1px solid var(--border);border-radius:9px;background:var(--panel);padding:15px;}.finance-card b{display:block;font:700 19px 'JetBrains Mono',monospace;color:var(--gold);}.finance-card span{display:block;color:var(--text3);font-size:11px;margin-top:6px;text-transform:uppercase;letter-spacing:.4px;}
+.finance-column-filter{position:relative;display:inline-block;}.finance-column-filter summary{cursor:pointer;list-style:none;white-space:nowrap;}.finance-column-filter summary::-webkit-details-marker{display:none;}.finance-column-filter summary span{color:var(--gold);margin-left:3px;}.finance-filter-menu{position:absolute;left:0;top:20px;z-index:80;width:240px;max-height:330px;overflow:auto;padding:8px;background:#202020;border:1px solid #575757;border-radius:7px;box-shadow:0 12px 28px #000b;color:#eee;text-transform:none;letter-spacing:0;font-size:12px;}.finance-filter-menu label{display:block;padding:5px 3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.finance-filter-menu label:first-child{padding-bottom:8px;margin-bottom:5px;border-bottom:1px solid #454545;font-weight:700;}.finance-filter-menu input{vertical-align:middle;margin:0 6px 0 0;accent-color:#c8a84b;}.finance-filter-menu small{display:block;padding:7px 3px;color:var(--text3);}
 @media(max-width:760px){.finance-head{display:block;}.finance-actions{justify-content:flex-start;margin-top:12px;}.finance-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.finance-card{padding:12px;}.finance-card b{font-size:16px;}.finance-tabs{gap:6px;}.finance-tab{padding:9px 10px;font-size:11px;}.finance-toolbar{display:block;}.finance-toolbar input{width:100%;}.finance-table{min-width:760px;}}
 @media(max-width:640px){.parts-head h2{font-size:19px}.parts-stats{grid-template-columns:1fr}.parts-toolbar .search-wrap{width:100%;}}
 @media(max-width:640px){
@@ -1242,6 +1243,7 @@ const DEFAULT_DB = {
 let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
 let FILE_STORE = {};
 let financeiroView='receber';
+let financeColumnFilters={};
 // Dados financeiros podem ultrapassar o limite de 1 MB de um documento Firestore.
 // O cache detalhado fica no navegador; no banco é gravada apenas a data da consulta.
 let FINANCE_CACHE=(()=>{
@@ -1823,12 +1825,23 @@ function financeNormalize(value){return String(value??'').normalize('NFD').repla
 function financeValue(row,keys){
   const target=(keys||[]).map(financeNormalize);
   for(const key of Object.keys(row||{}))if(target.includes(financeNormalize(key))&&row[key]!==null&&row[key]!==undefined&&row[key]!=='')return row[key];
+  for(const key of Object.keys(row||{})){
+    const normalized=financeNormalize(key);
+    if(target.some(name=>normalized.includes(name)||name.includes(normalized))&&row[key]!==null&&row[key]!==undefined&&row[key]!=='')return row[key];
+  }
   return null;
 }
+function financeDateNumber(value){
+  if(value===null||value===undefined||value==='')return 0;
+  const text=String(value).trim(),br=text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if(br)return new Date(`${br[3]}-${br[2]}-${br[1]}T00:00:00`).getTime()||0;
+  const time=Date.parse(text);return Number.isFinite(time)?time:0;
+}
+function financeRowDate(row,view){const col=view.columns.find(([label])=>/emiss|venc|data|movimento|liquidez/i.test(label));return financeDateNumber(col?financeValue(row,col[1]):null);}
 function financeRows(view){
   const raw=FINANCE_CACHE?.datasets?.[view.source]?.items||[];
   const filtered=view.filter?raw.filter(row=>view.filter.test(String(financeValue(row,['codigo'])||'')+' '+String(financeValue(row,['descricao'])||''))):raw;
-  return filtered;
+  return [...filtered].sort((a,b)=>financeRowDate(b,view)-financeRowDate(a,view));
 }
 function financeFormat(value,label){
   if(value===null||value===undefined||value==='')return '—';
@@ -1845,13 +1858,30 @@ function financeNumber(value){
   return Number.isFinite(parsed)?parsed:0;
 }
 function getFinanceDataStamp(){const date=FINANCE_CACHE?.updatedAt||DB.financeiroFiscalMeta?.updatedAt;return date?new Date(date).toLocaleString('pt-BR'):'Ainda não atualizado';}
+function financeColumnId(index){return `${financeiroView}:${index}`;}
+function financeCell(row,column){return financeFormat(financeValue(row,column[1]),column[0]);}
+function financeColumnValues(view,index){return [...new Set(financeRows(view).map(row=>financeCell(row,view.columns[index])))].sort((a,b)=>String(a).localeCompare(String(b),'pt-BR',{numeric:true}));}
+function financeRowsFiltered(view,search){
+  let rows=financeRows(view);
+  view.columns.forEach((column,index)=>{const selected=financeColumnFilters[financeColumnId(index)];if(Array.isArray(selected))rows=rows.filter(row=>selected.includes(financeCell(row,column)));});
+  return search?rows.filter(row=>Object.values(row||{}).join(' ').toLowerCase().includes(search)):rows;
+}
+function toggleFinanceColumnFilter(index,value,checked){const view=FINANCE_VIEWS[financeiroView],values=financeColumnValues(view,index),id=financeColumnId(index),selected=new Set(Array.isArray(financeColumnFilters[id])?financeColumnFilters[id]:values);if(checked)selected.add(value);else selected.delete(value);financeColumnFilters[id]=[...selected];renderFinanceiroFiscal();}
+function toggleAllFinanceColumnFilter(index,checked){const view=FINANCE_VIEWS[financeiroView];financeColumnFilters[financeColumnId(index)]=checked?financeColumnValues(view,index):[];renderFinanceiroFiscal();}
 function switchFinanceView(key){financeiroView=key;renderFinanceiroFiscal();}
 async function refreshFinanceiroFiscal(){
   if(!isMaster(loggedUser))return;
   try{
-    showLoading('Consultando dados financeiro/fiscais no MaxiProd...');
-    const result=await consultarFinanceiroFiscalMaxiprodRemoto({take:75});
-    FINANCE_CACHE=result.data||{updatedAt:new Date().toISOString(),datasets:{}};
+    const view=FINANCE_VIEWS[financeiroView]||FINANCE_VIEWS.receber;
+    showLoading(`Consultando todo o histórico de ${view.title.toLowerCase()} no MaxiProd...`);
+    const pageSize=200,all=[];let skip=0,updatedAt=new Date().toISOString();
+    for(let page=0;page<100;page++){
+      const result=await consultarFinanceiroFiscalMaxiprodRemoto({source:view.source,take:pageSize,skip});
+      const dataset=result.data?.datasets?.[view.source]||{items:[]},items=Array.isArray(dataset.items)?dataset.items:[];
+      all.push(...items);updatedAt=result.data?.updatedAt||updatedAt;if(items.length<pageSize)break;skip+=pageSize;
+    }
+    FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+    FINANCE_CACHE.datasets[view.source]={items:all,available:true};FINANCE_CACHE.updatedAt=updatedAt;
     try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){/* cache local opcional */}
     DB.financeiroFiscalMeta={updatedAt:FINANCE_CACHE.updatedAt||new Date().toISOString()};
     await persist();
@@ -1862,8 +1892,8 @@ async function refreshFinanceiroFiscal(){
 function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
   const view=FINANCE_VIEWS[financeiroView]||FINANCE_VIEWS.receber;
-  const allRows=financeRows(view);const search=(document.getElementById('financeSearch')?.value||'').trim().toLowerCase();
-  const rows=search?allRows.filter(row=>Object.values(row||{}).join(' ').toLowerCase().includes(search)):allRows;
+  const search=(document.getElementById('financeSearch')?.value||'').trim().toLowerCase();
+  const rows=financeRowsFiltered(view,search);
   const data=FINANCE_CACHE?.datasets||{};
   const totalReceber=(data.contaAReceber?.items||[]).reduce((sum,row)=>sum+financeNumber(financeValue(row,['valorAReceber','saldo','valor'])),0);
   const totalPagar=(data.contaAPagar?.items||[]).reduce((sum,row)=>sum+financeNumber(financeValue(row,['valorAPagar','saldo','valor'])),0);
@@ -1872,7 +1902,7 @@ function renderFinanceiroFiscal(){
   <div class="finance-card-grid"><div class="finance-card"><b>${fmtBRL(totalReceber)}</b><span>A receber (amostra)</span></div><div class="finance-card"><b>${fmtBRL(totalPagar)}</b><span>A pagar (amostra)</span></div><div class="finance-card"><b>${fmtBRL(totalVendas)}</b><span>Vendas (amostra)</span></div><div class="finance-card"><b>${Object.values(data).reduce((n,d)=>n+(d?.items?.length||0),0)}</b><span>Registros consultados</span></div></div>
   <div class="finance-tabs">${Object.entries(FINANCE_VIEWS).map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>
   <div class="finance-toolbar"><input id="financeSearch" class="search-input" value="${esc(search)}" oninput="renderFinanceiroFiscal()" placeholder="Filtrar ${esc(view.title.toLowerCase())}..."><span class="muted" style="font-size:12px;white-space:nowrap;">${rows.length} registro(s)</span></div>
-  <div class="finance-table-wrap">${rows.length?`<table class="finance-table"><thead><tr>${view.columns.map(([label])=>`<th>${esc(label)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${view.columns.map(([label,keys])=>{const val=financeFormat(financeValue(row,keys),label);return `<td class="${financeIsMoney(label)&&val!=='—'?'money':''}">${esc(val)}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`:`<div class="finance-empty">${FINANCE_CACHE?.updatedAt?'Nenhum registro correspondente nesta categoria.':'Clique em “Atualizar MaxiProd” para trazer os dados desta área.'}</div>`}</div>`;
+  <div class="finance-table-wrap">${rows.length?`<table class="finance-table"><thead><tr>${view.columns.map((column,index)=>{const values=financeColumnValues(view,index),selected=financeColumnFilters[financeColumnId(index)],allSelected=!Array.isArray(selected)||selected.length===values.length;return `<th><details class="finance-column-filter"><summary>${esc(column[0])} <span>▾</span></summary><div class="finance-filter-menu"><label><input type="checkbox" ${allSelected?'checked':''} onchange="toggleAllFinanceColumnFilter(${index},this.checked)"> Selecionar tudo</label>${values.slice(0,300).map(value=>`<label><input type="checkbox" value="${esc(value)}" ${(allSelected||selected.includes(value))?'checked':''} onchange="toggleFinanceColumnFilter(${index},this.value,this.checked)"> ${esc(value)}</label>`).join('')}${values.length>300?'<small>Exibidos os primeiros 300 valores.</small>':''}</div></details></th>`;}).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${view.columns.map(column=>{const val=financeCell(row,column);return `<td class="${financeIsMoney(column[0])&&val!=='—'?'money':''}">${esc(val)}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`:`<div class="finance-empty">${FINANCE_CACHE?.updatedAt?'Nenhum registro correspondente nesta categoria.':'Clique em “Atualizar MaxiProd” para trazer os dados desta área.'}</div>`}</div>`;
 }
 function getCostEntry(orderId){
   if(!DB.costsData)DB.costsData={};
@@ -3751,7 +3781,7 @@ Object.assign(window,{
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
-  renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,
+  renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
 </script>
