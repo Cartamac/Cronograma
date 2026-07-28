@@ -173,6 +173,7 @@ input[type="file"]{display:none;}
 .finance-table-wrap{border:1px solid var(--border);border-radius:10px;overflow:auto;background:var(--panel);}
 .finance-table{width:100%;min-width:900px;border-collapse:collapse;font-size:12px;}.finance-table th{background:var(--panel2);color:var(--text3);font-size:10px;letter-spacing:.4px;text-transform:uppercase;text-align:left;padding:12px;border-bottom:1px solid var(--border);white-space:nowrap;}.finance-table td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text2);}.finance-table tr:last-child td{border-bottom:0;}.finance-table .money{font-family:'JetBrains Mono',monospace;font-weight:700;color:#fff;white-space:nowrap;}.finance-table .muted{color:var(--text3);}.finance-empty{padding:28px;color:var(--text3);text-align:center;}
 .finance-card-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}.finance-card{border:1px solid var(--border);border-radius:9px;background:var(--panel);padding:15px;}.finance-card b{display:block;font:700 19px 'JetBrains Mono',monospace;color:var(--gold);}.finance-card span{display:block;color:var(--text3);font-size:11px;margin-top:6px;text-transform:uppercase;letter-spacing:.4px;}
+.receber-navegacao,.receber-detalhe{border:1px solid var(--border);border-radius:12px;background:var(--panel);padding:20px;margin-top:16px;}.receber-navegacao h3,.receber-detalhe h3{margin:0 0 6px;font-size:18px;color:#fff;}.receber-navegacao p,.receber-detalhe p{margin:0 0 16px;color:var(--text3);font-size:13px;}.receber-year-grid,.receber-period-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;}.receber-year-card,.receber-period-card{appearance:none;text-align:left;border:1px solid var(--border);background:var(--panel2);border-radius:10px;padding:17px;cursor:pointer;color:var(--text);transition:.16s ease;min-height:112px;}.receber-year-card:hover,.receber-period-card:hover{border-color:var(--gold);transform:translateY(-1px);}.receber-year-card b{display:block;font:700 30px 'JetBrains Mono',monospace;color:var(--gold);}.receber-period-card b{display:block;font-size:15px;color:#fff;}.receber-year-card span,.receber-period-card span{display:block;color:var(--text3);font-size:12px;margin-top:9px;}.receber-year-card strong,.receber-period-card strong{display:block;color:#51cb68;font:700 13px 'JetBrains Mono',monospace;margin-top:5px;}.receber-period-card.general{border-color:#857333;}.receber-period-card.calendar{border-color:#38637e;}.receber-filtros{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:8px;margin:16px 0 12px;}.receber-filtros input{width:100%;min-width:0;background:#252525;color:#fff;border:1px solid #424242;border-radius:6px;padding:10px;font-size:12px;}.receber-filtros input:focus{outline:none;border-color:var(--gold);}.receber-calendar-months{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0;}.receber-calendar-months button{border:1px solid var(--border);background:#252525;color:var(--text2);border-radius:6px;padding:8px 10px;font-size:11px;cursor:pointer;}.receber-calendar-months button.active,.receber-calendar-months button:hover{border-color:var(--gold);color:#fff;background:#332c16;}.receber-calendar{display:grid;grid-template-columns:repeat(7,minmax(115px,1fr));gap:5px;overflow:auto;}.receber-calendar>div:nth-child(-n+7){background:#252525;color:var(--text3);font-weight:700;font-size:11px;text-align:center;padding:9px;}.receber-calendar-day{min-height:130px;border:1px solid var(--border);background:#151515;padding:8px;}.receber-calendar-day.empty{background:#101010;border-color:#202020;}.receber-calendar-day>b{font:700 14px 'JetBrains Mono',monospace;color:#d8d8d8;}.receber-calendar-item{border-left:3px solid var(--gold);background:#242013;border-radius:4px;margin-top:7px;padding:5px;font-size:10px;overflow:hidden;}.receber-calendar-item span,.receber-calendar-item strong,.receber-calendar-item small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.receber-calendar-item strong{font:700 11px 'JetBrains Mono',monospace;color:#fff;margin-top:2px;}.receber-calendar-item small{color:var(--text3);margin-top:2px;}
 .finance-column-filter{position:relative;display:inline-block;}.finance-column-filter summary{cursor:pointer;list-style:none;white-space:nowrap;}.finance-column-filter summary::-webkit-details-marker{display:none;}.finance-column-filter summary span{color:var(--gold);margin-left:3px;}.finance-filter-menu{position:absolute;left:0;top:20px;z-index:80;width:240px;max-height:330px;overflow:auto;padding:8px;background:#202020;border:1px solid #575757;border-radius:7px;box-shadow:0 12px 28px #000b;color:#eee;text-transform:none;letter-spacing:0;font-size:12px;}.finance-filter-menu label{display:block;padding:5px 3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.finance-filter-menu label:first-child{padding-bottom:8px;margin-bottom:5px;border-bottom:1px solid #454545;font-weight:700;}.finance-filter-menu input{vertical-align:middle;margin:0 6px 0 0;accent-color:#c8a84b;}.finance-filter-menu small{display:block;padding:7px 3px;color:var(--text3);}
 @media(max-width:760px){.finance-head{display:block;}.finance-actions{justify-content:flex-start;margin-top:12px;}.finance-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.finance-card{padding:12px;}.finance-card b{font-size:16px;}.finance-tabs{gap:6px;}.finance-tab{padding:9px 10px;font-size:11px;}.finance-toolbar{display:block;}.finance-toolbar input{width:100%;}.finance-table{min-width:760px;}}
 @media(max-width:640px){.parts-head h2{font-size:19px}.parts-stats{grid-template-columns:1fr}.parts-toolbar .search-wrap{width:100%;}}
@@ -1246,6 +1247,11 @@ let financeiroView='receber';
 let financeColumnFilters={};
 let financeRefreshInProgress=null;
 let financeRenderQueued=false;
+// Estado exclusivo da visualização de Contas a receber. Não interfere nas demais abas.
+let receberAnoSelecionado=null;
+let receberModo='anos'; // anos | meses | geral | calendario | mes
+let receberMesSelecionado=(new Date()).getMonth();
+let receberFiltros={vencimento:'',emissao:'',descricao:'',cliente:'',parcela:'',forma:'',valor:''};
 
 function scheduleFinanceRender(){
   if(financeRenderQueued)return;
@@ -1258,6 +1264,27 @@ let FINANCE_CACHE=(()=>{
   try{return JSON.parse(localStorage.getItem('cartamac_financeiro_fiscal_cache')||'{"updatedAt":null,"datasets":{}}');}
   catch(_){return {updatedAt:null,datasets:{}};}
 })();
+// A área financeira precisa permanecer leve no navegador. A consulta inicial usa
+// somente os lançamentos mais recentes de cada fonte; anos antigos poderão ser
+// carregados por demanda em uma etapa posterior.
+const FINANCE_FAST_LIMIT=250;
+function financeCacheDate(row){
+  const value=row?.vencimentoData||row?.vencimento||row?.emissaoData||row?.emissao||row?.movimentoData||row?.data||'';
+  const text=String(value),br=text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if(br)return new Date(`${br[3]}-${br[2]}-${br[1]}T00:00:00`).getTime()||0;
+  return Date.parse(text)||0;
+}
+function trimFinanceItems(items){
+  return (Array.isArray(items)?items:[]).sort((a,b)=>financeCacheDate(b)-financeCacheDate(a)).slice(0,FINANCE_FAST_LIMIT);
+}
+// Remove o cache antigo de milhares de linhas deixado pelas versões anteriores.
+if(FINANCE_CACHE?.datasets){
+  Object.keys(FINANCE_CACHE.datasets).forEach(key=>{
+    const data=FINANCE_CACHE.datasets[key];
+    if(data?.items?.length>FINANCE_FAST_LIMIT)data.items=trimFinanceItems(data.items);
+  });
+  try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){}
+}
 
 let loggedUser     = null;
 let selectedUserId = null;
@@ -1818,16 +1845,7 @@ const esc=escapeHTML;
 // localiza cada informação por alternativas de nome, sem depender de um único schema.
 const FINANCE_VIEWS={
   receber:{title:'Contas a receber',source:'contaAReceber',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Descrição',['descricao','historico']],['Empresa',['empresaNome','empresa']],['Parcela',['parcela','numeroParcela']],['Nº parcelas',['numeroTotalParcelas','quantidadeParcelas']],['Referente a',['referenteA','referencia','referente']],['Valor',['valor','valorOriginal']],['Valor original',['valorOriginal']],['Valor recebido',['valorRecebido','valorBaixado']],['Valor a receber',['valorAReceber','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
-  pagar:{title:'Contas a pagar',source:'contaAPagar',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Empresa',['empresaNome','empresa']],['Descrição',['descricao','historico']],['Conta destino',['contaDestinoDescricao','contaDestino']],['Referente a',['referenteA','referencia','referente']],['Observações',['observacoes','observacao']],['Valor original',['valorOriginal','valor']],['Valor pago',['valorPago','valorBaixado']],['Valor a pagar',['valorAPagar','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
-  vendas:{title:'Vendas',source:'pedidosDeVenda',columns:[['Emissão',['emissaoData','emissao']],['Rev.',['revisao','rev']],['Operação fiscal',['operacaoFiscalDescricao','operacaoFiscal']],['Nº',['numero','codigo']],['Cliente',['clienteNome','clienteRazaoSocialNome']],['Referência',['referencia','descricao']],['Valor total',['valorTotal','valor']]]},
-  compras:{title:'Pedidos de compra',source:'pedidosDeCompra',columns:[['Emissão',['emissaoData','emissao']],['Nº',['numero','codigo']],['Fornecedor',['fornecedorNome','fornecedor']],['Observações',['observacoes','observacao']],['Valor total',['valorTotal','valor']],['Valor recebido',['valorRecebido']],['Valor a receber',['valorAReceber']]]},
-  notas:{title:'Notas fiscais',source:'notasFiscais',columns:[['Emissão',['emissaoData','emissao']],['Nº',['numero','numeroNotaFiscal']],['Série',['serie']],['Remetente / destinatário',['remetenteNome','destinatarioNome','pessoaNome']],['Operação fiscal',['operacaoFiscalDescricao','operacaoFiscal']],['Valor total',['valorTotal','valor']],['Estado',['estado','situacao']]]},
-  materia:{title:'Matéria-prima',source:'itens',filter:/^MP|CHAPA|BARRA|TUBO|PERFIL|AÇO|ACO|INOX/i,columns:[['Item',['codigo']],['Descrição',['descricao']],['Grupo',['grupoCodigo','grupo']],['Descrição do grupo',['grupoDescricao']],['Quantidade',['quantidade','estoqueAtual']],['Unid.',['unidade','unidadeSigla']],['Custo unitário',['custoUnitario','ultimoPrecoCompra','valorUltimaCompra']],['Custo total',['custoTotal','valorEstoque']]]},
-  ativo:{title:'Ativo imobilizado',source:'itens',filter:/ATIVO|IMOBILIZ|MOTOR|REDUTOR|BOMBA|MAQUINA|MÁQUINA/i,columns:[['Item',['codigo']],['Preço de venda',['precoVenda','valorVenda']],['Quantidade',['quantidade','estoqueAtual']],['Custo orçado',['custoOrcado','custo']],['Estoque atual',['estoqueAtual','quantidade']],['Valor última compra',['ultimoPrecoCompra','valorUltimaCompra','custoUnitario']],['Data última compra',['dataUltimaCompra','ultimaCompraData']]]},
-  uso:{title:'Uso e consumo',source:'itens',filter:/USO|CONSUMO|LIXA|DISCO|TINTA|ELETRODO|ARAME/i,columns:[['Item',['codigo']],['Descrição',['descricao']],['Grupo',['grupoCodigo','grupo']],['Descrição do grupo',['grupoDescricao']],['Quantidade',['quantidade','estoqueAtual']],['Unid.',['unidade','unidadeSigla']],['Custo unitário',['custoUnitario','ultimoPrecoCompra','valorUltimaCompra']],['Custo total',['custoTotal','valorEstoque']],['Item vendável',['itemVendavel','vendavel']]]},
-  industrializacao:{title:'Industrialização',source:'itens',filter:/USINAGEM|TEMPERA|CALDEIRARIA|SOLDA|INDUSTRIALIZA/i,columns:[['Item',['codigo']],['Descrição',['descricao']],['Quantidade',['quantidade','estoqueAtual']],['Qt. reservada',['quantidadeReservada','reservado']],['Unid.',['unidade','unidadeSigla']],['Custo unitário',['custoUnitario','ultimoPrecoCompra','valorUltimaCompra']],['Custo total',['custoTotal','valorEstoque']],['Estoque',['estoqueAtual','quantidade']]]},
-  pintura:{title:'Pintura',source:'itens',filter:/PINTURA|TINTA|PRIMER|CATALISADOR|DILUENTE/i,columns:[['Item',['codigo']],['Descrição',['descricao']],['Quantidade',['quantidade','estoqueAtual']],['Unid.',['unidade','unidadeSigla']],['Custo unitário',['custoUnitario','ultimoPrecoCompra','valorUltimaCompra']],['Custo total',['custoTotal','valorEstoque']]]},
-  banco:{title:'Banco / lançamentos',source:'lancamentosContabeis',columns:[['Data',['data','emissaoData','movimentoData']],['Banco / conta',['contaBancariaDescricao','contaDescricao','contaContabilDescricao']],['Descrição',['descricao','historico']],['Saldo (+/-)',['valor','valorLancamento','saldo']],['Liquidez',['liquidezData','vencimentoData']],['Observação',['observacoes','observacao']]]}
+  pagar:{title:'Contas a pagar',source:'contaAPagar',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Empresa',['empresaNome','empresa']],['Descrição',['descricao','historico']],['Conta destino',['contaDestinoDescricao','contaDestino']],['Referente a',['referenteA','referencia','referente']],['Observações',['observacoes','observacao']],['Valor original',['valorOriginal','valor']],['Valor pago',['valorPago','valorBaixado']],['Valor a pagar',['valorAPagar','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]}
 };
 function financeNormalize(value){return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
 function financeValue(row,keys){
@@ -1849,7 +1867,7 @@ function financeRowDate(row,view){const col=view.columns.find(([label])=>/emiss|
 function financeRows(view){
   const raw=FINANCE_CACHE?.datasets?.[view.source]?.items||[];
   const filtered=view.filter?raw.filter(row=>view.filter.test(String(financeValue(row,['codigo'])||'')+' '+String(financeValue(row,['descricao'])||''))):raw;
-  return [...filtered].sort((a,b)=>financeRowDate(b,view)-financeRowDate(a,view));
+  return [...filtered].sort((a,b)=>financeRowDate(b,view)-financeRowDate(a,view)).slice(0,FINANCE_FAST_LIMIT);
 }
 function financeFormat(value,label){
   if(value===null||value===undefined||value==='')return '—';
@@ -1910,20 +1928,20 @@ async function refreshFinanceiroFiscal(){
   if(financeRefreshInProgress){showToast('A atualização completa já está em andamento.');return;}
   financeRefreshInProgress=true;
   const sources=[...new Set(Object.values(FINANCE_VIEWS).map(view=>view.source))];
-  const pageSize=200;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
+  const pageSize=FINANCE_FAST_LIMIT;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
   try{
     FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
     for(let sourceIndex=0;sourceIndex<sources.length;sourceIndex++){
-      const source=sources[sourceIndex],all=[];let skip=0;
+      const source=sources[sourceIndex];
       showLoading(`Atualizando todas as abas (${sourceIndex+1}/${sources.length})...`);
       try{
-        for(let page=0;page<100;page++){
-          const result=await consultarFinanceiroFiscalMaxiprodRemoto({source,take:pageSize,skip});
-          const dataset=result.data?.datasets?.[source]||{items:[]},items=Array.isArray(dataset.items)?dataset.items:[];
-          all.push(...items);updatedAt=result.data?.updatedAt||updatedAt;
-          if(items.length<pageSize)break;skip+=pageSize;
-        }
-        FINANCE_CACHE.datasets[source]={items:all,available:true};totalRecords+=all.length;
+        // Uma única consulta por fonte. A versão anterior fazia até 100 páginas
+        // (20 mil linhas) e congelava a navegação entre as abas.
+        const result=await consultarFinanceiroFiscalMaxiprodRemoto({source,take:pageSize,skip:0});
+        const dataset=result.data?.datasets?.[source]||{items:[]};
+        const items=trimFinanceItems(dataset.items);
+        updatedAt=result.data?.updatedAt||updatedAt;
+        FINANCE_CACHE.datasets[source]={items,available:true};totalRecords+=items.length;
       }catch(error){console.error(`Financeiro/Fiscal: falha ao atualizar ${source}`,error);failed++;}
     }
     FINANCE_CACHE.updatedAt=updatedAt;
@@ -1934,8 +1952,155 @@ async function refreshFinanceiroFiscal(){
   }catch(error){console.error(error);showToast('Nao foi possivel atualizar os dados financeiros agora','err');}
   finally{financeRefreshInProgress=null;hideLoading();renderFinanceiroFiscal();}
 }
+function receberChave(row,aliases){
+  const wanted=(aliases||[]).map(financeNormalize);
+  for(const key of Object.keys(row||{})){if(wanted.includes(financeNormalize(key))&&row[key]!==null&&row[key]!==undefined&&row[key]!=='')return row[key];}
+  return null;
+}
+function receberTexto(value){
+  if(value===null||value===undefined||value==='')return '—';
+  if(typeof value==='object'){
+    const code=value.codigo||value.code||value.numero||value.sigla||'';
+    const name=value.nomeRazaoSocial||value.razaoSocial||value.nomeFantasia||value.nomeCompleto||value.nome||value.descricao||value.apelido||value.identificacao||value.referencia||'';
+    return [code,name].filter(Boolean).join(' - ')||'—';
+  }
+  return String(value);
+}
+function receberCliente(row){
+  const direct=receberChave(row,['clienteNome','clienteRazaoSocial','clienteRazaoSocialNome','nomeCliente','clientePagadorNome','pagadorNome','pessoaNome','empresaNome','razaoSocialCliente','nomeRazaoSocialCliente','nomeEmpresa']);
+  if(direct!==null)return receberTexto(direct);
+  return receberTexto(row?.cliente||row?.clientePagador||row?.pagador||row?.pessoa||row?.empresa||row?.clienteFornecedor||row?.sacado||row?.tomador);
+}
+function receberFormaCobranca(row){
+  const direct=receberChave(row,['formaCobrancaDescricao','formaDeCobrancaDescricao','formaPagamentoDescricao','formaDePagamentoDescricao','cobrancaDescricao','meioPagamentoDescricao']);
+  if(direct!==null)return receberTexto(direct);
+  return receberTexto(row?.formaDeCobranca||row?.formaCobranca||row?.formaDePagamento||row?.formaPagamento||row?.cobranca||row?.meioPagamento);
+}
+function receberData(row,aliases){
+  const raw=receberChave(row,aliases);
+  if(raw===null)return null;
+  const text=String(raw).trim();
+  let match=text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if(match)return new Date(Number(match[3]),Number(match[2])-1,Number(match[1]));
+  match=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(match)return new Date(Number(match[1]),Number(match[2])-1,Number(match[3]));
+  const parsed=new Date(text);return Number.isNaN(parsed.getTime())?null:parsed;
+}
+function receberDataFormat(data){return data?data.toLocaleDateString('pt-BR'):'—';}
+function receberNumero(value){
+  if(typeof value==='number')return value;
+  const text=String(value??'').replace(/[^0-9,.-]/g,'');
+  if(!text)return 0;
+  const normalized=text.includes(',')?text.replace(/\./g,'').replace(',','.'):text;
+  const number=Number(normalized);return Number.isFinite(number)?number:0;
+}
+function receberInteiro(value){const n=receberNumero(value);return n>0?Math.round(n):0;}
+function receberParcela(row){
+  const raw=receberChave(row,['parcela','numeroParcela','numeroDaParcela','parcelaNumero','numeroParcelaCobranca']);
+  const totalRaw=receberChave(row,['numeroTotalParcelas','numeroDeParcelas','quantidadeParcelas','totalParcelas','parcelasTotal','totalDeParcelas','quantidadeDeParcelas','numeroParcelas']);
+  const match=String(raw??'').match(/(\d+)\s*\/\s*(\d+)/);
+  const numeroN=match?Number(match[1]):receberInteiro(raw);
+  const totalN=match?Number(match[2]):receberInteiro(totalRaw);
+  return {numero:match?match[1]:(numeroN?String(numeroN):receberTexto(raw)),total:match?match[2]:(totalN?String(totalN):receberTexto(totalRaw)),numeroN,totalN};
+}
+function receberRegistro(row){
+  const vencimento=receberData(row,['vencimentoData','vencimento','vencimentoOriginalData','vencimentoOriginal']);
+  const emissao=receberData(row,['emissaoData','emissao','dataEmissao']);
+  const parcela=receberParcela(row);
+  const valorParcela=receberNumero(receberChave(row,['valorParcela','valorDaParcela','valor','valorTitulo','valorOriginal']));
+  const valorPedido=receberNumero(receberChave(row,['valorTotalPedido','valorTotalDoPedido','valorTotalNegociacao','valorTotalDaNegociacao','totalPedido','valorNegociacao']));
+  return {
+    raw:row,vencimento,emissao,parcela,
+    descricao:receberTexto(receberChave(row,['descricao','descricaoTitulo','descricaoDaConta','descricaoConta','historico','referencia','referenteA'])??row?.pedidoDeVenda??row?.propostaDeVenda??row?.notaFiscal),
+    cliente:receberCliente(row),
+    formaCobranca:receberFormaCobranca(row),
+    negociacao:valorPedido,valorParcela,
+    recebido:receberNumero(receberChave(row,['valorRecebido','valorBaixado','valorLiquidado','valorPago'])),
+    aberto:0
+  };
+}
+function receberChaveGrupo(item,index){
+  const row=item.raw||{};
+  const source=receberChave(row,['numeroPedido','pedidoNumero','pedidoDeVendaNumero','numeroProposta','propostaNumero','numeroDocumento','documentoNumero','numeroNotaFiscal','notaFiscalNumero','idTituloPai','tituloPaiId']);
+  return source!==null&&String(source).trim()?String(source).trim():[item.cliente,item.descricao,item.emissao?.toISOString().slice(0,10)||'',item.parcela.total].join('|')||`registro-${index}`;
+}
+function receberRegistros(){
+  const rows=(FINANCE_CACHE?.datasets?.contaAReceber?.items||[]).map(receberRegistro);
+  const groups=new Map();
+  rows.forEach((item,index)=>{
+    const key=receberChaveGrupo(item,index);
+    if(!groups.has(key))groups.set(key,{items:[],totalExplicito:0,valorParcela:0,parcelas:0,recebido:0});
+    const group=groups.get(key);
+    group.items.push(item);
+    group.totalExplicito=Math.max(group.totalExplicito,item.negociacao||0);
+    group.valorParcela=Math.max(group.valorParcela,item.valorParcela||0);
+    group.parcelas=Math.max(group.parcelas,item.parcela.totalN||0);
+    group.recebido+=item.recebido||0;
+  });
+  groups.forEach(group=>{
+    const totalEstimado=group.parcelas>1&&group.valorParcela>0?group.parcelas*group.valorParcela:0;
+    const totalPedido=group.totalExplicito||totalEstimado||group.valorParcela;
+    group.items.forEach(item=>{
+      item.parcela.total=group.parcelas?String(group.parcelas):item.parcela.total;
+      item.negociacao=totalPedido;
+      item.valorParcela=item.valorParcela||(group.parcelas?totalPedido/group.parcelas:totalPedido);
+      item.aberto=Math.max(totalPedido-group.recebido,0);
+    });
+  });
+  return rows.sort((a,b)=>(b.vencimento?.getTime()||0)-(a.vencimento?.getTime()||0)).slice(0,FINANCE_FAST_LIMIT);
+}
+function receberMesNome(month){return ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][month];}
+function receberMesSigla(month){return ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'][month];}
+function receberListaFiltrada(rows){
+  return rows.filter(item=>Object.entries(receberFiltros).every(([key,value])=>{
+    if(!value)return true;
+    const needle=String(value).toLocaleLowerCase('pt-BR');
+    const source={vencimento:receberDataFormat(item.vencimento),emissao:receberDataFormat(item.emissao),descricao:item.descricao,cliente:item.cliente,parcela:[item.parcela.numero,item.parcela.total].join('/'),forma:item.formaCobranca,valor:[item.negociacao,item.valorParcela,item.recebido,item.aberto].join(' ')}[key]||'';
+    return String(source).toLocaleLowerCase('pt-BR').includes(needle);
+  }));
+}
+function abrirReceberAno(year){receberAnoSelecionado=Number(year);receberModo='meses';receberFiltros={vencimento:'',emissao:'',descricao:'',cliente:'',parcela:'',forma:'',valor:''};renderFinanceiroFiscal();}
+function voltarReceberAnos(){receberAnoSelecionado=null;receberModo='anos';renderFinanceiroFiscal();}
+function voltarReceberParaMeses(){receberModo='meses';renderFinanceiroFiscal();}
+function abrirReceberGeral(){receberModo='geral';renderFinanceiroFiscal();}
+function abrirReceberMes(month){receberMesSelecionado=Number(month);receberModo='mes';renderFinanceiroFiscal();}
+function abrirReceberCalendario(){receberMesSelecionado=0;receberModo='calendario';renderFinanceiroFiscal();}
+function alterarReceberCalendario(month){receberMesSelecionado=Number(month);renderFinanceiroFiscal();}
+function alterarFiltroReceber(key,value){receberFiltros[key]=value;renderFinanceiroFiscal();}
+function receberCabecalhoFinanceiro(data){
+  const totalReceber=receberRegistros().reduce((sum,row)=>sum+row.aberto,0);
+  const totalPagar=(data.contaAPagar?.items||[]).reduce((sum,row)=>sum+financeNumber(financeValue(row,['valorAPagar','saldo','valor'])),0);
+  const totalVendas=(data.pedidosDeVenda?.items||[]).reduce((sum,row)=>sum+financeNumber(financeValue(row,['valorTotal','valor'])),0);
+  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a receber organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
+  <div class="finance-card-grid"><div class="finance-card"><b>${fmtBRL(totalReceber)}</b><span>A receber</span></div><div class="finance-card"><b>${fmtBRL(totalPagar)}</b><span>A pagar</span></div><div class="finance-card"><b>${fmtBRL(totalVendas)}</b><span>Vendas</span></div><div class="finance-card"><b>${Object.values(data).reduce((n,d)=>n+(d?.items?.length||0),0)}</b><span>Registros consultados</span></div></div>
+  <div class="finance-tabs">${Object.entries(FINANCE_VIEWS).map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
+}
+function receberFiltrosHtml(){return `<div class="receber-filtros"><input value="${esc(receberFiltros.vencimento)}" onchange="alterarFiltroReceber('vencimento',this.value)" placeholder="Filtrar vencimento"><input value="${esc(receberFiltros.emissao)}" onchange="alterarFiltroReceber('emissao',this.value)" placeholder="Filtrar emissão"><input value="${esc(receberFiltros.descricao)}" onchange="alterarFiltroReceber('descricao',this.value)" placeholder="Filtrar descrição"><input value="${esc(receberFiltros.cliente)}" onchange="alterarFiltroReceber('cliente',this.value)" placeholder="Filtrar cliente pagador"><input value="${esc(receberFiltros.parcela)}" onchange="alterarFiltroReceber('parcela',this.value)" placeholder="Filtrar parcela"><input value="${esc(receberFiltros.forma)}" onchange="alterarFiltroReceber('forma',this.value)" placeholder="Filtrar forma de cobrança"><input value="${esc(receberFiltros.valor)}" onchange="alterarFiltroReceber('valor',this.value)" placeholder="Filtrar valor"></div>`;}
+function receberTabela(rows){
+  const filtered=receberListaFiltrada(rows);
+  return `${receberFiltrosHtml()}<div class="finance-table-wrap">${filtered.length?`<table class="finance-table receber-table"><thead><tr><th>Vencimento</th><th>Emissão</th><th>Descrição</th><th>Cliente pagador</th><th>Parcela</th><th>Nº parcelas</th><th>Forma de cobrança</th><th>Valor total do pedido</th><th>Valor da parcela</th><th>Valor recebido (parcela)</th><th>Falta receber</th></tr></thead><tbody>${filtered.map(item=>`<tr><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.emissao)}</td><td>${esc(item.descricao)}</td><td>${esc(item.cliente)}</td><td>${esc(item.parcela.numero)}</td><td>${esc(item.parcela.total)}</td><td>${esc(item.formaCobranca)}</td><td class="money">${fmtBRL(item.negociacao)}</td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money">${fmtBRL(item.recebido)}</td><td class="money">${fmtBRL(item.aberto)}</td></tr>`).join('')}</tbody></table>`:`<div class="finance-empty">Nenhum lançamento para este filtro.</div>`}</div>`;
+}
+function receberCalendario(rows,year,month){
+  const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),byDay={};
+  rows.forEach(row=>{if(row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month){const day=row.vencimento.getDate();(byDay[day]||=[]).push(row);}});
+  const cells=[];for(let blank=0;blank<first;blank++)cells.push('<div class="receber-calendar-day empty"></div>');
+  for(let day=1;day<=days;day++){const items=byDay[day]||[];cells.push(`<div class="receber-calendar-day"><b>${day}</b>${items.map(item=>`<div class="receber-calendar-item" title="${esc(item.descricao)}"><span>${esc(item.cliente)}</span><strong>${fmtBRL(item.aberto)}</strong><small>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</small></div>`).join('')}</div>`);}
+  return `<div class="receber-calendar-months">${Array.from({length:12},(_,m)=>`<button class="${m===month?'active':''}" onclick="alterarReceberCalendario(${m})">${receberMesSigla(m)}</button>`).join('')}</div><div class="receber-calendar"><div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>${cells.join('')}</div>`;
+}
+function renderContasAReceber(target){
+  const data=FINANCE_CACHE?.datasets||{},rows=receberRegistros();
+  const years=[...new Set(rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean))].sort((a,b)=>b-a);
+  let content='';
+  if(!rows.length){content='<div class="finance-empty">Clique em “Atualizar MaxiProd” para trazer todo o histórico de contas a receber.</div>';}
+  else if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>Escolha o ano para consultar os meses, a visão geral ou o calendário de vencimentos.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.aberto,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
+  else {const year=receberAnoSelecionado||years[0];const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button><h3>${year}</h3><p>Escolha uma visão para Contas a receber.</p><div class="receber-period-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button>${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.aberto,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
+    else if(receberModo==='calendario')content=`<section class="receber-detalhe"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
+    else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;content=`<section class="receber-detalhe"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><h3>${title}</h3><p>${list.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
+  target.innerHTML=`${receberCabecalhoFinanceiro(data)}${content}`;
+}
 function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
+  if(financeiroView==='receber'){renderContasAReceber(target);return;}
   const view=FINANCE_VIEWS[financeiroView]||FINANCE_VIEWS.receber;
   const search=(document.getElementById('financeSearch')?.value||'').trim().toLowerCase();
   const rows=financeRowsFiltered(view,search);
@@ -3827,6 +3992,7 @@ Object.assign(window,{
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
+abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
 </script>
