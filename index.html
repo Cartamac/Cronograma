@@ -1244,6 +1244,14 @@ let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
 let FILE_STORE = {};
 let financeiroView='receber';
 let financeColumnFilters={};
+let financeRefreshInProgress=null;
+let financeRenderQueued=false;
+
+function scheduleFinanceRender(){
+  if(financeRenderQueued)return;
+  financeRenderQueued=true;
+  requestAnimationFrame(()=>{financeRenderQueued=false;renderFinanceiroFiscal();});
+}
 // Dados financeiros podem ultrapassar o limite de 1 MB de um documento Firestore.
 // O cache detalhado fica no navegador; no banco é gravada apenas a data da consulta.
 let FINANCE_CACHE=(()=>{
@@ -1868,8 +1876,14 @@ function financeRowsFiltered(view,search){
 }
 function toggleFinanceColumnFilter(index,value,checked){const view=FINANCE_VIEWS[financeiroView],values=financeColumnValues(view,index),id=financeColumnId(index),selected=new Set(Array.isArray(financeColumnFilters[id])?financeColumnFilters[id]:values);if(checked)selected.add(value);else selected.delete(value);financeColumnFilters[id]=[...selected];renderFinanceiroFiscal();}
 function toggleAllFinanceColumnFilter(index,checked){const view=FINANCE_VIEWS[financeiroView];financeColumnFilters[financeColumnId(index)]=checked?financeColumnValues(view,index):[];renderFinanceiroFiscal();}
-function switchFinanceView(key){financeiroView=key;renderFinanceiroFiscal();}
+function switchFinanceView(key){
+  // A troca de subaba usa somente o cache já baixado, sem consultar o MaxiProd.
+  financeiroView=key;
+  scheduleFinanceRender();
+}
 async function refreshFinanceiroFiscalAbaAtual(){
+  // Compatibilidade com botões antigos: atualizar uma aba agora atualiza todas.
+  return refreshFinanceiroFiscal();
   if(!isMaster(loggedUser))return;
   try{
     const view=FINANCE_VIEWS[financeiroView]||FINANCE_VIEWS.receber;
@@ -1893,6 +1907,8 @@ async function refreshFinanceiroFiscalAbaAtual(){
 // consulta, evitando cinco leituras idênticas do MaxiProd.
 async function refreshFinanceiroFiscal(){
   if(!isMaster(loggedUser))return;
+  if(financeRefreshInProgress){showToast('A atualização completa já está em andamento.');return;}
+  financeRefreshInProgress=true;
   const sources=[...new Set(Object.values(FINANCE_VIEWS).map(view=>view.source))];
   const pageSize=200;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
   try{
@@ -1916,7 +1932,7 @@ async function refreshFinanceiroFiscal(){
     await persist();
     showToast(failed?`Atualizacao concluida com ${failed} aba(s) sem retorno`:`Todas as abas foram atualizadas: ${totalRecords} registro(s)`);
   }catch(error){console.error(error);showToast('Nao foi possivel atualizar os dados financeiros agora','err');}
-  finally{hideLoading();renderFinanceiroFiscal();}
+  finally{financeRefreshInProgress=null;hideLoading();renderFinanceiroFiscal();}
 }
 function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
