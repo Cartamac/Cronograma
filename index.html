@@ -1889,6 +1889,35 @@ async function refreshFinanceiroFiscal(){
   }catch(error){console.error(error);showToast('Não foi possível atualizar os dados financeiros agora','err');}
   finally{hideLoading();renderFinanceiroFiscal();}
 }
+// Atualiza todas as fontes únicas uma vez. As subabas de itens reutilizam a mesma
+// consulta, evitando cinco leituras idênticas do MaxiProd.
+async function refreshFinanceiroFiscal(){
+  if(!isMaster(loggedUser))return;
+  const sources=[...new Set(Object.values(FINANCE_VIEWS).map(view=>view.source))];
+  const pageSize=200;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
+  try{
+    FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+    for(let sourceIndex=0;sourceIndex<sources.length;sourceIndex++){
+      const source=sources[sourceIndex],all=[];let skip=0;
+      showLoading(`Atualizando todas as abas (${sourceIndex+1}/${sources.length})...`);
+      try{
+        for(let page=0;page<100;page++){
+          const result=await consultarFinanceiroFiscalMaxiprodRemoto({source,take:pageSize,skip});
+          const dataset=result.data?.datasets?.[source]||{items:[]},items=Array.isArray(dataset.items)?dataset.items:[];
+          all.push(...items);updatedAt=result.data?.updatedAt||updatedAt;
+          if(items.length<pageSize)break;skip+=pageSize;
+        }
+        FINANCE_CACHE.datasets[source]={items:all,available:true};totalRecords+=all.length;
+      }catch(error){console.error(`Financeiro/Fiscal: falha ao atualizar ${source}`,error);failed++;}
+    }
+    FINANCE_CACHE.updatedAt=updatedAt;
+    try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){/* cache local opcional */}
+    DB.financeiroFiscalMeta={updatedAt:FINANCE_CACHE.updatedAt||new Date().toISOString()};
+    await persist();
+    showToast(failed?`Atualizacao concluida com ${failed} aba(s) sem retorno`:`Todas as abas foram atualizadas: ${totalRecords} registro(s)`);
+  }catch(error){console.error(error);showToast('Nao foi possivel atualizar os dados financeiros agora','err');}
+  finally{hideLoading();renderFinanceiroFiscal();}
+}
 function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
   const view=FINANCE_VIEWS[financeiroView]||FINANCE_VIEWS.receber;
