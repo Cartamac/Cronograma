@@ -1267,7 +1267,10 @@ let FINANCE_CACHE=(()=>{
 // A área financeira precisa permanecer leve no navegador. A consulta inicial usa
 // somente os lançamentos mais recentes de cada fonte; anos antigos poderão ser
 // carregados por demanda em uma etapa posterior.
-const FINANCE_FAST_LIMIT=250;
+// Historico completo de contas a receber desde 2020.
+const FINANCE_FAST_LIMIT=50000;
+const FINANCE_PAGE_SIZE=200;
+const FINANCE_RECEIVABLE_FROM='2020-01-01';
 function financeCacheDate(row){
   const value=row?.vencimentoData||row?.vencimento||row?.emissaoData||row?.emissao||row?.movimentoData||row?.data||'';
   const text=String(value),br=text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
@@ -1278,13 +1281,7 @@ function trimFinanceItems(items){
   return (Array.isArray(items)?items:[]).sort((a,b)=>financeCacheDate(b)-financeCacheDate(a)).slice(0,FINANCE_FAST_LIMIT);
 }
 // Remove o cache antigo de milhares de linhas deixado pelas versões anteriores.
-if(FINANCE_CACHE?.datasets){
-  Object.keys(FINANCE_CACHE.datasets).forEach(key=>{
-    const data=FINANCE_CACHE.datasets[key];
-    if(data?.items?.length>FINANCE_FAST_LIMIT)data.items=trimFinanceItems(data.items);
-  });
-  try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){}
-}
+// O historico nao e truncado: a navegacao anual depende de todos os titulos.
 
 let loggedUser     = null;
 let selectedUserId = null;
@@ -1867,7 +1864,7 @@ function financeRowDate(row,view){const col=view.columns.find(([label])=>/emiss|
 function financeRows(view){
   const raw=FINANCE_CACHE?.datasets?.[view.source]?.items||[];
   const filtered=view.filter?raw.filter(row=>view.filter.test(String(financeValue(row,['codigo'])||'')+' '+String(financeValue(row,['descricao'])||''))):raw;
-  return [...filtered].sort((a,b)=>financeRowDate(b,view)-financeRowDate(a,view)).slice(0,FINANCE_FAST_LIMIT);
+  return [...filtered].sort((a,b)=>financeRowDate(b,view)-financeRowDate(a,view));
 }
 function financeFormat(value,label){
   if(value===null||value===undefined||value==='')return '—';
@@ -1928,7 +1925,7 @@ async function refreshFinanceiroFiscal(){
   if(financeRefreshInProgress){showToast('A atualização completa já está em andamento.');return;}
   financeRefreshInProgress=true;
   const sources=[...new Set(Object.values(FINANCE_VIEWS).map(view=>view.source))];
-  const pageSize=FINANCE_FAST_LIMIT;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
+  const pageSize=FINANCE_PAGE_SIZE;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
   try{
     FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
     for(let sourceIndex=0;sourceIndex<sources.length;sourceIndex++){
@@ -1937,10 +1934,22 @@ async function refreshFinanceiroFiscal(){
       try{
         // Uma única consulta por fonte. A versão anterior fazia até 100 páginas
         // (20 mil linhas) e congelava a navegação entre as abas.
-        const result=await consultarFinanceiroFiscalMaxiprodRemoto({source,take:pageSize,skip:0});
-        const dataset=result.data?.datasets?.[source]||{items:[]};
-        const items=trimFinanceItems(dataset.items);
-        updatedAt=result.data?.updatedAt||updatedAt;
+        const items=[];let skip=0;
+        const maxPages=source==='contaAReceber'?250:1;
+        for(let page=0;page<maxPages;page++){
+          showLoading(`Atualizando ${source==='contaAReceber'?'contas a receber desde 2020':'contas a pagar'} - pagina ${page+1}...`);
+          const result=await consultarFinanceiroFiscalMaxiprodRemoto({
+            source,take:pageSize,skip,
+            dateFrom:source==='contaAReceber'?FINANCE_RECEIVABLE_FROM:null,
+            includeDetails:source==='contaAReceber'
+          });
+          const dataset=result.data?.datasets?.[source]||{items:[]};
+          const pageItems=Array.isArray(dataset.items)?dataset.items:[];
+          items.push(...pageItems);
+          updatedAt=result.data?.updatedAt||updatedAt;
+          if(result.data?.done===true||pageItems.length<pageSize)break;
+          skip+=pageSize;
+        }
         FINANCE_CACHE.datasets[source]={items,available:true};totalRecords+=items.length;
       }catch(error){console.error(`Financeiro/Fiscal: falha ao atualizar ${source}`,error);failed++;}
     }
@@ -1972,7 +1981,7 @@ function receberCliente(row){
   return receberTexto(row?.cliente||row?.clientePagador||row?.pagador||row?.pessoa||row?.empresa||row?.clienteFornecedor||row?.sacado||row?.tomador);
 }
 function receberFormaCobranca(row){
-  const direct=receberChave(row,['formaCobrancaDescricao','formaDeCobrancaDescricao','formaPagamentoDescricao','formaDePagamentoDescricao','cobrancaDescricao','meioPagamentoDescricao']);
+  const direct=receberChave(row,['formaCobrancaDetalhe','formaCobrancaDescricao','formaDeCobrancaDescricao','formaPagamentoDescricao','formaDePagamentoDescricao','cobrancaDescricao','meioPagamentoDescricao','descricaoFormaCobranca']);
   if(direct!==null)return receberTexto(direct);
   return receberTexto(row?.formaDeCobranca||row?.formaCobranca||row?.formaDePagamento||row?.formaPagamento||row?.cobranca||row?.meioPagamento);
 }
@@ -1996,8 +2005,8 @@ function receberNumero(value){
 }
 function receberInteiro(value){const n=receberNumero(value);return n>0?Math.round(n):0;}
 function receberParcela(row){
-  const raw=receberChave(row,['parcela','numeroParcela','numeroDaParcela','parcelaNumero','numeroParcelaCobranca']);
-  const totalRaw=receberChave(row,['numeroTotalParcelas','numeroDeParcelas','quantidadeParcelas','totalParcelas','parcelasTotal','totalDeParcelas','quantidadeDeParcelas','numeroParcelas']);
+  const raw=receberChave(row,['parcelaDetalhe','parcela','numeroParcela','numeroDaParcela','parcelaNumero','numeroParcelaCobranca']);
+  const totalRaw=receberChave(row,['totalParcelasDetalhe','numeroTotalParcelas','numeroDeParcelas','quantidadeParcelas','totalParcelas','parcelasTotal','totalDeParcelas','quantidadeDeParcelas','numeroParcelas']);
   const match=String(raw??'').match(/(\d+)\s*\/\s*(\d+)/);
   const numeroN=match?Number(match[1]):receberInteiro(raw);
   const totalN=match?Number(match[2]):receberInteiro(totalRaw);
@@ -2011,7 +2020,7 @@ function receberRegistro(row){
   const valorPedido=receberNumero(receberChave(row,['valorTotalPedido','valorTotalDoPedido','valorTotalNegociacao','valorTotalDaNegociacao','totalPedido','valorNegociacao']));
   return {
     raw:row,vencimento,emissao,parcela,
-    descricao:receberTexto(receberChave(row,['descricao','descricaoTitulo','descricaoDaConta','descricaoConta','historico','referencia','referenteA'])??row?.pedidoDeVenda??row?.propostaDeVenda??row?.notaFiscal),
+    descricao:receberTexto(receberChave(row,['descricaoDetalhe','descricao','descricaoTitulo','descricaoDaConta','descricaoConta','historico','referencia','referenteA','referente'])??row?.pedidoDeVenda??row?.propostaDeVenda??row?.notaFiscal),
     cliente:receberCliente(row),
     formaCobranca:receberFormaCobranca(row),
     negociacao:valorPedido,valorParcela,
@@ -2047,7 +2056,9 @@ function receberRegistros(){
       item.aberto=Math.max(totalPedido-group.recebido,0);
     });
   });
-  return rows.sort((a,b)=>(b.vencimento?.getTime()||0)-(a.vencimento?.getTime()||0)).slice(0,FINANCE_FAST_LIMIT);
+  return rows
+    .filter(item=>!item.vencimento||item.vencimento>=new Date(2020,0,1))
+    .sort((a,b)=>(b.vencimento?.getTime()||0)-(a.vencimento?.getTime()||0));
 }
 function receberMesNome(month){return ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][month];}
 function receberMesSigla(month){return ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'][month];}
