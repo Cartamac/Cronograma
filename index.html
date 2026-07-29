@@ -1270,6 +1270,10 @@ let FINANCE_CACHE=(()=>{
   try{return JSON.parse(localStorage.getItem('cartamac_financeiro_fiscal_cache')||'{"updatedAt":null,"datasets":{}}');}
   catch(_){return {updatedAt:null,datasets:{}};}
 })();
+// A rev44 muda a origem da consulta. Dados gravados pelas revisoes anteriores
+// nao podem reaparecer antes da primeira atualizacao com o novo filtro remoto.
+const FINANCE_CACHE_VERSION=44;
+if(FINANCE_CACHE?.version!==FINANCE_CACHE_VERSION)FINANCE_CACHE={version:FINANCE_CACHE_VERSION,updatedAt:null,datasets:{}};
 // A área financeira precisa permanecer leve no navegador. A consulta inicial usa
 // somente os lançamentos mais recentes de cada fonte; anos antigos poderão ser
 // carregados por demanda em uma etapa posterior.
@@ -2019,26 +2023,7 @@ function receberPermitido(row){
   // ficam fora; DIGITACAO representa o filtro "A receber" do ERP.
   const estadosPermitidos=new Set(['DIGITACAO','RECEBIDO']);
   const tiposPermitidos=new Set(['TITULO','TITULO_PROPOSTA_DE_VENDA','TITULO_PEDIDO_DE_VENDA','RECEITA','ADIANTAMENTO']);
-  const compensado=receberNumero(row?.adiantamentoValorCompensado);
-  return estadosPermitidos.has(String(row?.estado||'').trim().toUpperCase())&&tiposPermitidos.has(String(row?.tipo||'').trim().toUpperCase())&&!(compensado>0);
-}
-function receberSemDuplicadosHistoricos(rows){
-  const groups=new Map(),discard=new Set();
-  rows.forEach(row=>{
-    const vencimento=receberData(row,['vencimentoData','vencimento','vencimentoOriginalData','vencimentoOriginal']);
-    const valor=receberNumero(row?.valorLiquido??row?.valorOriginal??row?.valorAReceber);
-    const cliente=String(row?.clienteId||'');
-    if(!vencimento||!cliente||!valor)return;
-    const key=[cliente,vencimento.getFullYear(),vencimento.getMonth(),Math.round(valor*100)].join('|');
-    if(!groups.has(key))groups.set(key,[]);groups.get(key).push(row);
-  });
-  groups.forEach(candidatos=>{
-    if(candidatos.length<2)return;
-    const distancia=row=>{const vencimento=receberData(row,['vencimentoData','vencimento','vencimentoOriginalData','vencimentoOriginal']),emissao=receberData(row,['emissaoData','emissao','dataEmissao']);return vencimento&&emissao?Math.abs(vencimento-emissao)/86400000:Infinity;};
-    const ordenados=[...candidatos].sort((a,b)=>distancia(a)-distancia(b));
-    if(distancia(ordenados[0])<=45)ordenados.slice(1).forEach(row=>{if(distancia(row)>75)discard.add(row);});
-  });
-  return rows.filter(row=>!discard.has(row));
+  return estadosPermitidos.has(String(row?.estado||'').trim().toUpperCase())&&tiposPermitidos.has(String(row?.tipo||'').trim().toUpperCase());
 }
 function receberParcela(row){
   const raw=receberChave(row,['parcelaDetalhe','parcela','numeroParcela','numeroDaParcela','parcelaNumero','numeroParcelaCobranca']);
@@ -2073,7 +2058,7 @@ function receberChaveGrupo(item,index){
   return source!==null&&String(source).trim()?String(source).trim():[item.cliente,item.descricao,item.emissao?.toISOString().slice(0,10)||'',item.parcela.total].join('|')||`registro-${index}`;
 }
 function receberRegistros(){
-  const rows=receberSemDuplicadosHistoricos((FINANCE_CACHE?.datasets?.contaAReceber?.items||[]).filter(receberPermitido)).map(receberRegistro);
+  const rows=(FINANCE_CACHE?.datasets?.contaAReceber?.items||[]).filter(receberPermitido).map(receberRegistro);
   return rows
     .filter(item=>!item.vencimento||item.vencimento>=new Date(2020,0,1))
     .sort((a,b)=>(b.vencimento?.getTime()||0)-(a.vencimento?.getTime()||0));
