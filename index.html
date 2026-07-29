@@ -2019,7 +2019,8 @@ function receberPermitido(row){
   // ficam fora; DIGITACAO representa o filtro "A receber" do ERP.
   const estadosPermitidos=new Set(['DIGITACAO','RECEBIDO']);
   const tiposPermitidos=new Set(['TITULO','TITULO_PROPOSTA_DE_VENDA','TITULO_PEDIDO_DE_VENDA','RECEITA','ADIANTAMENTO']);
-  return estadosPermitidos.has(String(row?.estado||'').trim().toUpperCase())&&tiposPermitidos.has(String(row?.tipo||'').trim().toUpperCase());
+  const compensado=receberNumero(row?.adiantamentoValorCompensado);
+  return estadosPermitidos.has(String(row?.estado||'').trim().toUpperCase())&&tiposPermitidos.has(String(row?.tipo||'').trim().toUpperCase())&&!(compensado>0);
 }
 function receberParcela(row){
   const raw=receberChave(row,['parcelaDetalhe','parcela','numeroParcela','numeroDaParcela','parcelaNumero','numeroParcelaCobranca']);
@@ -2109,6 +2110,22 @@ function renderContasAReceber(target){
     else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;content=`<section class="receber-detalhe"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><h3>${title}</h3><p>${list.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
   target.innerHTML=`${receberCabecalhoFinanceiro(data)}${content}`;
 }
+// Os cards anuais/mensais exibem o valor dos titulos filtrados. O saldo aberto
+// permanece na coluna "Falta receber" da tabela, sem zerar o total do mes.
+const renderContasAReceberAntesDoTotal=renderContasAReceber;
+renderContasAReceber=function(target){
+  renderContasAReceberAntesDoTotal(target);
+  const rows=receberRegistros();
+  const total=list=>list.reduce((sum,row)=>sum+(row.valorParcela||0),0);
+  if(receberModo==='anos'){
+    const years=[...new Set(rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean))].sort((a,b)=>b-a);
+    target.querySelectorAll('.receber-year-card strong').forEach((node,index)=>{const year=years[index];node.textContent=fmtBRL(total(rows.filter(row=>row.vencimento?.getFullYear()===year)));});
+  }else if(receberModo==='meses'){
+    const year=receberAnoSelecionado||Math.max(...rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean));
+    const cards=target.querySelectorAll('.receber-period-card');
+    for(let month=0;month<12;month++){const node=cards[month+2]?.querySelector('strong');if(node)node.textContent=fmtBRL(total(rows.filter(row=>row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month)));}
+  }
+};
 function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
   if(financeiroView==='receber'){renderContasAReceber(target);return;}
