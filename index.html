@@ -2015,18 +2015,11 @@ function receberVerdadeiro(value){
   return /^(1|true|sim|s|yes)$/i.test(String(value??'').trim());
 }
 function receberPermitido(row){
-  // Mesma combinacao da grade do MaxiProd. Registros compensados,
-  // agrupados ou parcelados sao excluidos para nao duplicar valores.
-  const excludedFlags=[
-    'adiantamentoCompensado','adiantamentosCompensados','ehAdiantamentoCompensado',
-    'compensado','estaCompensado','tituloAgrupado','agrupado','tituloParcelado','parcelado'
-  ];
-  if(excludedFlags.some(key=>receberVerdadeiro(receberChave(row,[key]))))return false;
-  const estado=receberTexto(receberChave(row,['estadoDescricao','situacaoDescricao','statusDescricao','estado','situacao','status']));
-  if(/adiantamento.?compensado|agrupad|parcelad|cancelad/i.test(estado))return false;
-  const tipo=receberTexto(receberChave(row,['tipoContaAReceberDescricao','tipoTituloDescricao','tipoDescricao','origemDescricao','tipoContaAReceber','tipoTitulo']));
-  if(/adiantamento.?compensado|agrupad|parcelad/i.test(tipo))return false;
-  return true;
+  // Valores confirmados no retorno do MaxiProd. COMPENSADO e CANCELADO
+  // ficam fora; DIGITACAO representa o filtro "A receber" do ERP.
+  const estadosPermitidos=new Set(['DIGITACAO','RECEBIDO']);
+  const tiposPermitidos=new Set(['TITULO','TITULO_PROPOSTA_DE_VENDA','TITULO_PEDIDO_DE_VENDA','RECEITA','ADIANTAMENTO']);
+  return estadosPermitidos.has(String(row?.estado||'').trim().toUpperCase())&&tiposPermitidos.has(String(row?.tipo||'').trim().toUpperCase());
 }
 function receberParcela(row){
   const raw=receberChave(row,['parcelaDetalhe','parcela','numeroParcela','numeroDaParcela','parcelaNumero','numeroParcelaCobranca']);
@@ -2040,16 +2033,19 @@ function receberRegistro(row){
   const vencimento=receberData(row,['vencimentoData','vencimento','vencimentoOriginalData','vencimentoOriginal']);
   const emissao=receberData(row,['emissaoData','emissao','dataEmissao']);
   const parcela=receberParcela(row);
-  const valorParcela=receberNumero(receberChave(row,['valorParcela','valorDaParcela','valor','valorTitulo','valorOriginal']));
-  const valorPedido=receberNumero(receberChave(row,['valorTotalPedido','valorTotalDoPedido','valorTotalNegociacao','valorTotalDaNegociacao','totalPedido','valorNegociacao']));
+  // Cada linha recebida ja e um titulo/parcela do MaxiProd. Nao agrupamos
+  // nem multiplicamos parcelas: isso repetia o valor do pedido em cada linha.
+  const valorTitulo=receberNumero(receberChave(row,['valorOriginal','valorLiquido','valorAReceber','valorParcela','valorDaParcela','valor','valorTitulo']));
+  const recebido=receberNumero(receberChave(row,['valorRecebidoLiquido','valorRecebido','valorBaixado','valorLiquidado','valorPago']));
+  const estado=String(row?.estado||'').trim().toUpperCase();
   return {
     raw:row,vencimento,emissao,parcela,
     descricao:receberTexto(receberChave(row,['descricaoDetalhe','descricao','descricaoTitulo','descricaoDaConta','descricaoConta','historico','referencia','referenteA','referente'])??row?.pedidoDeVenda??row?.propostaDeVenda??row?.notaFiscal),
     cliente:receberCliente(row),
     formaCobranca:receberFormaCobranca(row),
-    negociacao:valorPedido,valorParcela,
-    recebido:receberNumero(receberChave(row,['valorRecebido','valorBaixado','valorLiquidado','valorPago'])),
-    aberto:0
+    negociacao:valorTitulo,valorParcela:valorTitulo,
+    recebido,
+    aberto:estado==='RECEBIDO'?0:receberNumero(receberChave(row,['valorAReceber','valorLiquido','valorOriginal']))
   };
 }
 function receberChaveGrupo(item,index){
@@ -2059,27 +2055,6 @@ function receberChaveGrupo(item,index){
 }
 function receberRegistros(){
   const rows=(FINANCE_CACHE?.datasets?.contaAReceber?.items||[]).filter(receberPermitido).map(receberRegistro);
-  const groups=new Map();
-  rows.forEach((item,index)=>{
-    const key=receberChaveGrupo(item,index);
-    if(!groups.has(key))groups.set(key,{items:[],totalExplicito:0,valorParcela:0,parcelas:0,recebido:0});
-    const group=groups.get(key);
-    group.items.push(item);
-    group.totalExplicito=Math.max(group.totalExplicito,item.negociacao||0);
-    group.valorParcela=Math.max(group.valorParcela,item.valorParcela||0);
-    group.parcelas=Math.max(group.parcelas,item.parcela.totalN||0);
-    group.recebido+=item.recebido||0;
-  });
-  groups.forEach(group=>{
-    const totalEstimado=group.parcelas>1&&group.valorParcela>0?group.parcelas*group.valorParcela:0;
-    const totalPedido=group.totalExplicito||totalEstimado||group.valorParcela;
-    group.items.forEach(item=>{
-      item.parcela.total=group.parcelas?String(group.parcelas):item.parcela.total;
-      item.negociacao=totalPedido;
-      item.valorParcela=item.valorParcela||(group.parcelas?totalPedido/group.parcelas:totalPedido);
-      item.aberto=Math.max(totalPedido-group.recebido,0);
-    });
-  });
   return rows
     .filter(item=>!item.vencimento||item.vencimento>=new Date(2020,0,1))
     .sort((a,b)=>(b.vencimento?.getTime()||0)-(a.vencimento?.getTime()||0));
