@@ -184,6 +184,11 @@ input[type="file"]{display:none;}
 .receber-period-card b{font-size:17px;}
 .receber-year-card strong,.receber-period-card strong{font-size:14px;}
 .finance-table.receber-table td.money.valor-atrasado{color:var(--red);}
+.receber-calendar-item span{font-size:11px;font-weight:700;color:#fff;}
+.receber-calendar-item strong{font-size:12px;color:#fff;}
+.receber-calendar-item small{font-size:11px;color:#fff;}
+.receber-calendar-item.atrasado{background:#7a2027;border-left-color:#ff5c68;}
+.receber-calendar-item.atrasado span,.receber-calendar-item.atrasado strong,.receber-calendar-item.atrasado small{color:#fff;}
 @media(max-width:1100px){.receber-year-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.receber-month-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:680px){.receber-year-grid,.receber-feature-grid,.receber-month-grid{grid-template-columns:1fr;}}
 .finance-column-filter{position:relative;display:inline-block;}.finance-column-filter summary{cursor:pointer;list-style:none;white-space:nowrap;}.finance-column-filter summary::-webkit-details-marker{display:none;}.finance-column-filter summary span{color:var(--gold);margin-left:3px;}.finance-filter-menu{position:absolute;left:0;top:20px;z-index:80;width:240px;max-height:330px;overflow:auto;padding:8px;background:#202020;border:1px solid #575757;border-radius:7px;box-shadow:0 12px 28px #000b;color:#eee;text-transform:none;letter-spacing:0;font-size:12px;}.finance-filter-menu label{display:block;padding:5px 3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.finance-filter-menu label:first-child{padding-bottom:8px;margin-bottom:5px;border-bottom:1px solid #454545;font-weight:700;}.finance-filter-menu input{vertical-align:middle;margin:0 6px 0 0;accent-color:#c8a84b;}.finance-filter-menu small{display:block;padding:7px 3px;color:var(--text3);}
@@ -2173,7 +2178,7 @@ function receberCalendario(rows,year,month){
   const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),byDay={};
   rows.forEach(row=>{if(row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month){const day=row.vencimento.getDate();(byDay[day]||=[]).push(row);}});
   const cells=[];for(let blank=0;blank<first;blank++)cells.push('<div class="receber-calendar-day empty"></div>');
-  for(let day=1;day<=days;day++){const items=byDay[day]||[];cells.push(`<div class="receber-calendar-day"><b>${day}</b>${items.map(item=>`<div class="receber-calendar-item" title="${esc(item.descricao)}"><span>${esc(item.cliente)}</span><strong>${fmtBRL(item.aberto)}</strong><small>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</small></div>`).join('')}</div>`);}
+  for(let day=1;day<=days;day++){const items=byDay[day]||[];cells.push(`<div class="receber-calendar-day"><b>${day}</b>${items.map(item=>`<div class="receber-calendar-item ${receberEstaAtrasado(item)?'atrasado':''}" title="${esc(item.descricao)}"><span>${esc(item.cliente)}</span><strong>${fmtBRL(item.aberto)}</strong><small>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</small></div>`).join('')}</div>`);}
   return `<div class="receber-calendar-months">${Array.from({length:12},(_,m)=>`<button class="${m===month?'active':''}" onclick="alterarReceberCalendario(${m})">${receberMesSigla(m)}</button>`).join('')}</div><div class="receber-calendar"><div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>${cells.join('')}</div>`;
 }
 function receberEstaAtrasado(row){
