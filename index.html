@@ -850,6 +850,12 @@ input[type="file"]{display:none;}
 .macro-filter-row{display:flex;align-items:center;gap:10px;margin:-6px 0 18px;color:var(--text2);font-size:13px;font-weight:700;}.macro-filter-row select{min-width:210px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:8px 10px;}.macro-filter-row option{color:#111;background:#fff;}
 .macro-summary-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto;}.macro-summary-chip{border:1px solid var(--border2);background:var(--bg3);border-radius:6px;padding:6px 8px;font-size:11px;color:var(--text2);white-space:nowrap;}.macro-summary-chip b{color:var(--green);margin-right:4px;}.macro-summary-chip.final b{color:var(--gold);}.macro-engineering-summary{margin-top:20px;border:1px solid rgba(92,184,92,.38);background:rgba(92,184,92,.06);border-radius:8px;padding:13px 15px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;}.macro-engineering-summary .sum-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:800;}.macro-engineering-summary .sum-value{font-size:17px;font-weight:800;color:#9cdb9c;margin-top:3px;}.macro-block-title{cursor:pointer;user-select:none;position:relative;}.macro-block-title::after{content:'⌃';position:absolute;right:14px;font-size:15px;line-height:12px;}.macro-block.collapsed .macro-stage-grid{display:none;}.macro-block.collapsed .macro-block-title::after{content:'⌄';}
 @media(max-width:640px){.macro-filter-row{align-items:stretch;flex-direction:column;gap:5px;}.macro-filter-row select{width:100%;}.macro-summary-chips{margin:4px 0 0;width:100%;}.macro-summary-chip{font-size:10px;}.macro-engineering-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;}.macro-order-summary{gap:7px;}}
+.receber-maxiprod-filter{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#111;border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin:12px 0 16px;color:var(--text2);font-size:12px;}
+.receber-maxiprod-filter strong{color:#fff;margin-right:3px;}
+.receber-maxiprod-filter span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.receber-maxiprod-filter .on::before,.receber-maxiprod-filter .off::before{content:'✓';display:inline-grid;place-items:center;width:16px;height:16px;border-radius:3px;background:#1677ff;color:#fff;font-size:11px;font-weight:900;}
+.receber-maxiprod-filter .off{color:var(--text3);text-decoration:line-through;}
+.receber-maxiprod-filter .off::before{content:'';background:transparent;border:1px solid #555;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -1947,7 +1953,7 @@ async function refreshFinanceiroFiscal(){
           const pageItems=Array.isArray(dataset.items)?dataset.items:[];
           items.push(...pageItems);
           updatedAt=result.data?.updatedAt||updatedAt;
-          if(result.data?.done===true||pageItems.length<pageSize)break;
+          if(result.data?.done===true)break;
           skip+=pageSize;
         }
         FINANCE_CACHE.datasets[source]={items,available:true};totalRecords+=items.length;
@@ -2004,6 +2010,24 @@ function receberNumero(value){
   const number=Number(normalized);return Number.isFinite(number)?number:0;
 }
 function receberInteiro(value){const n=receberNumero(value);return n>0?Math.round(n):0;}
+function receberVerdadeiro(value){
+  if(value===true||value===1)return true;
+  return /^(1|true|sim|s|yes)$/i.test(String(value??'').trim());
+}
+function receberPermitido(row){
+  // Mesma combinacao da grade do MaxiProd. Registros compensados,
+  // agrupados ou parcelados sao excluidos para nao duplicar valores.
+  const excludedFlags=[
+    'adiantamentoCompensado','adiantamentosCompensados','ehAdiantamentoCompensado',
+    'compensado','estaCompensado','tituloAgrupado','agrupado','tituloParcelado','parcelado'
+  ];
+  if(excludedFlags.some(key=>receberVerdadeiro(receberChave(row,[key]))))return false;
+  const estado=receberTexto(receberChave(row,['estadoDescricao','situacaoDescricao','statusDescricao','estado','situacao','status']));
+  if(/adiantamento.?compensado|agrupad|parcelad|cancelad/i.test(estado))return false;
+  const tipo=receberTexto(receberChave(row,['tipoContaAReceberDescricao','tipoTituloDescricao','tipoDescricao','origemDescricao','tipoContaAReceber','tipoTitulo']));
+  if(/adiantamento.?compensado|agrupad|parcelad/i.test(tipo))return false;
+  return true;
+}
 function receberParcela(row){
   const raw=receberChave(row,['parcelaDetalhe','parcela','numeroParcela','numeroDaParcela','parcelaNumero','numeroParcelaCobranca']);
   const totalRaw=receberChave(row,['totalParcelasDetalhe','numeroTotalParcelas','numeroDeParcelas','quantidadeParcelas','totalParcelas','parcelasTotal','totalDeParcelas','quantidadeDeParcelas','numeroParcelas']);
@@ -2034,7 +2058,7 @@ function receberChaveGrupo(item,index){
   return source!==null&&String(source).trim()?String(source).trim():[item.cliente,item.descricao,item.emissao?.toISOString().slice(0,10)||'',item.parcela.total].join('|')||`registro-${index}`;
 }
 function receberRegistros(){
-  const rows=(FINANCE_CACHE?.datasets?.contaAReceber?.items||[]).map(receberRegistro);
+  const rows=(FINANCE_CACHE?.datasets?.contaAReceber?.items||[]).filter(receberPermitido).map(receberRegistro);
   const groups=new Map();
   rows.forEach((item,index)=>{
     const key=receberChaveGrupo(item,index);
@@ -2083,6 +2107,7 @@ function receberCabecalhoFinanceiro(data){
   const totalPagar=(data.contaAPagar?.items||[]).reduce((sum,row)=>sum+financeNumber(financeValue(row,['valorAPagar','saldo','valor'])),0);
   const totalVendas=(data.pedidosDeVenda?.items||[]).reduce((sum,row)=>sum+financeNumber(financeValue(row,['valorTotal','valor'])),0);
   return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a receber organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
+  <div class="receber-maxiprod-filter"><strong>Filtro MaxiProd aplicado:</strong><span class="on">A receber</span><span class="on">Recebidos</span><span class="on">Títulos</span><span class="on">Receitas</span><span class="on">Adiantamentos</span><span class="on">Pedidos de venda</span><span class="off">Adiantamentos compensados</span><span class="off">Agrupados</span><span class="off">Parcelados</span></div>
   <div class="finance-card-grid"><div class="finance-card"><b>${fmtBRL(totalReceber)}</b><span>A receber</span></div><div class="finance-card"><b>${fmtBRL(totalPagar)}</b><span>A pagar</span></div><div class="finance-card"><b>${fmtBRL(totalVendas)}</b><span>Vendas</span></div><div class="finance-card"><b>${Object.values(data).reduce((n,d)=>n+(d?.items?.length||0),0)}</b><span>Registros consultados</span></div></div>
   <div class="finance-tabs">${Object.entries(FINANCE_VIEWS).map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
 }
