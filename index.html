@@ -1221,7 +1221,7 @@ input[type="file"]{display:none;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
@@ -1331,6 +1331,81 @@ let costsView = 'orders';
 let selectedStructureOrderId = null;
 const MAXIPROD_STRUCTURES = {};
 const productionBlockOpen = {};
+const COST_STRUCTURE_CHUNK_SIZE=600000;
+function costStructureBaseId(orderId){
+  return `cost-structure-${String(orderId).replace(/[^A-Za-z0-9_-]/g,'_')}`;
+}
+function costStructureRef(orderId,chunkIndex=null){
+  const suffix=chunkIndex===null?'':`-chunk-${chunkIndex}`;
+  return doc(db,'cartamac',`${costStructureBaseId(orderId)}${suffix}`);
+}
+function parseStoredCostStructure(data){
+  if(Array.isArray(data?.estrutura))return data.estrutura;
+  if(typeof data?.estruturaJson==='string'){
+    try{const parsed=JSON.parse(data.estruturaJson);return Array.isArray(parsed)?parsed:[];}catch{return [];}
+  }
+  return [];
+}
+async function saveCostStructureDocument(orderId,itemCode,structure){
+  const json=JSON.stringify(Array.isArray(structure)?structure:[]);
+  const chunks=[];
+  for(let start=0;start<json.length;start+=COST_STRUCTURE_CHUNK_SIZE)chunks.push(json.slice(start,start+COST_STRUCTURE_CHUNK_SIZE));
+  if(!chunks.length)chunks.push('[]');
+  const manifestRef=costStructureRef(orderId);
+  let previousChunks=0;
+  try{const previous=await getDoc(manifestRef);previousChunks=Number(previous.data()?.chunkCount)||0;}catch{}
+  await Promise.all(chunks.map((content,index)=>setDoc(costStructureRef(orderId,index),{content,index,updatedAt:new Date().toISOString()})));
+  await setDoc(manifestRef,{
+    format:'json-chunks-v1',
+    itemCode:String(itemCode||''),
+    chunkCount:chunks.length,
+    characterCount:json.length,
+    updatedAt:new Date().toISOString()
+  });
+  if(previousChunks>chunks.length){
+    await Promise.all(Array.from({length:previousChunks-chunks.length},(_,offset)=>deleteDoc(costStructureRef(orderId,chunks.length+offset)).catch(()=>{})));
+  }
+  return {docId:costStructureBaseId(orderId),chunkCount:chunks.length,characterCount:json.length};
+}
+async function loadCostStructureDocument(orderId){
+  const manifest=await getDoc(costStructureRef(orderId));
+  if(!manifest.exists())return [];
+  const data=manifest.data()||{};
+  const legacy=parseStoredCostStructure(data);
+  if(legacy.length||data.estruturaJson==='[]')return legacy;
+  const chunkCount=Number(data.chunkCount)||0;
+  if(!chunkCount)return [];
+  const snapshots=await Promise.all(Array.from({length:chunkCount},(_,index)=>getDoc(costStructureRef(orderId,index))));
+  const json=snapshots.map(snapshot=>String(snapshot.data()?.content||'')).join('');
+  const parsed=JSON.parse(json||'[]');
+  return Array.isArray(parsed)?parsed:[];
+}
+async function ensureCostStructureLoaded(orderId){
+  if(Array.isArray(MAXIPROD_STRUCTURES[orderId])&&MAXIPROD_STRUCTURES[orderId].length)return MAXIPROD_STRUCTURES[orderId];
+  const entry=getCostEntry(orderId);
+  const legacy=entry?.maxiprod?.estrutura;
+  if(Array.isArray(legacy)&&legacy.length){
+    MAXIPROD_STRUCTURES[orderId]=legacy;
+    return legacy;
+  }
+  try{
+    const structure=await loadCostStructureDocument(orderId);
+    MAXIPROD_STRUCTURES[orderId]=structure;
+    return structure;
+  }catch(error){
+    console.warn('Estrutura MaxiProd:',error);
+    showToast('Não foi possível carregar a estrutura salva no Firebase.','err');
+    return [];
+  }
+}
+async function deleteCostStructureDocument(orderId){
+  try{
+    const manifest=await getDoc(costStructureRef(orderId));
+    const chunkCount=manifest.exists()?Number(manifest.data()?.chunkCount)||0:0;
+    await Promise.all(Array.from({length:chunkCount},(_,index)=>deleteDoc(costStructureRef(orderId,index)).catch(()=>{})));
+    await deleteDoc(costStructureRef(orderId)).catch(()=>{});
+  }catch(error){console.warn('Limpeza da estrutura:',error);}
+}
 
 // ─────────── HELPERS ───────────
 const isMaster = u => u && (u.type==='master' || MASTER_EMAILS.includes(u.ref?.email));
@@ -2418,7 +2493,7 @@ function pagarResumoAtual(rows){
 }
 function pagarCabecalhoFinanceiro(){
   const resumo=pagarResumoAtual(pagarRegistros());
-  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a pagar organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Busca rev70 · Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
+  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a pagar organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Busca rev71 · Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
   <div class="receber-maxiprod-filter"><strong>Filtro MaxiProd aplicado:</strong><span class="on">A pagar</span><span class="on">Pagos</span><span class="on">Títulos</span><span class="on">Despesas</span><span class="on">Adiantamentos</span><span class="on">Pedidos de compra</span><span class="off">Adiantamentos compensados</span><span class="off">Agrupados</span><span class="off">Parcelados</span></div>
   <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.pago)}</b><span>Total pago no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div></div>
   <div class="finance-tabs">${Object.entries(FINANCE_VIEWS).map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
@@ -2487,10 +2562,9 @@ function getCostEntry(orderId){
 }
 function isClosedCostEntry(entry){return !!entry?.closedAt;}
 function hydrateMaxiprodStructures(){
-  Object.keys(MAXIPROD_STRUCTURES).forEach(k=>delete MAXIPROD_STRUCTURES[k]);
   Object.entries(DB.costsData||{}).forEach(([id,entry])=>{
     const structure=entry?.maxiprod?.estrutura;
-    if(Array.isArray(structure))MAXIPROD_STRUCTURES[id]=structure;
+    if(Array.isArray(structure)&&structure.length)MAXIPROD_STRUCTURES[id]=structure;
   });
 }
 // Soma, por mês, os valores oriundos de planos de parcelamento (gerados pela % gasta)
@@ -2924,6 +2998,7 @@ async function consultMaxiprodCost(orderId){
       throw new Error('A função de custos do Firebase está desatualizada: o total foi calculado, mas a estrutura multinível não foi enviada.');
     }
     MAXIPROD_STRUCTURES[orderId]=loadedStructure;
+    const structureStorage=await saveCostStructureDocument(orderId,itemCode,loadedStructure);
     const savedRates=e.maxiprod?.production?.operationRates||{};
     const loadedMaxiprod={
       itemCode,
@@ -2932,9 +3007,11 @@ async function consultMaxiprodCost(orderId){
       itensSemCusto:Number(result.itensSemCusto)||0,
       calculadoEm:result.calculadoEm||new Date().toISOString(),
       criterio:result.criterio||'',
-      // A estrutura também vai para o Firestore: assim ela não desaparece ao sair
-      // da tela e fica visível imediatamente para os demais dispositivos.
-      estrutura:loadedStructure,
+      // A árvore fica em documentos próprios para não ultrapassar o limite do
+      // documento principal cartamac/db.
+      estruturaDocId:structureStorage.docId,
+      estruturaChunkCount:structureStorage.chunkCount,
+      estruturaCharacterCount:structureStorage.characterCount,
       pendencias:(result.pendencias||[]).slice(0,50).map(p=>({codigo:p.codigo||'',descricao:p.descricao||'',motivo:p.motivo||''})),
       production:{
         itemCode:production.itemCode||itemCode,
@@ -2950,8 +3027,8 @@ async function consultMaxiprodCost(orderId){
     };
     e.maxiprod=loadedMaxiprod;
     e.maxiprod.custoTotal=getStructureGrandTotal(orderId);
-    // Mostra imediatamente o retorno correto. O listener em tempo real pode
-    // entregar uma fotografia anterior enquanto o salvamento é confirmado.
+    // Mostra imediatamente o retorno correto. Apenas o resumo fica em
+    // cartamac/db; a árvore completa já foi salva separadamente.
     openCostCardId=orderId;
     renderCostsContent();
     const saved=await persist();
@@ -2964,7 +3041,7 @@ async function consultMaxiprodCost(orderId){
     renderCostsContent();
     const suffix=loadedMaxiprod.itensSemCusto?` (${loadedMaxiprod.itensSemCusto} pendência(s))`:'';
     if(saved)showToast(`Custo MaxiProd atualizado: ${fmtBRL(loadedMaxiprod.custoTotal)}${suffix}`);
-    else showToast('Estrutura carregada na tela, mas não foi possível salvá-la no Firebase. Tente novamente.','err');
+    else showToast('A estrutura foi salva separadamente, mas o resumo não pôde ser atualizado. Tente novamente.','err');
   }catch(error){
     console.error('MaxiProd:',error);
     const message=String(error?.message||'Não foi possível consultar o MaxiProd.');
@@ -3074,7 +3151,17 @@ function buildProductionBlocks(order,master){
         <div class="production-table-wrap"><table class="production-table"><thead><tr><th>Descrição</th><th>Estação</th><th>Tempo realizado (h)</th><th>Valor (R$/h)</th><th>Valor total</th></tr></thead><tbody>${operationRows}</tbody><tfoot><tr><td colspan="4"><b>Total das operações</b></td><td class="production-number production-total">${productionCurrency(operationsTotal)}</td></tr></tfoot></table></div>
       </div></div>`;
 }
-async function clearCostStructure(orderId){if(!isMaster(loggedUser))return;if(!confirm('Limpar a estrutura carregada e o custo MaxiProd deste equipamento?'))return;const entry=getCostEntry(orderId);delete entry.maxiprod;delete MAXIPROD_STRUCTURES[orderId];await persist();renderCostsContent();showToast('Estrutura removida.');}
+async function clearCostStructure(orderId){
+  if(!isMaster(loggedUser))return;
+  if(!confirm('Limpar a estrutura carregada e o custo MaxiProd deste equipamento?'))return;
+  const entry=getCostEntry(orderId);
+  delete entry.maxiprod;
+  delete MAXIPROD_STRUCTURES[orderId];
+  await deleteCostStructureDocument(orderId);
+  await persist();
+  renderCostsContent();
+  showToast('Estrutura removida.');
+}
 function buildCostStructuresView(master,readOnly=false){
   if(selectedStructureOrderId!==null){
     const order=ORDERS.find(o=>String(o.id)===String(selectedStructureOrderId));
@@ -3112,10 +3199,12 @@ function buildCostStructuresView(master,readOnly=false){
   }).join(''):'<div class="structure-empty">Não há OPs abertas nesta área. As OPs fechadas ficam disponíveis em <b>Projetos fechados</b>.</div>';
   return `<div class="structure-intro">Cada equipamento importado pelo arquivo Project aparece automaticamente abaixo. Para consultar sua estrutura, informe uma única vez o código raiz correspondente no MaxiProd e abra o equipamento.</div><div class="structure-order-list">${list}</div>`;
 }
-function openCostStructure(orderId){
+async function openCostStructure(orderId){
   selectedStructureOrderId=orderId;
   costsView='structure';
   renderCostsContent();
+  await ensureCostStructureLoaded(orderId);
+  if(String(selectedStructureOrderId)===String(orderId))renderCostsContent();
 }
 function closeCostStructure(){selectedStructureOrderId=null;renderCostsContent();}
 function safeReportFileName(value){return String(value||'Relatório').replace(/[\\/:*?"<>|]/g,'-').replace(/\s+/g,' ').trim();}
