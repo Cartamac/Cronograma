@@ -872,12 +872,52 @@ input[type="file"]{display:none;}
 .macro-filter-row{display:flex;align-items:center;gap:10px;margin:-6px 0 18px;color:var(--text2);font-size:13px;font-weight:700;}.macro-filter-row select{min-width:210px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:8px 10px;}.macro-filter-row option{color:#111;background:#fff;}
 .macro-summary-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto;}.macro-summary-chip{border:1px solid var(--border2);background:var(--bg3);border-radius:6px;padding:6px 8px;font-size:11px;color:var(--text2);white-space:nowrap;}.macro-summary-chip b{color:var(--green);margin-right:4px;}.macro-summary-chip.final b{color:var(--gold);}.macro-engineering-summary{margin-top:20px;border:1px solid rgba(92,184,92,.38);background:rgba(92,184,92,.06);border-radius:8px;padding:13px 15px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;}.macro-engineering-summary .sum-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:800;}.macro-engineering-summary .sum-value{font-size:17px;font-weight:800;color:#9cdb9c;margin-top:3px;}.macro-block-title{cursor:pointer;user-select:none;position:relative;}.macro-block-title::after{content:'⌃';position:absolute;right:14px;font-size:15px;line-height:12px;}.macro-block.collapsed .macro-stage-grid{display:none;}.macro-block.collapsed .macro-block-title::after{content:'⌄';}
 @media(max-width:640px){.macro-filter-row{align-items:stretch;flex-direction:column;gap:5px;}.macro-filter-row select{width:100%;}.macro-summary-chips{margin:4px 0 0;width:100%;}.macro-summary-chip{font-size:10px;}.macro-engineering-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;}.macro-order-summary{gap:7px;}}
-.receber-maxiprod-filter{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#111;border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin:12px 0 16px;color:var(--text2);font-size:12px;}
-.receber-maxiprod-filter strong{color:#fff;margin-right:3px;}
-.receber-maxiprod-filter span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
-.receber-maxiprod-filter .on::before,.receber-maxiprod-filter .off::before{content:'✓';display:inline-grid;place-items:center;width:16px;height:16px;border-radius:3px;background:#1677ff;color:#fff;font-size:11px;font-weight:900;}
-.receber-maxiprod-filter .off{color:var(--text3);text-decoration:line-through;}
-.receber-maxiprod-filter .off::before{content:'';background:transparent;border:1px solid #555;}
+/* VENDAS / PEDIDOS DE VENDA */
+.sales-page{display:flex;flex-direction:column;gap:18px;}
+.sales-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+.sales-head h2{display:flex;align-items:center;gap:8px;margin:0 0 5px;font-size:20px;}
+.sales-head p{margin:0;color:var(--text3);font-size:13px;}
+.sales-update{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.sales-updated{font-size:12px;color:var(--text3);}
+.sales-years{display:flex;flex-direction:column;gap:18px;}
+.sales-year{border:1px solid var(--border);border-radius:11px;background:var(--bg2);overflow:hidden;}
+.sales-year-toggle{width:100%;border:0;background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;gap:15px;padding:18px 54px;cursor:pointer;text-align:center;position:relative;}
+.sales-year-toggle:hover{background:rgba(255,255,255,.018);}
+.sales-year-title{font-size:24px;font-weight:850;letter-spacing:.02em;}
+.sales-year-count{font-size:12px;color:var(--text3);margin-top:3px;}
+.sales-year-chevron{font-size:22px;color:var(--gold);transition:transform .18s;position:absolute;right:20px;}
+.sales-year.open .sales-year-chevron{transform:rotate(180deg);}
+.sales-year-body{display:none;padding:0 20px 20px;}
+.sales-year.open .sales-year-body{display:block;}
+.sales-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+.sales-summary-card{min-height:105px;border:1px solid var(--border);border-radius:9px;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;}
+.sales-summary-value{font-size:22px;font-weight:850;color:#fff;}
+.sales-summary-card.money .sales-summary-value{color:var(--green);}
+.sales-summary-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:7px;}
+.sales-summary-sub{font-size:12px;color:var(--gold);font-weight:700;margin-top:5px;}
+.fixed-assets-page{display:flex;flex-direction:column;gap:16px;}
+.fixed-assets-title h2{margin:0 0 5px;display:flex;align-items:center;gap:7px;}
+.fixed-assets-title p{margin:0;color:var(--text3);font-size:13px;}
+.fixed-assets-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.fixed-assets-table td:nth-child(2){font-weight:750;color:var(--gold);}
+.fixed-assets-table td:nth-child(5),.fixed-assets-table td:nth-child(6){font-family:'JetBrains Mono',monospace;font-weight:750;color:#fff;text-align:right;white-space:nowrap;}
+.fixed-assets-table th:nth-child(5),.fixed-assets-table th:nth-child(6){text-align:right;}
+.sales-search{max-width:570px;margin:0 0 13px;}
+.sales-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:9px;}
+.sales-table{width:100%;border-collapse:collapse;min-width:1120px;}
+.sales-table th{background:var(--bg3);color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:11px 12px;white-space:nowrap;}
+.sales-table td{border-top:1px solid var(--border);padding:11px 12px;color:var(--text2);font-size:12px;vertical-align:top;}
+.sales-table td.money{font-family:'Roboto Mono',monospace;font-weight:750;color:#fff;text-align:right;white-space:nowrap;}
+.sales-table td.order-number{font-family:'Roboto Mono',monospace;font-weight:800;color:var(--gold);}
+.sales-empty{border:1px dashed var(--border2);border-radius:9px;padding:50px 20px;text-align:center;color:var(--text3);}
+@media(max-width:1200px){.sales-summary{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:900px){.fixed-assets-summary{grid-template-columns:1fr;}}
+@media(max-width:760px){
+  .sales-summary{grid-template-columns:1fr;}
+  .sales-year-toggle,.sales-year-body{padding-left:14px;padding-right:14px;}
+  .sales-update{width:100%;}
+  .sales-update .btn{width:100%;justify-content:center;}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -1242,6 +1282,8 @@ const functions = getFunctions(app, "southamerica-east1");
 const calcularCustoMaxiprodRemoto = httpsCallable(functions, "calcularCustoMaxiprod", {timeout:310000});
 const consultarOrdemProducaoMaxiprodRemoto = httpsCallable(functions, "consultarOrdemProducaoMaxiprod", {timeout:130000});
 const consultarFinanceiroFiscalMaxiprodRemoto = httpsCallable(functions, "consultarFinanceiroFiscalMaxiprod", {timeout:310000});
+const consultarPedidosVendaMaxiprodRemoto = httpsCallable(functions, "consultarPedidosVendaMaxiprod", {timeout:310000});
+const consultarAtivosImobilizadosMaxiprodRemoto = httpsCallable(functions, "consultarAtivosImobilizadosMaxiprod", {timeout:310000});
 const DB_REF   = doc(db, "cartamac", "db");
 const FILE_REF = doc(db, "cartamac", "files");
 
@@ -1286,6 +1328,23 @@ let pagarModo='anos'; // anos | meses | geral | calendario | mes
 let pagarMesSelecionado=(new Date()).getMonth();
 let pagarFiltros={descricao:'',fornecedor:''};
 let pagarSomenteAtrasados=false;
+const SALES_CACHE_KEY='cartamac_vendas_maxiprod_cache_v2';
+let SALES_CACHE=(()=>{
+  try{return JSON.parse(localStorage.getItem(SALES_CACHE_KEY)||'{"version":2,"updatedAt":null,"items":[]}');}
+  catch(_){return {version:2,updatedAt:null,items:[]};}
+})();
+if(SALES_CACHE?.version!==2||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={version:2,updatedAt:null,items:[]};
+let salesRefreshInProgress=false;
+let salesSearch='';
+const salesExpandedYears=new Set();
+const FIXED_ASSETS_CACHE_KEY='cartamac_ativos_imobilizados_cache_v1';
+let FIXED_ASSETS_CACHE=(()=>{
+  try{return JSON.parse(localStorage.getItem(FIXED_ASSETS_CACHE_KEY)||'{"version":1,"updatedAt":null,"items":[]}');}
+  catch(_){return {version:1,updatedAt:null,items:[]};}
+})();
+if(FIXED_ASSETS_CACHE?.version!==1||!Array.isArray(FIXED_ASSETS_CACHE?.items))FIXED_ASSETS_CACHE={version:1,updatedAt:null,items:[]};
+let fixedAssetsRefreshInProgress=false;
+let fixedAssetsSearch='';
 
 function scheduleFinanceRender(){
   if(financeRenderQueued)return;
@@ -1625,7 +1684,7 @@ function doAdminLogin(){
   document.getElementById('btnNewClient').style.display=master?'':'none';
   document.getElementById('tabImportar').style.display=master?'':'none';
   document.getElementById('tabCustos').style.display=master?'':'none';
-  document.getElementById('tabFinanceiro').style.display=master?'':'none';
+  document.getElementById('tabFinanceiro').style.display=(master||seller)?'flex':'none';
   document.getElementById('tabPecas').style.display=(master||seller)?'flex':'none';
   document.getElementById('tabSimulador').style.display=(master||seller)?'flex':'none';
   document.getElementById('tabMacroEngenharia').style.display=(master||engineering)?'flex':'none';
@@ -1649,7 +1708,8 @@ function doLogin(){
 
 // ─────────── DEV TABS ───────────
 function switchDevTab(id,btn){
-  if((id==='importar'||id==='custos'||id==='financeiro')&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
+  if((id==='importar'||id==='custos')&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
+  if(id==='financeiro'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a administradores mestres e vendedores','err');return;}
   if(id==='pecas'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a vendedores e administradores mestres','err');return;}
   if(id==='simulador'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a vendedores e administradores mestres','err');return;}
   if(id==='macro-engenharia'&&!(isMaster(loggedUser)||isEngineering(loggedUser))){showToast('Acesso restrito à Engenharia e administradores mestres','err');return;}
@@ -1662,7 +1722,7 @@ function switchDevTab(id,btn){
   if(id==='cronograma')renderDevAll();
   if(id==='gantt')     renderGantt();
   if(id==='custos')    renderCostsPage();
-  if(id==='financeiro') renderFinanceiroFiscal();
+  if(id==='financeiro'){if(loggedUser?.type==='seller')financeiroView='vendas';renderFinanceiroFiscal();}
   if(id==='pecas')     renderPartsPage();
   if(id==='simulador') renderSimulator();
   if(id==='macro-engenharia') renderMacroEngineering();
@@ -1955,7 +2015,9 @@ const esc=escapeHTML;
 // localiza cada informação por alternativas de nome, sem depender de um único schema.
 const FINANCE_VIEWS={
   receber:{title:'Contas a receber',source:'contaAReceber',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Descrição',['descricao','historico']],['Empresa',['empresaNome','empresa']],['Parcela',['parcela','numeroParcela']],['Nº parcelas',['numeroTotalParcelas','quantidadeParcelas']],['Referente a',['referenteA','referencia','referente']],['Valor',['valor','valorOriginal']],['Valor original',['valorOriginal']],['Valor recebido',['valorRecebido','valorBaixado']],['Valor a receber',['valorAReceber','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
-  pagar:{title:'Contas a pagar',source:'contaAPagar',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Empresa',['empresaNome','empresa']],['Descrição',['descricao','historico']],['Conta destino',['contaDestinoDescricao','contaDestino']],['Referente a',['referenteA','referencia','referente']],['Observações',['observacoes','observacao']],['Valor original',['valorOriginal','valor']],['Valor pago',['valorPago','valorBaixado']],['Valor a pagar',['valorAPagar','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]}
+  pagar:{title:'Contas a pagar',source:'contaAPagar',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Empresa',['empresaNome','empresa']],['Descrição',['descricao','historico']],['Conta destino',['contaDestinoDescricao','contaDestino']],['Referente a',['referenteA','referencia','referente']],['Observações',['observacoes','observacao']],['Valor original',['valorOriginal','valor']],['Valor pago',['valorPago','valorBaixado']],['Valor a pagar',['valorAPagar','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
+  vendas:{title:'Vendas',source:'pedidosDeVenda',columns:[]},
+  ativos:{title:'Ativos imobilizados',source:null,columns:[]}
 };
 function financeNormalize(value){return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
 function financeValue(row,keys){
@@ -2004,7 +2066,14 @@ function financeRowsFiltered(view,search){
 }
 function toggleFinanceColumnFilter(index,value,checked){const view=FINANCE_VIEWS[financeiroView],values=financeColumnValues(view,index),id=financeColumnId(index),selected=new Set(Array.isArray(financeColumnFilters[id])?financeColumnFilters[id]:values);if(checked)selected.add(value);else selected.delete(value);financeColumnFilters[id]=[...selected];renderFinanceiroFiscal();}
 function toggleAllFinanceColumnFilter(index,checked){const view=FINANCE_VIEWS[financeiroView];financeColumnFilters[financeColumnId(index)]=checked?financeColumnValues(view,index):[];renderFinanceiroFiscal();}
+function financeVisibleEntries(){
+  return loggedUser?.type==='seller'?[['vendas',FINANCE_VIEWS.vendas]]:Object.entries(FINANCE_VIEWS);
+}
+function financeTabsHtml(){
+  return `<div class="finance-tabs">${financeVisibleEntries().map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
+}
 function switchFinanceView(key){
+  if(loggedUser?.type==='seller'&&key!=='vendas'){showToast('Acesso restrito à área financeira','err');return;}
   // A troca de subaba usa somente o cache já baixado, sem consultar o MaxiProd.
   financeiroView=key;
   scheduleFinanceRender();
@@ -2034,26 +2103,30 @@ async function refreshFinanceiroFiscalAbaAtual(){
 // Atualiza todas as fontes únicas uma vez. As subabas de itens reutilizam a mesma
 // consulta, evitando cinco leituras idênticas do MaxiProd.
 async function refreshFinanceiroFiscal(){
-  if(!isMaster(loggedUser))return;
+  if(!isMaster(loggedUser)){
+    if(loggedUser?.type==='seller')return refreshSalesMaxiprod();
+    return;
+  }
   if(financeRefreshInProgress){showToast('A atualização completa já está em andamento.');return;}
   financeRefreshInProgress=true;
   // Pedidos de venda sao uma fonte auxiliar: usamos id/numero somente para
   // reproduzir a descricao dos adiantamentos e previsoes exatamente como no ERP.
-  const sources=[...new Set([...Object.values(FINANCE_VIEWS).map(view=>view.source),'pedidosDeVenda'])];
+  const sources=[...new Set([...Object.values(FINANCE_VIEWS).map(view=>view.source).filter(Boolean),'pedidosDeVenda'])];
+  const totalStages=sources.length+2;
   const pageSize=FINANCE_PAGE_SIZE;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
   try{
     FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
     for(let sourceIndex=0;sourceIndex<sources.length;sourceIndex++){
       const source=sources[sourceIndex];
-      showLoading(`Atualizando todas as abas (${sourceIndex+1}/${sources.length})...`);
+      const progress=Math.round((sourceIndex/totalStages)*100);
+      showLoading(`Carregando MaxiProd — ${progress}%`);
       try{
         // Uma única consulta por fonte. A versão anterior fazia até 100 páginas
         // (20 mil linhas) e congelava a navegação entre as abas.
         const items=[];let skip=0;
         const maxPages=(source==='contaAReceber'||source==='contaAPagar'||source==='pedidosDeVenda')?250:1;
         for(let page=0;page<maxPages;page++){
-          const fonteLabel=source==='contaAReceber'?'contas a receber desde 2020':source==='pedidosDeVenda'?'pedidos de venda para as descricoes':'contas a pagar';
-          showLoading(`Atualizando ${fonteLabel} - pagina ${page+1}...`);
+          showLoading(`Carregando MaxiProd — ${progress}% · página ${page+1}`);
           const result=await consultarFinanceiroFiscalMaxiprodRemoto({
             source,take:pageSize,skip,
             dateFrom:source==='contaAReceber'?FINANCE_RECEIVABLE_FROM:null,
@@ -2078,10 +2151,19 @@ async function refreshFinanceiroFiscal(){
         FINANCE_CACHE.datasets[source]={items:itensUnicos,available:true};totalRecords+=itensUnicos.length;
       }catch(error){console.error(`Financeiro/Fiscal: falha ao atualizar ${source}`,error);failed++;}
     }
+    const salesProgress=Math.round((sources.length/totalStages)*100);
+    const salesUpdated=await refreshSalesMaxiprod({integrated:true,percent:salesProgress});
+    if(salesUpdated)totalRecords+=SALES_CACHE.items.length;
+    else failed++;
+    const assetsProgress=Math.round(((sources.length+1)/totalStages)*100);
+    const assetsUpdated=await refreshFixedAssetsMaxiprod({integrated:true,percent:assetsProgress});
+    if(assetsUpdated)totalRecords+=FIXED_ASSETS_CACHE.items.length;
+    else failed++;
     FINANCE_CACHE.updatedAt=updatedAt;
     try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){/* cache local opcional */}
     DB.financeiroFiscalMeta={updatedAt:FINANCE_CACHE.updatedAt||new Date().toISOString()};
     await persist();
+    showLoading('Carregando MaxiProd — 100%');
     showToast(failed?`Atualizacao concluida com ${failed} aba(s) sem retorno`:`Todas as abas foram atualizadas: ${totalRecords} registro(s)`);
   }catch(error){console.error(error);showToast('Nao foi possivel atualizar os dados financeiros agora','err');}
   finally{financeRefreshInProgress=null;hideLoading();renderFinanceiroFiscal();}
@@ -2260,9 +2342,8 @@ function receberResumoAtual(rows){
 function receberCabecalhoFinanceiro(data){
   const resumo=receberResumoAtual(receberRegistros());
   return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a receber organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
-  <div class="receber-maxiprod-filter"><strong>Filtro MaxiProd aplicado:</strong><span class="on">A receber</span><span class="on">Recebidos</span><span class="on">Títulos</span><span class="on">Receitas</span><span class="on">Adiantamentos</span><span class="on">Pedidos de venda</span><span class="off">Adiantamentos compensados</span><span class="off">Agrupados</span><span class="off">Parcelados</span></div>
   <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.recebido)}</b><span>Total recebido no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div></div>
-  <div class="finance-tabs">${Object.entries(FINANCE_VIEWS).map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
+  ${financeTabsHtml()}`;
 }
 function receberFiltrosHtml(){return `<div class="receber-filtros"><input value="${esc(receberFiltros.descricao)}" onchange="alterarFiltroReceber('descricao',this.value)" placeholder="Filtrar descrição"><input value="${esc(receberFiltros.cliente)}" onchange="alterarFiltroReceber('cliente',this.value)" placeholder="Filtrar cliente pagador"></div>`;}
 function receberTabela(rows){
@@ -2494,9 +2575,8 @@ function pagarResumoAtual(rows){
 function pagarCabecalhoFinanceiro(){
   const resumo=pagarResumoAtual(pagarRegistros());
   return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a pagar organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Busca rev71 · Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
-  <div class="receber-maxiprod-filter"><strong>Filtro MaxiProd aplicado:</strong><span class="on">A pagar</span><span class="on">Pagos</span><span class="on">Títulos</span><span class="on">Despesas</span><span class="on">Adiantamentos</span><span class="on">Pedidos de compra</span><span class="off">Adiantamentos compensados</span><span class="off">Agrupados</span><span class="off">Parcelados</span></div>
   <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.pago)}</b><span>Total pago no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div></div>
-  <div class="finance-tabs">${Object.entries(FINANCE_VIEWS).map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
+  ${financeTabsHtml()}`;
 }
 function pagarFiltrosHtml(){
   return `<div class="receber-filtros"><input value="${esc(pagarFiltros.descricao)}" onchange="alterarFiltroPagar('descricao',this.value)" placeholder="Filtrar descrição"><input value="${esc(pagarFiltros.fornecedor)}" onchange="alterarFiltroPagar('fornecedor',this.value)" placeholder="Filtrar fornecedor"></div>`;
@@ -2535,6 +2615,8 @@ function renderContasAPagar(target){
 function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
   if(financeiroView==='receber'){renderContasAReceber(target);return;}
+  if(financeiroView==='vendas'){renderSalesPage(target);return;}
+  if(financeiroView==='ativos'){renderFixedAssetsPage(target);return;}
   if(financeiroView==='pagar'){renderContasAPagar(target);return;}
   const view=FINANCE_VIEWS[financeiroView]||FINANCE_VIEWS.receber;
   const search=(document.getElementById('financeSearch')?.value||'').trim().toLowerCase();
@@ -2545,7 +2627,7 @@ function renderFinanceiroFiscal(){
   const totalVendas=(data.pedidosDeVenda?.items||[]).reduce((sum,row)=>sum+financeNumber(financeValue(row,['valorTotal','valor'])),0);
   target.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. As listas seguem as colunas destacadas na planilha de referência.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
   <div class="finance-card-grid"><div class="finance-card"><b>${fmtBRL(totalReceber)}</b><span>A receber (amostra)</span></div><div class="finance-card"><b>${fmtBRL(totalPagar)}</b><span>A pagar (amostra)</span></div><div class="finance-card"><b>${fmtBRL(totalVendas)}</b><span>Vendas (amostra)</span></div><div class="finance-card"><b>${Object.values(data).reduce((n,d)=>n+(d?.items?.length||0),0)}</b><span>Registros consultados</span></div></div>
-  <div class="finance-tabs">${Object.entries(FINANCE_VIEWS).map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>
+  ${financeTabsHtml()}
   <div class="finance-toolbar"><input id="financeSearch" class="search-input" value="${esc(search)}" oninput="renderFinanceiroFiscal()" placeholder="Filtrar ${esc(view.title.toLowerCase())}..."><span class="muted" style="font-size:12px;white-space:nowrap;">${rows.length} registro(s)</span></div>
   <div class="finance-table-wrap">${rows.length?`<table class="finance-table"><thead><tr>${view.columns.map((column,index)=>{const values=financeColumnValues(view,index),selected=financeColumnFilters[financeColumnId(index)],allSelected=!Array.isArray(selected)||selected.length===values.length;return `<th><details class="finance-column-filter"><summary>${esc(column[0])} <span>▾</span></summary><div class="finance-filter-menu"><label><input type="checkbox" ${allSelected?'checked':''} onchange="toggleAllFinanceColumnFilter(${index},this.checked)"> Selecionar tudo</label>${values.slice(0,300).map(value=>`<label><input type="checkbox" value="${esc(value)}" ${(allSelected||selected.includes(value))?'checked':''} onchange="toggleFinanceColumnFilter(${index},this.value,this.checked)"> ${esc(value)}</label>`).join('')}${values.length>300?'<small>Exibidos os primeiros 300 valores.</small>':''}</div></details></th>`;}).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${view.columns.map(column=>{const val=financeCell(row,column);return `<td class="${financeIsMoney(column[0])&&val!=='—'?'money':''}">${esc(val)}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`:`<div class="finance-empty">${FINANCE_CACHE?.updatedAt?'Nenhum registro correspondente nesta categoria.':'Clique em “Atualizar MaxiProd” para trazer os dados desta área.'}</div>`}</div>`;
 }
@@ -4338,6 +4420,288 @@ macroKey=function(order){return String(order.code||order.id||order.op);};
 const macroRecordBeforeUniqueKey=macroRecord;
 macroRecord=function(order){const key=macroKey(order),legacyKey=String(order.op||'');const direct=DB.engineeringMacros?.[key];const legacy=legacyKey?DB.engineeringMacros?.[legacyKey]:null;if(!direct&&legacy&&String(legacy.code||'')===String(order.code||'')){DB.engineeringMacros[key]={...legacy,key};delete DB.engineeringMacros[legacyKey];saveMacroLocal();}return macroRecordBeforeUniqueKey(order);};
 
+// ─────────────── VENDAS / PEDIDOS DE VENDA ───────────────
+let salesExpandedInitialized=false;
+function salesValue(row,aliases){
+  const wanted=(aliases||[]).map(financeNormalize);
+  for(const [key,value] of Object.entries(row||{})){
+    if(wanted.includes(financeNormalize(key))&&value!==null&&value!==undefined&&value!=='')return value;
+  }
+  return null;
+}
+function salesText(value){
+  if(value===null||value===undefined||value==='')return '—';
+  if(typeof value!=='object')return String(value);
+  const alias=value.apelido||value.codigo||value.sigla||'';
+  const name=value.nomeRazaoSocial||value.razaoSocial||value.nomeFantasia||value.nomeCompleto||value.nome||value.descricao||'';
+  return [...new Set([alias,name].filter(Boolean).map(String))].join(' - ')||'—';
+}
+function salesNumber(value){
+  if(typeof value==='number')return Number.isFinite(value)?value:0;
+  const text=String(value??'').replace(/[^0-9,.-]/g,'');
+  if(!text)return 0;
+  const normalized=text.includes(',')?text.replace(/\./g,'').replace(',','.'):text;
+  const parsed=Number(normalized);
+  return Number.isFinite(parsed)?parsed:0;
+}
+function salesDate(value){
+  if(value===null||value===undefined||value==='')return null;
+  const text=String(value).trim();
+  let match=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(match)return new Date(Number(match[1]),Number(match[2])-1,Number(match[3]));
+  match=text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if(match)return new Date(Number(match[3]),Number(match[2])-1,Number(match[1]));
+  const parsed=new Date(text);
+  return Number.isNaN(parsed.getTime())?null:parsed;
+}
+function salesOrderRecord(row){
+  const emissao=salesDate(salesValue(row,['emissaoDataDetalhe','emissaoData','dataEmissao','emissao']));
+  const entrega=salesDate(salesValue(row,['entregaDataDetalhe','entregaData','dataEntrega','previsaoDeEntregaData','previsaoEntregaData','dataPrevistaEntrega','entrega']));
+  const cliente=salesValue(row,['clienteDetalhe','clienteNome','clienteRazaoSocial','nomeCliente'])??row?.cliente??row?.pessoa??row?.comprador??row?.pagador;
+  return {
+    raw:row,
+    id:salesValue(row,['id','pedidoDeVendaId']),
+    emissao,
+    ano:emissao?emissao.getFullYear():null,
+    mes:emissao?emissao.getMonth():null,
+    numero:salesText(salesValue(row,['numeroDetalhe','numero','numeroPedido','pedidoNumero'])),
+    referencia:salesText(salesValue(row,['referenciaDetalhe','referencia','descricao','observacao'])),
+    cliente:salesText(cliente),
+    valorTotal:salesNumber(salesValue(row,['valorTotalDetalhe','valorTotal','total','valor'])),
+    valorFaturado:salesNumber(salesValue(row,['valorFaturadoDetalhe','valorFaturado','totalFaturado','faturadoValor'])),
+    valorAFaturar:salesNumber(salesValue(row,['valorAFaturarDetalhe','valorAFaturar','totalAFaturar','saldoAFaturar'])),
+    entrega,
+  };
+}
+function salesRecords(){
+  const seen=new Set();
+  return (SALES_CACHE?.items||[]).map(salesOrderRecord).filter(record=>{
+    const fallback=[
+      record.numero,
+      record.emissao?.toISOString().slice(0,10)||'',
+      record.cliente,
+      record.valorTotal.toFixed(2),
+    ].join('|');
+    const key=record.id!==null&&record.id!==undefined?`id:${record.id}`:`fallback:${fallback}`;
+    if(seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
+}
+function salesMonthName(index){
+  return ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][index]||'Sem mês';
+}
+function salesYearSummary(records){
+  const total=records.reduce((sum,row)=>sum+row.valorTotal,0);
+  const months=new Map();
+  records.forEach(row=>{if(row.mes!==null)months.set(row.mes,(months.get(row.mes)||0)+row.valorTotal);});
+  const highest=[...months.entries()].sort((a,b)=>b[1]-a[1])[0]||[null,0];
+  const highestOrder=[...records].sort((a,b)=>b.valorTotal-a.valorTotal)[0]||null;
+  return {total,count:records.length,highestMonth:highest[0],highestValue:highest[1],highestOrder};
+}
+function salesDateText(date){return date?date.toLocaleDateString('pt-BR'):'—';}
+function salesYearMarkup(year,records){
+  const open=salesExpandedYears.has(String(year));
+  const summary=salesYearSummary(records);
+  const rows=[...records].sort((a,b)=>(b.emissao?.getTime()||0)-(a.emissao?.getTime()||0)||String(b.numero).localeCompare(String(a.numero),'pt-BR',{numeric:true}));
+  return `<section class="sales-year ${open?'open':''}" id="sales-year-${year}">
+    <button class="sales-year-toggle" type="button" onclick="toggleSalesYear('${year}')">
+      <div><div class="sales-year-title">${escapeHTML(year)}</div><div class="sales-year-count">${summary.count} pedido(s) de venda</div></div>
+      <span class="msi sales-year-chevron">expand_more</span>
+    </button>
+    <div class="sales-year-body">
+      <div class="sales-summary">
+        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(summary.total)}</div><div class="sales-summary-label">Valor total das vendas</div></div>
+        <div class="sales-summary-card"><div class="sales-summary-value">${summary.count}</div><div class="sales-summary-label">Número de pedidos</div></div>
+        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(summary.highestValue)}</div><div class="sales-summary-label">Mês com maior valor</div><div class="sales-summary-sub">${salesMonthName(summary.highestMonth)}</div></div>
+        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(summary.highestOrder?.valorTotal||0)}</div><div class="sales-summary-label">Maior pedido · Nº ${escapeHTML(summary.highestOrder?.numero||'—')}</div><div class="sales-summary-sub">${escapeHTML(summary.highestOrder?.cliente||'—')}</div></div>
+      </div>
+      <div class="sales-table-wrap"><table class="sales-table">
+        <thead><tr><th>Emissão</th><th>Nº</th><th>Referência</th><th>Cliente</th><th>Valor total</th><th>Valor faturado</th><th>Valor a faturar</th><th>Entrega</th></tr></thead>
+        <tbody>${rows.map(row=>`<tr>
+          <td>${salesDateText(row.emissao)}</td>
+          <td class="order-number">${escapeHTML(row.numero)}</td>
+          <td>${escapeHTML(row.referencia)}</td>
+          <td>${escapeHTML(row.cliente)}</td>
+          <td class="money">${fmtBRL(row.valorTotal)}</td>
+          <td class="money">${fmtBRL(row.valorFaturado)}</td>
+          <td class="money">${fmtBRL(row.valorAFaturar)}</td>
+          <td>${salesDateText(row.entrega)}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>
+    </div>
+  </section>`;
+}
+function renderSalesPage(container=document.getElementById('financeiroContent')){
+  if(!container)return;
+  const records=salesRecords();
+  const byYear=new Map();
+  records.forEach(row=>{
+    const year=row.ano===null?'Sem data':String(row.ano);
+    if(!byYear.has(year))byYear.set(year,[]);
+    byYear.get(year).push(row);
+  });
+  const years=[...byYear.keys()].sort((a,b)=>{
+    if(a==='Sem data')return 1;
+    if(b==='Sem data')return -1;
+    return Number(b)-Number(a);
+  });
+  if(!salesExpandedInitialized&&years.length){
+    salesExpandedYears.add(String(years[0]));
+    salesExpandedInitialized=true;
+  }
+  const updated=SALES_CACHE?.updatedAt?new Date(SALES_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Pedidos de venda consultados diretamente no MaxiProd, sem pedidos cancelados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de vendas: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(salesRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(salesRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+    ${financeTabsHtml()}
+    <div class="sales-page">
+    <div class="sales-head">
+      <div><h2><span class="msi">point_of_sale</span> Vendas</h2><p>Pedidos de venda consultados diretamente no MaxiProd e organizados pelo ano de emissão.</p></div>
+    </div>
+    ${years.length?`<div class="sales-years">${years.map(year=>salesYearMarkup(year,byYear.get(year))).join('')}</div>`:`<div class="sales-empty"><span class="msi msi-xl">receipt_long</span><h3>Nenhum pedido de venda carregado</h3><p>Clique em “Atualizar MaxiProd” para fazer a primeira consulta.</p></div>`}
+  </div>`;
+}
+function toggleSalesYear(year){
+  const key=String(year);
+  salesExpandedYears.has(key)?salesExpandedYears.delete(key):salesExpandedYears.add(key);
+  renderSalesPage();
+}
+async function refreshSalesMaxiprod(options={}){
+  const integrated=options?.integrated===true;
+  if(salesRefreshInProgress)return false;
+  if(!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito à área comercial','err');return;}
+  salesRefreshInProgress=true;
+  if(!integrated)renderSalesPage();
+  const items=[];
+  const seenIds=new Set();
+  let skip=0,updatedAt=new Date().toISOString();
+  let success=false;
+  try{
+    for(let page=0;page<250;page++){
+      const progress=integrated?(Number(options.percent)||75):Math.min(95,Math.max(5,(page+1)*5));
+      showLoading(`Carregando MaxiProd — ${progress}% · página ${page+1}`);
+      const result=await consultarPedidosVendaMaxiprodRemoto({take:200,skip});
+      const pageItems=Array.isArray(result.data?.items)?result.data.items:[];
+      for(const item of pageItems){
+        const id=salesValue(item,['id','pedidoDeVendaId']);
+        if(id!==null&&id!==undefined){
+          const key=String(id);
+          if(seenIds.has(key))continue;
+          seenIds.add(key);
+        }
+        items.push(item);
+      }
+      updatedAt=result.data?.updatedAt||updatedAt;
+      if(result.data?.done===true)break;
+      skip+=200;
+    }
+    SALES_CACHE={version:2,updatedAt,items};
+    localStorage.setItem(SALES_CACHE_KEY,JSON.stringify(SALES_CACHE));
+    salesExpandedYears.clear();
+    salesExpandedInitialized=false;
+    success=true;
+    if(!integrated)showToast(`${items.length} pedido(s) de venda atualizado(s) pelo MaxiProd.`);
+  }catch(error){
+    console.error('Vendas: falha ao consultar pedidos de venda',error);
+    if(!integrated)showToast(error?.message||'Não foi possível atualizar os pedidos de venda.','err');
+  }finally{
+    salesRefreshInProgress=false;
+    if(!integrated){hideLoading();renderSalesPage();}
+  }
+  return success;
+}
+
+// ─────────────── ATIVOS IMOBILIZADOS · GRUPO 8 ───────────────
+function fixedAssetRecord(row){
+  return {
+    id:salesValue(row,['id','itemId']),
+    criadoEm:salesDate(salesValue(row,['criadoEm','criacaoData','dataCriacao'])),
+    codigo:salesText(salesValue(row,['codigo','itemCodigo'])),
+    descricao:salesText(salesValue(row,['descricao','nome','itemDescricao'])),
+    procedencia:salesText(salesValue(row,['procedencia','origem','tipoProcedencia'])),
+    custoOrcado:salesNumber(salesValue(row,['custoOrcado','custoOrcamentado','valorOrcado'])),
+    precoCompra:salesNumber(salesValue(row,['precoCompra','precoDeCompra','precoDeCompraUltimoValor','ultimoPrecoDeCompra'])),
+  };
+}
+function fixedAssetRecords(){
+  const seen=new Set();
+  return (FIXED_ASSETS_CACHE?.items||[]).map(fixedAssetRecord).filter(row=>{
+    const fallback=[row.codigo,row.descricao,row.criadoEm?.getTime()||''].join('|');
+    const key=row.id!==null&&row.id!==undefined?`id:${row.id}`:`fallback:${fallback}`;
+    if(seen.has(key))return false;
+    seen.add(key);
+    return true;
+  }).sort((a,b)=>(b.criadoEm?.getTime()||0)-(a.criadoEm?.getTime()||0)||String(a.codigo).localeCompare(String(b.codigo),'pt-BR',{numeric:true}));
+}
+function filterFixedAssets(value){fixedAssetsSearch=String(value||'');renderFixedAssetsPage();}
+function renderFixedAssetsPage(container=document.getElementById('financeiroContent')){
+  if(!container)return;
+  const allRows=fixedAssetRecords();
+  const query=fixedAssetsSearch.trim().toLowerCase();
+  const rows=query?allRows.filter(row=>[row.codigo,row.descricao,row.procedencia].join(' ').toLowerCase().includes(query)):allRows;
+  const total=allRows.reduce((sum,row)=>sum+row.precoCompra,0);
+  const highest=[...allRows].sort((a,b)=>b.precoCompra-a.precoCompra)[0]||null;
+  const updated=FIXED_ASSETS_CACHE?.updatedAt?new Date(FIXED_ASSETS_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de ativos: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(fixedAssetsRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(fixedAssetsRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+    ${financeTabsHtml()}
+    <div class="fixed-assets-page">
+      <div class="fixed-assets-title"><h2><span class="msi">precision_manufacturing</span> Ativos imobilizados</h2><p>Itens pertencentes ao grupo 8 no MaxiProd.</p></div>
+      <div class="fixed-assets-summary">
+        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Valor total · preço de compra</div></div>
+        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(highest?.precoCompra||0)}</div><div class="sales-summary-label">Item com maior valor</div><div class="sales-summary-sub">${escapeHTML(highest?.descricao||'—')}</div></div>
+        <div class="sales-summary-card"><div class="sales-summary-value">${allRows.length}</div><div class="sales-summary-label">Quantidade de itens</div></div>
+      </div>
+      <div class="finance-toolbar"><input class="search-input" value="${escapeHTML(fixedAssetsSearch)}" oninput="filterFixedAssets(this.value)" placeholder="Filtrar por código, descrição ou procedência..."><span class="muted" style="font-size:12px;white-space:nowrap;">${rows.length} item(ns)</span></div>
+      <div class="finance-table-wrap">${rows.length?`<table class="finance-table fixed-assets-table"><thead><tr><th>Criado em</th><th>Código</th><th>Descrição</th><th>Procedência</th><th>Custo orçado</th><th>Preço de compra</th></tr></thead><tbody>${rows.map(row=>`<tr>
+        <td>${salesDateText(row.criadoEm)}</td>
+        <td>${escapeHTML(row.codigo)}</td>
+        <td>${escapeHTML(row.descricao)}</td>
+        <td>${escapeHTML(row.procedencia)}</td>
+        <td>${fmtBRL(row.custoOrcado)}</td>
+        <td>${fmtBRL(row.precoCompra)}</td>
+      </tr>`).join('')}</tbody></table>`:`<div class="finance-empty">${FIXED_ASSETS_CACHE?.updatedAt?'Nenhum ativo corresponde ao filtro informado.':'Clique em “Atualizar MaxiProd” para carregar os itens do grupo 8.'}</div>`}</div>
+    </div>`;
+}
+async function refreshFixedAssetsMaxiprod(options={}){
+  const integrated=options?.integrated===true;
+  if(fixedAssetsRefreshInProgress)return false;
+  if(!isMaster(loggedUser))return false;
+  fixedAssetsRefreshInProgress=true;
+  if(!integrated)renderFixedAssetsPage();
+  const items=[],seenIds=new Set();
+  let skip=0,updatedAt=new Date().toISOString(),success=false;
+  try{
+    for(let page=0;page<250;page++){
+      const progress=integrated?(Number(options.percent)||90):Math.min(95,Math.max(5,(page+1)*5));
+      showLoading(`Carregando MaxiProd — ${progress}% · ativos · página ${page+1}`);
+      const result=await consultarAtivosImobilizadosMaxiprodRemoto({take:200,skip});
+      const pageItems=Array.isArray(result.data?.items)?result.data.items:[];
+      for(const item of pageItems){
+        const id=salesValue(item,['id','itemId']);
+        if(id!==null&&id!==undefined){
+          const key=String(id);
+          if(seenIds.has(key))continue;
+          seenIds.add(key);
+        }
+        items.push(item);
+      }
+      updatedAt=result.data?.updatedAt||updatedAt;
+      if(result.data?.done===true)break;
+      skip+=200;
+    }
+    FIXED_ASSETS_CACHE={version:1,updatedAt,items};
+    localStorage.setItem(FIXED_ASSETS_CACHE_KEY,JSON.stringify(FIXED_ASSETS_CACHE));
+    success=true;
+    if(!integrated)showToast(`${items.length} ativo(s) imobilizado(s) atualizado(s) pelo MaxiProd.`);
+  }catch(error){
+    console.error('Ativos imobilizados: falha ao consultar grupo 8',error);
+    if(!integrated)showToast(error?.message||'Não foi possível atualizar os ativos imobilizados.','err');
+  }finally{
+    fixedAssetsRefreshInProgress=false;
+    if(!integrated){hideLoading();renderFixedAssetsPage();}
+  }
+  return success;
+}
+
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 
@@ -4456,6 +4820,8 @@ Object.assign(window,{
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
+  renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,
+  renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
 abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,
   abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,alternarFiltroAtrasadosPagar,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
