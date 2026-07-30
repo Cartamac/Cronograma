@@ -1441,8 +1441,8 @@ async function filesLoad(){
   return {};
 }
 async function persist(){
-  try{await setDoc(DB_REF,DB);}
-  catch(e){console.warn('DB save:',e);showToast('Erro ao salvar dados','err');}
+  try{await setDoc(DB_REF,DB);return true;}
+  catch(e){console.warn('DB save:',e);showToast('Erro ao salvar dados','err');return false;}
 }
 async function persistFiles(){
   try{await setDoc(FILE_REF,{files:FILE_STORE});}
@@ -2418,7 +2418,7 @@ function pagarResumoAtual(rows){
 }
 function pagarCabecalhoFinanceiro(){
   const resumo=pagarResumoAtual(pagarRegistros());
-  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a pagar organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Busca rev69 · Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
+  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a pagar organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Busca rev70 · Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
   <div class="receber-maxiprod-filter"><strong>Filtro MaxiProd aplicado:</strong><span class="on">A pagar</span><span class="on">Pagos</span><span class="on">Títulos</span><span class="on">Despesas</span><span class="on">Adiantamentos</span><span class="on">Pedidos de compra</span><span class="off">Adiantamentos compensados</span><span class="off">Agrupados</span><span class="off">Parcelados</span></div>
   <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.pago)}</b><span>Total pago no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div></div>
   <div class="finance-tabs">${Object.entries(FINANCE_VIEWS).map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
@@ -2919,9 +2919,13 @@ async function consultMaxiprodCost(orderId){
       console.warn('MaxiProd OP:',productionError);
       production.erro=String(productionError?.message||'A consulta da Ordem de Produção não retornou dados.');
     }
-    MAXIPROD_STRUCTURES[orderId]=Array.isArray(result.estrutura)?result.estrutura:[];
+    const loadedStructure=Array.isArray(result.estrutura)?result.estrutura:[];
+    if(!loadedStructure.length&&(Number(result.custoTotal)||0)>0){
+      throw new Error('A função de custos do Firebase está desatualizada: o total foi calculado, mas a estrutura multinível não foi enviada.');
+    }
+    MAXIPROD_STRUCTURES[orderId]=loadedStructure;
     const savedRates=e.maxiprod?.production?.operationRates||{};
-    e.maxiprod={
+    const loadedMaxiprod={
       itemCode,
       custoTotal:Number(result.custoTotal)||0,
       itensComCusto:Number(result.itensComCusto)||0,
@@ -2930,7 +2934,7 @@ async function consultMaxiprodCost(orderId){
       criterio:result.criterio||'',
       // A estrutura também vai para o Firestore: assim ela não desaparece ao sair
       // da tela e fica visível imediatamente para os demais dispositivos.
-      estrutura:MAXIPROD_STRUCTURES[orderId],
+      estrutura:loadedStructure,
       pendencias:(result.pendencias||[]).slice(0,50).map(p=>({codigo:p.codigo||'',descricao:p.descricao||'',motivo:p.motivo||''})),
       production:{
         itemCode:production.itemCode||itemCode,
@@ -2944,12 +2948,23 @@ async function consultMaxiprodCost(orderId){
         operationRates:savedRates
       }
     };
+    e.maxiprod=loadedMaxiprod;
     e.maxiprod.custoTotal=getStructureGrandTotal(orderId);
-    await persist();
+    // Mostra imediatamente o retorno correto. O listener em tempo real pode
+    // entregar uma fotografia anterior enquanto o salvamento é confirmado.
     openCostCardId=orderId;
     renderCostsContent();
-    const suffix=e.maxiprod.itensSemCusto?` (${e.maxiprod.itensSemCusto} pendência(s))`:'';
-    showToast(`Custo MaxiProd atualizado: ${fmtBRL(e.maxiprod.custoTotal)}${suffix}`);
+    const saved=await persist();
+    // Se o listener tiver aplicado a fotografia anterior durante o await,
+    // recoloca a estrutura recém-consultada antes da renderização definitiva.
+    const currentEntry=getCostEntry(orderId);
+    currentEntry.maxiprod=loadedMaxiprod;
+    MAXIPROD_STRUCTURES[orderId]=loadedStructure;
+    openCostCardId=orderId;
+    renderCostsContent();
+    const suffix=loadedMaxiprod.itensSemCusto?` (${loadedMaxiprod.itensSemCusto} pendência(s))`:'';
+    if(saved)showToast(`Custo MaxiProd atualizado: ${fmtBRL(loadedMaxiprod.custoTotal)}${suffix}`);
+    else showToast('Estrutura carregada na tela, mas não foi possível salvá-la no Firebase. Tente novamente.','err');
   }catch(error){
     console.error('MaxiProd:',error);
     const message=String(error?.message||'Não foi possível consultar o MaxiProd.');
