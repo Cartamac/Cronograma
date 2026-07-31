@@ -900,8 +900,13 @@ input[type="file"]{display:none;}
 .fixed-assets-title p{margin:0;color:var(--text3);font-size:13px;}
 .fixed-assets-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
 .fixed-assets-table td:nth-child(2){font-weight:750;color:var(--gold);}
+.fixed-assets-table td:nth-child(4){font-family:'JetBrains Mono',monospace;text-align:right;white-space:nowrap;}
 .fixed-assets-table td:nth-child(5),.fixed-assets-table td:nth-child(6){font-family:'JetBrains Mono',monospace;font-weight:750;color:#fff;text-align:right;white-space:nowrap;}
-.fixed-assets-table th:nth-child(5),.fixed-assets-table th:nth-child(6){text-align:right;}
+.fixed-assets-table th:nth-child(4),.fixed-assets-table th:nth-child(5),.fixed-assets-table th:nth-child(6){text-align:right;}
+.payable-year-actions{display:flex;gap:9px;align-items:center;justify-content:flex-start;flex-wrap:wrap;margin:14px 0 20px;padding:12px;border:1px solid var(--border);border-radius:9px;background:var(--bg3);}
+.payable-year-actions .btn{min-width:190px;}
+.payable-year-state{font-size:12px;color:var(--text3);margin-right:auto;}
+@media(max-width:760px){.payable-year-actions{margin:12px 0;}.payable-year-actions .btn{width:100%;}.payable-year-state{width:100%;}}
 .sales-search{max-width:570px;margin:0 0 13px;}
 .sales-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:9px;}
 .sales-table{width:100%;border-collapse:collapse;min-width:1120px;}
@@ -1322,12 +1327,18 @@ let receberAnoSelecionado=null;
 let receberModo='anos'; // anos | meses | geral | calendario | mes
 let receberMesSelecionado=(new Date()).getMonth();
 let receberFiltros={descricao:'',cliente:''};
+let receivableYearRefreshInProgress=false;
+let receberTabelaLimite=200;
 // Estado exclusivo da visualização de Contas a pagar.
 let pagarAnoSelecionado=null;
 let pagarModo='anos'; // anos | meses | geral | calendario | mes
 let pagarMesSelecionado=(new Date()).getMonth();
 let pagarFiltros={descricao:'',fornecedor:''};
 let pagarSomenteAtrasados=false;
+let payableYearRefreshInProgress=false;
+let pagarTabelaLimite=200;
+let pagarRegistrosMemoSource=null;
+let pagarRegistrosMemo=[];
 const SALES_CACHE_KEY='cartamac_vendas_maxiprod_cache_v2';
 let SALES_CACHE=(()=>{
   try{return JSON.parse(localStorage.getItem(SALES_CACHE_KEY)||'{"version":2,"updatedAt":null,"items":[]}');}
@@ -1337,12 +1348,19 @@ if(SALES_CACHE?.version!==2||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={ver
 let salesRefreshInProgress=false;
 let salesSearch='';
 const salesExpandedYears=new Set();
-const FIXED_ASSETS_CACHE_KEY='cartamac_ativos_imobilizados_cache_v1';
+localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v2');
+localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v3');
+localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v4');
+localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v5');
+localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v6');
+localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v7');
+localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v8');
+const FIXED_ASSETS_CACHE_KEY='cartamac_ativos_imobilizados_estoque_cache_v9';
 let FIXED_ASSETS_CACHE=(()=>{
-  try{return JSON.parse(localStorage.getItem(FIXED_ASSETS_CACHE_KEY)||'{"version":1,"updatedAt":null,"items":[]}');}
-  catch(_){return {version:1,updatedAt:null,items:[]};}
+  try{return JSON.parse(localStorage.getItem(FIXED_ASSETS_CACHE_KEY)||'{"version":9,"updatedAt":null,"items":[]}');}
+  catch(_){return {version:9,updatedAt:null,items:[]};}
 })();
-if(FIXED_ASSETS_CACHE?.version!==1||!Array.isArray(FIXED_ASSETS_CACHE?.items))FIXED_ASSETS_CACHE={version:1,updatedAt:null,items:[]};
+if(FIXED_ASSETS_CACHE?.version!==9||!Array.isArray(FIXED_ASSETS_CACHE?.items))FIXED_ASSETS_CACHE={version:9,updatedAt:null,items:[]};
 let fixedAssetsRefreshInProgress=false;
 let fixedAssetsSearch='';
 
@@ -1368,11 +1386,81 @@ if(FINANCE_CACHE?.version!==FINANCE_CACHE_VERSION)FINANCE_CACHE={version:FINANCE
 const FINANCE_FAST_LIMIT=50000;
 const FINANCE_PAGE_SIZE=200;
 const FINANCE_RECEIVABLE_FROM='2020-01-01';
+const PAYABLE_FIRST_YEAR=2020;
+const PAYABLE_YEAR_CACHE_VERSION=1;
+const RECEIVABLE_FIRST_YEAR=2020;
+const RECEIVABLE_YEAR_CACHE_VERSION=1;
 function financeCacheDate(row){
   const value=row?.vencimentoData||row?.vencimento||row?.emissaoData||row?.emissao||row?.movimentoData||row?.data||'';
   const text=String(value),br=text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
   if(br)return new Date(`${br[3]}-${br[2]}-${br[1]}T00:00:00`).getTime()||0;
   return Date.parse(text)||0;
+}
+function payableRawYear(row){
+  const time=financeCacheDate(row);
+  return time?new Date(time).getFullYear():null;
+}
+// A partir desta versão, Contas a pagar mantém apenas anos explicitamente
+// carregados. A migração apaga somente o cache antigo desta subaba.
+if(FINANCE_CACHE?.payableYearCacheVersion!==PAYABLE_YEAR_CACHE_VERSION){
+  FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+  FINANCE_CACHE.datasets.contaAPagar={items:[],available:true};
+  FINANCE_CACHE.payableLoadedYears=[];
+  FINANCE_CACHE.payableYearCacheVersion=PAYABLE_YEAR_CACHE_VERSION;
+  try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){/* cache local opcional */}
+}
+const PAYABLE_CURRENT_YEAR=(new Date()).getFullYear();
+if(Number(FINANCE_CACHE?.payableCurrentYear)!==PAYABLE_CURRENT_YEAR){
+  const previousCurrentYear=Number(FINANCE_CACHE?.payableCurrentYear);
+  if(Number.isInteger(previousCurrentYear)){
+    FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+    FINANCE_CACHE.datasets.contaAPagar={
+      items:(FINANCE_CACHE.datasets.contaAPagar?.items||[]).filter(item=>payableRawYear(item)!==previousCurrentYear),
+      available:true
+    };
+    FINANCE_CACHE.payableLoadedYears=(Array.isArray(FINANCE_CACHE.payableLoadedYears)?FINANCE_CACHE.payableLoadedYears:[])
+      .map(Number).filter(year=>year!==previousCurrentYear);
+  }
+  FINANCE_CACHE.payableCurrentYear=PAYABLE_CURRENT_YEAR;
+  try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){/* cache local opcional */}
+}
+function payableLoadedYears(){
+  return new Set((Array.isArray(FINANCE_CACHE?.payableLoadedYears)?FINANCE_CACHE.payableLoadedYears:[]).map(Number));
+}
+function payableYearBounds(year){
+  const value=Number(year);
+  return {
+    dateFrom:`${value}-01-01`,
+    dateTo:`${value+1}-01-01`
+  };
+}
+function saveFinanceCacheLocal(){
+  try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){/* cache local opcional */}
+}
+if(FINANCE_CACHE?.receivableYearCacheVersion!==RECEIVABLE_YEAR_CACHE_VERSION){
+  FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+  FINANCE_CACHE.datasets.contaAReceber={items:[],available:true};
+  FINANCE_CACHE.receivableLoadedYears=[];
+  FINANCE_CACHE.receivableYearCacheVersion=RECEIVABLE_YEAR_CACHE_VERSION;
+  FINANCE_CACHE.receivableCurrentYear=PAYABLE_CURRENT_YEAR;
+  saveFinanceCacheLocal();
+}
+if(Number(FINANCE_CACHE?.receivableCurrentYear)!==PAYABLE_CURRENT_YEAR){
+  const previousCurrentYear=Number(FINANCE_CACHE?.receivableCurrentYear);
+  if(Number.isInteger(previousCurrentYear)){
+    FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+    FINANCE_CACHE.datasets.contaAReceber={
+      items:(FINANCE_CACHE.datasets.contaAReceber?.items||[]).filter(item=>payableRawYear(item)!==previousCurrentYear),
+      available:true
+    };
+    FINANCE_CACHE.receivableLoadedYears=(Array.isArray(FINANCE_CACHE.receivableLoadedYears)?FINANCE_CACHE.receivableLoadedYears:[])
+      .map(Number).filter(year=>year!==previousCurrentYear);
+  }
+  FINANCE_CACHE.receivableCurrentYear=PAYABLE_CURRENT_YEAR;
+  saveFinanceCacheLocal();
+}
+function receivableLoadedYears(){
+  return new Set((Array.isArray(FINANCE_CACHE?.receivableLoadedYears)?FINANCE_CACHE.receivableLoadedYears:[]).map(Number));
 }
 function trimFinanceItems(items){
   return (Array.isArray(items)?items:[]).sort((a,b)=>financeCacheDate(b)-financeCacheDate(a)).slice(0,FINANCE_FAST_LIMIT);
@@ -2113,6 +2201,8 @@ async function refreshFinanceiroFiscal(){
   // reproduzir a descricao dos adiantamentos e previsoes exatamente como no ERP.
   const sources=[...new Set([...Object.values(FINANCE_VIEWS).map(view=>view.source).filter(Boolean),'pedidosDeVenda'])];
   const totalStages=sources.length+2;
+  const payableCurrentYear=(new Date()).getFullYear();
+  const payableCurrentBounds=payableYearBounds(payableCurrentYear);
   const pageSize=FINANCE_PAGE_SIZE;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
   try{
     FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
@@ -2129,10 +2219,12 @@ async function refreshFinanceiroFiscal(){
           showLoading(`Carregando MaxiProd — ${progress}% · página ${page+1}`);
           const result=await consultarFinanceiroFiscalMaxiprodRemoto({
             source,take:pageSize,skip,
-            dateFrom:source==='contaAReceber'?FINANCE_RECEIVABLE_FROM:null,
+            dateFrom:(source==='contaAReceber'||source==='contaAPagar')?payableCurrentBounds.dateFrom:null,
+            dateTo:(source==='contaAReceber'||source==='contaAPagar')?payableCurrentBounds.dateTo:null,
             includeDetails:source==='contaAReceber'||source==='contaAPagar'
           });
           const dataset=result.data?.datasets?.[source]||{items:[]};
+          if(dataset.available===false)throw new Error(dataset.error||`O MaxiProd não disponibilizou a fonte ${source}.`);
           const pageItems=Array.isArray(dataset.items)?dataset.items:[];
           items.push(...pageItems);
           updatedAt=result.data?.updatedAt||updatedAt;
@@ -2148,7 +2240,22 @@ async function refreshFinanceiroFiscal(){
           idsVistos.add(key);
           return true;
         }):items;
-        FINANCE_CACHE.datasets[source]={items:itensUnicos,available:true};totalRecords+=itensUnicos.length;
+        if(source==='contaAPagar'){
+          const historicoMantido=(FINANCE_CACHE.datasets.contaAPagar?.items||[])
+            .filter(item=>{const year=payableRawYear(item);return year&&year!==payableCurrentYear;});
+          FINANCE_CACHE.datasets[source]={items:[...historicoMantido,...itensUnicos],available:true};
+          const loaded=payableLoadedYears();loaded.add(payableCurrentYear);
+          FINANCE_CACHE.payableLoadedYears=[...loaded].sort((a,b)=>b-a);
+        }else if(source==='contaAReceber'){
+          const historicoMantido=(FINANCE_CACHE.datasets.contaAReceber?.items||[])
+            .filter(item=>{const year=payableRawYear(item);return year&&year!==payableCurrentYear;});
+          FINANCE_CACHE.datasets[source]={items:[...historicoMantido,...itensUnicos],available:true};
+          const loaded=receivableLoadedYears();loaded.add(payableCurrentYear);
+          FINANCE_CACHE.receivableLoadedYears=[...loaded].sort((a,b)=>b-a);
+        }else{
+          FINANCE_CACHE.datasets[source]={items:itensUnicos,available:true};
+        }
+        totalRecords+=itensUnicos.length;
       }catch(error){console.error(`Financeiro/Fiscal: falha ao atualizar ${source}`,error);failed++;}
     }
     const salesProgress=Math.round((sources.length/totalStages)*100);
@@ -2160,7 +2267,7 @@ async function refreshFinanceiroFiscal(){
     if(assetsUpdated)totalRecords+=FIXED_ASSETS_CACHE.items.length;
     else failed++;
     FINANCE_CACHE.updatedAt=updatedAt;
-    try{localStorage.setItem('cartamac_financeiro_fiscal_cache',JSON.stringify(FINANCE_CACHE));}catch(_){/* cache local opcional */}
+    saveFinanceCacheLocal();
     DB.financeiroFiscalMeta={updatedAt:FINANCE_CACHE.updatedAt||new Date().toISOString()};
     await persist();
     showLoading('Carregando MaxiProd — 100%');
@@ -2317,14 +2424,82 @@ function receberListaFiltrada(rows){
     return String(source).toLocaleLowerCase('pt-BR').includes(needle);
   }));
 }
-function abrirReceberAno(year){receberAnoSelecionado=Number(year);receberModo='meses';receberFiltros={descricao:'',cliente:''};renderFinanceiroFiscal();}
+function abrirReceberAno(year){receberAnoSelecionado=Number(year);receberModo='meses';receberFiltros={descricao:'',cliente:''};receberTabelaLimite=200;renderFinanceiroFiscal();}
 function voltarReceberAnos(){receberAnoSelecionado=null;receberModo='anos';renderFinanceiroFiscal();}
 function voltarReceberParaMeses(){receberModo='meses';renderFinanceiroFiscal();}
-function abrirReceberGeral(){receberModo='geral';renderFinanceiroFiscal();}
-function abrirReceberMes(month){receberMesSelecionado=Number(month);receberModo='mes';renderFinanceiroFiscal();}
+function abrirReceberGeral(){receberModo='geral';receberTabelaLimite=200;renderFinanceiroFiscal();}
+function abrirReceberMes(month){receberMesSelecionado=Number(month);receberModo='mes';receberTabelaLimite=200;renderFinanceiroFiscal();}
 function abrirReceberCalendario(){receberMesSelecionado=0;receberModo='calendario';renderFinanceiroFiscal();}
 function alterarReceberCalendario(month){receberMesSelecionado=Number(month);renderFinanceiroFiscal();}
-function alterarFiltroReceber(key,value){receberFiltros[key]=value;renderFinanceiroFiscal();}
+function alterarFiltroReceber(key,value){receberFiltros[key]=value;receberTabelaLimite=200;renderFinanceiroFiscal();}
+function mostrarMaisContasReceber(){receberTabelaLimite+=200;renderFinanceiroFiscal();}
+async function atualizarContasReceberAno(year){
+  year=Number(year);
+  const currentYear=(new Date()).getFullYear();
+  if(!isMaster(loggedUser)||!Number.isInteger(year)||year<RECEIVABLE_FIRST_YEAR||year>currentYear)return;
+  if(receivableYearRefreshInProgress||financeRefreshInProgress){showToast('Já existe uma atualização do MaxiProd em andamento.');return;}
+  receivableYearRefreshInProgress=true;
+  const bounds=payableYearBounds(year),items=[];
+  let skip=0,updatedAt=new Date().toISOString();
+  try{
+    for(let page=0;page<250;page++){
+      showLoading(`Carregando MaxiProd — Contas a receber ${year} · página ${page+1}`);
+      const result=await consultarFinanceiroFiscalMaxiprodRemoto({
+        source:'contaAReceber',
+        take:FINANCE_PAGE_SIZE,
+        skip,
+        dateFrom:bounds.dateFrom,
+        dateTo:bounds.dateTo,
+        includeDetails:true
+      });
+      const dataset=result.data?.datasets?.contaAReceber||{items:[]};
+      if(dataset.available===false)throw new Error(dataset.error||`O MaxiProd não disponibilizou Contas a receber de ${year}.`);
+      const pageItems=Array.isArray(dataset.items)?dataset.items:[];
+      items.push(...pageItems);
+      updatedAt=result.data?.updatedAt||updatedAt;
+      if(result.data?.done===true)break;
+      skip+=FINANCE_PAGE_SIZE;
+    }
+    FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+    const otherYears=(FINANCE_CACHE.datasets.contaAReceber?.items||[]).filter(item=>payableRawYear(item)!==year);
+    FINANCE_CACHE.datasets.contaAReceber={items:[...otherYears,...items],available:true};
+    const loaded=receivableLoadedYears();loaded.add(year);
+    FINANCE_CACHE.receivableLoadedYears=[...loaded].sort((a,b)=>b-a);
+    FINANCE_CACHE.updatedAt=updatedAt;
+    saveFinanceCacheLocal();
+    DB.financeiroFiscalMeta={updatedAt};
+    await persist();
+    showToast(`Contas a receber de ${year}: ${items.length} registro(s) carregado(s).`);
+  }catch(error){
+    console.error(`Contas a receber ${year}: falha na atualização`,error);
+    showToast(error?.message||`Não foi possível carregar Contas a receber de ${year}.`,'err');
+  }finally{
+    receivableYearRefreshInProgress=false;
+    hideLoading();
+    renderFinanceiroFiscal();
+  }
+}
+function limparContasReceberAno(year){
+  year=Number(year);
+  const currentYear=(new Date()).getFullYear();
+  if(!isMaster(loggedUser)||!Number.isInteger(year)||year>=currentYear)return;
+  if(!confirm(`Limpar do navegador todos os dados de Contas a receber de ${year}? Você poderá carregá-los novamente depois.`))return;
+  FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+  FINANCE_CACHE.datasets.contaAReceber={
+    items:(FINANCE_CACHE.datasets.contaAReceber?.items||[]).filter(item=>payableRawYear(item)!==year),
+    available:true
+  };
+  FINANCE_CACHE.receivableLoadedYears=[...receivableLoadedYears()].filter(value=>value!==year).sort((a,b)=>b-a);
+  saveFinanceCacheLocal();
+  showToast(`Dados de Contas a receber de ${year} removidos deste navegador.`);
+  renderFinanceiroFiscal();
+}
+function receberAcoesAnoHtml(year){
+  const currentYear=(new Date()).getFullYear();
+  if(year>=currentYear)return '';
+  const loaded=receivableLoadedYears().has(Number(year));
+  return `<div class="payable-year-actions"><span class="payable-year-state">${loaded?'Ano carregado neste navegador':'Ano ainda não carregado'}</span><button class="btn btn-gold" type="button" onclick="atualizarContasReceberAno(${year})" ${receivableYearRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> Atualizar MaxiProd ${year}</button>${loaded?`<button class="btn btn-danger" type="button" onclick="limparContasReceberAno(${year})"><span class="msi msi-sm">delete_sweep</span> Limpar dados de ${year}</button>`:''}</div>`;
+}
 function receberResumoAtual(rows){
   const years=rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean);
   const year=receberAnoSelecionado||(years.length?Math.max(...years):new Date().getFullYear());
@@ -2339,16 +2514,18 @@ function receberResumoAtual(rows){
     atrasado:periodoRows.reduce((sum,row)=>sum+(row.aberto>0&&row.vencimento&&row.vencimento<hoje?row.aberto:0),0)
   };
 }
-function receberCabecalhoFinanceiro(data){
-  const resumo=receberResumoAtual(receberRegistros());
-  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a receber organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
+function receberCabecalhoFinanceiro(data,rows=null){
+  const resumo=receberResumoAtual(rows||receberRegistros());
+  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Contas a receber do ano atual são atualizadas automaticamente. Anos anteriores são carregados somente quando solicitados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
   <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.recebido)}</b><span>Total recebido no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div></div>
   ${financeTabsHtml()}`;
 }
 function receberFiltrosHtml(){return `<div class="receber-filtros"><input value="${esc(receberFiltros.descricao)}" onchange="alterarFiltroReceber('descricao',this.value)" placeholder="Filtrar descrição"><input value="${esc(receberFiltros.cliente)}" onchange="alterarFiltroReceber('cliente',this.value)" placeholder="Filtrar cliente pagador"></div>`;}
 function receberTabela(rows){
   const filtered=receberListaFiltrada(rows);
-  return `${receberFiltrosHtml()}<div class="finance-table-wrap">${filtered.length?`<table class="finance-table receber-table"><thead><tr><th>Vencimento</th><th>Emissão</th><th>Descrição</th><th>Cliente pagador</th><th>Parcela</th><th>Nº parcelas</th><th>Valor total do pedido</th><th>Valor da parcela</th><th>Valor recebido (parcela)</th><th>Falta receber</th></tr></thead><tbody>${filtered.map(item=>`<tr><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.emissao)}</td><td>${esc(item.descricao)}</td><td>${esc(item.cliente)}</td><td>${esc(item.parcela.numero)}</td><td>${esc(item.parcela.total)}</td><td class="money">${fmtBRL(item.negociacao)}</td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money">${fmtBRL(item.recebido)}</td><td class="money ${receberEstaAtrasado(item)?'valor-atrasado':''}">${fmtBRL(item.aberto)}</td></tr>`).join('')}</tbody></table>`:`<div class="finance-empty">Nenhum lançamento para este filtro.</div>`}</div>`;
+  const visible=filtered.slice(0,receberTabelaLimite);
+  const remaining=Math.max(0,filtered.length-visible.length);
+  return `${receberFiltrosHtml()}<div class="finance-table-wrap">${visible.length?`<table class="finance-table receber-table"><thead><tr><th>Vencimento</th><th>Emissão</th><th>Descrição</th><th>Cliente pagador</th><th>Parcela</th><th>Nº parcelas</th><th>Valor total do pedido</th><th>Valor da parcela</th><th>Valor recebido (parcela)</th><th>Falta receber</th></tr></thead><tbody>${visible.map(item=>`<tr><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.emissao)}</td><td>${esc(item.descricao)}</td><td>${esc(item.cliente)}</td><td>${esc(item.parcela.numero)}</td><td>${esc(item.parcela.total)}</td><td class="money">${fmtBRL(item.negociacao)}</td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money">${fmtBRL(item.recebido)}</td><td class="money ${receberEstaAtrasado(item)?'valor-atrasado':''}">${fmtBRL(item.aberto)}</td></tr>`).join('')}</tbody></table>${remaining?`<div style="display:flex;justify-content:center;padding:16px;"><button class="btn btn-ghost" onclick="mostrarMaisContasReceber()">Mostrar mais 200 · ${remaining} restante(s)</button></div>`:''}`:`<div class="finance-empty">Nenhum lançamento para este filtro.</div>`}</div>`;
 }
 function receberCalendario(rows,year,month){
   const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),byDay={};
@@ -2363,31 +2540,15 @@ function receberEstaAtrasado(row){
 }
 function renderContasAReceber(target){
   const data=FINANCE_CACHE?.datasets||{},rows=receberRegistros();
-  const years=[...new Set(rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean))].sort((a,b)=>b-a);
+  const currentYear=(new Date()).getFullYear();
+  const years=Array.from({length:Math.max(1,currentYear-RECEIVABLE_FIRST_YEAR+1)},(_,index)=>currentYear-index);
   let content='';
-  if(!rows.length){content='<div class="finance-empty">Clique em “Atualizar MaxiProd” para trazer todo o histórico de contas a receber.</div>';}
-  else if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>Escolha o ano para consultar os meses, a visão geral ou o calendário de vencimentos.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.aberto,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
-  else {const year=receberAnoSelecionado||years[0];const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button><h3>${year}</h3><p>Escolha uma visão para Contas a receber.</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.aberto,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
+  if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>O ano atual é atualizado pelo botão principal. Entre em um ano anterior para carregá-lo somente quando precisar.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
+  else {const year=receberAnoSelecionado||currentYear;const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button>${receberAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a receber.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
     else if(receberModo==='calendario')content=`<section class="receber-detalhe"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
     else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;content=`<section class="receber-detalhe"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><h3>${title}</h3><p>${list.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
-  target.innerHTML=`${receberCabecalhoFinanceiro(data)}${content}`;
+  target.innerHTML=`${receberCabecalhoFinanceiro(data,rows)}${content}`;
 }
-// Os cards anuais/mensais exibem o valor dos titulos filtrados. O saldo aberto
-// permanece na coluna "Falta receber" da tabela, sem zerar o total do mes.
-const renderContasAReceberAntesDoTotal=renderContasAReceber;
-renderContasAReceber=function(target){
-  renderContasAReceberAntesDoTotal(target);
-  const rows=receberRegistros();
-  const total=list=>list.reduce((sum,row)=>sum+(row.valorParcela||0),0);
-  if(receberModo==='anos'){
-    const years=[...new Set(rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean))].sort((a,b)=>b-a);
-    target.querySelectorAll('.receber-year-card strong').forEach((node,index)=>{const year=years[index];node.textContent=fmtBRL(total(rows.filter(row=>row.vencimento?.getFullYear()===year)));});
-  }else if(receberModo==='meses'){
-    const year=receberAnoSelecionado||Math.max(...rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean));
-    const cards=target.querySelectorAll('.receber-period-card');
-    for(let month=0;month<12;month++){const node=cards[month+2]?.querySelector('strong');if(node)node.textContent=fmtBRL(total(rows.filter(row=>row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month)));}
-  }
-};
 function pagarFornecedor(row){
   const detalhe=receberChave(row,['fornecedorDetalhe']);
   if(detalhe!==null)return receberTexto(detalhe);
@@ -2526,14 +2687,18 @@ function pagarRemoverPrevisoesSubstituidas(items){
   });
 }
 function pagarRegistros(){
-  const items=(FINANCE_CACHE?.datasets?.contaAPagar?.items||[])
+  const source=FINANCE_CACHE?.datasets?.contaAPagar?.items||[];
+  if(source===pagarRegistrosMemoSource)return pagarRegistrosMemo;
+  const items=source
     .filter(pagarPermitido)
     .map(pagarRegistro)
     // A API pode conservar títulos emitidos já totalmente baixados/compensados.
     // A grade com "A pagar + Pagos" não mostra registros de saldo zerado.
     .filter(item=>item.vencimento&&item.valorTitulo>0.004);
-  return pagarRemoverPrevisoesSubstituidas(items)
+  pagarRegistrosMemoSource=source;
+  pagarRegistrosMemo=pagarRemoverPrevisoesSubstituidas(items)
     .sort((a,b)=>(b.vencimento?.getTime()||0)-(a.vencimento?.getTime()||0));
+  return pagarRegistrosMemo;
 }
 function pagarEstaAtrasado(row){
   const hoje=new Date();hoje.setHours(0,0,0,0);
@@ -2550,15 +2715,91 @@ function pagarListaFiltrada(rows){
     });
   });
 }
-function abrirPagarAno(year){pagarAnoSelecionado=Number(year);pagarModo='meses';pagarFiltros={descricao:'',fornecedor:''};renderFinanceiroFiscal();}
+function abrirPagarAno(year){pagarAnoSelecionado=Number(year);pagarModo='meses';pagarFiltros={descricao:'',fornecedor:''};pagarTabelaLimite=200;renderFinanceiroFiscal();}
 function voltarPagarAnos(){pagarAnoSelecionado=null;pagarModo='anos';renderFinanceiroFiscal();}
 function voltarPagarParaMeses(){pagarModo='meses';renderFinanceiroFiscal();}
-function abrirPagarGeral(){pagarModo='geral';renderFinanceiroFiscal();}
-function abrirPagarMes(month){pagarMesSelecionado=Number(month);pagarModo='mes';renderFinanceiroFiscal();}
+function abrirPagarGeral(){pagarModo='geral';pagarTabelaLimite=200;renderFinanceiroFiscal();}
+function abrirPagarMes(month){pagarMesSelecionado=Number(month);pagarModo='mes';pagarTabelaLimite=200;renderFinanceiroFiscal();}
 function abrirPagarCalendario(){pagarMesSelecionado=0;pagarModo='calendario';renderFinanceiroFiscal();}
 function alterarPagarCalendario(month){pagarMesSelecionado=Number(month);renderFinanceiroFiscal();}
-function alterarFiltroPagar(key,value){pagarFiltros[key]=value;renderFinanceiroFiscal();}
-function alternarFiltroAtrasadosPagar(){pagarSomenteAtrasados=!pagarSomenteAtrasados;renderFinanceiroFiscal();}
+function alterarFiltroPagar(key,value){pagarFiltros[key]=value;pagarTabelaLimite=200;renderFinanceiroFiscal();}
+function alternarFiltroAtrasadosPagar(){pagarSomenteAtrasados=!pagarSomenteAtrasados;pagarTabelaLimite=200;renderFinanceiroFiscal();}
+function mostrarMaisContasPagar(){pagarTabelaLimite+=200;renderFinanceiroFiscal();}
+async function atualizarContasPagarAno(year){
+  year=Number(year);
+  const currentYear=(new Date()).getFullYear();
+  if(!isMaster(loggedUser)||!Number.isInteger(year)||year<PAYABLE_FIRST_YEAR||year>currentYear)return;
+  if(payableYearRefreshInProgress||financeRefreshInProgress){showToast('Já existe uma atualização do MaxiProd em andamento.');return;}
+  payableYearRefreshInProgress=true;
+  const bounds=payableYearBounds(year),items=[],seenIds=new Set();
+  let skip=0,updatedAt=new Date().toISOString();
+  try{
+    for(let page=0;page<250;page++){
+      showLoading(`Carregando MaxiProd — Contas a pagar ${year} · página ${page+1}`);
+      const result=await consultarFinanceiroFiscalMaxiprodRemoto({
+        source:'contaAPagar',
+        take:FINANCE_PAGE_SIZE,
+        skip,
+        dateFrom:bounds.dateFrom,
+        dateTo:bounds.dateTo,
+        includeDetails:true
+      });
+      const dataset=result.data?.datasets?.contaAPagar||{items:[]};
+      if(dataset.available===false)throw new Error(dataset.error||`O MaxiProd não disponibilizou Contas a pagar de ${year}.`);
+      const pageItems=Array.isArray(dataset.items)?dataset.items:[];
+      for(const item of pageItems){
+        const id=receberChave(item,['id']);
+        if(id!==null&&id!==undefined){
+          const key=String(id);
+          if(seenIds.has(key))continue;
+          seenIds.add(key);
+        }
+        items.push(item);
+      }
+      updatedAt=result.data?.updatedAt||updatedAt;
+      if(result.data?.done===true)break;
+      skip+=FINANCE_PAGE_SIZE;
+    }
+    FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+    const otherYears=(FINANCE_CACHE.datasets.contaAPagar?.items||[]).filter(item=>payableRawYear(item)!==year);
+    FINANCE_CACHE.datasets.contaAPagar={items:[...otherYears,...items],available:true};
+    const loaded=payableLoadedYears();loaded.add(year);
+    FINANCE_CACHE.payableLoadedYears=[...loaded].sort((a,b)=>b-a);
+    FINANCE_CACHE.updatedAt=updatedAt;
+    saveFinanceCacheLocal();
+    DB.financeiroFiscalMeta={updatedAt};
+    await persist();
+    showToast(`Contas a pagar de ${year}: ${items.length} registro(s) carregado(s).`);
+  }catch(error){
+    console.error(`Contas a pagar ${year}: falha na atualização`,error);
+    showToast(error?.message||`Não foi possível carregar Contas a pagar de ${year}.`,'err');
+  }finally{
+    payableYearRefreshInProgress=false;
+    hideLoading();
+    renderFinanceiroFiscal();
+  }
+}
+function limparContasPagarAno(year){
+  year=Number(year);
+  const currentYear=(new Date()).getFullYear();
+  if(!isMaster(loggedUser)||!Number.isInteger(year)||year>=currentYear)return;
+  if(!confirm(`Limpar do navegador todos os dados de Contas a pagar de ${year}? Você poderá carregá-los novamente depois.`))return;
+  FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+  FINANCE_CACHE.datasets.contaAPagar={
+    items:(FINANCE_CACHE.datasets.contaAPagar?.items||[]).filter(item=>payableRawYear(item)!==year),
+    available:true
+  };
+  FINANCE_CACHE.payableLoadedYears=[...payableLoadedYears()].filter(value=>value!==year).sort((a,b)=>b-a);
+  saveFinanceCacheLocal();
+  showToast(`Dados de Contas a pagar de ${year} removidos deste navegador.`);
+  renderFinanceiroFiscal();
+}
+function pagarAcoesAnoHtml(year){
+  const currentYear=(new Date()).getFullYear();
+  if(year>=currentYear)return '';
+  const loaded=payableLoadedYears().has(Number(year));
+  return `<div class="payable-year-actions"><span class="payable-year-state">${loaded?'Ano carregado neste navegador':'Ano ainda não carregado'}</span><button class="btn btn-gold" type="button" onclick="atualizarContasPagarAno(${year})" ${payableYearRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> Atualizar MaxiProd ${year}</button>${loaded?`<button class="btn btn-danger" type="button" onclick="limparContasPagarAno(${year})"><span class="msi msi-sm">delete_sweep</span> Limpar dados de ${year}</button>`:''}</div>`;
+}
 function pagarResumoAtual(rows){
   const years=rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean);
   const year=pagarAnoSelecionado||(years.length?Math.max(...years):new Date().getFullYear());
@@ -2572,9 +2813,9 @@ function pagarResumoAtual(rows){
     atrasado:periodoRows.reduce((sum,row)=>sum+(pagarEstaAtrasado(row)?row.aberto:0),0)
   };
 }
-function pagarCabecalhoFinanceiro(){
-  const resumo=pagarResumoAtual(pagarRegistros());
-  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd. Contas a pagar organizadas por vencimento.</p></div><div class="finance-actions"><span class="finance-status">Busca rev71 · Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
+function pagarCabecalhoFinanceiro(rows=null){
+  const resumo=pagarResumoAtual(rows||pagarRegistros());
+  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Contas a pagar do ano atual são atualizadas automaticamente. Anos anteriores são carregados somente quando solicitados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
   <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.pago)}</b><span>Total pago no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div></div>
   ${financeTabsHtml()}`;
 }
@@ -2583,7 +2824,9 @@ function pagarFiltrosHtml(){
 }
 function pagarTabela(rows){
   const filtered=pagarListaFiltrada(rows);
-  return `${pagarFiltrosHtml()}<div class="finance-table-wrap">${filtered.length?`<table class="finance-table pagar-table"><thead><tr><th>Vencimento</th><th>Emissão</th><th>Descrição</th><th>Fornecedor</th><th>Referente a</th><th>Parcela</th><th>Nº parcelas</th><th>Valor</th><th>Valor pago</th><th>Falta pagar</th></tr></thead><tbody>${filtered.map(item=>`<tr><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.emissao)}</td><td>${esc(item.descricao)}</td><td>${esc(item.fornecedor)}</td><td>${esc(item.referenteA)}</td><td>${esc(item.parcela.numero)}</td><td>${esc(item.parcela.total)}</td><td class="money">${fmtBRL(item.valorTitulo)}</td><td class="money">${fmtBRL(item.pago)}</td><td class="money ${pagarEstaAtrasado(item)?'valor-atrasado':''}">${fmtBRL(item.aberto)}</td></tr>`).join('')}</tbody></table>`:`<div class="finance-empty">Nenhum lançamento para este filtro.</div>`}</div>`;
+  const visible=filtered.slice(0,pagarTabelaLimite);
+  const remaining=Math.max(0,filtered.length-visible.length);
+  return `${pagarFiltrosHtml()}<div class="finance-table-wrap">${visible.length?`<table class="finance-table pagar-table"><thead><tr><th>Vencimento</th><th>Emissão</th><th>Descrição</th><th>Fornecedor</th><th>Referente a</th><th>Parcela</th><th>Nº parcelas</th><th>Valor</th><th>Valor pago</th><th>Falta pagar</th></tr></thead><tbody>${visible.map(item=>`<tr><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.emissao)}</td><td>${esc(item.descricao)}</td><td>${esc(item.fornecedor)}</td><td>${esc(item.referenteA)}</td><td>${esc(item.parcela.numero)}</td><td>${esc(item.parcela.total)}</td><td class="money">${fmtBRL(item.valorTitulo)}</td><td class="money">${fmtBRL(item.pago)}</td><td class="money ${pagarEstaAtrasado(item)?'valor-atrasado':''}">${fmtBRL(item.aberto)}</td></tr>`).join('')}</tbody></table>${remaining?`<div style="display:flex;justify-content:center;padding:16px;"><button class="btn btn-ghost" onclick="mostrarMaisContasPagar()">Mostrar mais 200 · ${remaining} restante(s)</button></div>`:''}`:`<div class="finance-empty">Nenhum lançamento para este filtro.</div>`}</div>`;
 }
 function pagarCalendario(rows,year,month){
   const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),byDay={};
@@ -2594,14 +2837,14 @@ function pagarCalendario(rows,year,month){
 }
 function renderContasAPagar(target){
   const rows=pagarRegistros();
-  const years=[...new Set(rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean))].sort((a,b)=>b-a);
+  const currentYear=(new Date()).getFullYear();
+  const years=Array.from({length:Math.max(1,currentYear-PAYABLE_FIRST_YEAR+1)},(_,index)=>currentYear-index);
   let content='';
-  if(!rows.length){content='<div class="finance-empty">Clique em “Atualizar MaxiProd” para trazer o histórico de contas a pagar.</div>';}
-  else if(pagarModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a pagar por ano</h3><p>Escolha o ano para consultar os meses, a visão geral ou o calendário de vencimentos.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorTitulo,0);return `<button class="receber-year-card" onclick="abrirPagarAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
+  if(pagarModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a pagar por ano</h3><p>O ano atual é atualizado pelo botão principal. Entre em um ano anterior para carregá-lo somente quando precisar.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorTitulo,0);return `<button class="receber-year-card" onclick="abrirPagarAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
   else {
-    const year=pagarAnoSelecionado||years[0];
+    const year=pagarAnoSelecionado||currentYear;
     const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);
-    if(pagarModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarPagarAnos()">← Todos os anos</button><h3>${year}</h3><p>Escolha uma visão para Contas a pagar.</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirPagarGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirPagarCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorTitulo,0);return `<button class="receber-period-card" onclick="abrirPagarMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
+    if(pagarModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarPagarAnos()">← Todos os anos</button>${pagarAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a pagar.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirPagarGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirPagarCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorTitulo,0);return `<button class="receber-period-card" onclick="abrirPagarMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
     else if(pagarModo==='calendario')content=`<section class="receber-detalhe"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><h3>Calendário de vencimentos — ${receberMesNome(pagarMesSelecionado)} de ${year}</h3>${pagarCalendario(yearRows,year,pagarMesSelecionado)}</section>`;
     else {
       const list=pagarModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===pagarMesSelecionado):yearRows;
@@ -2610,7 +2853,7 @@ function renderContasAPagar(target){
       content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><button class="btn btn-danger pagar-atrasados-btn ${pagarSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosPagar()">${pagarSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${pagarTabela(list)}</section>`;
     }
   }
-  target.innerHTML=`${pagarCabecalhoFinanceiro()}${content}`;
+  target.innerHTML=`${pagarCabecalhoFinanceiro(rows)}${content}`;
 }
 function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
@@ -4612,52 +4855,78 @@ async function refreshSalesMaxiprod(options={}){
 
 // ─────────────── ATIVOS IMOBILIZADOS · GRUPO 8 ───────────────
 function fixedAssetRecord(row){
+  const quantidade=salesNumber(salesValue(row,['quantidade','quantidadeAtual','quantidadeEmEstoque','estoqueQuantidade','saldoAtual','saldoQuantidade','quantidadeTotal']));
+  const valorUnitario=salesNumber(salesValue(row,['valorUnitario','custoUnitario','custoMedioUnitario','custoMedio','precoUnitario']));
   return {
     id:salesValue(row,['id','itemId']),
     criadoEm:salesDate(salesValue(row,['criadoEm','criacaoData','dataCriacao'])),
     codigo:salesText(salesValue(row,['codigo','itemCodigo'])),
     descricao:salesText(salesValue(row,['descricao','nome','itemDescricao'])),
-    procedencia:salesText(salesValue(row,['procedencia','origem','tipoProcedencia'])),
-    custoOrcado:salesNumber(salesValue(row,['custoOrcado','custoOrcamentado','valorOrcado'])),
-    precoCompra:salesNumber(salesValue(row,['precoCompra','precoDeCompra','precoDeCompraUltimoValor','ultimoPrecoDeCompra'])),
+    estoque:salesText(salesValue(row,['estoque','conta','contaEstoque','contaDeEstoque'])),
+    quantidade,
+    valorUnitario,
+    valorEstoque:salesNumber(salesValue(row,['valorEstoque','custoTotal','valorTotal']))||(quantidade*valorUnitario),
   };
 }
 function fixedAssetRecords(){
-  const seen=new Set();
-  return (FIXED_ASSETS_CACHE?.items||[]).map(fixedAssetRecord).filter(row=>{
-    const fallback=[row.codigo,row.descricao,row.criadoEm?.getTime()||''].join('|');
-    const key=row.id!==null&&row.id!==undefined?`id:${row.id}`:`fallback:${fallback}`;
-    if(seen.has(key))return false;
-    seen.add(key);
-    return true;
-  }).sort((a,b)=>(b.criadoEm?.getTime()||0)-(a.criadoEm?.getTime()||0)||String(a.codigo).localeCompare(String(b.codigo),'pt-BR',{numeric:true}));
+  const sourceName=String(FIXED_ASSETS_CACHE?.source||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const apiAlreadyGrouped=/agrup|consolidad|sintetic/.test(sourceName);
+  let rows=(FIXED_ASSETS_CACHE?.items||[]).map(fixedAssetRecord);
+  if(!apiAlreadyGrouped){
+    // Compatibilidade com versoes do schema que expoem apenas as posicoes
+    // analiticas: a grade do MaxiProd agrupa por Item + Conta de estoque.
+    const grouped=new Map();
+    for(const row of rows){
+      // Posicoes internas completamente vazias nao fazem parte da grade do
+      // MaxiProd. Mantemos ajustes com quantidade zero quando possuem custo.
+      if(Math.abs(row.quantidade)<=0.0000001&&Math.abs(row.valorEstoque)<=0.0000001)continue;
+      const code=String(row.codigo||'').trim().toUpperCase();
+      const stock=String(row.estoque||'').trim().toUpperCase();
+      const key=`${code||row.descricao.toUpperCase()}::${stock}`;
+      const current=grouped.get(key);
+      if(!current){grouped.set(key,{...row});continue;}
+      current.quantidade+=row.quantidade;
+      current.valorEstoque+=row.valorEstoque;
+      if((row.criadoEm?.getTime()||0)>(current.criadoEm?.getTime()||0))current.criadoEm=row.criadoEm;
+    }
+    rows=[...grouped.values()].map(row=>({
+      ...row,
+      valorUnitario:row.quantidade!==0?row.valorEstoque/row.quantidade:row.valorUnitario,
+    }));
+  }
+  return rows.map(row=>({
+    ...row,
+    // Preserva o Custo total calculado pelo ERP. Normalmente equivale a
+    // Quantidade x Custo unitario e tambem contempla ajustes internos.
+    precoTotal:row.valorEstoque,
+  })).sort((a,b)=>(b.criadoEm?.getTime()||0)-(a.criadoEm?.getTime()||0)||String(a.codigo).localeCompare(String(b.codigo),'pt-BR',{numeric:true}));
 }
 function filterFixedAssets(value){fixedAssetsSearch=String(value||'');renderFixedAssetsPage();}
 function renderFixedAssetsPage(container=document.getElementById('financeiroContent')){
   if(!container)return;
   const allRows=fixedAssetRecords();
   const query=fixedAssetsSearch.trim().toLowerCase();
-  const rows=query?allRows.filter(row=>[row.codigo,row.descricao,row.procedencia].join(' ').toLowerCase().includes(query)):allRows;
-  const total=allRows.reduce((sum,row)=>sum+row.precoCompra,0);
-  const highest=[...allRows].sort((a,b)=>b.precoCompra-a.precoCompra)[0]||null;
+  const rows=query?allRows.filter(row=>[row.codigo,row.descricao].join(' ').toLowerCase().includes(query)):allRows;
+  const total=allRows.reduce((sum,row)=>sum+row.precoTotal,0);
+  const highest=[...allRows].sort((a,b)=>b.precoTotal-a.precoTotal)[0]||null;
   const updated=FIXED_ASSETS_CACHE?.updatedAt?new Date(FIXED_ASSETS_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
   container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de ativos: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(fixedAssetsRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(fixedAssetsRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
     ${financeTabsHtml()}
     <div class="fixed-assets-page">
-      <div class="fixed-assets-title"><h2><span class="msi">precision_manufacturing</span> Ativos imobilizados</h2><p>Itens pertencentes ao grupo 8 no MaxiProd.</p></div>
+      <div class="fixed-assets-title"><h2><span class="msi">precision_manufacturing</span> Ativos imobilizados</h2><p>Registros da grade de Estoque pertencentes ao grupo 8 no MaxiProd.</p></div>
       <div class="fixed-assets-summary">
-        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Valor total · preço de compra</div></div>
-        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(highest?.precoCompra||0)}</div><div class="sales-summary-label">Item com maior valor</div><div class="sales-summary-sub">${escapeHTML(highest?.descricao||'—')}</div></div>
+        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Valor total do estoque</div></div>
+        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(highest?.precoTotal||0)}</div><div class="sales-summary-label">Item com maior valor em estoque</div><div class="sales-summary-sub">${escapeHTML(highest?.descricao||'—')}</div></div>
         <div class="sales-summary-card"><div class="sales-summary-value">${allRows.length}</div><div class="sales-summary-label">Quantidade de itens</div></div>
       </div>
-      <div class="finance-toolbar"><input class="search-input" value="${escapeHTML(fixedAssetsSearch)}" oninput="filterFixedAssets(this.value)" placeholder="Filtrar por código, descrição ou procedência..."><span class="muted" style="font-size:12px;white-space:nowrap;">${rows.length} item(ns)</span></div>
-      <div class="finance-table-wrap">${rows.length?`<table class="finance-table fixed-assets-table"><thead><tr><th>Criado em</th><th>Código</th><th>Descrição</th><th>Procedência</th><th>Custo orçado</th><th>Preço de compra</th></tr></thead><tbody>${rows.map(row=>`<tr>
+      <div class="finance-toolbar"><input class="search-input" value="${escapeHTML(fixedAssetsSearch)}" oninput="filterFixedAssets(this.value)" placeholder="Filtrar por código ou descrição..."><span class="muted" style="font-size:12px;white-space:nowrap;">${rows.length} item(ns)</span></div>
+      <div class="finance-table-wrap">${rows.length?`<table class="finance-table fixed-assets-table"><thead><tr><th>Criado em</th><th>Código</th><th>Descrição</th><th>Quantidade</th><th>Valor unitário</th><th>Preço total</th></tr></thead><tbody>${rows.map(row=>`<tr>
         <td>${salesDateText(row.criadoEm)}</td>
         <td>${escapeHTML(row.codigo)}</td>
         <td>${escapeHTML(row.descricao)}</td>
-        <td>${escapeHTML(row.procedencia)}</td>
-        <td>${fmtBRL(row.custoOrcado)}</td>
-        <td>${fmtBRL(row.precoCompra)}</td>
+        <td>${row.quantidade.toLocaleString('pt-BR',{maximumFractionDigits:5})}</td>
+        <td>${fmtBRL(row.valorUnitario)}</td>
+        <td>${fmtBRL(row.precoTotal)}</td>
       </tr>`).join('')}</tbody></table>`:`<div class="finance-empty">${FIXED_ASSETS_CACHE?.updatedAt?'Nenhum ativo corresponde ao filtro informado.':'Clique em “Atualizar MaxiProd” para carregar os itens do grupo 8.'}</div>`}</div>
     </div>`;
 }
@@ -4667,31 +4936,26 @@ async function refreshFixedAssetsMaxiprod(options={}){
   if(!isMaster(loggedUser))return false;
   fixedAssetsRefreshInProgress=true;
   if(!integrated)renderFixedAssetsPage();
-  const items=[],seenIds=new Set();
-  let skip=0,updatedAt=new Date().toISOString(),success=false;
+  const items=[];
+  let skip=0,updatedAt=new Date().toISOString(),source='',success=false;
   try{
     for(let page=0;page<250;page++){
       const progress=integrated?(Number(options.percent)||90):Math.min(95,Math.max(5,(page+1)*5));
       showLoading(`Carregando MaxiProd — ${progress}% · ativos · página ${page+1}`);
       const result=await consultarAtivosImobilizadosMaxiprodRemoto({take:200,skip});
       const pageItems=Array.isArray(result.data?.items)?result.data.items:[];
-      for(const item of pageItems){
-        const id=salesValue(item,['id','itemId']);
-        if(id!==null&&id!==undefined){
-          const key=String(id);
-          if(seenIds.has(key))continue;
-          seenIds.add(key);
-        }
-        items.push(item);
-      }
+      // Nao remover IDs repetidos: um mesmo item pode aparecer em mais de
+      // uma linha/conta da grade agrupada, exatamente como no MaxiProd.
+      items.push(...pageItems);
       updatedAt=result.data?.updatedAt||updatedAt;
+      source=result.data?.source||source;
       if(result.data?.done===true)break;
       skip+=200;
     }
-    FIXED_ASSETS_CACHE={version:1,updatedAt,items};
+    FIXED_ASSETS_CACHE={version:9,updatedAt,source,items};
     localStorage.setItem(FIXED_ASSETS_CACHE_KEY,JSON.stringify(FIXED_ASSETS_CACHE));
     success=true;
-    if(!integrated)showToast(`${items.length} ativo(s) imobilizado(s) atualizado(s) pelo MaxiProd.`);
+    if(!integrated)showToast(`${fixedAssetRecords().length} ativo(s) imobilizado(s) atualizado(s) pelo MaxiProd.`);
   }catch(error){
     console.error('Ativos imobilizados: falha ao consultar grupo 8',error);
     if(!integrated)showToast(error?.message||'Não foi possível atualizar os ativos imobilizados.','err');
@@ -4822,8 +5086,8 @@ Object.assign(window,{
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
-abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,
-  abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,alternarFiltroAtrasadosPagar,
+abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,mostrarMaisContasReceber,atualizarContasReceberAno,limparContasReceberAno,
+  abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,alternarFiltroAtrasadosPagar,mostrarMaisContasPagar,atualizarContasPagarAno,limparContasPagarAno,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
 </script>
