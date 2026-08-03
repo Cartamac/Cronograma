@@ -82,6 +82,11 @@ input[type="file"]{display:none;}
 .dev-tab{padding:7px 14px;border-radius:var(--radius);cursor:pointer;color:var(--text2);font-size:14.5px;font-weight:500;border:none;background:transparent;transition:all .15s;white-space:nowrap;flex-shrink:0;min-height:38px;display:flex;align-items:center;gap:7px;}
 .dev-tab:hover{background:var(--bg3);color:var(--text);}
 .dev-tab.active{background:var(--bg4);color:var(--accent2);border:1px solid var(--border2);}
+.dev-nav-separator{width:1px;height:30px;background:var(--border2);margin:4px 9px;flex:0 0 1px;align-self:center;}
+.cronograma-subtabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.cronograma-subtab{border:1px solid var(--border2);border-radius:var(--radius);padding:9px 14px;background:var(--bg3);color:var(--text2);font:600 13px Inter,sans-serif;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s;}
+.cronograma-subtab:hover{color:var(--text);border-color:#555;}
+.cronograma-subtab.active{background:rgba(205,173,72,.15);border-color:var(--gold);color:var(--accent2);}
 .header-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .rev-badge{display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:4px 8px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--gold);font-weight:500;white-space:nowrap;}
 .admin-user-badge{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px;white-space:nowrap;}
@@ -92,6 +97,7 @@ input[type="file"]{display:none;}
   .header-actions{order:1;margin-left:auto;}
   .dev-nav{order:2;width:100%;flex:none;padding-bottom:2px;}
   .dev-tab{font-size:13px;padding:6px 11px;min-height:35px;gap:6px;}
+  .dev-nav-separator{height:27px;margin:4px 7px;}
   .btn-sair-label{display:none;}
   .rev-badge{font-size:11px;padding:3px 6px;}
   .admin-user-badge{display:none;}
@@ -1029,16 +1035,15 @@ input[type="file"]{display:none;}
   <header class="dev-header">
     <img class="brand-icon-header" src="data:image/png;base64,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" alt="Cartamac"><div class="dev-wordmark">CARTAMAC</div>
     <nav class="dev-nav">
-      <button class="dev-tab active" onclick="switchDevTab('cronograma',this)"><span class="msi msi-sm">list_alt</span> Cronograma</button>
-      <button class="dev-tab" onclick="switchDevTab('gantt',this)"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
+      <button class="dev-tab active" id="tabCronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="dev-tab" id="tabClientes" onclick="switchDevTab('clientes',this)"><span class="msi msi-sm">group</span> Clientes</button>
       <button class="dev-tab" id="tabAdmins" onclick="switchDevTab('admins',this)"><span class="msi msi-sm">shield_person</span> Admins</button>
-      <button class="dev-tab" id="tabImportar" onclick="switchDevTab('importar',this)"><span class="msi msi-sm">upload_file</span> Importar</button>
-      <button class="dev-tab" id="tabCustos" onclick="switchDevTab('custos',this)"><span class="msi msi-sm">payments</span> Custos</button>
-      <button class="dev-tab" id="tabFinanceiro" onclick="switchDevTab('financeiro',this)"><span class="msi msi-sm">account_balance</span> Financeiro/Fiscal</button>
       <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">settings</span> Peças de Reposição</button>
       <button class="dev-tab" id="tabSimulador" onclick="switchDevTab('simulador',this)"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
       <button class="dev-tab" id="tabMacroEngenharia" onclick="switchDevTab('macro-engenharia',this)"><span class="msi msi-sm">architecture</span> Macro Engenharia</button>
+      <span class="dev-nav-separator" aria-hidden="true"></span>
+      <button class="dev-tab" id="tabCustos" onclick="switchDevTab('custos',this)"><span class="msi msi-sm">payments</span> Custos</button>
+      <button class="dev-tab" id="tabFinanceiro" onclick="switchDevTab('financeiro',this)"><span class="msi msi-sm">account_balance</span> Financeiro/Fiscal</button>
     </nav>
     <div class="header-actions">
       <div class="admin-user-badge"><span class="msi msi-sm">person</span> <strong id="adminNameBadge">Admin</strong></div>
@@ -1049,6 +1054,11 @@ input[type="file"]{display:none;}
 
   <!-- CRONOGRAMA -->
   <div class="page active" id="page-cronograma">
+    <div class="cronograma-subtabs">
+      <button class="cronograma-subtab active" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="cronograma-subtab" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
+      <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
+    </div>
     <div class="filters">
       <div class="search-wrap"><span class="msi msi-sm">search</span><input type="text" class="search-input" placeholder="Buscar pedido, código, OP..." id="searchInput" oninput="filterOrders()"></div>
       <select class="filter-select" id="filterWeek" onchange="filterOrders()">
@@ -1063,12 +1073,6 @@ input[type="file"]{display:none;}
         <option value="on_track">No prazo</option>
         <option value="done">Concluídos</option>
       </select>
-      <label class="filter-chip" id="chipDelayed">
-        <input type="checkbox" id="onlyDelayed" onchange="toggleChip('chipDelayed');filterOrders()">
-        <span class="msi msi-sm filled msi-red">circle</span> Só atrasados
-      </label>
-      <button class="btn btn-sm btn-ghost" onclick="collapseAll()">Recolher</button>
-      <button class="btn btn-sm btn-ghost" onclick="expandAll()">Expandir</button>
     </div>
     <div class="stats-row" id="statsRow"></div>
     <div class="orders-list" id="ordersList"></div>
@@ -1076,6 +1080,11 @@ input[type="file"]{display:none;}
 
   <!-- GANTT -->
   <div class="page" id="page-gantt">
+    <div class="cronograma-subtabs">
+      <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="cronograma-subtab active" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
+      <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
+    </div>
     <div class="filters" style="margin-bottom:16px;">
       <select class="filter-select" id="ganttFilter" onchange="renderGantt()">
         <option value="">Todos os pedidos</option>
@@ -1222,6 +1231,11 @@ input[type="file"]{display:none;}
 
   <!-- IMPORTAR -->
   <div class="page" id="page-importar">
+    <div class="cronograma-subtabs">
+      <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="cronograma-subtab" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
+      <button class="cronograma-subtab cron-subtab-import active" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
+    </div>
     <div class="import-box">
       <h3><span class="msi msi-sm">folder_open</span> Importar Arquivo Microsoft Project (.XML)</h3>
       <div style="background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.2);border-radius:var(--radius);padding:14px;margin-bottom:16px;font-size:14px;color:var(--text2);">
@@ -1441,7 +1455,7 @@ let RAW_MATERIAL_CACHE=(()=>{
 if(RAW_MATERIAL_CACHE?.version!==1||!Array.isArray(RAW_MATERIAL_CACHE?.items))RAW_MATERIAL_CACHE={version:1,updatedAt:null,items:[]};
 let rawMaterialRefreshInProgress=false;
 let rawMaterialSearch='';
-const rawMaterialLimits={1:200,2:200,7:200};
+const rawMaterialLimits={1:200,2:200,4:200,7:200,11:200};
 const rawMaterialExpandedGroups=new Set(['1']);
 
 function scheduleFinanceRender(){
@@ -1850,7 +1864,7 @@ function doAdminLogin(){
   const engineering=isEngineering(loggedUser);
   document.getElementById('btnNewAdmin').style.display=master?'':'none';
   document.getElementById('btnNewClient').style.display=master?'':'none';
-  document.getElementById('tabImportar').style.display=master?'':'none';
+  document.querySelectorAll('.cron-subtab-import').forEach(tab=>tab.style.display=master?'flex':'none');
   document.getElementById('tabCustos').style.display=master?'':'none';
   document.getElementById('tabFinanceiro').style.display=(master||seller)?'flex':'none';
   document.getElementById('tabPecas').style.display=(master||seller)?'flex':'none';
@@ -1897,6 +1911,16 @@ function switchDevTab(id,btn){
   if(id==='clientes')  renderClientsPanel();
   if(id==='admins')    renderAdminsPanel();
   if(id==='importar')  renderImportHistory();
+}
+function syncCronogramaSubtabs(id){
+  document.querySelectorAll('.cronograma-subtab').forEach(tab=>tab.classList.toggle('active',tab.dataset.cronSubtab===id));
+}
+function switchCronogramaSubtab(id){
+  if(id==='importar'&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
+  const headerTab=document.getElementById('tabCronograma');
+  if(!headerTab)return;
+  switchDevTab(id,headerTab);
+  syncCronogramaSubtabs(id);
 }
 function renderDevAll(){renderStats();renderOrders();populateGanttFilter();}
 
@@ -2044,7 +2068,7 @@ function filterOrders(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   const weekSel=document.getElementById('filterWeek').value;
   const status=document.getElementById('filterStatus').value;
-  const onlyD=document.getElementById('onlyDelayed').checked;
+  const onlyD=document.getElementById('onlyDelayed')?.checked||false;
   const weekRangeVal=weekSel==='next1'?weekRange(1):weekSel==='next2'?weekRange(2):null;
   const filtered=ORDERS.filter(o=>{
     const s=getStatus(o);
@@ -2652,7 +2676,7 @@ function renderContasAReceber(target){
   let content='';
   if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>O ano atual é atualizado pelo botão principal. Entre em um ano anterior para carregá-lo somente quando precisar.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
   else {const year=receberAnoSelecionado||currentYear;const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button>${receberAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a receber.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
-    else if(receberModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber')"><span class="msi msi-sm">picture_as_pdf</span> PDF do calendário</button></div><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
+    else if(receberModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber','expandido')"><span class="msi msi-sm">receipt_long</span> PDF expandido</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
     else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
   target.innerHTML=`${receberCabecalhoFinanceiro(data,rows)}${content}`;
 }
@@ -2954,13 +2978,14 @@ function pagarCalendario(rows,year,month){
   }
   return `<div class="receber-calendar-months">${Array.from({length:12},(_,m)=>`<button class="${m===month?'active':''}" onclick="alterarPagarCalendario(${m})">${receberMesSigla(m)}</button>`).join('')}</div><div class="receber-calendar"><div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>${cells.join('')}</div>`;
 }
-function exportFinanceCalendarPDF(kind){
+function exportFinanceCalendarPDF(kind,mode='curto'){
   const JsPDF=window.jspdf?.jsPDF;
   if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
   const isReceive=kind==='receber';
   const year=Number(isReceive?receberAnoSelecionado:pagarAnoSelecionado)||(new Date()).getFullYear();
   const month=Number(isReceive?receberMesSelecionado:pagarMesSelecionado);
   const records=(isReceive?receberRegistros():pagarRegistros()).filter(row=>row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month);
+  if(mode==='expandido'){exportFinanceCalendarExpandedPDF(kind,year,month,records);return;}
   const total=records.reduce((sum,row)=>sum+(isReceive?(row.valorParcela||0):(row.valorTitulo||0)),0);
   const open=records.reduce((sum,row)=>sum+(row.aberto||0),0);
   const overdue=records.reduce((sum,row)=>sum+((isReceive?receberEstaAtrasado(row):pagarEstaAtrasado(row))?(row.aberto||0):0),0);
@@ -2993,6 +3018,50 @@ function exportFinanceCalendarPDF(kind){
   doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(120,120,120);doc.text('Valores organizados pela data de vencimento.',left,205);doc.text('CARTAMAC',pageW-right,205,{align:'right'});
   doc.save(`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${year}-${String(month+1).padStart(2,'0')}.pdf`);
 }
+function exportFinanceCalendarExpandedPDF(kind,year,month,records){
+  const JsPDF=window.jspdf?.jsPDF;
+  if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const isReceive=kind==='receber';
+  const sorted=[...records].sort((a,b)=>(a.vencimento?.getTime()||0)-(b.vencimento?.getTime()||0)||(a.emissao?.getTime()||0)-(b.emissao?.getTime()||0));
+  const total=sorted.reduce((sum,row)=>sum+(isReceive?(row.valorParcela||0):(row.valorTitulo||0)),0);
+  const received=sorted.reduce((sum,row)=>sum+(isReceive?(row.recebido||0):(row.pago||0)),0);
+  const open=sorted.reduce((sum,row)=>sum+(row.aberto||0),0);
+  const overdue=sorted.reduce((sum,row)=>sum+((isReceive?receberEstaAtrasado(row):pagarEstaAtrasado(row))?(row.aberto||0):0),0);
+  const headers=isReceive
+    ?['Venc.','Emissão','Descrição','Cliente pagador','Parc.','Nº parc.','Total pedido','Valor parcela','Recebido','Falta receber']
+    :['Venc.','Emissão','Descrição','Fornecedor','Referente a','Parc.','Nº parc.','Valor','Valor pago','Falta pagar'];
+  const widths=isReceive?[17,17,46,49,10,11,27,25,24,25]:[17,17,41,43,38,10,11,28,27,28];
+  const values=row=>isReceive
+    ?[receberDataFormat(row.vencimento),receberDataFormat(row.emissao),row.descricao,row.cliente,row.parcela.numero,row.parcela.total,fmtBRL(row.negociacao),fmtBRL(row.valorParcela),fmtBRL(row.recebido),fmtBRL(row.aberto)]
+    :[receberDataFormat(row.vencimento),receberDataFormat(row.emissao),row.descricao,row.fornecedor,row.referenteA,row.parcela.numero,row.parcela.total,fmtBRL(row.valorTitulo),fmtBRL(row.pago),fmtBRL(row.aberto)];
+  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),left=7,pageW=297,pageBottom=202;
+  const drawHeader=(firstPage=false)=>{
+    let y=firstPage?10:8;
+    if(firstPage){
+      doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(25,25,25);doc.text(`CARTAMAC - ${isReceive?'Contas a receber':'Contas a pagar'}`,left,y);y+=6;
+      doc.setFontSize(10);doc.text(`Relatório expandido - ${receberMesNome(month)} de ${year}`,left,y);y+=5;
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · ${sorted.length} lançamento(s)`,left,y);y+=6;
+      const cards=[['TOTAL',total],['RECEBIDO / PAGO',received],['EM ABERTO',open],['ATRASADO',overdue]];
+      cards.forEach((card,index)=>{const x=left+index*70.5;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,y,67.5,12,1.2,1.2,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,y+4);doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(index===3&&overdue>0?195:35,index===3&&overdue>0?45:130,index===3&&overdue>0?55:70);doc.text(fmtBRL(card[1]),x+2.5,y+9);});
+      y+=17;
+    }
+    doc.setFillColor(40,40,40);doc.rect(left,y,283,8,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(5.6);
+    let x=left;headers.forEach((header,index)=>{doc.text(header,x+1.2,y+5,{maxWidth:widths[index]-2.4});x+=widths[index];});
+    return y+8;
+  };
+  let y=drawHeader(true);
+  sorted.forEach((row,index)=>{
+    const rowValues=values(row).map(value=>String(value??'—'));
+    const lineSets=rowValues.map((value,column)=>doc.splitTextToSize(value,widths[column]-2.4));
+    const rowHeight=Math.max(6,...lineSets.map(lines=>lines.length*3+2));
+    if(y+rowHeight>pageBottom){doc.addPage();y=drawHeader(false);}
+    if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,283,rowHeight,'F');}
+    doc.setDrawColor(222,222,222);doc.line(left,y+rowHeight,left+283,y+rowHeight);doc.setFont('helvetica','normal');doc.setFontSize(5.5);doc.setTextColor(28,28,28);
+    let x=left;lineSets.forEach((lines,column)=>{doc.text(lines,x+1.2,y+3.8,{maxWidth:widths[column]-2.4});x+=widths[column];});y+=rowHeight;
+  });
+  const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Relatório expandido · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
+  doc.save(`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_Expandido_${year}-${String(month+1).padStart(2,'0')}.pdf`);
+}
 function renderContasAPagar(target){
   const rows=pagarRegistros();
   const currentYear=(new Date()).getFullYear();
@@ -3003,7 +3072,7 @@ function renderContasAPagar(target){
     const year=pagarAnoSelecionado||currentYear;
     const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);
     if(pagarModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarPagarAnos()">← Todos os anos</button>${pagarAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a pagar.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirPagarGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirPagarCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorTitulo,0);return `<button class="receber-period-card" onclick="abrirPagarMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
-    else if(pagarModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('pagar')"><span class="msi msi-sm">picture_as_pdf</span> PDF do calendário</button></div><h3>Calendário de vencimentos — ${receberMesNome(pagarMesSelecionado)} de ${year}</h3>${pagarCalendario(yearRows,year,pagarMesSelecionado)}</section>`;
+    else if(pagarModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('pagar','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('pagar','expandido')"><span class="msi msi-sm">receipt_long</span> PDF expandido</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(pagarMesSelecionado)} de ${year}</h3>${pagarCalendario(yearRows,year,pagarMesSelecionado)}</section>`;
     else {
       const list=pagarModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===pagarMesSelecionado):yearRows;
       const title=pagarModo==='mes'?`${receberMesNome(pagarMesSelecionado)} de ${year}`:`Visão geral — ${year}`;
@@ -3101,6 +3170,25 @@ function cashFlowYearOverview(year){
     </tr>`;
   }).join('');
 }
+function exportCashFlowPDF(){
+  const JsPDF=window.jspdf?.jsPDF;
+  if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const selected=cashFlowMonthTotals(cashFlowSelectedMonth),data=getCashFlowData();
+  const annual=Array.from({length:12},(_,month)=>cashFlowMonthTotals(monthKey(selected.year,month)));
+  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),left=12;
+  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text('CARTAMAC - Fluxo de Caixa Mensal',left,14);
+  doc.setFontSize(10);doc.text(`Visão consolidada de ${selected.year}`,left,21);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · mês selecionado: ${receberMesNome(selected.month)}`,left,26);
+  const cards=[['TOTAL NOS BANCOS',selected.totalBancos],['ENTRADAS',selected.entradas],['SAÍDAS',selected.saidas],['PREVISTO',selected.previsto],['SALDO PROJETADO',selected.saldoProjetado]];
+  cards.forEach((card,index)=>{const x=left+index*55;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,31,51,14,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.8);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,35);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(card[1]<0?195:35,card[1]<0?45:125,card[1]<0?55:70);doc.text(fmtBRL(card[1]),x+2.5,41);});
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(35,35,35);doc.text(`Saldos bancários de ${receberMesNome(selected.month)}`,left,53);
+  data.bankNames.forEach((name,index)=>{const x=left+index*91;doc.setFillColor(250,250,250);doc.setDrawColor(215,215,215);doc.roundedRect(x,57,87,12,1,1,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(80,80,80);doc.text(String(name||`Banco ${index+1}`),x+2.5,61);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(30,30,30);doc.text(fmtBRL(selected.banks[index]||0),x+2.5,66);});
+  const headers=['Mês','Total nos bancos','Entradas','Saídas','Previsto','Saldo projetado'],widths=[43,48,48,48,45,45],top=78;
+  doc.setFillColor(40,40,40);doc.rect(left,top,277,9,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(7);let x=left;headers.forEach((header,index)=>{doc.text(header,x+2,top+5.8);x+=widths[index];});
+  annual.forEach((row,index)=>{const y=top+9+index*8;if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,277,8,'F');}doc.setDrawColor(220,220,220);doc.line(left,y+8,left+277,y+8);const values=[receberMesNome(index),fmtBRL(row.totalBancos),fmtBRL(row.entradas),fmtBRL(row.saidas),fmtBRL(row.previsto),fmtBRL(row.saldoProjetado)];doc.setFont('helvetica',index===selected.month?'bold':'normal');doc.setFontSize(7);doc.setTextColor(30,30,30);let cellX=left;values.forEach((value,column)=>{doc.text(String(value),cellX+2,y+5.2,{maxWidth:widths[column]-4});cellX+=widths[column];});});
+  doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(105,105,105);doc.text('Relatório financeiro sem o Gantt de Custos. O valor previsto mensal permanece consolidado na coluna “Previsto”.',left,203);
+  doc.save(`Fluxo_de_Caixa_${selected.year}_${new Date().toISOString().slice(0,10)}.pdf`);
+}
 function renderCashFlowPage(container=document.getElementById('financeiroContent')){
   if(!container)return;
   const data=getCashFlowData(),totals=cashFlowMonthTotals(cashFlowSelectedMonth);
@@ -3113,7 +3201,7 @@ function renderCashFlowPage(container=document.getElementById('financeiroContent
   container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Fluxo mensal consolidado com saldos bancários, contas a receber, contas a pagar e previsão do Gantt de Custos.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
     ${financeTabsHtml()}
     <section class="cashflow-shell">
-      <div class="cashflow-period"><div><h3>Fluxo de caixa — ${monthLabel}</h3><p>Os três saldos bancários são manuais e ficam salvos separadamente em cada mês.</p></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(-1)">←</button><input class="cashflow-month-input" type="month" value="${cashFlowSelectedMonth}" onchange="selectCashFlowMonth(this.value)"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(1)">→</button></div></div>
+      <div class="cashflow-period"><div><h3>Fluxo de caixa — ${monthLabel}</h3><p>Os três saldos bancários são manuais e ficam salvos separadamente em cada mês.</p></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-ghost" onclick="exportCashFlowPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(-1)">←</button><input class="cashflow-month-input" type="month" value="${cashFlowSelectedMonth}" onchange="selectCashFlowMonth(this.value)"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(1)">→</button></div></div>
       <div class="cashflow-bank-grid">${bankCards}</div>
       <div class="cashflow-summary-grid">
         <div class="cashflow-summary-card"><b style="color:var(--text)">${fmtBRL(totals.totalBancos)}</b><span>Total nos três bancos</span></div>
@@ -4956,7 +5044,81 @@ function removeEngineeringPerson(i){if(!confirm('Remover este responsável da li
 function saveMacroRevision(k){const r=macroEnsure(k);if(!r)return;r.revisions.push({number:r.revisions.length,date:new Date().toLocaleString('pt-BR'),by:loggedUser?.ref?.name||'Usuário',snapshot:JSON.parse(JSON.stringify({...r,revisions:[]}))});persist().then(()=>{renderMacroEngineering();showToast(`Revisão ${String(r.revisions.length-1).padStart(2,'0')} salva.`);});}
 function finalizeMacro(k){const r=macroEnsure(k);if(!r?.effectiveAt){showToast('Informe a entrega efetiva antes de finalizar','err');return;}if(!confirm(`Finalizar a OP ${r.code||r.op}? Ela ficará bloqueada para edição.`))return;r.finalized=true;r.finalizedAt=new Date().toLocaleString('pt-BR');r.finalizedBy=loggedUser?.ref?.name||'Usuário';persist().then(()=>{renderMacroEngineering();showToast('OP finalizada e arquivada no Macro Engenharia.');});}
 function reopenMacro(k){if(!isMaster(loggedUser)){showToast('Somente mestre pode reabrir uma OP','err');return;}const r=macroEnsure(k);if(!r)return;r.finalized=false;r.finalizedAt='';r.finalizedBy='';persist().then(()=>{macroView='active';renderMacroEngineering();showToast('OP reaberta para edição.');});}
-function exportEngineeringMacroPDF(){const js=window.jspdf?.jsPDF;if(!js){showToast('Biblioteca de PDF indisponível','err');return;}const pdf=new js({unit:'mm',format:'a4'}),records=ORDERS.map(macroRecord);let y=16;const line=(t,s=9,b=false)=>{if(y>278){pdf.addPage();y=16;}pdf.setFont('helvetica',b?'bold':'normal');pdf.setFontSize(s);pdf.text(String(t),12,y,{maxWidth:186});y+=s*.55+2;};line('CARTAMAC — Macro Engenharia',16,true);line(`Relatório emitido em ${new Date().toLocaleString('pt-BR')} · ${records.length} OP(s)`);y+=3;records.forEach(r=>{if(y>240){pdf.addPage();y=16;}pdf.setFillColor(200,168,75);pdf.rect(10,y-5,190,7,'F');pdf.setTextColor(20,20,20);pdf.setFontSize(11);pdf.setFont('helvetica','bold');pdf.text(`${r.code||r.op} — ${r.description}`,12,y);y+=7;pdf.setTextColor(35,35,35);line(`OP: ${r.op||'—'} | Emissão: ${fmtDate(r.issuedAt)} | Entrega proposta: ${fmtDate(r.proposedAt)} | Entrega efetiva: ${fmtDate(r.effectiveAt)}`,8);line(`Q.F: ${r.qf||'—'} | Q.E: ${r.qe||'—'} | Cliente: ${r.client||'—'} | Responsável: ${r.responsible||'—'}`,8);line(`Observações: ${r.observations||'—'}`,8);MACRO_GROUPS.forEach(g=>line(`${g.name}: ${g.stages.map(s=>{const p=r.phases[g.id][s];return `${s}: ${p.date?fmtDate(p.date):'—'} / ${p.pct!==''?p.pct+'%':'—'}`;}).join(' · ')}`,7));line(`Revisões: ${r.revisions.length} | Situação: ${r.finalized?'Finalizada':'Aberta'}`,8,true);y+=3;});pdf.save(`Macro_Engenharia_${new Date().toISOString().slice(0,10)}.pdf`);}
+function exportEngineeringMacroPDF(){
+  const JsPDF=window.jspdf?.jsPDF;
+  if(!JsPDF){showToast('Biblioteca de PDF indisponível','err');return;}
+  const records=ORDERS.map(macroRecord),pdf=new JsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pageW=210,left=12,right=12,contentW=186,bottom=282;
+  const textValue=value=>String(value??'').trim()||'N/A';
+  const dateValue=value=>value&&/^\d{4}-\d{2}-\d{2}$/.test(String(value))?fmtDate(String(value)):'N/A';
+  let y=0,currentRecord=null;
+  const drawPageHeader=(continuation=false)=>{
+    pdf.setTextColor(35,35,35);pdf.setFont('helvetica','bold');pdf.setFontSize(9);pdf.text('CARTAMAC - MACRO ENGENHARIA',left,9);
+    pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);pdf.setTextColor(105,105,105);pdf.text(`Emitido em ${new Date().toLocaleString('pt-BR')}`,pageW-right,9,{align:'right'});
+    pdf.setDrawColor(210,210,210);pdf.line(left,12,pageW-right,12);
+    if(continuation&&currentRecord){pdf.setFont('helvetica','bold');pdf.setFontSize(7);pdf.setTextColor(75,75,75);pdf.text(`Continuação: ${textValue(currentRecord.code||currentRecord.op)} - ${textValue(currentRecord.description)}`,left,17,{maxWidth:contentW});y=22;}else y=18;
+  };
+  const newPage=(continuation=false)=>{pdf.addPage();drawPageHeader(continuation);};
+  const ensureSpace=(height,continuation=true)=>{if(y+height>bottom)newPage(continuation);};
+  const drawSectionTitle=title=>{
+    ensureSpace(9);pdf.setFillColor(239,239,239);pdf.setDrawColor(210,210,210);pdf.roundedRect(left,y,contentW,7,1,1,'FD');
+    pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(45,45,45);pdf.text(String(title).toUpperCase(),left+3,y+4.8);y+=10;
+  };
+  const drawField=(label,value,options={})=>{
+    const labelW=options.labelWidth||39,maxTextW=contentW-labelW-5;
+    const lines=pdf.splitTextToSize(textValue(value),maxTextW),height=Math.max(options.minHeight||7,lines.length*4+3);
+    ensureSpace(height);pdf.setDrawColor(225,225,225);pdf.setFillColor(options.highlight?251:255,options.highlight?247:255,options.highlight?232:255);pdf.roundedRect(left,y,contentW,height-1,.8,.8,'FD');
+    pdf.setFont('helvetica','bold');pdf.setFontSize(7);pdf.setTextColor(90,90,90);pdf.text(label,left+2.5,y+4.5);
+    pdf.setFont('helvetica',options.boldValue?'bold':'normal');pdf.setFontSize(options.valueSize||8);pdf.setTextColor(28,28,28);pdf.text(lines,left+labelW,y+4.5,{maxWidth:maxTextW});y+=height;
+  };
+  const drawEngineeringGroup=group=>{
+    const entries=group.stages.map(stage=>({stage,phase:currentRecord.phases?.[group.id]?.[stage]||{}}));
+    const hasData=entries.some(({phase})=>Boolean(phase.date)||!(phase.pct===''||phase.pct===null||phase.pct===undefined));
+    ensureSpace(hasData?18:15);pdf.setFillColor(225,214,176);pdf.setDrawColor(200,168,75);pdf.roundedRect(left,y,contentW,7,1,1,'FD');
+    pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(45,40,25);pdf.text(group.name.toUpperCase(),left+3,y+4.8);y+=8;
+    if(!hasData){
+      pdf.setFillColor(250,250,250);pdf.setDrawColor(225,225,225);pdf.rect(left,y,contentW,7,'FD');pdf.setFont('helvetica','italic');pdf.setFontSize(8);pdf.setTextColor(105,105,105);pdf.text('N/A',left+3,y+4.8);y+=10;return;
+    }
+    const columns=[['ATIVIDADE',101],['DATA',45],['PROGRESSO',40]];
+    const drawColumns=()=>{ensureSpace(8);pdf.setFillColor(55,55,55);pdf.rect(left,y,contentW,7,'F');pdf.setFont('helvetica','bold');pdf.setFontSize(6.5);pdf.setTextColor(255,255,255);let x=left;columns.forEach(([title,width])=>{pdf.text(title,x+2.5,y+4.7);x+=width;});y+=7;};
+    drawColumns();
+    entries.forEach(({stage,phase},index)=>{
+      if(y+7>bottom){newPage(true);pdf.setFillColor(225,214,176);pdf.setDrawColor(200,168,75);pdf.roundedRect(left,y,contentW,7,1,1,'FD');pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(45,40,25);pdf.text(`${group.name.toUpperCase()} - CONTINUAÇÃO`,left+3,y+4.8);y+=8;drawColumns();}
+      if(index%2===0){pdf.setFillColor(249,249,249);pdf.rect(left,y,contentW,7,'F');}
+      pdf.setDrawColor(225,225,225);pdf.line(left,y+7,left+contentW,y+7);pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);pdf.setTextColor(35,35,35);
+      pdf.text(textValue(stage),left+2.5,y+4.7,{maxWidth:96});pdf.setFont('helvetica','bold');pdf.text(dateValue(phase.date),left+103.5,y+4.7);pdf.text(phase.pct===''||phase.pct===null||phase.pct===undefined?'N/A':`${phase.pct}%`,left+148.5,y+4.7);y+=7;
+    });
+    y+=3;
+  };
+  // A primeira página já existe no jsPDF.
+  drawPageHeader(false);
+  records.forEach((record,index)=>{
+    if(index>0)newPage(false);
+    currentRecord=record;
+    const projectTitle=pdf.splitTextToSize(`${textValue(record.code||record.op)} - ${textValue(record.description)}`,contentW-8).slice(0,2),titleHeight=Math.max(14,projectTitle.length*5.2+5);
+    pdf.setFillColor(200,168,75);pdf.setDrawColor(200,168,75);pdf.roundedRect(left,y,contentW,titleHeight,1.5,1.5,'FD');
+    pdf.setTextColor(22,22,22);pdf.setFont('helvetica','bold');pdf.setFontSize(13);pdf.text(projectTitle,left+4,y+7.5,{maxWidth:contentW-8});y+=titleHeight+4;
+    drawSectionTitle('Informações do projeto');
+    drawField('OP',record.op,{boldValue:true});
+    drawField('Código',record.code,{boldValue:true});
+    drawField('Emissão',dateValue(record.issuedAt),{highlight:true,boldValue:true,valueSize:9});
+    drawField('Entrega proposta',dateValue(record.proposedAt),{highlight:true,boldValue:true,valueSize:9});
+    drawField('Entrega efetiva',dateValue(record.effectiveAt),{highlight:true,boldValue:true,valueSize:9});
+    drawField('Q.F.',record.qf);
+    drawField('Q.E.',record.qe);
+    drawField('Cliente',record.client);
+    drawField('Responsável',record.responsible);
+    drawField('Observações',record.observations,{minHeight:9});
+    drawSectionTitle('Etapas de engenharia');
+    MACRO_GROUPS.forEach(drawEngineeringGroup);
+    drawSectionTitle('Controle');
+    drawField('Revisões',record.revisions?.length??0,{boldValue:true});
+    drawField('Situação',record.finalized?'Finalizada':'Aberta',{boldValue:true,highlight:true});
+  });
+  const pages=pdf.getNumberOfPages();
+  for(let page=1;page<=pages;page++){pdf.setPage(page);pdf.setDrawColor(215,215,215);pdf.line(left,288,pageW-right,288);pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);pdf.setTextColor(110,110,110);pdf.text('CARTAMAC - Macro Engenharia',left,293);pdf.text(`Página ${page} de ${pages}`,pageW-right,293,{align:'right'});}
+  pdf.save(`Macro_Engenharia_${new Date().toISOString().slice(0,10)}.pdf`);
+}
 
 // Ajustes de interação e cópia local do Macro Engenharia.
 // A cópia local evita perda de dados quando o arquivo ainda não está conectado ao Firebase.
@@ -5085,6 +5247,34 @@ function salesYearSummary(records){
   return {total,count:records.length,highestMonth:highest[0],highestValue:highest[1],highestOrder};
 }
 function salesDateText(date){return date?date.toLocaleDateString('pt-BR'):'—';}
+function exportSalesYearReport(year,format){
+  const key=String(year),rows=salesRecords().filter(row=>(row.ano===null?'Sem data':String(row.ano))===key).sort((a,b)=>(b.emissao?.getTime()||0)-(a.emissao?.getTime()||0));
+  if(!rows.length){showToast('Não há pedidos neste ano para exportar.','err');return;}
+  if(format==='excel'){exportSalesYearExcel(key,rows);return;}
+  const JsPDF=window.jspdf?.jsPDF;if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const summary=salesYearSummary(rows),doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),left=10,pageBottom=201;
+  const headers=['Emissão','Nº','Referência','Cliente','Valor total','Valor faturado','Valor a faturar','Entrega'],widths=[19,14,52,65,32,32,32,22];
+  const drawTableHeader=y=>{doc.setFillColor(40,40,40);doc.rect(left,y,268,8,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(6);let x=left;headers.forEach((header,index)=>{doc.text(header,x+1.4,y+5.2,{maxWidth:widths[index]-2.8});x+=widths[index];});return y+8;};
+  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text(`CARTAMAC - Vendas ${key}`,left,14);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · pedidos cancelados não incluídos`,left,20);
+  const cards=[['VALOR TOTAL DAS VENDAS',fmtBRL(summary.total)],['NÚMERO DE PEDIDOS',String(summary.count)],['MÊS COM MAIOR VALOR',`${fmtBRL(summary.highestValue)} · ${salesMonthName(summary.highestMonth)}`],['MAIOR PEDIDO',`${fmtBRL(summary.highestOrder?.valorTotal||0)} · ${summary.highestOrder?.cliente||'—'}`]];
+  cards.forEach((card,index)=>{const x=left+index*69;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,25,65,16,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.8);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,30);doc.setFont('helvetica','bold');doc.setFontSize(index>1?7:9);doc.setTextColor(35,130,70);doc.text(doc.splitTextToSize(card[1],60).slice(0,2),x+2.5,36);});
+  let y=drawTableHeader(47);
+  rows.forEach((row,index)=>{const values=[salesDateText(row.emissao),row.numero,row.referencia,row.cliente,fmtBRL(row.valorTotal),fmtBRL(row.valorFaturado),fmtBRL(row.valorAFaturar),salesDateText(row.entrega)].map(String);const lines=values.map((value,column)=>doc.splitTextToSize(value,widths[column]-2.8));const height=Math.max(6,...lines.map(set=>set.length*3+2));if(y+height>pageBottom){doc.addPage();y=drawTableHeader(10);}if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,268,height,'F');}doc.setDrawColor(220,220,220);doc.line(left,y+height,left+268,y+height);doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(30,30,30);let x=left;lines.forEach((set,column)=>{doc.text(set,x+1.4,y+3.8,{maxWidth:widths[column]-2.8});x+=widths[column];});y+=height;});
+  const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Vendas ${key} · Página ${page} de ${pages}`,287,207,{align:'right'});}
+  doc.save(`Vendas_${key}_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+function exportSalesYearExcel(year,rows){
+  if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const summary=salesYearSummary(rows),data=[
+    [`CARTAMAC - Vendas ${year}`],[`Exportado em ${new Date().toLocaleString('pt-BR')} · pedidos cancelados não incluídos`],[],
+    ['VALOR TOTAL DAS VENDAS','NÚMERO DE PEDIDOS','MÊS COM MAIOR VALOR','VALOR DO MAIOR MÊS','MAIOR PEDIDO','CLIENTE DO MAIOR PEDIDO'],
+    [summary.total,summary.count,salesMonthName(summary.highestMonth),summary.highestValue,summary.highestOrder?.valorTotal||0,summary.highestOrder?.cliente||'—'],[],
+    ['Emissão','Nº','Referência','Cliente','Valor total','Valor faturado','Valor a faturar','Entrega'],
+    ...rows.map(row=>[salesDateText(row.emissao),row.numero,row.referencia,row.cliente,row.valorTotal,row.valorFaturado,row.valorAFaturar,salesDateText(row.entrega)])
+  ];
+  const ws=XLSX.utils.aoa_to_sheet(data);ws['!cols']=[{wch:13},{wch:10},{wch:52},{wch:48},{wch:18},{wch:18},{wch:18},{wch:13}];ws['!autofilter']={ref:`A7:H${data.length}`};ws['!freeze']={xSplit:0,ySplit:7,topLeftCell:'A8',activePane:'bottomLeft',state:'frozen'};const currency='"R$" #,##0.00';[0,3,4].forEach(column=>{const cell=ws[XLSX.utils.encode_cell({r:4,c:column})];if(cell)cell.z=currency;});for(let row=7;row<data.length;row++)for(let column=4;column<=6;column++){const cell=ws[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=currency;}
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,`Vendas ${year}`.slice(0,31));XLSX.writeFile(wb,`Vendas_${year}_${new Date().toISOString().slice(0,10)}.xlsx`,{compression:true});
+}
 function salesYearMarkup(year,records){
   const open=salesExpandedYears.has(String(year));
   const summary=salesYearSummary(records);
@@ -5095,6 +5285,7 @@ function salesYearMarkup(year,records){
       <span class="msi sales-year-chevron">expand_more</span>
     </button>
     <div class="sales-year-body">
+      <div class="stock-group-actions" style="justify-content:flex-end;margin-bottom:12px;"><button class="btn btn-ghost btn-sm" type="button" onclick="exportSalesYearReport('${escapeHTML(year)}','pdf')"><span class="msi msi-sm">picture_as_pdf</span> PDF de ${escapeHTML(year)}</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportSalesYearReport('${escapeHTML(year)}','excel')"><span class="msi msi-sm">table_chart</span> Excel de ${escapeHTML(year)}</button></div>
       <div class="sales-summary">
         <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(summary.total)}</div><div class="sales-summary-label">Valor total das vendas</div></div>
         <div class="sales-summary-card"><div class="sales-summary-value">${summary.count}</div><div class="sales-summary-label">Número de pedidos</div></div>
@@ -5403,17 +5594,19 @@ async function refreshUsageStockMaxiprod(options={}){
   return success;
 }
 
-// ─────────────── MATÉRIA-PRIMA · ESTOQUE GRUPOS 1, 2 E 7 ───────────────
+// ─────────────── ESTOQUE · GRUPOS 1, 2, 4, 7 E 11 ───────────────
 const RAW_MATERIAL_GROUPS={
   '1':'Matérias-primas',
   '2':'Elementos de fixação',
-  '7':'Itens comerciais'
+  '7':'Itens comerciais',
+  '11':'Tintas'
 };
 const STOCK_DISPLAY_GROUPS=[
   ['1','Matérias-primas'],
   ['2','Elementos de fixação'],
+  ['4','Uso e consumo'],
   ['7','Itens comerciais'],
-  ['4','Uso e consumo']
+  ['11','Tintas']
 ];
 function rawMaterialRecords(){
   const sourceName=String(RAW_MATERIAL_CACHE?.source||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -5492,7 +5685,7 @@ function renderRawMaterialPage(container=document.getElementById('financeiroCont
   const updatedDates=[RAW_MATERIAL_CACHE?.updatedAt,USAGE_STOCK_CACHE?.updatedAt].filter(Boolean).map(value=>new Date(value)).filter(date=>!Number.isNaN(date.getTime()));
   const updated=updatedDates.length?new Date(Math.max(...updatedDates)).toLocaleString('pt-BR'):'Ainda não atualizado';
   const grandTotal=allRows.reduce((sum,row)=>sum+row.custoTotal,0);
-  const summaryCards=`<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(grandTotal)}</div><div class="sales-summary-label">Somatória total</div><div class="sales-summary-sub">Grupos 1, 2, 7 e 4</div></div>`+STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
+  const summaryCards=`<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(grandTotal)}</div><div class="sales-summary-label">Somatória total</div><div class="sales-summary-sub">Grupos 1, 2, 4, 7 e 11</div></div>`+STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
     const rows=groupRows[groupCode];
     const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
     return `<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Grupo ${groupCode} · ${escapeHTML(label)}</div><div class="sales-summary-sub">${rows.length} item(ns)</div></div>`;
@@ -5501,13 +5694,14 @@ function renderRawMaterialPage(container=document.getElementById('financeiroCont
     const rows=filtered.filter(row=>String(row.grupo)===groupCode);
     const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
     const open=rawMaterialExpandedGroups.has(groupCode);
-    const actions=groupCode==='4'?`<div class="stock-group-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="exportStockReport('usoConsumo','pdf')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportStockReport('usoConsumo','excel')"><span class="msi msi-sm">table_chart</span> Excel</button></div>`:'';
+    const reportKind=groupCode==='4'?'usoConsumo':`grupo${groupCode}`;
+    const actions=`<div class="stock-group-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="exportStockReport('${reportKind}','pdf')"><span class="msi msi-sm">picture_as_pdf</span> PDF do grupo ${groupCode}</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportStockReport('${reportKind}','excel')"><span class="msi msi-sm">table_chart</span> Excel do grupo ${groupCode}</button></div>`;
     return `<section class="raw-material-group ${open?'open':''}"><button class="raw-material-group-head" type="button" onclick="toggleRawMaterialGroup('${groupCode}')"><h3>Grupo ${groupCode} — ${escapeHTML(label)}</h3><span>${rows.length} item(ns) · ${fmtBRL(total)}</span><span class="msi raw-material-group-chevron">expand_more</span></button><div class="raw-material-group-body">${actions}${stockGroupSummaryHtml(rows)}${rawMaterialTable(rows,groupCode)}</div></section>`;
   }).join('');
   container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de estoque: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(rawMaterialRefreshInProgress||usageStockRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(rawMaterialRefreshInProgress||usageStockRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
     ${financeTabsHtml()}
     <div class="fixed-assets-page">
-      <div class="fixed-assets-title"><h2><span class="msi">inventory_2</span> Estoque</h2><p>Itens da grade de Estoque dos grupos 1, 2, 7 e 4 no MaxiProd.</p></div>
+      <div class="fixed-assets-title"><h2><span class="msi">inventory_2</span> Estoque</h2><p>Itens da grade de Estoque dos grupos 1, 2, 4, 7 e 11 no MaxiProd.</p></div>
       <div class="fixed-assets-summary raw-material-summary">${summaryCards}</div>
       <div class="finance-toolbar"><input class="search-input" value="${escapeHTML(rawMaterialSearch)}" oninput="filterRawMaterial(this.value)" placeholder="Filtrar por item, descrição ou unidade..."><span class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${allRows.length} item(ns)</span></div>
       <div class="raw-material-groups">${blocks}</div>
@@ -5540,11 +5734,11 @@ async function refreshRawMaterialMaxiprod(options={}){
     }
     RAW_MATERIAL_CACHE={version:1,updatedAt,source:[...sources].join(','),items};
     localStorage.setItem(RAW_MATERIAL_CACHE_KEY,JSON.stringify(RAW_MATERIAL_CACHE));
-    rawMaterialLimits[1]=rawMaterialLimits[2]=rawMaterialLimits[7]=200;
+    rawMaterialLimits[1]=rawMaterialLimits[2]=rawMaterialLimits[4]=rawMaterialLimits[7]=rawMaterialLimits[11]=200;
     success=true;
     if(!integrated)showToast(`${rawMaterialRecords().length} item(ns) de matéria-prima atualizado(s) pelo MaxiProd.`);
   }catch(error){
-    console.error('Matéria-prima: falha ao consultar grupos 1, 2 e 7',error);
+    console.error('Estoque: falha ao consultar grupos 1, 2, 7 e 11',error);
     if(!integrated)showToast(error?.message||'Não foi possível atualizar Matéria-prima.','err');
   }finally{
     rawMaterialRefreshInProgress=false;
@@ -5556,19 +5750,32 @@ async function refreshRawMaterialMaxiprod(options={}){
 // Relatórios das grades de estoque: Ativos imobilizados e Uso e consumo.
 function stockReportData(kind){
   const isAssets=kind==='ativos';
-  const rows=isAssets?fixedAssetRecords():usageStockRecords();
-  const title=isAssets?'Ativos Imobilizados':'Uso e Consumo';
-  const total=rows.reduce((sum,row)=>sum+(isAssets?row.precoTotal:row.valorTotal),0);
-  const highest=[...rows].sort((a,b)=>(isAssets?b.precoTotal:b.valorTotal)-(isAssets?a.precoTotal:a.valorTotal))[0]||null;
+  const groupMatch=String(kind).match(/^grupo(1|2|7|11)$/),groupCode=groupMatch?.[1]||null;
+  const isRawGroup=Boolean(groupCode);
+  const rows=isAssets?fixedAssetRecords():isRawGroup?stockGroupRows(groupCode):usageStockRecords();
+  const title=isAssets?'Ativos Imobilizados':isRawGroup?`Estoque - Grupo ${groupCode} - ${RAW_MATERIAL_GROUPS[groupCode]}`:'Uso e Consumo';
+  const rowTotal=row=>isAssets?row.precoTotal:isRawGroup?row.custoTotal:row.valorTotal;
+  const total=rows.reduce((sum,row)=>sum+(rowTotal(row)||0),0);
+  const highest=[...rows].sort((a,b)=>(rowTotal(b)||0)-(rowTotal(a)||0))[0]||null;
+  if(isRawGroup)return {
+    title,rows,total,highest,rowTotal,
+    filename:`Estoque_Grupo_${groupCode}_${RAW_MATERIAL_GROUPS[groupCode]}`.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_'),
+    headers:['Item','Descrição','Quantidade','Unidade de medida','Custo unitário','Custo total'],
+    widths:[28,118,25,24,38,39],colWidths:[18,58,14,18,18,18],quantityIndex:2,moneyIndexes:[4,5],
+    values:row=>[row.codigo,row.descricao,row.quantidade.toLocaleString('pt-BR',{maximumFractionDigits:5}),row.unidade,fmtBRL(row.valorUnitario),fmtBRL(row.custoTotal)],
+    excelValues:row=>[String(row.codigo??''),String(row.descricao??''),Number(row.quantidade)||0,String(row.unidade??''),Number(row.valorUnitario)||0,Number(row.custoTotal)||0]
+  };
   return {
-    title,rows,total,highest,
+    title,rows,total,highest,rowTotal,
     filename:title.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_'),
     headers:['Criado em',isAssets?'Código':'Item','Descrição','Quantidade','Valor unitário',isAssets?'Preço total':'Valor total'],
+    widths:[24,25,128,25,35,35],colWidths:[14,18,68,14,18,18],quantityIndex:3,moneyIndexes:[4,5],
     values:row=>[
       salesDateText(row.criadoEm),row.codigo,row.descricao,
       row.quantidade.toLocaleString('pt-BR',{maximumFractionDigits:5}),
       fmtBRL(row.valorUnitario),fmtBRL(isAssets?row.precoTotal:row.valorTotal)
-    ]
+    ],
+    excelValues:row=>[salesDateText(row.criadoEm),String(row.codigo??''),String(row.descricao??''),Number(row.quantidade)||0,Number(row.valorUnitario)||0,Number(isAssets?row.precoTotal:row.valorTotal)||0]
   };
 }
 function stockReportDate(){return new Date().toLocaleDateString('pt-BR');}
@@ -5582,7 +5789,7 @@ function exportStockReportPDF(report){
   const JsPDF=window.jspdf?.jsPDF;
   if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
   const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  const widths=[24,25,128,25,35,35],left=12,pageBottom=198;
+  const widths=report.widths||[24,25,128,25,35,35],left=12,pageBottom=198;
   const drawTableHeader=y=>{
     doc.setFillColor(40,40,40);doc.rect(left,y,272,8,'F');
     doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(7);
@@ -5595,7 +5802,7 @@ function exportStockReportPDF(report){
     const cards=[
       ['VALOR TOTAL',fmtBRL(report.total)],
       ['QUANTIDADE DE ITENS',String(report.rows.length)],
-      ['ITEM COM MAIOR VALOR',`${fmtBRL(report.highest?.precoTotal??report.highest?.valorTotal??0)} - ${report.highest?.descricao||'—'}`]
+      ['ITEM COM MAIOR VALOR',`${fmtBRL(report.highest?report.rowTotal(report.highest):0)} - ${report.highest?.descricao||'—'}`]
     ];
     cards.forEach((card,index)=>{
       const x=left+(index*91);doc.setFillColor(245,245,245);doc.setDrawColor(205,205,205);doc.roundedRect(x,25,87,17,2,2,'FD');
@@ -5628,15 +5835,8 @@ function exportStockReportPDF(report){
 }
 function exportStockReportExcel(report){
   if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
-  const highestValue=report.highest?.precoTotal??report.highest?.valorTotal??0;
-  const rows=report.rows.map(row=>[
-    salesDateText(row.criadoEm),
-    String(row.codigo??''),
-    String(row.descricao??''),
-    Number(row.quantidade)||0,
-    Number(row.valorUnitario)||0,
-    Number(row.precoTotal??row.valorTotal)||0
-  ]);
+  const highestValue=report.highest?report.rowTotal(report.highest):0;
+  const rows=report.rows.map(report.excelValues);
   const worksheetData=[
     [`CARTAMAC - ${report.title}`],
     [`Exportado em ${stockReportDate()}`],
@@ -5655,7 +5855,7 @@ function exportStockReportExcel(report){
     {s:{r:3,c:2},e:{r:3,c:3}},{s:{r:4,c:2},e:{r:4,c:3}},
     {s:{r:3,c:4},e:{r:3,c:5}},{s:{r:4,c:4},e:{r:4,c:5}},{s:{r:5,c:4},e:{r:5,c:5}}
   ];
-  worksheet['!cols']=[{wch:14},{wch:18},{wch:68},{wch:14},{wch:18},{wch:18}];
+  worksheet['!cols']=(report.colWidths||[14,18,68,14,18,18]).map(wch=>({wch}));
   worksheet['!autofilter']={ref:`A8:F${worksheetData.length}`};
   worksheet['!freeze']={xSplit:0,ySplit:8,topLeftCell:'A9',activePane:'bottomLeft',state:'frozen'};
   const currencyFormat='"R$" #,##0.00';
@@ -5664,12 +5864,9 @@ function exportStockReportExcel(report){
   if(totalCell)totalCell.z=currencyFormat;
   if(highestCell)highestCell.z=currencyFormat;
   for(let rowIndex=8;rowIndex<worksheetData.length;rowIndex++){
-    const quantityCell=worksheet[XLSX.utils.encode_cell({r:rowIndex,c:3})];
-    const unitCell=worksheet[XLSX.utils.encode_cell({r:rowIndex,c:4})];
-    const totalRowCell=worksheet[XLSX.utils.encode_cell({r:rowIndex,c:5})];
+    const quantityCell=worksheet[XLSX.utils.encode_cell({r:rowIndex,c:report.quantityIndex??3})];
     if(quantityCell)quantityCell.z='#,##0.#####';
-    if(unitCell)unitCell.z=currencyFormat;
-    if(totalRowCell)totalRowCell.z=currencyFormat;
+    (report.moneyIndexes||[4,5]).forEach(column=>{const cell=worksheet[XLSX.utils.encode_cell({r:rowIndex,c:column})];if(cell)cell.z=currencyFormat;});
   }
   const workbook=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook,worksheet,report.title.slice(0,31));
@@ -5784,7 +5981,7 @@ signInAnonymously(auth).catch((err)=>{
 // ─────────── EXPORTS GLOBAIS ───────────
 Object.assign(window,{
   doLogin,openAdminLogin,doAdminLogin,backToLogin,closeAdminLogin,
-  switchDevTab,switchClientTab,filterOrders,collapseAll,expandAll,toggleChip,togglePassword,
+  switchDevTab,switchCronogramaSubtab,switchClientTab,filterOrders,collapseAll,expandAll,toggleChip,togglePassword,
   renderGantt,openAddUserModal,saveNewUser,selectUser,saveUserChanges,
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
@@ -5794,8 +5991,8 @@ Object.assign(window,{
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
-  renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,
-  renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,
+  renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
+  renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,exportSalesYearReport,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
   renderRawMaterialPage,refreshRawMaterialMaxiprod,filterRawMaterial,showMoreRawMaterial,toggleRawMaterialGroup,
