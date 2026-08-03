@@ -212,6 +212,7 @@ input[type="file"]{display:none;}
 .finance-table.receber-table td.money.valor-atrasado{color:var(--red);}
 .finance-table.pagar-table td.money.valor-atrasado{color:var(--red);}
 .pagar-detalhe-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;}
+.pagar-detalhe-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
 .pagar-atrasados-btn{min-width:190px;justify-content:center;}
 .pagar-atrasados-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
 .receber-calendar-item span{font-size:11px;font-weight:700;color:#fff;}
@@ -231,7 +232,7 @@ input[type="file"]{display:none;}
 .finance-column-filter{position:relative;display:inline-block;}.finance-column-filter summary{cursor:pointer;list-style:none;white-space:nowrap;}.finance-column-filter summary::-webkit-details-marker{display:none;}.finance-column-filter summary span{color:var(--gold);margin-left:3px;}.finance-filter-menu{position:absolute;left:0;top:20px;z-index:80;width:240px;max-height:330px;overflow:auto;padding:8px;background:#202020;border:1px solid #575757;border-radius:7px;box-shadow:0 12px 28px #000b;color:#eee;text-transform:none;letter-spacing:0;font-size:12px;}.finance-filter-menu label{display:block;padding:5px 3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.finance-filter-menu label:first-child{padding-bottom:8px;margin-bottom:5px;border-bottom:1px solid #454545;font-weight:700;}.finance-filter-menu input{vertical-align:middle;margin:0 6px 0 0;accent-color:#c8a84b;}.finance-filter-menu small{display:block;padding:7px 3px;color:var(--text3);}
 @media(max-width:1100px){.cashflow-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr));}.cashflow-bank-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:760px){.finance-head{display:block;}.finance-actions{justify-content:flex-start;margin-top:12px;}.finance-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.finance-card-grid.receber-resumo-grid{grid-template-columns:1fr;}.finance-card{padding:12px;}.finance-card b{font-size:16px;}.finance-tabs{gap:6px;}.finance-tab{padding:9px 10px;font-size:11px;}.finance-toolbar{display:block;}.finance-toolbar input{width:100%;}.finance-table{min-width:760px;}.receber-filtros{grid-template-columns:1fr;}.cashflow-shell{padding:13px}.cashflow-bank-grid,.cashflow-summary-grid{grid-template-columns:1fr}.cashflow-month-input{width:100%;}}
-@media(max-width:760px){.pagar-detalhe-top{align-items:stretch;flex-direction:column;}.pagar-atrasados-btn{width:100%;}}
+@media(max-width:760px){.pagar-detalhe-top{align-items:stretch;flex-direction:column;}.pagar-detalhe-actions{width:100%;display:grid;grid-template-columns:1fr;}.pagar-atrasados-btn,.pagar-detalhe-actions .btn{width:100%;}}
 @media(max-width:640px){.parts-head h2{font-size:19px}.parts-stats{grid-template-columns:1fr}.parts-toolbar .search-wrap{width:100%;}}
 @media(max-width:640px){
   .parts-table-wrap,.sim-table-wrap{overflow:visible;}
@@ -930,6 +931,32 @@ input[type="file"]{display:none;}
 .sales-summary-card.money .sales-summary-value{color:var(--green);}
 .sales-summary-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:7px;}
 .sales-summary-sub{font-size:12px;color:var(--gold);font-weight:700;margin-top:5px;}
+.sales-commercial-summary{border:1px solid var(--border);border-radius:11px;background:var(--bg2);overflow:hidden;margin-bottom:18px;}
+.sales-commercial-head{width:100%;border:0;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:17px 19px;background:var(--bg3);color:var(--text);text-align:left;cursor:pointer;}
+.sales-commercial-head:hover{background:rgba(255,255,255,.035);}
+.sales-commercial-head h3{margin:0;color:#fff;font-size:18px;}
+.sales-commercial-head p{margin:4px 0 0;color:var(--text3);font-size:12px;}
+.sales-commercial-note{color:var(--text3);font-size:12px;text-align:right;max-width:390px;}
+.sales-commercial-side{display:flex;align-items:center;justify-content:flex-end;gap:13px;}
+.sales-commercial-chevron{color:var(--text3);font-size:22px;transition:transform .18s;}
+.sales-commercial-summary.open .sales-commercial-chevron{transform:rotate(180deg);}
+.sales-commercial-table-wrap{display:none;overflow-x:auto;border-top:1px solid var(--border);}
+.sales-commercial-summary.open .sales-commercial-table-wrap{display:block;}
+.sales-commercial-table{width:100%;border-collapse:collapse;min-width:850px;}
+.sales-commercial-table th{padding:12px 15px;background:var(--bg3);color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:.06em;text-align:right;white-space:nowrap;}
+.sales-commercial-table th:first-child,.sales-commercial-table td:first-child{text-align:center;}
+.sales-commercial-table td{padding:14px 15px;border-top:1px solid var(--border);color:var(--text2);font-size:14px;text-align:right;white-space:nowrap;}
+.sales-commercial-table tbody tr:hover{background:rgba(255,255,255,.018);}
+.sales-commercial-table tbody tr.current{background:transparent;}
+.sales-commercial-year{font-family:'Roboto Mono',monospace;font-size:17px;font-weight:850;color:#fff;}
+.sales-commercial-money{font-family:'Roboto Mono',monospace;font-size:15px;font-weight:850;color:var(--gold);}
+.sales-commercial-table td:nth-child(2){color:#fff;font-weight:850;}
+.sales-commercial-change{font-family:'Roboto Mono',monospace;font-size:15px;font-weight:850;}
+.sales-commercial-change.positive{color:var(--green);}
+.sales-commercial-change.negative{color:var(--red);}
+.sales-commercial-change.neutral{color:var(--text3);}
+.sales-commercial-divisor{display:block;color:var(--text3);font-family:inherit;font-size:10px;font-weight:500;margin-top:3px;}
+.sales-commercial-table tfoot td{background:var(--bg3);font-size:15px;font-weight:850;color:var(--gold);border-top:1px solid var(--border2);}
 .fixed-assets-page{display:flex;flex-direction:column;gap:16px;}
 .fixed-assets-title h2{margin:0 0 5px;display:flex;align-items:center;gap:7px;}
 .fixed-assets-title p{margin:0;color:var(--text3);font-size:13px;}
@@ -1414,15 +1441,17 @@ let payableYearRefreshInProgress=false;
 let pagarTabelaLimite=200;
 let pagarRegistrosMemoSource=null;
 let pagarRegistrosMemo=[];
-const SALES_CACHE_KEY='cartamac_vendas_maxiprod_cache_v2';
+localStorage.removeItem('cartamac_vendas_maxiprod_cache_v2');
+const SALES_CACHE_KEY='cartamac_vendas_maxiprod_cache_v3';
 let SALES_CACHE=(()=>{
-  try{return JSON.parse(localStorage.getItem(SALES_CACHE_KEY)||'{"version":2,"updatedAt":null,"items":[]}');}
-  catch(_){return {version:2,updatedAt:null,items:[]};}
+  try{return JSON.parse(localStorage.getItem(SALES_CACHE_KEY)||'{"version":3,"updatedAt":null,"items":[]}');}
+  catch(_){return {version:3,updatedAt:null,items:[]};}
 })();
-if(SALES_CACHE?.version!==2||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={version:2,updatedAt:null,items:[]};
+if(SALES_CACHE?.version!==3||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={version:3,updatedAt:null,items:[]};
 let salesRefreshInProgress=false;
 let salesSearch='';
 const salesExpandedYears=new Set();
+let salesCommercialSummaryOpen=true;
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v2');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v3');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v4');
@@ -1455,7 +1484,9 @@ let RAW_MATERIAL_CACHE=(()=>{
 if(RAW_MATERIAL_CACHE?.version!==1||!Array.isArray(RAW_MATERIAL_CACHE?.items))RAW_MATERIAL_CACHE={version:1,updatedAt:null,items:[]};
 let rawMaterialRefreshInProgress=false;
 let rawMaterialSearch='';
-const rawMaterialLimits={1:200,2:200,4:200,7:200,11:200};
+const rawMaterialGroupSearch={1:'',2:'',4:'',7:'',8:'',11:''};
+let rawMaterialGroupFilterTimer=null;
+const rawMaterialLimits={1:200,2:200,4:200,7:200,8:200,11:200};
 const rawMaterialExpandedGroups=new Set(['1']);
 
 function scheduleFinanceRender(){
@@ -2210,7 +2241,6 @@ const FINANCE_VIEWS={
   receber:{title:'Contas a receber',source:'contaAReceber',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Descrição',['descricao','historico']],['Empresa',['empresaNome','empresa']],['Parcela',['parcela','numeroParcela']],['Nº parcelas',['numeroTotalParcelas','quantidadeParcelas']],['Referente a',['referenteA','referencia','referente']],['Valor',['valor','valorOriginal']],['Valor original',['valorOriginal']],['Valor recebido',['valorRecebido','valorBaixado']],['Valor a receber',['valorAReceber','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
   pagar:{title:'Contas a pagar',source:'contaAPagar',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Empresa',['empresaNome','empresa']],['Descrição',['descricao','historico']],['Conta destino',['contaDestinoDescricao','contaDestino']],['Referente a',['referenteA','referencia','referente']],['Observações',['observacoes','observacao']],['Valor original',['valorOriginal','valor']],['Valor pago',['valorPago','valorBaixado']],['Valor a pagar',['valorAPagar','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
   vendas:{title:'Vendas',source:'pedidosDeVenda',columns:[]},
-  ativos:{title:'Ativos imobilizados',source:null,columns:[]},
   materiaPrima:{title:'Estoque',source:null,columns:[]}
 };
 function financeNormalize(value){return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
@@ -2676,8 +2706,8 @@ function renderContasAReceber(target){
   let content='';
   if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>O ano atual é atualizado pelo botão principal. Entre em um ano anterior para carregá-lo somente quando precisar.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
   else {const year=receberAnoSelecionado||currentYear;const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button>${receberAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a receber.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
-    else if(receberModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber','expandido')"><span class="msi msi-sm">receipt_long</span> PDF expandido</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
-    else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
+    else if(receberModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
+    else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('receber')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
   target.innerHTML=`${receberCabecalhoFinanceiro(data,rows)}${content}`;
 }
 function pagarFornecedor(row){
@@ -3018,7 +3048,28 @@ function exportFinanceCalendarPDF(kind,mode='curto'){
   doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(120,120,120);doc.text('Valores organizados pela data de vencimento.',left,205);doc.text('CARTAMAC',pageW-right,205,{align:'right'});
   doc.save(`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${year}-${String(month+1).padStart(2,'0')}.pdf`);
 }
-function exportFinanceCalendarExpandedPDF(kind,year,month,records){
+function exportFinancePeriodPDF(kind){
+  const isReceive=kind==='receber';
+  const year=Number(isReceive?receberAnoSelecionado:pagarAnoSelecionado)||(new Date()).getFullYear();
+  const mode=isReceive?receberModo:pagarModo;
+  const month=Number(isReceive?receberMesSelecionado:pagarMesSelecionado);
+  let records=(isReceive?receberRegistros():pagarRegistros()).filter(row=>row.vencimento?.getFullYear()===year);
+  if(mode==='mes')records=records.filter(row=>row.vencimento?.getMonth()===month);
+  records=isReceive?receberListaFiltrada(records):pagarListaFiltrada(records);
+  if(!records.length){showToast('Nenhum lançamento neste período e filtro.','err');return;}
+  const monthMode=mode==='mes';
+  const onlyOverdue=isReceive?receberSomenteAtrasados:pagarSomenteAtrasados;
+  const periodLabel=monthMode?`${receberMesNome(month)} de ${year}`:`Ano de ${year}`;
+  const periodFile=monthMode?`${year}-${String(month+1).padStart(2,'0')}`:String(year);
+  exportFinanceCalendarExpandedPDF(kind,year,month,records,{
+    reportTitle:onlyOverdue?'Relatório de itens atrasados':'Relatório do período',
+    periodLabel,
+    footerLabel:onlyOverdue?'Itens atrasados':'Relatório do período',
+    filename:`${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${onlyOverdue?'Atrasados':'Periodo'}_${periodFile}.pdf`
+  });
+}
+function exportFinanceOverduePDF(kind){return exportFinancePeriodPDF(kind);}
+function exportFinanceCalendarExpandedPDF(kind,year,month,records,options={}){
   const JsPDF=window.jspdf?.jsPDF;
   if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
   const isReceive=kind==='receber';
@@ -3039,7 +3090,7 @@ function exportFinanceCalendarExpandedPDF(kind,year,month,records){
     let y=firstPage?10:8;
     if(firstPage){
       doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(25,25,25);doc.text(`CARTAMAC - ${isReceive?'Contas a receber':'Contas a pagar'}`,left,y);y+=6;
-      doc.setFontSize(10);doc.text(`Relatório expandido - ${receberMesNome(month)} de ${year}`,left,y);y+=5;
+      doc.setFontSize(10);doc.text(`${options.reportTitle||'Relatório expandido'} - ${options.periodLabel||`${receberMesNome(month)} de ${year}`}`,left,y);y+=5;
       doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · ${sorted.length} lançamento(s)`,left,y);y+=6;
       const cards=[['TOTAL',total],['RECEBIDO / PAGO',received],['EM ABERTO',open],['ATRASADO',overdue]];
       cards.forEach((card,index)=>{const x=left+index*70.5;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,y,67.5,12,1.2,1.2,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,y+4);doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(index===3&&overdue>0?195:35,index===3&&overdue>0?45:130,index===3&&overdue>0?55:70);doc.text(fmtBRL(card[1]),x+2.5,y+9);});
@@ -3051,16 +3102,23 @@ function exportFinanceCalendarExpandedPDF(kind,year,month,records){
   };
   let y=drawHeader(true);
   sorted.forEach((row,index)=>{
+    const rowOverdue=(isReceive?receberEstaAtrasado(row):pagarEstaAtrasado(row))&&(row.aberto||0)>0;
     const rowValues=values(row).map(value=>String(value??'—'));
     const lineSets=rowValues.map((value,column)=>doc.splitTextToSize(value,widths[column]-2.4));
     const rowHeight=Math.max(6,...lineSets.map(lines=>lines.length*3+2));
     if(y+rowHeight>pageBottom){doc.addPage();y=drawHeader(false);}
     if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,283,rowHeight,'F');}
-    doc.setDrawColor(222,222,222);doc.line(left,y+rowHeight,left+283,y+rowHeight);doc.setFont('helvetica','normal');doc.setFontSize(5.5);doc.setTextColor(28,28,28);
-    let x=left;lineSets.forEach((lines,column)=>{doc.text(lines,x+1.2,y+3.8,{maxWidth:widths[column]-2.4});x+=widths[column];});y+=rowHeight;
+    doc.setDrawColor(222,222,222);doc.line(left,y+rowHeight,left+283,y+rowHeight);doc.setFontSize(5.5);
+    let x=left;lineSets.forEach((lines,column)=>{
+      const overdueValue=rowOverdue&&column===lineSets.length-1;
+      doc.setFont('helvetica',overdueValue?'bold':'normal');
+      doc.setTextColor(overdueValue?205:28,overdueValue?45:28,overdueValue?58:28);
+      doc.text(lines,x+1.2,y+3.8,{maxWidth:widths[column]-2.4});
+      x+=widths[column];
+    });y+=rowHeight;
   });
-  const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Relatório expandido · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
-  doc.save(`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_Expandido_${year}-${String(month+1).padStart(2,'0')}.pdf`);
+  const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`${options.footerLabel||'Relatório expandido'} · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
+  doc.save(options.filename||`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_Expandido_${year}-${String(month+1).padStart(2,'0')}.pdf`);
 }
 function renderContasAPagar(target){
   const rows=pagarRegistros();
@@ -3072,12 +3130,12 @@ function renderContasAPagar(target){
     const year=pagarAnoSelecionado||currentYear;
     const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);
     if(pagarModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarPagarAnos()">← Todos os anos</button>${pagarAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a pagar.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirPagarGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirPagarCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorTitulo,0);return `<button class="receber-period-card" onclick="abrirPagarMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
-    else if(pagarModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('pagar','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('pagar','expandido')"><span class="msi msi-sm">receipt_long</span> PDF expandido</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(pagarMesSelecionado)} de ${year}</h3>${pagarCalendario(yearRows,year,pagarMesSelecionado)}</section>`;
+    else if(pagarModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('pagar','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(pagarMesSelecionado)} de ${year}</h3>${pagarCalendario(yearRows,year,pagarMesSelecionado)}</section>`;
     else {
       const list=pagarModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===pagarMesSelecionado):yearRows;
       const title=pagarModo==='mes'?`${receberMesNome(pagarMesSelecionado)} de ${year}`:`Visão geral — ${year}`;
       const listFiltrada=pagarListaFiltrada(list);
-      content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><button class="btn btn-danger pagar-atrasados-btn ${pagarSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosPagar()">${pagarSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${pagarTabela(list)}</section>`;
+      content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-danger pagar-atrasados-btn ${pagarSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosPagar()">${pagarSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('pagar')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${pagarTabela(list)}</section>`;
     }
   }
   target.innerHTML=`${pagarCabecalhoFinanceiro(rows)}${content}`;
@@ -5220,9 +5278,16 @@ function salesOrderRecord(row){
     entrega,
   };
 }
+function salesOrderIsCancelled(row){
+  if(!row)return false;
+  if(row.cancelado===true||row.cancelada===true||row.isCancelado===true||row.isCancelled===true)return true;
+  const state=salesText(salesValue(row,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido','estadoDescricao','statusDescricao']));
+  const normalized=financeNormalize(state);
+  return normalized==='cancelled'||(normalized.includes('cancelad')&&!normalized.startsWith('naocancelad')&&!normalized.startsWith('nocancelad'));
+}
 function salesRecords(){
   const seen=new Set();
-  return (SALES_CACHE?.items||[]).map(salesOrderRecord).filter(record=>{
+  return (SALES_CACHE?.items||[]).filter(row=>!salesOrderIsCancelled(row)).map(salesOrderRecord).filter(record=>{
     const fallback=[
       record.numero,
       record.emissao?.toISOString().slice(0,10)||'',
@@ -5244,7 +5309,39 @@ function salesYearSummary(records){
   records.forEach(row=>{if(row.mes!==null)months.set(row.mes,(months.get(row.mes)||0)+row.valorTotal);});
   const highest=[...months.entries()].sort((a,b)=>b[1]-a[1])[0]||[null,0];
   const highestOrder=[...records].sort((a,b)=>b.valorTotal-a.valorTotal)[0]||null;
-  return {total,count:records.length,highestMonth:highest[0],highestValue:highest[1],highestOrder};
+  return {total,count:records.length,averageTicket:records.length?total/records.length:0,highestMonth:highest[0],highestValue:highest[1],highestOrder};
+}
+function salesCommercialSummaryMarkup(byYear){
+  const now=new Date(),currentYear=now.getFullYear(),currentMonth=now.getMonth()+1;
+  const numericYears=[...byYear.keys()].filter(year=>/^\d{4}$/.test(String(year))).map(Number).sort((a,b)=>a-b);
+  if(!numericYears.length)return '';
+  const summaries=new Map(numericYears.map(year=>[year,salesYearSummary(byYear.get(String(year))||[])]));
+  const totalPeriod=numericYears.reduce((sum,year)=>sum+(summaries.get(year)?.total||0),0);
+  const ordersPeriod=numericYears.reduce((sum,year)=>sum+(summaries.get(year)?.count||0),0);
+  const rows=numericYears.map(year=>{
+    const summary=summaries.get(year),previous=summaries.get(year-1);
+    const monthsDivisor=year===currentYear?currentMonth:year<currentYear?12:Math.max(1,...(byYear.get(String(year))||[]).map(row=>(row.mes??0)+1));
+    const monthlyAverage=summary.total/monthsDivisor;
+    const comparison=previous&&previous.total!==0?((summary.total-previous.total)/previous.total)*100:null;
+    const comparisonClass=comparison===null?'neutral':comparison>0?'positive':comparison<0?'negative':'neutral';
+    const comparisonText=comparison===null?'—':`${comparison>0?'+':''}${comparison.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+    return `<tr class="${year===currentYear?'current':''}">
+      <td><span class="sales-commercial-year">${year}</span>${year===currentYear?'<span class="sales-commercial-divisor">Ano atual</span>':''}</td>
+      <td>${summary.count.toLocaleString('pt-BR')}</td>
+      <td class="sales-commercial-money">${fmtBRL(summary.total)}</td>
+      <td><span class="sales-commercial-change ${comparisonClass}">${comparisonText}</span><span class="sales-commercial-divisor">vs. ${year-1}</span></td>
+      <td class="sales-commercial-money">${fmtBRL(monthlyAverage)}<span class="sales-commercial-divisor">Total ÷ ${monthsDivisor} ${monthsDivisor===1?'mês':'meses'}</span></td>
+      <td class="sales-commercial-money">${fmtBRL(summary.averageTicket)}<span class="sales-commercial-divisor">Total ÷ pedidos</span></td>
+    </tr>`;
+  }).join('');
+  return `<section class="sales-commercial-summary ${salesCommercialSummaryOpen?'open':''}">
+    <button class="sales-commercial-head" type="button" onclick="toggleSalesCommercialSummary()"><div><h3>Resumo comercial</h3><p>Variação anual = (ano atual − ano anterior) ÷ ano anterior.</p></div><div class="sales-commercial-side"><div class="sales-commercial-note">A média do ano atual acompanha o calendário: em ${salesMonthName(currentMonth-1)}, o total é dividido por ${currentMonth}.</div><span class="msi sales-commercial-chevron">expand_more</span></div></button>
+    <div class="sales-commercial-table-wrap"><table class="sales-commercial-table">
+      <thead><tr><th>Ano</th><th>Pedidos</th><th>Subtotal de vendas</th><th>Comparação anual</th><th>Média por mês</th><th>Ticket médio</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td>Total do período</td><td>${ordersPeriod.toLocaleString('pt-BR')}</td><td>${fmtBRL(totalPeriod)}</td><td>—</td><td>—</td><td>${fmtBRL(ordersPeriod?totalPeriod/ordersPeriod:0)}</td></tr></tfoot>
+    </table></div>
+  </section>`;
 }
 function salesDateText(date){return date?date.toLocaleDateString('pt-BR'):'—';}
 function exportSalesYearReport(year,format){
@@ -5256,8 +5353,8 @@ function exportSalesYearReport(year,format){
   const headers=['Emissão','Nº','Referência','Cliente','Valor total','Valor faturado','Valor a faturar','Entrega'],widths=[19,14,52,65,32,32,32,22];
   const drawTableHeader=y=>{doc.setFillColor(40,40,40);doc.rect(left,y,268,8,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(6);let x=left;headers.forEach((header,index)=>{doc.text(header,x+1.4,y+5.2,{maxWidth:widths[index]-2.8});x+=widths[index];});return y+8;};
   doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text(`CARTAMAC - Vendas ${key}`,left,14);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · pedidos cancelados não incluídos`,left,20);
-  const cards=[['VALOR TOTAL DAS VENDAS',fmtBRL(summary.total)],['NÚMERO DE PEDIDOS',String(summary.count)],['MÊS COM MAIOR VALOR',`${fmtBRL(summary.highestValue)} · ${salesMonthName(summary.highestMonth)}`],['MAIOR PEDIDO',`${fmtBRL(summary.highestOrder?.valorTotal||0)} · ${summary.highestOrder?.cliente||'—'}`]];
-  cards.forEach((card,index)=>{const x=left+index*69;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,25,65,16,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.8);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,30);doc.setFont('helvetica','bold');doc.setFontSize(index>1?7:9);doc.setTextColor(35,130,70);doc.text(doc.splitTextToSize(card[1],60).slice(0,2),x+2.5,36);});
+  const cards=[['VALOR TOTAL DAS VENDAS',fmtBRL(summary.total)],['NÚMERO DE PEDIDOS',String(summary.count)],['TICKET MÉDIO',fmtBRL(summary.averageTicket)],['MÊS COM MAIOR VALOR',`${fmtBRL(summary.highestValue)} · ${salesMonthName(summary.highestMonth)}`],['MAIOR PEDIDO',`${fmtBRL(summary.highestOrder?.valorTotal||0)} · ${summary.highestOrder?.cliente||'—'}`]];
+  cards.forEach((card,index)=>{const x=left+index*55.2;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,25,52,16,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.5);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,30);doc.setFont('helvetica','bold');doc.setFontSize(index>2?6.5:8.5);doc.setTextColor(35,130,70);doc.text(doc.splitTextToSize(card[1],47).slice(0,2),x+2.5,36);});
   let y=drawTableHeader(47);
   rows.forEach((row,index)=>{const values=[salesDateText(row.emissao),row.numero,row.referencia,row.cliente,fmtBRL(row.valorTotal),fmtBRL(row.valorFaturado),fmtBRL(row.valorAFaturar),salesDateText(row.entrega)].map(String);const lines=values.map((value,column)=>doc.splitTextToSize(value,widths[column]-2.8));const height=Math.max(6,...lines.map(set=>set.length*3+2));if(y+height>pageBottom){doc.addPage();y=drawTableHeader(10);}if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,268,height,'F');}doc.setDrawColor(220,220,220);doc.line(left,y+height,left+268,y+height);doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(30,30,30);let x=left;lines.forEach((set,column)=>{doc.text(set,x+1.4,y+3.8,{maxWidth:widths[column]-2.8});x+=widths[column];});y+=height;});
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Vendas ${key} · Página ${page} de ${pages}`,287,207,{align:'right'});}
@@ -5267,12 +5364,12 @@ function exportSalesYearExcel(year,rows){
   if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
   const summary=salesYearSummary(rows),data=[
     [`CARTAMAC - Vendas ${year}`],[`Exportado em ${new Date().toLocaleString('pt-BR')} · pedidos cancelados não incluídos`],[],
-    ['VALOR TOTAL DAS VENDAS','NÚMERO DE PEDIDOS','MÊS COM MAIOR VALOR','VALOR DO MAIOR MÊS','MAIOR PEDIDO','CLIENTE DO MAIOR PEDIDO'],
-    [summary.total,summary.count,salesMonthName(summary.highestMonth),summary.highestValue,summary.highestOrder?.valorTotal||0,summary.highestOrder?.cliente||'—'],[],
+    ['VALOR TOTAL DAS VENDAS','NÚMERO DE PEDIDOS','TICKET MÉDIO','MÊS COM MAIOR VALOR','VALOR DO MAIOR MÊS','MAIOR PEDIDO','CLIENTE DO MAIOR PEDIDO'],
+    [summary.total,summary.count,summary.averageTicket,salesMonthName(summary.highestMonth),summary.highestValue,summary.highestOrder?.valorTotal||0,summary.highestOrder?.cliente||'—'],[],
     ['Emissão','Nº','Referência','Cliente','Valor total','Valor faturado','Valor a faturar','Entrega'],
     ...rows.map(row=>[salesDateText(row.emissao),row.numero,row.referencia,row.cliente,row.valorTotal,row.valorFaturado,row.valorAFaturar,salesDateText(row.entrega)])
   ];
-  const ws=XLSX.utils.aoa_to_sheet(data);ws['!cols']=[{wch:13},{wch:10},{wch:52},{wch:48},{wch:18},{wch:18},{wch:18},{wch:13}];ws['!autofilter']={ref:`A7:H${data.length}`};ws['!freeze']={xSplit:0,ySplit:7,topLeftCell:'A8',activePane:'bottomLeft',state:'frozen'};const currency='"R$" #,##0.00';[0,3,4].forEach(column=>{const cell=ws[XLSX.utils.encode_cell({r:4,c:column})];if(cell)cell.z=currency;});for(let row=7;row<data.length;row++)for(let column=4;column<=6;column++){const cell=ws[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=currency;}
+  const ws=XLSX.utils.aoa_to_sheet(data);ws['!cols']=[{wch:13},{wch:10},{wch:18},{wch:24},{wch:18},{wch:18},{wch:42},{wch:13}];ws['!autofilter']={ref:`A7:H${data.length}`};ws['!freeze']={xSplit:0,ySplit:7,topLeftCell:'A8',activePane:'bottomLeft',state:'frozen'};const currency='"R$" #,##0.00';[0,2,4,5].forEach(column=>{const cell=ws[XLSX.utils.encode_cell({r:4,c:column})];if(cell)cell.z=currency;});for(let row=7;row<data.length;row++)for(let column=4;column<=6;column++){const cell=ws[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=currency;}
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,`Vendas ${year}`.slice(0,31));XLSX.writeFile(wb,`Vendas_${year}_${new Date().toISOString().slice(0,10)}.xlsx`,{compression:true});
 }
 function salesYearMarkup(year,records){
@@ -5333,12 +5430,16 @@ function renderSalesPage(container=document.getElementById('financeiroContent'))
     <div class="sales-head">
       <div><h2><span class="msi">point_of_sale</span> Vendas</h2><p>Pedidos de venda consultados diretamente no MaxiProd e organizados pelo ano de emissão.</p></div>
     </div>
-    ${years.length?`<div class="sales-years">${years.map(year=>salesYearMarkup(year,byYear.get(year))).join('')}</div>`:`<div class="sales-empty"><span class="msi msi-xl">receipt_long</span><h3>Nenhum pedido de venda carregado</h3><p>Clique em “Atualizar MaxiProd” para fazer a primeira consulta.</p></div>`}
+    ${years.length?`${salesCommercialSummaryMarkup(byYear)}<div class="sales-years">${years.map(year=>salesYearMarkup(year,byYear.get(year))).join('')}</div>`:`<div class="sales-empty"><span class="msi msi-xl">receipt_long</span><h3>Nenhum pedido de venda carregado</h3><p>Clique em “Atualizar MaxiProd” para fazer a primeira consulta.</p></div>`}
   </div>`;
 }
 function toggleSalesYear(year){
   const key=String(year);
   salesExpandedYears.has(key)?salesExpandedYears.delete(key):salesExpandedYears.add(key);
+  renderSalesPage();
+}
+function toggleSalesCommercialSummary(){
+  salesCommercialSummaryOpen=!salesCommercialSummaryOpen;
   renderSalesPage();
 }
 async function refreshSalesMaxiprod(options={}){
@@ -5358,6 +5459,7 @@ async function refreshSalesMaxiprod(options={}){
       const result=await consultarPedidosVendaMaxiprodRemoto({take:200,skip});
       const pageItems=Array.isArray(result.data?.items)?result.data.items:[];
       for(const item of pageItems){
+        if(salesOrderIsCancelled(item))continue;
         const id=salesValue(item,['id','pedidoDeVendaId']);
         if(id!==null&&id!==undefined){
           const key=String(id);
@@ -5370,7 +5472,7 @@ async function refreshSalesMaxiprod(options={}){
       if(result.data?.done===true)break;
       skip+=200;
     }
-    SALES_CACHE={version:2,updatedAt,items};
+    SALES_CACHE={version:3,updatedAt,items};
     localStorage.setItem(SALES_CACHE_KEY,JSON.stringify(SALES_CACHE));
     salesExpandedYears.clear();
     salesExpandedInitialized=false;
@@ -5606,6 +5708,7 @@ const STOCK_DISPLAY_GROUPS=[
   ['2','Elementos de fixação'],
   ['4','Uso e consumo'],
   ['7','Itens comerciais'],
+  ['8','Ativos imobilizados'],
   ['11','Tintas']
 ];
 function rawMaterialRecords(){
@@ -5636,6 +5739,21 @@ function rawMaterialRecords(){
     .sort((a,b)=>Number(a.grupo)-Number(b.grupo)||String(a.codigo).localeCompare(String(b.codigo),'pt-BR',{numeric:true}));
 }
 function filterRawMaterial(value){rawMaterialSearch=String(value||'');renderRawMaterialPage();}
+function filterRawMaterialGroup(groupCode,value){
+  const key=String(groupCode);
+  rawMaterialGroupSearch[key]=String(value||'');
+  clearTimeout(rawMaterialGroupFilterTimer);
+  rawMaterialGroupFilterTimer=setTimeout(()=>{
+    renderRawMaterialPage();
+    requestAnimationFrame(()=>{
+      const input=document.getElementById(`estoque-filtro-${key}`);
+      if(!input)return;
+      input.focus();
+      const end=input.value.length;
+      input.setSelectionRange?.(end,end);
+    });
+  },220);
+}
 function showMoreRawMaterial(groupCode){rawMaterialLimits[groupCode]=(rawMaterialLimits[groupCode]||200)+200;renderRawMaterialPage();}
 function toggleRawMaterialGroup(groupCode){
   const key=String(groupCode);
@@ -5644,6 +5762,7 @@ function toggleRawMaterialGroup(groupCode){
 }
 function stockGroupRows(groupCode){
   if(String(groupCode)==='4')return usageStockRecords().map(row=>({...row,grupo:'4',custoTotal:row.valorTotal}));
+  if(String(groupCode)==='8')return fixedAssetRecords().map(row=>({...row,grupo:'8',custoTotal:row.precoTotal}));
   return rawMaterialRecords().filter(row=>String(row.grupo)===String(groupCode));
 }
 function stockGroupSummaryHtml(rows){
@@ -5659,7 +5778,7 @@ function rawMaterialTable(rows,groupCode){
   const limit=rawMaterialLimits[groupCode]||200;
   const visible=rows.slice(0,limit),remaining=Math.max(0,rows.length-visible.length);
   if(!visible.length)return `<div class="finance-empty">Nenhum item deste grupo corresponde ao filtro informado.</div>`;
-  if(String(groupCode)==='4')return `<div class="finance-table-wrap"><table class="finance-table fixed-assets-table"><thead><tr><th>Criado em</th><th>Item</th><th>Descrição</th><th>Quantidade</th><th>Valor unitário</th><th>Valor total</th></tr></thead><tbody>${visible.map(row=>`<tr>
+  if(['4','8'].includes(String(groupCode)))return `<div class="finance-table-wrap"><table class="finance-table fixed-assets-table"><thead><tr><th>Criado em</th><th>Item</th><th>Descrição</th><th>Quantidade</th><th>Valor unitário</th><th>${String(groupCode)==='8'?'Preço total':'Valor total'}</th></tr></thead><tbody>${visible.map(row=>`<tr>
     <td>${salesDateText(row.criadoEm)}</td>
     <td>${escapeHTML(row.codigo)}</td>
     <td>${escapeHTML(row.descricao)}</td>
@@ -5680,30 +5799,30 @@ function renderRawMaterialPage(container=document.getElementById('financeiroCont
   if(!container)return;
   const groupRows=Object.fromEntries(STOCK_DISPLAY_GROUPS.map(([groupCode])=>[groupCode,stockGroupRows(groupCode)]));
   const allRows=STOCK_DISPLAY_GROUPS.flatMap(([groupCode])=>groupRows[groupCode]);
-  const query=rawMaterialSearch.trim().toLocaleLowerCase('pt-BR');
-  const filtered=query?allRows.filter(row=>[row.codigo,row.descricao,row.unidade].join(' ').toLocaleLowerCase('pt-BR').includes(query)):allRows;
-  const updatedDates=[RAW_MATERIAL_CACHE?.updatedAt,USAGE_STOCK_CACHE?.updatedAt].filter(Boolean).map(value=>new Date(value)).filter(date=>!Number.isNaN(date.getTime()));
+  const updatedDates=[RAW_MATERIAL_CACHE?.updatedAt,USAGE_STOCK_CACHE?.updatedAt,FIXED_ASSETS_CACHE?.updatedAt].filter(Boolean).map(value=>new Date(value)).filter(date=>!Number.isNaN(date.getTime()));
   const updated=updatedDates.length?new Date(Math.max(...updatedDates)).toLocaleString('pt-BR'):'Ainda não atualizado';
   const grandTotal=allRows.reduce((sum,row)=>sum+row.custoTotal,0);
-  const summaryCards=`<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(grandTotal)}</div><div class="sales-summary-label">Somatória total</div><div class="sales-summary-sub">Grupos 1, 2, 4, 7 e 11</div></div>`+STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
+  const summaryCards=`<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(grandTotal)}</div><div class="sales-summary-label">Somatória total</div><div class="sales-summary-sub">Grupos 1, 2, 4, 7, 8 e 11</div></div>`+STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
     const rows=groupRows[groupCode];
     const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
     return `<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Grupo ${groupCode} · ${escapeHTML(label)}</div><div class="sales-summary-sub">${rows.length} item(ns)</div></div>`;
   }).join('');
   const blocks=STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
-    const rows=filtered.filter(row=>String(row.grupo)===groupCode);
+    const allGroupRows=groupRows[groupCode];
+    const query=String(rawMaterialGroupSearch[groupCode]||'').trim().toLocaleLowerCase('pt-BR');
+    const rows=query?allGroupRows.filter(row=>[row.codigo,row.descricao,row.unidade].join(' ').toLocaleLowerCase('pt-BR').includes(query)):allGroupRows;
     const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
     const open=rawMaterialExpandedGroups.has(groupCode);
-    const reportKind=groupCode==='4'?'usoConsumo':`grupo${groupCode}`;
+    const reportKind=groupCode==='4'?'usoConsumo':groupCode==='8'?'ativos':`grupo${groupCode}`;
     const actions=`<div class="stock-group-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="exportStockReport('${reportKind}','pdf')"><span class="msi msi-sm">picture_as_pdf</span> PDF do grupo ${groupCode}</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportStockReport('${reportKind}','excel')"><span class="msi msi-sm">table_chart</span> Excel do grupo ${groupCode}</button></div>`;
-    return `<section class="raw-material-group ${open?'open':''}"><button class="raw-material-group-head" type="button" onclick="toggleRawMaterialGroup('${groupCode}')"><h3>Grupo ${groupCode} — ${escapeHTML(label)}</h3><span>${rows.length} item(ns) · ${fmtBRL(total)}</span><span class="msi raw-material-group-chevron">expand_more</span></button><div class="raw-material-group-body">${actions}${stockGroupSummaryHtml(rows)}${rawMaterialTable(rows,groupCode)}</div></section>`;
+    const search=`<div class="finance-toolbar" style="padding:14px;margin:0"><input id="estoque-filtro-${groupCode}" class="search-input" value="${escapeHTML(rawMaterialGroupSearch[groupCode]||'')}" oninput="filterRawMaterialGroup('${groupCode}',this.value)" placeholder="Filtrar o grupo ${groupCode} por item, descrição ou unidade..."><span class="muted" style="font-size:12px;white-space:nowrap;">${rows.length} de ${allGroupRows.length} item(ns)</span></div>`;
+    return `<section class="raw-material-group ${open?'open':''}"><button class="raw-material-group-head" type="button" onclick="toggleRawMaterialGroup('${groupCode}')"><h3>Grupo ${groupCode} — ${escapeHTML(label)}</h3><span>${allGroupRows.length} item(ns) · ${fmtBRL(allGroupRows.reduce((sum,row)=>sum+row.custoTotal,0))}</span><span class="msi raw-material-group-chevron">expand_more</span></button><div class="raw-material-group-body">${actions}${search}${stockGroupSummaryHtml(rows)}${rawMaterialTable(rows,groupCode)}</div></section>`;
   }).join('');
-  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de estoque: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(rawMaterialRefreshInProgress||usageStockRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(rawMaterialRefreshInProgress||usageStockRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de estoque: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(rawMaterialRefreshInProgress||usageStockRefreshInProgress||fixedAssetsRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(rawMaterialRefreshInProgress||usageStockRefreshInProgress||fixedAssetsRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
     ${financeTabsHtml()}
     <div class="fixed-assets-page">
-      <div class="fixed-assets-title"><h2><span class="msi">inventory_2</span> Estoque</h2><p>Itens da grade de Estoque dos grupos 1, 2, 4, 7 e 11 no MaxiProd.</p></div>
+      <div class="fixed-assets-title"><h2><span class="msi">inventory_2</span> Estoque</h2><p>Itens da grade de Estoque dos grupos 1, 2, 4, 7, 8 e 11 no MaxiProd.</p></div>
       <div class="fixed-assets-summary raw-material-summary">${summaryCards}</div>
-      <div class="finance-toolbar"><input class="search-input" value="${escapeHTML(rawMaterialSearch)}" oninput="filterRawMaterial(this.value)" placeholder="Filtrar por item, descrição ou unidade..."><span class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${allRows.length} item(ns)</span></div>
       <div class="raw-material-groups">${blocks}</div>
     </div>`;
 }
@@ -5992,14 +6111,14 @@ Object.assign(window,{
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
-  renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,exportSalesYearReport,
+  renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,exportSalesYearReport,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
-  renderRawMaterialPage,refreshRawMaterialMaxiprod,filterRawMaterial,showMoreRawMaterial,toggleRawMaterialGroup,
+  renderRawMaterialPage,refreshRawMaterialMaxiprod,filterRawMaterial,filterRawMaterialGroup,showMoreRawMaterial,toggleRawMaterialGroup,
   exportStockReport,
 abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,alternarFiltroAtrasadosReceber,mostrarMaisContasReceber,atualizarContasReceberAno,limparContasReceberAno,
   abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,alternarFiltroAtrasadosPagar,mostrarMaisContasPagar,atualizarContasPagarAno,limparContasPagarAno,
-  exportFinanceCalendarPDF,
+  exportFinanceCalendarPDF,exportFinancePeriodPDF,exportFinanceOverduePDF,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
 </script>
