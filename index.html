@@ -174,6 +174,26 @@ input[type="file"]{display:none;}
 .finance-table{width:100%;min-width:900px;border-collapse:collapse;font-size:12px;}.finance-table th{background:var(--panel2);color:var(--text3);font-size:10px;letter-spacing:.4px;text-transform:uppercase;text-align:left;padding:12px;border-bottom:1px solid var(--border);white-space:nowrap;}.finance-table td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text2);}.finance-table tr:last-child td{border-bottom:0;}.finance-table .money{font-family:'JetBrains Mono',monospace;font-weight:700;color:#fff;white-space:nowrap;}.finance-table .muted{color:var(--text3);}.finance-empty{padding:28px;color:var(--text3);text-align:center;}
 .finance-card-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}.finance-card{border:1px solid var(--border);border-radius:9px;background:var(--panel);padding:15px;}.finance-card b{display:block;font:700 19px 'JetBrains Mono',monospace;color:var(--gold);}.finance-card span{display:block;color:var(--text3);font-size:11px;margin-top:6px;text-transform:uppercase;letter-spacing:.4px;}
 .finance-card-grid.receber-resumo-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+.cashflow-shell{border:1px solid var(--border);border-radius:12px;background:var(--panel);padding:20px;}
+.cashflow-period{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+.cashflow-period h3{margin:0;font-size:18px}.cashflow-period p{margin:5px 0 0;color:var(--text3);font-size:12px}
+.cashflow-month-input{width:190px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:10px 12px;font:600 13px var(--font);color-scheme:dark;}
+.cashflow-bank-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px;}
+.cashflow-bank-card{border:1px solid var(--border);border-radius:10px;background:var(--panel2);padding:14px;}
+.cashflow-bank-card label{display:block;color:var(--text3);font-size:10px;letter-spacing:.45px;text-transform:uppercase;margin-bottom:7px;}
+.cashflow-bank-card .bank-name{width:100%;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;color:var(--text);font-weight:700;padding:5px 0 8px;margin-bottom:10px;}
+.cashflow-bank-card .bank-value{width:100%;border:1px solid var(--border);border-radius:7px;background:var(--panel);color:var(--green);padding:10px;font:700 17px 'JetBrains Mono',monospace;}
+.cashflow-summary-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:18px;}
+.cashflow-summary-card{border:1px solid var(--border);border-radius:10px;background:var(--panel2);padding:17px;text-align:center;min-width:0;}
+.cashflow-summary-card b{display:block;font:700 20px 'JetBrains Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cashflow-summary-card span{display:block;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.45px;margin-top:7px;}
+.cashflow-summary-card.cashflow-link{font:inherit;color:inherit;width:100%;cursor:pointer;transition:border-color .16s,transform .16s;}
+.cashflow-summary-card.cashflow-link:hover{border-color:var(--gold);transform:translateY(-1px);}
+.cashflow-value-link{border:0;background:transparent;padding:4px 0;color:inherit;font:700 12px 'JetBrains Mono',monospace;cursor:pointer;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;}
+.cashflow-value-link:hover{color:#fff !important;text-decoration-color:var(--gold);}
+.cashflow-formula{border-left:3px solid var(--gold);background:#181713;border-radius:8px;padding:12px 14px;color:var(--text2);font-size:12px;margin-bottom:18px;}
+.cashflow-overview h3{margin:0 0 10px;font-size:15px}.cashflow-overview .finance-table th,.cashflow-overview .finance-table td{text-align:right}.cashflow-overview .finance-table th:first-child,.cashflow-overview .finance-table td:first-child{text-align:left}.cashflow-current-row td{background:rgba(212,160,23,.08);}
+.cashflow-gantt{margin-top:22px;min-width:0;max-width:100%;}.cashflow-gantt .cgantt-wrap{margin-bottom:0;max-width:100%;}.cashflow-gantt .cgantt-outer{width:100%;max-width:100%;}
 .receber-navegacao,.receber-detalhe{border:1px solid var(--border);border-radius:12px;background:var(--panel);padding:20px;margin-top:16px;}.receber-navegacao h3,.receber-detalhe h3{margin:0 0 6px;font-size:18px;color:#fff;}.receber-navegacao p,.receber-detalhe p{margin:0 0 16px;color:var(--text3);font-size:13px;}.receber-year-grid,.receber-period-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;}.receber-year-card,.receber-period-card{appearance:none;text-align:left;border:1px solid var(--border);background:var(--panel2);border-radius:10px;padding:17px;cursor:pointer;color:var(--text);transition:.16s ease;min-height:112px;}.receber-year-card:hover,.receber-period-card:hover{border-color:var(--gold);transform:translateY(-1px);}.receber-year-card b{display:block;font:700 30px 'JetBrains Mono',monospace;color:var(--gold);}.receber-period-card b{display:block;font-size:15px;color:#fff;}.receber-year-card span,.receber-period-card span{display:block;color:var(--text3);font-size:12px;margin-top:9px;}.receber-year-card strong,.receber-period-card strong{display:block;color:#51cb68;font:700 13px 'JetBrains Mono',monospace;margin-top:5px;}.receber-period-card.general{border-color:#857333;}.receber-period-card.calendar{border-color:#38637e;}.receber-filtros{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:8px;margin:16px 0 12px;max-width:900px;}.receber-filtros input{width:100%;min-width:0;background:#252525;color:#fff;border:1px solid #424242;border-radius:6px;padding:10px;font-size:12px;}.receber-filtros input:focus{outline:none;border-color:var(--gold);}.receber-calendar-months{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0;}.receber-calendar-months button{border:1px solid var(--border);background:#252525;color:var(--text2);border-radius:6px;padding:8px 10px;font-size:11px;cursor:pointer;}.receber-calendar-months button.active,.receber-calendar-months button:hover{border-color:var(--gold);color:#fff;background:#332c16;}.receber-calendar{display:grid;grid-template-columns:repeat(7,minmax(115px,1fr));gap:5px;overflow:auto;}.receber-calendar>div:nth-child(-n+7){background:#252525;color:var(--text3);font-weight:700;font-size:11px;text-align:center;padding:9px;}.receber-calendar-day{min-height:130px;border:1px solid var(--border);background:#151515;padding:8px;}.receber-calendar-day.empty{background:#101010;border-color:#202020;}.receber-calendar-day>b{font:700 14px 'JetBrains Mono',monospace;color:#d8d8d8;}.receber-calendar-item{border-left:3px solid var(--gold);background:#242013;border-radius:4px;margin-top:7px;padding:5px;font-size:10px;overflow:hidden;}.receber-calendar-item span,.receber-calendar-item strong,.receber-calendar-item small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.receber-calendar-item strong{font:700 11px 'JetBrains Mono',monospace;color:#fff;margin-top:2px;}.receber-calendar-item small{color:var(--text3);margin-top:2px;}
 .receber-year-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
 .receber-feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px;}
@@ -193,10 +213,18 @@ input[type="file"]{display:none;}
 .receber-calendar-item small{font-size:11px;color:#fff;}
 .receber-calendar-item.atrasado{background:#7a2027;border-left-color:#ff5c68;}
 .receber-calendar-item.atrasado span,.receber-calendar-item.atrasado strong,.receber-calendar-item.atrasado small{color:#fff;}
+.finance-calendar-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+.receber-calendar-day-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.receber-calendar-day-head>b{font:700 14px 'JetBrains Mono',monospace;color:#d8d8d8;flex:0 0 auto;}
+.receber-calendar-day-subtotals{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;text-align:right;}
+.receber-calendar-day-subtotals span{font:800 11px 'JetBrains Mono',monospace;color:#51cb68;white-space:nowrap;line-height:1.25;}
+.receber-calendar-day-subtotals .open{color:#fff;font-size:11px;}
+.receber-calendar-day-subtotals .open.overdue{color:#ff5c68;}
 @media(max-width:1100px){.receber-year-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.receber-month-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:680px){.receber-year-grid,.receber-feature-grid,.receber-month-grid{grid-template-columns:1fr;}}
 .finance-column-filter{position:relative;display:inline-block;}.finance-column-filter summary{cursor:pointer;list-style:none;white-space:nowrap;}.finance-column-filter summary::-webkit-details-marker{display:none;}.finance-column-filter summary span{color:var(--gold);margin-left:3px;}.finance-filter-menu{position:absolute;left:0;top:20px;z-index:80;width:240px;max-height:330px;overflow:auto;padding:8px;background:#202020;border:1px solid #575757;border-radius:7px;box-shadow:0 12px 28px #000b;color:#eee;text-transform:none;letter-spacing:0;font-size:12px;}.finance-filter-menu label{display:block;padding:5px 3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.finance-filter-menu label:first-child{padding-bottom:8px;margin-bottom:5px;border-bottom:1px solid #454545;font-weight:700;}.finance-filter-menu input{vertical-align:middle;margin:0 6px 0 0;accent-color:#c8a84b;}.finance-filter-menu small{display:block;padding:7px 3px;color:var(--text3);}
-@media(max-width:760px){.finance-head{display:block;}.finance-actions{justify-content:flex-start;margin-top:12px;}.finance-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.finance-card-grid.receber-resumo-grid{grid-template-columns:1fr;}.finance-card{padding:12px;}.finance-card b{font-size:16px;}.finance-tabs{gap:6px;}.finance-tab{padding:9px 10px;font-size:11px;}.finance-toolbar{display:block;}.finance-toolbar input{width:100%;}.finance-table{min-width:760px;}.receber-filtros{grid-template-columns:1fr;}}
+@media(max-width:1100px){.cashflow-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr));}.cashflow-bank-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:760px){.finance-head{display:block;}.finance-actions{justify-content:flex-start;margin-top:12px;}.finance-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.finance-card-grid.receber-resumo-grid{grid-template-columns:1fr;}.finance-card{padding:12px;}.finance-card b{font-size:16px;}.finance-tabs{gap:6px;}.finance-tab{padding:9px 10px;font-size:11px;}.finance-toolbar{display:block;}.finance-toolbar input{width:100%;}.finance-table{min-width:760px;}.receber-filtros{grid-template-columns:1fr;}.cashflow-shell{padding:13px}.cashflow-bank-grid,.cashflow-summary-grid{grid-template-columns:1fr}.cashflow-month-input{width:100%;}}
 @media(max-width:760px){.pagar-detalhe-top{align-items:stretch;flex-direction:column;}.pagar-atrasados-btn{width:100%;}}
 @media(max-width:640px){.parts-head h2{font-size:19px}.parts-stats{grid-template-columns:1fr}.parts-toolbar .search-wrap{width:100%;}}
 @media(max-width:640px){
@@ -756,10 +784,11 @@ input[type="file"]{display:none;}
 .cgantt-title-bar h3{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .cgantt-title-bar .cgantt-sub{font-size:12px;font-weight:500;color:var(--text3);}
 .cgantt-outer{overflow:auto;max-height:70vh;-webkit-overflow-scrolling:touch;}
-.cgantt-table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:13px;}
+.cgantt-table{border-collapse:separate;border-spacing:0;width:100%;min-width:max-content;font-size:13px;}
 .cgantt-table th,.cgantt-table td{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:9px 12px;text-align:center;white-space:nowrap;}
-.cg-name-th,.cg-name-td{text-align:left;position:sticky;left:0;z-index:6;background:var(--bg3);min-width:220px;max-width:260px;overflow:hidden;text-overflow:ellipsis;}
-.cg-pct-th,.cg-pct-td{position:sticky;left:220px;z-index:5;min-width:64px;border-right:2px solid var(--border3) !important;}
+.cg-name-th,.cg-name-td{text-align:left;position:sticky;left:0;z-index:6;background:var(--bg3);width:240px;min-width:240px;max-width:240px;box-sizing:border-box;overflow:hidden;text-overflow:ellipsis;}
+.cg-pct-th,.cg-pct-td{position:sticky;left:240px;z-index:5;width:72px;min-width:72px;max-width:72px;box-sizing:border-box;border-right:2px solid var(--border3) !important;}
+.cg-month-th,.cg-cell,.cg-total-row td:not(.cg-name-td):not(.cg-pct-td){min-width:125px;box-sizing:border-box;}
 .cgantt-table thead th{background:var(--bg3);color:var(--text2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;z-index:7;}
 .cgantt-table thead .cg-name-th,.cgantt-table thead .cg-pct-th{z-index:9;}
 .cg-month-th.cur{color:var(--gold);background:#1f1c10;}
@@ -774,7 +803,7 @@ input[type="file"]{display:none;}
 .cg-total-label{color:var(--gold) !important;text-transform:uppercase;font-size:11px;letter-spacing:.4px;}
 .cgantt-wrap .gcal-summary{padding:18px 20px;margin-bottom:0;border-top:1px solid var(--border);}
 @media(max-width:768px){
-  .cg-name-th,.cg-name-td{min-width:150px;max-width:170px;}
+  .cg-name-th,.cg-name-td{width:150px;min-width:150px;max-width:150px;}
   .cg-pct-th,.cg-pct-td{left:150px;}
   .cgantt-table th,.cgantt-table td{padding:7px 8px;font-size:12px;}
   .cgantt-title-bar{padding:12px 14px;}
@@ -913,7 +942,9 @@ input[type="file"]{display:none;}
 .raw-material-group-body{display:none;border-top:1px solid var(--border);}
 .raw-material-group.open .raw-material-group-body{display:block;}
 .raw-material-group .finance-table-wrap{border:0;border-radius:0;}
-.raw-material-summary{grid-template-columns:repeat(4,minmax(0,1fr));}
+.raw-material-summary{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+.stock-group-summary{padding:14px;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid var(--border);}
+.stock-group-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:12px 14px 0;}
 .raw-material-table td:nth-child(1){font-weight:750;color:var(--gold);}
 .raw-material-table td:nth-child(2){font-weight:400;color:var(--text2);}
 .raw-material-table td:nth-child(3),.raw-material-table td:nth-child(5),.raw-material-table td:nth-child(6){font-family:'JetBrains Mono',monospace;text-align:right;white-space:nowrap;}
@@ -936,6 +967,7 @@ input[type="file"]{display:none;}
 @media(max-width:900px){.fixed-assets-summary{grid-template-columns:1fr;}}
 @media(max-width:1250px){.raw-material-summary{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:700px){.raw-material-summary{grid-template-columns:1fr;}.raw-material-group-head{align-items:flex-start;flex-direction:column;}}
+@media(max-width:900px){.stock-group-summary{grid-template-columns:1fr;}}
 @media(max-width:760px){
   .sales-summary{grid-template-columns:1fr;}
   .sales-year-toggle,.sales-year-body{padding-left:14px;padding-right:14px;}
@@ -1328,21 +1360,26 @@ const DEFAULT_DB = {
   projectOrders:    null,
   costsPassword:    '000000',
   costsData:        {},
+  costsAutoMonthKey: null,
   partsData:        [],
   partsLastImport:  null,
   simulatorDraft:   null,
   simulatorTemplateVersion: 2,
   engineeringPeople: [],
   engineeringMacros: {},
+  cashFlowData: {bankNames:['Banco 1','Banco 2','Banco 3'],months:{}},
   financeiroFiscalMeta: {updatedAt:null}
 };
 
 let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
 let FILE_STORE = {};
-let financeiroView='receber';
+let financeiroView='fluxoCaixa';
 let financeColumnFilters={};
 let financeRefreshInProgress=null;
 let financeRenderQueued=false;
+let cashFlowSelectedMonth=monthKey((new Date()).getFullYear(),(new Date()).getMonth());
+let costMonthRolloverInProgress=false;
+let costMonthRolloverTimer=null;
 // Estado exclusivo da visualização de Contas a receber. Não interfere nas demais abas.
 let receberAnoSelecionado=null;
 let receberModo='anos'; // anos | meses | geral | calendario | mes
@@ -2145,12 +2182,12 @@ function fmtBRL(v){
 const esc=escapeHTML;
 // localiza cada informação por alternativas de nome, sem depender de um único schema.
 const FINANCE_VIEWS={
+  fluxoCaixa:{title:'Fluxo de caixa mensal',source:null,columns:[]},
   receber:{title:'Contas a receber',source:'contaAReceber',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Descrição',['descricao','historico']],['Empresa',['empresaNome','empresa']],['Parcela',['parcela','numeroParcela']],['Nº parcelas',['numeroTotalParcelas','quantidadeParcelas']],['Referente a',['referenteA','referencia','referente']],['Valor',['valor','valorOriginal']],['Valor original',['valorOriginal']],['Valor recebido',['valorRecebido','valorBaixado']],['Valor a receber',['valorAReceber','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
   pagar:{title:'Contas a pagar',source:'contaAPagar',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Empresa',['empresaNome','empresa']],['Descrição',['descricao','historico']],['Conta destino',['contaDestinoDescricao','contaDestino']],['Referente a',['referenteA','referencia','referente']],['Observações',['observacoes','observacao']],['Valor original',['valorOriginal','valor']],['Valor pago',['valorPago','valorBaixado']],['Valor a pagar',['valorAPagar','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
   vendas:{title:'Vendas',source:'pedidosDeVenda',columns:[]},
   ativos:{title:'Ativos imobilizados',source:null,columns:[]},
-  usoConsumo:{title:'Uso e consumo',source:null,columns:[]},
-  materiaPrima:{title:'Matéria-prima',source:null,columns:[]}
+  materiaPrima:{title:'Estoque',source:null,columns:[]}
 };
 function financeNormalize(value){return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
 function financeValue(row,keys){
@@ -2597,7 +2634,11 @@ function receberCalendario(rows,year,month){
   const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),byDay={};
   rows.forEach(row=>{if(row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month){const day=row.vencimento.getDate();(byDay[day]||=[]).push(row);}});
   const cells=[];for(let blank=0;blank<first;blank++)cells.push('<div class="receber-calendar-day empty"></div>');
-  for(let day=1;day<=days;day++){const items=byDay[day]||[];cells.push(`<div class="receber-calendar-day"><b>${day}</b>${items.map(item=>`<div class="receber-calendar-item ${receberEstaAtrasado(item)?'atrasado':''}" title="${esc(item.descricao)}"><span>${esc(item.cliente)}</span><strong>${fmtBRL(item.aberto)}</strong><small>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</small></div>`).join('')}</div>`);}
+  for(let day=1;day<=days;day++){
+    const items=byDay[day]||[],total=items.reduce((sum,item)=>sum+(item.valorParcela||0),0),open=items.reduce((sum,item)=>sum+(item.aberto||0),0),overdue=items.some(receberEstaAtrasado);
+    const subtotals=items.length?`<span>Total ${fmtBRL(total)}</span><span class="open ${overdue&&open>0?'overdue':''}">Falta ${fmtBRL(open)}</span>`:'';
+    cells.push(`<div class="receber-calendar-day"><div class="receber-calendar-day-head"><b>${day}</b><div class="receber-calendar-day-subtotals">${subtotals}</div></div>${items.map(item=>`<div class="receber-calendar-item ${receberEstaAtrasado(item)?'atrasado':''}" title="${esc(item.descricao)}"><span>${esc(item.cliente)}</span><strong>${fmtBRL(item.aberto)}</strong><small>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</small></div>`).join('')}</div>`);
+  }
   return `<div class="receber-calendar-months">${Array.from({length:12},(_,m)=>`<button class="${m===month?'active':''}" onclick="alterarReceberCalendario(${m})">${receberMesSigla(m)}</button>`).join('')}</div><div class="receber-calendar"><div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>${cells.join('')}</div>`;
 }
 function receberEstaAtrasado(row){
@@ -2611,7 +2652,7 @@ function renderContasAReceber(target){
   let content='';
   if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>O ano atual é atualizado pelo botão principal. Entre em um ano anterior para carregá-lo somente quando precisar.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
   else {const year=receberAnoSelecionado||currentYear;const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button>${receberAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a receber.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
-    else if(receberModo==='calendario')content=`<section class="receber-detalhe"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
+    else if(receberModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber')"><span class="msi msi-sm">picture_as_pdf</span> PDF do calendário</button></div><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
     else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
   target.innerHTML=`${receberCabecalhoFinanceiro(data,rows)}${content}`;
 }
@@ -2906,8 +2947,51 @@ function pagarCalendario(rows,year,month){
   const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),byDay={};
   rows.forEach(row=>{if(row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month){const day=row.vencimento.getDate();(byDay[day]||=[]).push(row);}});
   const cells=[];for(let blank=0;blank<first;blank++)cells.push('<div class="receber-calendar-day empty"></div>');
-  for(let day=1;day<=days;day++){const items=byDay[day]||[];cells.push(`<div class="receber-calendar-day"><b>${day}</b>${items.map(item=>`<div class="receber-calendar-item ${pagarEstaAtrasado(item)?'atrasado':''}" title="${esc(item.descricao)}"><span>${esc(item.fornecedor)}</span><strong>${fmtBRL(item.aberto)}</strong><small>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</small></div>`).join('')}</div>`);}
+  for(let day=1;day<=days;day++){
+    const items=byDay[day]||[],total=items.reduce((sum,item)=>sum+(item.valorTitulo||0),0),open=items.reduce((sum,item)=>sum+(item.aberto||0),0),overdue=items.some(pagarEstaAtrasado);
+    const subtotals=items.length?`<span>Total ${fmtBRL(total)}</span><span class="open ${overdue&&open>0?'overdue':''}">Falta ${fmtBRL(open)}</span>`:'';
+    cells.push(`<div class="receber-calendar-day"><div class="receber-calendar-day-head"><b>${day}</b><div class="receber-calendar-day-subtotals">${subtotals}</div></div>${items.map(item=>`<div class="receber-calendar-item ${pagarEstaAtrasado(item)?'atrasado':''}" title="${esc(item.descricao)}"><span>${esc(item.fornecedor)}</span><strong>${fmtBRL(item.aberto)}</strong><small>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</small></div>`).join('')}</div>`);
+  }
   return `<div class="receber-calendar-months">${Array.from({length:12},(_,m)=>`<button class="${m===month?'active':''}" onclick="alterarPagarCalendario(${m})">${receberMesSigla(m)}</button>`).join('')}</div><div class="receber-calendar"><div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>${cells.join('')}</div>`;
+}
+function exportFinanceCalendarPDF(kind){
+  const JsPDF=window.jspdf?.jsPDF;
+  if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const isReceive=kind==='receber';
+  const year=Number(isReceive?receberAnoSelecionado:pagarAnoSelecionado)||(new Date()).getFullYear();
+  const month=Number(isReceive?receberMesSelecionado:pagarMesSelecionado);
+  const records=(isReceive?receberRegistros():pagarRegistros()).filter(row=>row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month);
+  const total=records.reduce((sum,row)=>sum+(isReceive?(row.valorParcela||0):(row.valorTitulo||0)),0);
+  const open=records.reduce((sum,row)=>sum+(row.aberto||0),0);
+  const overdue=records.reduce((sum,row)=>sum+((isReceive?receberEstaAtrasado(row):pagarEstaAtrasado(row))?(row.aberto||0):0),0);
+  const byDay={};records.forEach(row=>{const day=row.vencimento.getDate();(byDay[day]||=[]).push(row);});
+  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),pageW=297,left=10,right=10,contentW=277;
+  doc.setFillColor(255,255,255);doc.rect(0,0,pageW,210,'F');
+  doc.setTextColor(28,28,28);doc.setFont('helvetica','bold');doc.setFontSize(16);
+  doc.text(`CARTAMAC - ${isReceive?'Contas a receber':'Contas a pagar'}`,left,13);
+  doc.setFontSize(11);doc.text(`Calendário de vencimentos - ${receberMesNome(month)} de ${year}`,left,20);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(170,170,170);
+  doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} - ${records.length} lançamento(s)`,left,25);
+  const cards=[['TOTAL DO MÊS',fmtBRL(total)],['FALTA '+(isReceive?'RECEBER':'PAGAR'),fmtBRL(open)],['ATRASADO',fmtBRL(overdue)]];
+  cards.forEach((card,index)=>{const x=left+(index*(contentW/3)),w=(contentW/3)-3;doc.setFillColor(248,248,248);doc.setDrawColor(205,205,205);doc.roundedRect(x,29,w,12,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(95,95,95);doc.text(card[0],x+3,33.5);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(index===2&&overdue>0?205:38,index===2&&overdue>0?45:145,index===2&&overdue>0?58:72);doc.text(card[1],x+3,38.3);});
+  const weekdays=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'],gridTop=48,colW=contentW/7;
+  weekdays.forEach((label,index)=>{const x=left+(index*colW);doc.setFillColor(232,232,232);doc.setDrawColor(190,190,190);doc.rect(x,gridTop-5,colW,5,'FD');doc.setFont('helvetica','bold');doc.setFontSize(6);doc.setTextColor(55,55,55);doc.text(label,x+(colW/2),gridTop-1.6,{align:'center'});});
+  const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),weeks=Math.ceil((first+days)/7),cellH=145/weeks;
+  for(let day=1;day<=days;day++){
+    const position=first+day-1,rowIndex=Math.floor(position/7),colIndex=position%7,x=left+(colIndex*colW),y=gridTop+(rowIndex*cellH),items=byDay[day]||[];
+    const dayTotal=items.reduce((sum,item)=>sum+(isReceive?(item.valorParcela||0):(item.valorTitulo||0)),0),dayOpen=items.reduce((sum,item)=>sum+(item.aberto||0),0),dayOverdue=items.some(item=>isReceive?receberEstaAtrasado(item):pagarEstaAtrasado(item));
+    doc.setFillColor(255,255,255);doc.setDrawColor(195,195,195);doc.rect(x,y,colW,cellH,'FD');doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(30,30,30);doc.text(String(day),x+2,y+4.5);
+    if(items.length){doc.setFontSize(5.4);doc.setTextColor(38,145,72);doc.text(`Total ${fmtBRL(dayTotal)}`,x+colW-2,y+3.4,{align:'right'});doc.setTextColor(dayOverdue&&dayOpen>0?205:65,dayOverdue&&dayOpen>0?45:65,dayOverdue&&dayOpen>0?58:65);doc.text(`Falta ${fmtBRL(dayOpen)}`,x+colW-2,y+6.2,{align:'right'});}
+    const maxItems=Math.max(1,Math.floor((cellH-9)/6));items.slice(0,maxItems).forEach((item,index)=>{
+      const iy=y+10+(index*6),name=isReceive?item.cliente:item.fornecedor,itemOverdue=isReceive?receberEstaAtrasado(item):pagarEstaAtrasado(item);
+      doc.setFillColor(itemOverdue?255:247,itemOverdue?229:247,itemOverdue?232:247);doc.setDrawColor(itemOverdue?220:215,itemOverdue?105:215,itemOverdue?115:215);doc.roundedRect(x+1.5,iy-2.8,colW-3,5.5,.8,.8,'FD');
+      doc.setFont('helvetica','bold');doc.setFontSize(4.7);doc.setTextColor(itemOverdue?165:35,itemOverdue?35:35,itemOverdue?48:35);doc.text(doc.splitTextToSize(String(name||'-'),colW-16)[0]||'-',x+2.5,iy);
+      doc.setFont('helvetica','normal');doc.text(fmtBRL(item.aberto||0),x+colW-2.5,iy,{align:'right'});
+    });
+    if(items.length>maxItems){doc.setFont('helvetica','bold');doc.setFontSize(5);doc.setTextColor(200,168,75);doc.text(`+ ${items.length-maxItems} item(ns)`,x+2,y+cellH-2);}
+  }
+  doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(120,120,120);doc.text('Valores organizados pela data de vencimento.',left,205);doc.text('CARTAMAC',pageW-right,205,{align:'right'});
+  doc.save(`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${year}-${String(month+1).padStart(2,'0')}.pdf`);
 }
 function renderContasAPagar(target){
   const rows=pagarRegistros();
@@ -2919,7 +3003,7 @@ function renderContasAPagar(target){
     const year=pagarAnoSelecionado||currentYear;
     const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);
     if(pagarModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarPagarAnos()">← Todos os anos</button>${pagarAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a pagar.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirPagarGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirPagarCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorTitulo,0);return `<button class="receber-period-card" onclick="abrirPagarMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
-    else if(pagarModo==='calendario')content=`<section class="receber-detalhe"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><h3>Calendário de vencimentos — ${receberMesNome(pagarMesSelecionado)} de ${year}</h3>${pagarCalendario(yearRows,year,pagarMesSelecionado)}</section>`;
+    else if(pagarModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('pagar')"><span class="msi msi-sm">picture_as_pdf</span> PDF do calendário</button></div><h3>Calendário de vencimentos — ${receberMesNome(pagarMesSelecionado)} de ${year}</h3>${pagarCalendario(yearRows,year,pagarMesSelecionado)}</section>`;
     else {
       const list=pagarModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===pagarMesSelecionado):yearRows;
       const title=pagarModo==='mes'?`${receberMesNome(pagarMesSelecionado)} de ${year}`:`Visão geral — ${year}`;
@@ -2929,12 +3013,126 @@ function renderContasAPagar(target){
   }
   target.innerHTML=`${pagarCabecalhoFinanceiro(rows)}${content}`;
 }
+
+// ───────────────── FLUXO DE CAIXA MENSAL ─────────────────
+// Os saldos dos bancos são informados manualmente e preservados por mês.
+// Entradas, saídas e valores previstos são derivados das áreas já existentes.
+function getCashFlowData(){
+  if(!DB.cashFlowData||typeof DB.cashFlowData!=='object')DB.cashFlowData={};
+  if(!Array.isArray(DB.cashFlowData.bankNames))DB.cashFlowData.bankNames=['Banco 1','Banco 2','Banco 3'];
+  // A empresa utiliza três bancos. Dados antigos do quarto campo são apenas
+  // ignorados, sem afetar os três saldos já cadastrados.
+  DB.cashFlowData.bankNames=Array.from({length:3},(_,index)=>String(DB.cashFlowData.bankNames[index]||`Banco ${index+1}`));
+  if(!DB.cashFlowData.months||typeof DB.cashFlowData.months!=='object')DB.cashFlowData.months={};
+  return DB.cashFlowData;
+}
+function getCashFlowMonthRecord(key,create=false){
+  const data=getCashFlowData();
+  if(!data.months[key]&&create)data.months[key]={banks:[0,0,0]};
+  const record=data.months[key];
+  if(record&&!Array.isArray(record.banks))record.banks=[0,0,0];
+  return record||{banks:[0,0,0]};
+}
+function cashFlowPlannedCost(key){
+  return ORDERS.reduce((total,order)=>{
+    const entry=getCostEntry(order.id);
+    const automatic=getInstallmentMonthTotals(entry);
+    return total+(Number(entry.months?.[key])||0)+(Number(automatic[key])||0);
+  },0);
+}
+function cashFlowMonthTotals(key){
+  const match=String(key||'').match(/^(\d{4})-(\d{2})$/);
+  const year=match?Number(match[1]):TODAY.getFullYear();
+  const month=match?Number(match[2])-1:TODAY.getMonth();
+  const bankRecord=getCashFlowMonthRecord(key,false);
+  const banks=Array.from({length:3},(_,index)=>Number(bankRecord.banks[index])||0);
+  const entradas=receberRegistros().filter(row=>row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month).reduce((sum,row)=>sum+(Number(row.valorParcela)||0),0);
+  const saidas=pagarRegistros().filter(row=>row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month).reduce((sum,row)=>sum+(Number(row.valorTitulo)||0),0);
+  const previsto=cashFlowPlannedCost(key);
+  const totalBancos=banks.reduce((sum,value)=>sum+value,0);
+  const saldoProjetado=totalBancos+entradas-saidas-previsto;
+  return {year,month,banks,totalBancos,entradas,saidas,previsto,saldoProjetado};
+}
+function selectCashFlowMonth(value){
+  if(!/^\d{4}-\d{2}$/.test(String(value||'')))return;
+  cashFlowSelectedMonth=value;
+  renderFinanceiroFiscal();
+}
+function shiftCashFlowMonth(delta){
+  const [year,month]=cashFlowSelectedMonth.split('-').map(Number);
+  const date=new Date(year,month-1+Number(delta||0),1);
+  cashFlowSelectedMonth=monthKey(date.getFullYear(),date.getMonth());
+  renderFinanceiroFiscal();
+}
+function updateCashFlowBankName(index,value){
+  const data=getCashFlowData();
+  data.bankNames[index]=String(value||'').trim()||`Banco ${index+1}`;
+  persist();
+  renderFinanceiroFiscal();
+}
+function updateCashFlowBankBalance(index,value){
+  const record=getCashFlowMonthRecord(cashFlowSelectedMonth,true);
+  record.banks[index]=Number(value)||0;
+  persist();
+  renderFinanceiroFiscal();
+}
+function openCashFlowFinanceDetail(type,key=cashFlowSelectedMonth){
+  const match=String(key||'').match(/^(\d{4})-(\d{2})$/);if(!match)return;
+  const year=Number(match[1]),month=Number(match[2])-1;
+  if(type==='receber'){
+    financeiroView='receber';receberAnoSelecionado=year;receberMesSelecionado=month;receberModo='mes';
+    receberFiltros={descricao:'',cliente:''};receberSomenteAtrasados=false;receberTabelaLimite=200;
+  }else if(type==='pagar'){
+    financeiroView='pagar';pagarAnoSelecionado=year;pagarMesSelecionado=month;pagarModo='mes';
+    pagarFiltros={descricao:'',fornecedor:''};pagarSomenteAtrasados=false;pagarTabelaLimite=200;
+  }else return;
+  renderFinanceiroFiscal();
+}
+function cashFlowYearOverview(year){
+  return Array.from({length:12},(_,month)=>{
+    const key=monthKey(year,month),totals=cashFlowMonthTotals(key);
+    return `<tr class="${key===cashFlowSelectedMonth?'cashflow-current-row':''}">
+      <td><button class="btn btn-ghost btn-sm" onclick="selectCashFlowMonth('${key}')">${receberMesNome(month)}</button></td>
+      <td class="money">${fmtBRL(totals.totalBancos)}</td>
+      <td class="money"><button class="cashflow-value-link" style="color:var(--green)" onclick="openCashFlowFinanceDetail('receber','${key}')" title="Abrir Contas a receber de ${receberMesNome(month)}">${fmtBRL(totals.entradas)}</button></td>
+      <td class="money"><button class="cashflow-value-link" style="color:var(--red)" onclick="openCashFlowFinanceDetail('pagar','${key}')" title="Abrir Contas a pagar de ${receberMesNome(month)}">${fmtBRL(totals.saidas)}</button></td>
+      <td class="money" style="color:var(--gold)">${fmtBRL(totals.previsto)}</td>
+      <td class="money" style="color:${totals.saldoProjetado<0?'var(--red)':'var(--green)'}">${fmtBRL(totals.saldoProjetado)}</td>
+    </tr>`;
+  }).join('');
+}
+function renderCashFlowPage(container=document.getElementById('financeiroContent')){
+  if(!container)return;
+  const data=getCashFlowData(),totals=cashFlowMonthTotals(cashFlowSelectedMonth);
+  const monthLabel=`${receberMesNome(totals.month)} de ${totals.year}`;
+  const bankCards=data.bankNames.map((name,index)=>`<div class="cashflow-bank-card">
+    <label>Conta bancária ${index+1}</label>
+    <input class="bank-name" type="text" value="${esc(name)}" maxlength="50" onchange="updateCashFlowBankName(${index},this.value)" aria-label="Nome do banco ${index+1}">
+    <input class="bank-value" type="number" min="0" step="0.01" value="${totals.banks[index]||''}" placeholder="R$ 0,00" onchange="updateCashFlowBankBalance(${index},this.value)" aria-label="Saldo de ${esc(name)}">
+  </div>`).join('');
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Fluxo mensal consolidado com saldos bancários, contas a receber, contas a pagar e previsão do Gantt de Custos.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
+    ${financeTabsHtml()}
+    <section class="cashflow-shell">
+      <div class="cashflow-period"><div><h3>Fluxo de caixa — ${monthLabel}</h3><p>Os três saldos bancários são manuais e ficam salvos separadamente em cada mês.</p></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(-1)">←</button><input class="cashflow-month-input" type="month" value="${cashFlowSelectedMonth}" onchange="selectCashFlowMonth(this.value)"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(1)">→</button></div></div>
+      <div class="cashflow-bank-grid">${bankCards}</div>
+      <div class="cashflow-summary-grid">
+        <div class="cashflow-summary-card"><b style="color:var(--text)">${fmtBRL(totals.totalBancos)}</b><span>Total nos três bancos</span></div>
+        <button class="cashflow-summary-card cashflow-link" onclick="openCashFlowFinanceDetail('receber')" title="Abrir Contas a receber de ${monthLabel}"><b style="color:var(--green)">${fmtBRL(totals.entradas)}</b><span>Entradas · Contas a receber</span></button>
+        <button class="cashflow-summary-card cashflow-link" onclick="openCashFlowFinanceDetail('pagar')" title="Abrir Contas a pagar de ${monthLabel}"><b style="color:var(--red)">${fmtBRL(totals.saidas)}</b><span>Saídas · Contas a pagar</span></button>
+        <div class="cashflow-summary-card"><b style="color:var(--gold)">${fmtBRL(totals.previsto)}</b><span>Previsto · Gantt de Custos</span></div>
+        <div class="cashflow-summary-card"><b style="color:${totals.saldoProjetado<0?'var(--red)':'var(--green)'}">${fmtBRL(totals.saldoProjetado)}</b><span>Saldo projetado do mês</span></div>
+      </div>
+      <div class="cashflow-formula"><b>Saldo projetado:</b> total dos bancos + entradas − saídas − valores previstos no Gantt de Custos.</div>
+      <div class="cashflow-overview"><h3>Visão mensal de ${totals.year}</h3><div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Mês</th><th>Total nos bancos</th><th>Entradas</th><th>Saídas</th><th>Previsto</th><th>Saldo projetado</th></tr></thead><tbody>${cashFlowYearOverview(totals.year)}</tbody></table></div></div>
+      <div class="cashflow-gantt">${buildCostsGanttSection()}</div>
+    </section>`;
+}
 function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
+  if(financeiroView==='fluxoCaixa'){renderCashFlowPage(target);return;}
   if(financeiroView==='receber'){renderContasAReceber(target);return;}
   if(financeiroView==='vendas'){renderSalesPage(target);return;}
   if(financeiroView==='ativos'){renderFixedAssetsPage(target);return;}
-  if(financeiroView==='usoConsumo'){renderUsageStockPage(target);return;}
   if(financeiroView==='materiaPrima'){renderRawMaterialPage(target);return;}
   if(financeiroView==='pagar'){renderContasAPagar(target);return;}
   const view=FINANCE_VIEWS[financeiroView]||FINANCE_VIEWS.receber;
@@ -3017,8 +3215,76 @@ function calcSpent(entry){
   const installments=getInstallmentPlansTotal(entry);
   return manual+installments;
 }
+function getEntryProductionTotals(entry){
+  const production=entry?.maxiprod?.production||{};
+  const insumos=(production.insumos||[]).filter(row=>!/^DS/i.test(String(row.codigo||'').trim()));
+  const insumosTotal=insumos.reduce((sum,row)=>sum+(Number(row.valorTotal)||0),0);
+  const rates=production.operationRates||{};
+  const operacoesTotal=(production.operacoes||[]).reduce((sum,row)=>sum+(Number(row.tempoRealizadoEmHoras)||0)*(Number(rates[String(row.id)])||0),0);
+  const estruturaTotal=Number(entry?.maxiprod?.custoTotal)||0;
+  return {estruturaTotal,insumosTotal,operacoesTotal,total:estruturaTotal+insumosTotal+operacoesTotal};
+}
+// Na virada do mês, mantém as parcelas passadas exatamente como foram lançadas
+// e redistribui apenas o saldo atual entre o mês vigente e os meses futuros.
+function rebalanceFutureCostInstallments(entry,currentKey){
+  const plans=entry?.installmentPlans||[];
+  const future=[];
+  plans.forEach(plan=>(plan.installments||[]).forEach(inst=>{
+    if(String(inst.key)>=currentKey)future.push({plan,inst});
+  }));
+  if(!future.length)return false;
+  future.sort((a,b)=>String(a.inst.key).localeCompare(String(b.inst.key)));
+  const budget=Number(entry.budgetCost)||0;
+  const totalOp=entry?.maxiprod?.calculadoEm?getEntryProductionTotals(entry).total:0;
+  const remaining=Math.max(0,Math.round((budget-totalOp)*100)/100);
+  const base=Math.round((remaining/future.length)*100)/100;
+  const last=Math.round((remaining-base*(future.length-1))*100)/100;
+  future.forEach((ref,index)=>{ref.inst.value=index===future.length-1?last:base;});
+  plans.forEach(plan=>{
+    plan.totalValue=Math.round((plan.installments||[]).reduce((sum,inst)=>sum+(Number(inst.value)||0),0)*100)/100;
+    plan.maxiprodTotal=totalOp;
+    plan.lastAutoRebalanceMonth=currentKey;
+  });
+  entry.lastAutoRebalanceMonth=currentKey;
+  return true;
+}
+async function runCostMonthRolloverAuto(){
+  if(!costsUnlocked||!isMaster(loggedUser)||costMonthRolloverInProgress)return;
+  const now=new Date(),currentKey=monthKey(now.getFullYear(),now.getMonth());
+  if(DB.costsAutoMonthKey===currentKey)return;
+  costMonthRolloverInProgress=true;
+  let failed=0,updated=0;
+  try{
+    const candidates=ORDERS.filter(order=>{
+      const entry=getCostEntry(order.id);
+      return !isClosedCostEntry(entry)&&String(entry.maxiprod?.itemCode||'').trim();
+    });
+    for(let index=0;index<candidates.length;index++){
+      const order=candidates[index];
+      showLoading(`Atualização mensal de Custos — ${index+1} de ${candidates.length}`);
+      const success=await consultMaxiprodCost(order.id,{silent:true});
+      if(success){rebalanceFutureCostInstallments(getCostEntry(order.id),currentKey);updated++;}
+      else failed++;
+    }
+    if(failed===0)DB.costsAutoMonthKey=currentKey;
+    await persist();
+    renderCostsContent();
+    if(updated||failed)showToast(failed?`Custos mensais: ${updated} OP(s) atualizada(s) e ${failed} pendência(s). A atualização será tentada novamente.`:`Custos atualizados para ${MONTH_NAMES[now.getMonth()]}/${now.getFullYear()}; meses anteriores foram preservados.` ,failed?'err':'ok');
+  }catch(error){
+    console.error('Atualização mensal de Custos:',error);
+    showToast('Não foi possível concluir a atualização mensal de Custos. Ela será tentada novamente.','err');
+  }finally{
+    costMonthRolloverInProgress=false;
+    hideLoading();
+  }
+}
+function startCostMonthRolloverWatcher(){
+  if(costMonthRolloverTimer)clearInterval(costMonthRolloverTimer);
+  runCostMonthRolloverAuto();
+  costMonthRolloverTimer=setInterval(runCostMonthRolloverAuto,15*60*1000);
+}
 function getCostReference(entry){
-  const maxiprod=Number(entry?.maxiprod?.custoTotal)||0;
+  const maxiprod=getEntryProductionTotals(entry).total;
   return entry?.maxiprod?.calculadoEm&&maxiprod>0?maxiprod:(Number(entry?.budgetCost)||0);
 }
 function renderCostsPage(){
@@ -3051,12 +3317,14 @@ function unlockCosts(){
     costsUnlocked=true;
     renderCostsPage();
     showToast('Acesso liberado');
+    startCostMonthRolloverWatcher();
   }else{
     document.getElementById('costsPassError').style.display='block';
   }
 }
 function relockCosts(){
   costsUnlocked=false;
+  if(costMonthRolloverTimer){clearInterval(costMonthRolloverTimer);costMonthRolloverTimer=null;}
   renderCostsPage();
 }
 function renderCostsContent(){
@@ -3071,16 +3339,17 @@ function renderCostsContent(){
     totalBudget+=Number(e.budgetCost)||0;
     const spent=calcSpent(e);
     totalSpent+=spent;
-    totalMaxiprod+=Number(e.maxiprod?.custoTotal)||0;
-    if(e.budgetCost>0&&spent>Number(e.budgetCost))overCount++;
+    const totalOp=e.maxiprod?.calculadoEm?getEntryProductionTotals(e).total:0;
+    totalMaxiprod+=totalOp;
+    if(e.budgetCost>0&&totalOp>Number(e.budgetCost))overCount++;
   });
 
   const statsHTML=`
     <div class="stats-row">
       <div class="stat-card"><div class="stat-val" style="font-size:22px;">${fmtBRL(totalSale)}</div><div class="stat-lbl">Valor Total Vendido</div></div>
       <div class="stat-card"><div class="stat-val" style="font-size:22px;">${fmtBRL(totalBudget)}</div><div class="stat-lbl">Custo Orçado Total</div></div>
-      <div class="stat-card"><div class="stat-val" style="font-size:22px;color:${totalSpent>totalBudget&&totalBudget>0?'var(--red)':'var(--text)'}">${fmtBRL(totalSpent)}</div><div class="stat-lbl">Gasto Realizado Total</div></div>
-      <div class="stat-card"><div class="stat-val" style="font-size:22px;color:var(--gold)">${fmtBRL(totalMaxiprod)}</div><div class="stat-lbl">Custo MaxiProd — Última NF</div></div>
+      <div class="stat-card"><div class="stat-val" style="font-size:22px;color:var(--text)">${fmtBRL(totalSpent)}</div><div class="stat-lbl">Planejado no Calendário</div></div>
+      <div class="stat-card"><div class="stat-val" style="font-size:22px;color:var(--gold)">${fmtBRL(totalMaxiprod)}</div><div class="stat-lbl">Custo MaxiProd — Total das OPs</div></div>
       <div class="stat-card"><div class="stat-val" style="color:${overCount>0?'var(--red)':'var(--green)'}">${overCount}</div><div class="stat-lbl">Pedidos Acima do Orçado</div></div>
     </div>`;
 
@@ -3128,17 +3397,16 @@ function buildCostCard(order,master,closed=false){
   const spent=calcSpent(e);
   const budget=Number(e.budgetCost)||0;
   const mp=e.maxiprod||{itemCode:''};
-  const maxiprodCost=mp.calculadoEm?(Number(mp.custoTotal)||0):0;
-  const costReference=getCostReference(e);
-  const costReferenceLabel=maxiprodCost>0?'Custo MaxiProd':'Custo Orçado';
+  const opTotals=getEntryProductionTotals(e);
+  const maxiprodCost=mp.calculadoEm?opTotals.total:0;
   const sale=Number(e.saleValue)||0;
-  const pctUsed=costReference>0?Math.round((spent/costReference)*100):0;
-  const remaining=costReference-spent;
+  const pctUsed=budget>0?Math.round((maxiprodCost/budget)*100):0;
+  const remaining=budget-maxiprodCost;
   const margin=sale-budget;
 
   let statusCls='ok-budget',barColor='var(--green)';
-  if(costReference>0){
-    if(spent>costReference){statusCls='over-budget';barColor='var(--red)';}
+  if(budget>0&&mp.calculadoEm){
+    if(maxiprodCost>budget){statusCls='over-budget';barColor='var(--red)';}
     else if(pctUsed>=80){statusCls='warn-budget';barColor='var(--warn)';}
   }
 
@@ -3169,16 +3437,15 @@ function buildCostCard(order,master,closed=false){
   const opLabel=(order.op&&order.op!==order.code)?order.op:'';
   const clientTag=e.client?`<span class="cost-client-tag"><span class="msi msi-sm">apartment</span> ${e.client}</span>`:'<span class="cost-client-tag" style="color:var(--warn);"><span class="msi msi-sm">warning</span> Cliente não definido</span>';
 
-  const alertHTML=(costReference>0&&spent>costReference)
-    ?`<div class="budget-alert"><span class="msi msi-sm">warning</span> Atenção: este pedido já ultrapassou o ${costReferenceLabel.toLowerCase()} em ${fmtBRL(spent-costReference)}!</div>`
+  const alertHTML=(budget>0&&maxiprodCost>budget)
+    ?`<div class="budget-alert"><span class="msi msi-sm">warning</span> Atenção: o Total da OP já ultrapassou o custo orçado em ${fmtBRL(maxiprodCost-budget)}!</div>`
     :'';
 
-  // ── Caixa de % gasto + parcelamento ──
-  const pctValue=e.pctSpentInput!=null?e.pctSpentInput:'';
-  const remainingAmount=costReference>0&&pctValue!==''?(costReference*(1-Number(pctValue)/100)):0;
+  // ── Diferença entre custo orçado e Total da OP + parcelamento ──
+  const remainingAmount=budget-maxiprodCost;
   const installCount=e.installCountInput||'';
   const installStartKey=e.installStartInput||todayKey;
-  const perInstallment=(installCount&&Number(installCount)>0)?(remainingAmount/Number(installCount)):0;
+  const perInstallment=(remainingAmount>0&&installCount&&Number(installCount)>0)?(remainingAmount/Number(installCount)):0;
 
   // opções de mês de início (a partir de 6 meses atrás até 24 meses à frente)
   let monthOptionsHTML='';
@@ -3196,9 +3463,16 @@ function buildCostCard(order,master,closed=false){
     ?`<div class="cost-plans-list">${e.installmentPlans.map(plan=>{
         const firstKey=plan.installments[0]?.key;
         const [py,pm]=firstKey.split('-').map(Number);
+        const currentPlanDate=new Date();
+        const currentPlanKey=monthKey(currentPlanDate.getFullYear(),currentPlanDate.getMonth());
+        const futureInstallments=(plan.installments||[]).filter(inst=>String(inst.key)>=currentPlanKey);
+        const futureTotal=futureInstallments.reduce((sum,inst)=>sum+(Number(inst.value)||0),0);
+        const planDescription=plan.lastAutoRebalanceMonth
+          ?`Meses encerrados preservados. Saldo atual de <b>${fmtBRL(futureTotal)}</b> distribuído em ${futureInstallments.length} parcela(s) vigente/futura(s).`
+          :`Diferença de <b>${fmtBRL(plan.totalValue)}</b> entre o custo orçado e o Total da OP, parcelada em ${plan.installments.length}x de <b>${fmtBRL(plan.totalValue/plan.installments.length)}</b>, a partir de ${MONTH_NAMES[pm-1]}/${py}`;
         return `<div class="cost-plan-item">
-          <span class="cpi-tag">${plan.pct}% gasto · falta ${plan.installments.length}x</span>
-          <div class="cpi-main">Restante de <b>${fmtBRL(plan.totalValue)}</b> (${100-plan.pct}% do ${costReferenceLabel.toLowerCase()}) parcelado em ${plan.installments.length}x de <b>${fmtBRL(plan.totalValue/plan.installments.length)}</b>, a partir de ${MONTH_NAMES[pm-1]}/${py}</div>
+          <span class="cpi-tag">${plan.installments.length} parcela(s)</span>
+          <div class="cpi-main">${planDescription}</div>
           ${master?`<button onclick="removeInstallmentPlan(${order.id},'${plan.id}')"><span class="msi msi-sm">delete</span> Remover</button>`:''}
         </div>`;
       }).join('')}</div>`
@@ -3206,12 +3480,8 @@ function buildCostCard(order,master,closed=false){
 
   const pctBoxHTML=`
     <div class="cost-pct-box">
-      <div class="section-title"><span class="msi msi-sm">bar_chart</span> % Gasto do ${costReferenceLabel} &amp; Parcelamento do Restante</div>
+      <div class="section-title"><span class="msi msi-sm">calculate</span> Diferença entre Orçado e Total da OP &amp; Parcelamento</div>
       <div class="cost-pct-row">
-        <div class="form-group">
-          <label>% já gasto do ${costReferenceLabel.toLowerCase()}</label>
-          <input type="number" min="0" max="100" step="0.01" id="pctInput-${order.id}" value="${pctValue}" placeholder="Ex: 80" ${master?'':'disabled'} oninput="updatePctPreview(${order.id})">
-        </div>
         <div class="form-group">
           <label>Dividir o restante em quantas parcelas</label>
           <input type="number" min="1" step="1" id="installCountInput-${order.id}" value="${installCount}" placeholder="Ex: 4" ${master?'':'disabled'} oninput="updatePctPreview(${order.id})">
@@ -3223,8 +3493,8 @@ function buildCostCard(order,master,closed=false){
         ${master?`<button class="btn btn-gold btn-sm" onclick="applyInstallmentPlan(${order.id})">Lançar parcelamento</button>`:''}
       </div>
       <div class="cost-pct-result" id="pctResult-${order.id}">
-        <div><div class="ppv">${costReference>0&&pctValue!==''?fmtBRL(remainingAmount):'—'}</div><div class="ppl">Valor restante a gastar (${pctValue!==''?100-Number(pctValue):'—'}%)</div></div>
-        <div><div class="ppv">${installCount&&Number(installCount)>0?fmtBRL(perInstallment):'—'}</div><div class="ppl">Valor por parcela</div></div>
+        <div><div class="ppv" style="color:${remainingAmount<0?'var(--red)':'var(--gold)'}">${budget>0&&mp.calculadoEm?fmtBRL(remainingAmount):'—'}</div><div class="ppl">Diferença (Custo orçado − Total da OP)</div></div>
+        <div><div class="ppv">${budget>0&&mp.calculadoEm&&remainingAmount>0&&installCount&&Number(installCount)>0?fmtBRL(perInstallment):'—'}</div><div class="ppl">Valor por parcela</div></div>
       </div>
       ${plansHTML}
     </div>`;
@@ -3232,15 +3502,18 @@ function buildCostCard(order,master,closed=false){
   const mpWhen=mp.calculadoEm?new Date(mp.calculadoEm).toLocaleString('pt-BR'):'Ainda não calculado';
   const mpSummary=mp.calculadoEm
     ?`<div class="cost-pct-result" style="margin-top:14px;">
-        <div><div class="ppv" style="color:var(--gold)">${fmtBRL(mp.custoTotal)}</div><div class="ppl">Custo da estrutura</div></div>
+        <div><div class="ppv" style="color:var(--gold)">${fmtBRL(opTotals.estruturaTotal)}</div><div class="ppl">Custo da estrutura</div></div>
+        <div><div class="ppv" style="color:var(--gold)">${fmtBRL(opTotals.insumosTotal)}</div><div class="ppl">Custo dos insumos</div></div>
+        <div><div class="ppv" style="color:var(--gold)">${fmtBRL(opTotals.operacoesTotal)}</div><div class="ppl">Custo das operações</div></div>
+        <div><div class="ppv" style="color:var(--green)">${fmtBRL(maxiprodCost)}</div><div class="ppl">Custo MaxiProd — Total da OP</div></div>
         <div><div class="ppv">${Number(mp.itensComCusto)||0}</div><div class="ppl">Itens com preço</div></div>
         <div><div class="ppv" style="color:${Number(mp.itensSemCusto)>0?'var(--warn)':'var(--green)'}">${Number(mp.itensSemCusto)||0}</div><div class="ppl">Pendências sem custo</div></div>
       </div>
-      <div class="form-hint" style="margin-top:12px;">Atualizado: ${mpWhen}. Base: último preço de compra registrado no MaxiProd, aplicado à estrutura do item.</div>`
+      <div class="form-hint" style="margin-top:12px;">Atualizado: ${mpWhen}. O Total da OP soma estrutura multinível, insumos baixados e operações apontadas.</div>`
     :`<div class="form-hint" style="margin-top:12px;">Informe o código raiz do item no MaxiProd (ex.: DS2832) para calcular a estrutura com os últimos preços de compra.</div>`;
   const maxiprodBoxHTML=`
     <div class="cost-pct-box" style="border-color:rgba(212,160,23,.55);">
-      <div class="section-title"><span class="msi msi-sm">sync</span> Custo MaxiProd — estrutura e última nota fiscal</div>
+      <div class="section-title"><span class="msi msi-sm">sync</span> Custo MaxiProd — Total da OP</div>
       <div class="cost-pct-row">
         <div class="form-group">
           <label>Código raiz do item no MaxiProd</label>
@@ -3263,7 +3536,7 @@ function buildCostCard(order,master,closed=false){
         <span class="cost-mini"><span class="lbl">Venda</span>${fmtBRL(sale)}</span>
         <span class="cost-mini"><span class="lbl">Orçado</span>${fmtBRL(budget)}</span>
         <span class="cost-mini" style="color:var(--gold)"><span class="lbl">MaxiProd</span>${maxiprodCost>0?fmtBRL(maxiprodCost):'—'}</span>
-        <span class="cost-mini" style="color:${barColor}"><span class="lbl">Gasto</span>${fmtBRL(spent)}${costReference>0?` (${pctUsed}%)`:''}</span>
+        <span class="cost-mini" style="color:${remaining<0?'var(--red)':'var(--green)'}"><span class="lbl">Diferença</span>${mp.calculadoEm&&budget>0?fmtBRL(remaining):'—'}</span>
       </div>
       <span class="chevron">▾</span>
     </div>
@@ -3287,10 +3560,10 @@ function buildCostCard(order,master,closed=false){
       <div class="cost-summary-row">
         <div class="cost-summary-card"><div class="csv" style="color:var(--text)">${fmtBRL(sale)}</div><div class="csl">Venda Total</div></div>
         <div class="cost-summary-card"><div class="csv" style="color:var(--text)">${fmtBRL(budget)}</div><div class="csl">Custo Orçado</div></div>
-        <div class="cost-summary-card"><div class="csv" style="color:${barColor}">${fmtBRL(spent)}</div><div class="csl">Gasto Realizado (${pctUsed}%)</div></div>
-        <div class="cost-summary-card"><div class="csv" style="color:${remaining<0?'var(--red)':'var(--green)'}">${fmtBRL(remaining)}</div><div class="csl">Saldo do ${costReferenceLabel}</div></div>
+        <div class="cost-summary-card"><div class="csv" style="color:var(--gold)">${mp.calculadoEm?fmtBRL(maxiprodCost):'—'}</div><div class="csl">Custo MaxiProd — Total da OP</div></div>
+        <div class="cost-summary-card"><div class="csv" style="color:${remaining<0?'var(--red)':'var(--green)'}">${mp.calculadoEm&&budget>0?fmtBRL(remaining):'—'}</div><div class="csl">Diferença (Orçado − Total da OP)</div></div>
         <div class="cost-summary-card"><div class="csv" style="color:${margin<0?'var(--red)':'var(--green)'}">${fmtBRL(margin)}</div><div class="csl">Margem Prevista (Venda-Orçado)</div></div>
-        <div class="cost-summary-card"><div class="csv" style="color:var(--gold)">${mp.calculadoEm?fmtBRL(mp.custoTotal):'—'}</div><div class="csl">Custo MaxiProd</div></div>
+        <div class="cost-summary-card"><div class="csv" style="color:var(--text2)">${fmtBRL(spent)}</div><div class="csl">Planejado no calendário mensal</div></div>
       </div>
       <div class="cost-progress-bar"><div class="cost-progress-fill" style="width:${Math.min(100,pctUsed)}%;background:${barColor}"></div></div>
 
@@ -3372,14 +3645,15 @@ function updateMaxiprodCode(orderId,value){
   persist();
   openCostCardId=orderId;
 }
-async function consultMaxiprodCost(orderId){
+async function consultMaxiprodCost(orderId,options={}){
   if(!isMaster(loggedUser)){showToast('Somente mestres podem atualizar pelo MaxiProd','err');return;}
+  const silent=!!options.silent;
   const e=getCostEntry(orderId);
   const input=document.getElementById(`maxiprodCode-${orderId}`);
   const itemCode=String(input?.value||e.maxiprod?.itemCode||'').trim().toUpperCase();
   if(!itemCode){showToast('Informe o código do item no MaxiProd','err');return;}
   if(!/^[A-Z0-9._+\-]+$/.test(itemCode)){showToast('Código MaxiProd inválido','err');return;}
-  const button=document.getElementById(`maxiprodBtn-${orderId}`);
+  const button=silent?null:document.getElementById(`maxiprodBtn-${orderId}`);
   if(button){button.disabled=true;button.innerHTML='<span class="msi msi-sm">hourglass_top</span> Consultando estrutura e OP...';}
   try{
     // A estrutura e a OP são consultas independentes. Assim, se ainda não existir
@@ -3430,24 +3704,26 @@ async function consultMaxiprodCost(orderId){
     e.maxiprod.custoTotal=getStructureGrandTotal(orderId);
     // Mostra imediatamente o retorno correto. Apenas o resumo fica em
     // cartamac/db; a árvore completa já foi salva separadamente.
-    openCostCardId=orderId;
-    renderCostsContent();
+    if(!silent){openCostCardId=orderId;renderCostsContent();}
     const saved=await persist();
     // Se o listener tiver aplicado a fotografia anterior durante o await,
     // recoloca a estrutura recém-consultada antes da renderização definitiva.
     const currentEntry=getCostEntry(orderId);
     currentEntry.maxiprod=loadedMaxiprod;
     MAXIPROD_STRUCTURES[orderId]=loadedStructure;
-    openCostCardId=orderId;
-    renderCostsContent();
+    if(!silent){openCostCardId=orderId;renderCostsContent();}
     const suffix=loadedMaxiprod.itensSemCusto?` (${loadedMaxiprod.itensSemCusto} pendência(s))`:'';
-    if(saved)showToast(`Custo MaxiProd atualizado: ${fmtBRL(loadedMaxiprod.custoTotal)}${suffix}`);
-    else showToast('A estrutura foi salva separadamente, mas o resumo não pôde ser atualizado. Tente novamente.','err');
+    if(!silent){
+      if(saved)showToast(`Custo MaxiProd atualizado — Total da OP: ${fmtBRL(getEntryProductionTotals(currentEntry).total)}${suffix}`);
+      else showToast('A estrutura foi salva separadamente, mas o resumo não pôde ser atualizado. Tente novamente.','err');
+    }
+    return !!saved;
   }catch(error){
     console.error('MaxiProd:',error);
     const message=String(error?.message||'Não foi possível consultar o MaxiProd.');
-    showToast(message.replace(/^.*?:\s*/,''),'err');
+    if(!silent)showToast(message.replace(/^.*?:\s*/,''),'err');
     if(button){button.disabled=false;button.innerHTML='<span class="msi msi-sm">sync</span> Atualizar pelo MaxiProd';}
+    return false;
   }
 }
 function switchCostsView(view){
@@ -3501,13 +3777,7 @@ async function updateOperationRate(orderId,operationId,value){
 }
 function productionCurrency(value){return fmtBRL(Number(value)||0);}
 function getOrderProductionTotals(order){
-  const production=getCostEntry(order.id)?.maxiprod?.production||{};
-  const insumos=(production.insumos||[]).filter(row=>!/^DS/i.test(String(row.codigo||'').trim()));
-  const insumosTotal=insumos.reduce((sum,row)=>sum+(Number(row.valorTotal)||0),0);
-  const rates=production.operationRates||{};
-  const operacoesTotal=(production.operacoes||[]).reduce((sum,row)=>sum+(Number(row.tempoRealizadoEmHoras)||0)*(Number(rates[String(row.id)])||0),0);
-  const estruturaTotal=Number(getCostEntry(order.id)?.maxiprod?.custoTotal)||0;
-  return {estruturaTotal,insumosTotal,operacoesTotal,total:estruturaTotal+insumosTotal+operacoesTotal};
+  return getEntryProductionTotals(getCostEntry(order.id));
 }
 function buildOrderTotalsSummary(order){
   const totals=getOrderProductionTotals(order);
@@ -3585,7 +3855,7 @@ function buildCostStructuresView(master,readOnly=false){
       :`<div class="production-block"><div class="production-block-head">Estrutura multinível</div><div class="structure-empty">${mp.itemCode?'Clique em “Atualizar pelo MaxiProd” para consultar todos os níveis.':'Informe o código raiz do equipamento no MaxiProd para carregar a estrutura.'}</div></div>`;
     return `<div class="structure-view-head">
       <div><button class="btn btn-ghost btn-sm structure-return" onclick="closeCostStructure()"><span class="msi msi-sm">arrow_back</span> Todos os equipamentos</button><h3>${escapeHTML(titleCode)} — ${escapeHTML(order.name||'')}</h3><div class="structure-intro">${locked?'Projeto fechado — valores extraídos do MaxiProd e travados.':'Estrutura vinculada ao pedido do Project. São exibidos os níveis, a quantidade aplicada (G), o último preço do MaxiProd (P) e o total calculado por linha (P × G).'}</div></div>
-      <div class="structure-summary">${mp.calculadoEm?`<span class="cost-client-tag"><span class="msi msi-sm">payments</span> Total: ${fmtBRL(mp.custoTotal)}</span>`:''}<span class="cost-client-tag"><span class="msi msi-sm">tag</span> Código: ${escapeHTML(mp.itemCode||'não definido')}</span></div>
+      <div class="structure-summary">${mp.calculadoEm?`<span class="cost-client-tag"><span class="msi msi-sm">payments</span> Total da OP: ${fmtBRL(getEntryProductionTotals(entry).total)}</span>`:''}<span class="cost-client-tag"><span class="msi msi-sm">tag</span> Código: ${escapeHTML(mp.itemCode||'não definido')}</span></div>
     </div>
     ${statusNotice}
     <div class="structure-order-totals">${totalsSummary}</div>
@@ -3662,48 +3932,45 @@ function updateCostMonth(orderId,key,val){
   openCostCardId=orderId;
   renderCostsContent();
 }
-// Atualiza preview de valores (sem persistir) ao digitar % / parcelas / mês de início
+// Atualiza o preview da diferença Orçado - Total da OP e do parcelamento.
 function updatePctPreview(orderId){
   const e=getCostEntry(orderId);
-  const pctEl=document.getElementById('pctInput-'+orderId);
   const countEl=document.getElementById('installCountInput-'+orderId);
-  if(!pctEl||!countEl)return;
-  e.pctSpentInput=pctEl.value;
+  if(!countEl)return;
   e.installCountInput=countEl.value;
   const startEl=document.getElementById('installStartInput-'+orderId);
   if(startEl)e.installStartInput=startEl.value;
 
-  const costReference=getCostReference(e);
-  const costReferenceLabel=(Number(e.maxiprod?.custoTotal)||0)>0&&e.maxiprod?.calculadoEm?'Custo MaxiProd':'Custo Orçado';
-  const pct=Number(pctEl.value)||0;
+  const budget=Number(e.budgetCost)||0;
+  const maxiprodTotal=e.maxiprod?.calculadoEm?getEntryProductionTotals(e).total:0;
   const count=Number(countEl.value)||0;
-  const remaining=costReference*(1-pct/100);
-  const per=count>0?remaining/count:0;
+  const remaining=budget-maxiprodTotal;
+  const per=remaining>0&&count>0?remaining/count:0;
 
   const result=document.getElementById('pctResult-'+orderId);
   if(result){
     result.innerHTML=`
-      <div><div class="ppv">${costReference>0&&pctEl.value!==''?fmtBRL(remaining):'—'}</div><div class="ppl">Valor restante a gastar (${pctEl.value!==''?100-pct:'—'}% do ${costReferenceLabel})</div></div>
-      <div><div class="ppv">${count>0?fmtBRL(per):'—'}</div><div class="ppl">Valor por parcela</div></div>`;
+      <div><div class="ppv" style="color:${remaining<0?'var(--red)':'var(--gold)'}">${budget>0&&e.maxiprod?.calculadoEm?fmtBRL(remaining):'—'}</div><div class="ppl">Diferença (Custo orçado − Total da OP)</div></div>
+      <div><div class="ppv">${budget>0&&e.maxiprod?.calculadoEm&&remaining>0&&count>0?fmtBRL(per):'—'}</div><div class="ppl">Valor por parcela</div></div>`;
   }
 }
 function applyInstallmentPlan(orderId){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
   const e=getCostEntry(orderId);
-  const costReference=getCostReference(e);
-  const costReferenceLabel=(Number(e.maxiprod?.custoTotal)||0)>0&&e.maxiprod?.calculadoEm?'Custo MaxiProd':'Custo Orçado';
-  const pct=Number(document.getElementById('pctInput-'+orderId)?.value)||0;
+  const budget=Number(e.budgetCost)||0;
+  const maxiprodTotal=e.maxiprod?.calculadoEm?getEntryProductionTotals(e).total:0;
   const count=Number(document.getElementById('installCountInput-'+orderId)?.value)||0;
   const startKey=document.getElementById('installStartInput-'+orderId)?.value;
 
-  if(costReference<=0){showToast(`Defina o ${costReferenceLabel} antes de parcelar`,'err');return;}
-  if(pct<0||pct>=100){showToast('Informe uma % válida (0 a 99,9)','err');return;}
+  if(budget<=0){showToast('Defina o Custo Orçado antes de parcelar','err');return;}
+  if(!e.maxiprod?.calculadoEm){showToast('Atualize o MaxiProd para obter o Total da OP antes de parcelar','err');return;}
   if(count<=0){showToast('Informe em quantas parcelas dividir','err');return;}
   if(!startKey){showToast('Selecione o mês de início','err');return;}
 
-  // valor que falta gastar = custo de referência * (1 - %)
-  const totalValue=costReference*(1-pct/100);
-  const baseValue=Math.floor((totalValue/count)*100)/100;
+  // Valor a parcelar = Custo Orçado - Total da OP (estrutura + insumos + operações).
+  const totalValue=budget-maxiprodTotal;
+  if(totalValue<=0){showToast('O Total da OP já atingiu ou ultrapassou o Custo Orçado; não há saldo positivo para parcelar.','err');return;}
+  const baseValue=Math.round((totalValue/count)*100)/100;
   const lastValue=Math.round((totalValue-baseValue*(count-1))*100)/100;
 
   const [sy,sm]=startKey.split('-').map(Number);
@@ -3719,11 +3986,10 @@ function applyInstallmentPlan(orderId){
   if(!e.installmentPlans)e.installmentPlans=[];
   e.installmentPlans.push({
     id:'plan-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
-    pct,totalValue,installments
+    budgetCost:budget,maxiprodTotal,totalValue,installments
   });
 
   // limpa os campos de entrada após lançar
-  e.pctSpentInput='';
   e.installCountInput='';
 
   persist();
@@ -5143,6 +5409,12 @@ const RAW_MATERIAL_GROUPS={
   '2':'Elementos de fixação',
   '7':'Itens comerciais'
 };
+const STOCK_DISPLAY_GROUPS=[
+  ['1','Matérias-primas'],
+  ['2','Elementos de fixação'],
+  ['7','Itens comerciais'],
+  ['4','Uso e consumo']
+];
 function rawMaterialRecords(){
   const sourceName=String(RAW_MATERIAL_CACHE?.source||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const apiAlreadyGrouped=/agrup|consolidad|sintetic/.test(sourceName);
@@ -5177,10 +5449,31 @@ function toggleRawMaterialGroup(groupCode){
   rawMaterialExpandedGroups.has(key)?rawMaterialExpandedGroups.delete(key):rawMaterialExpandedGroups.add(key);
   renderRawMaterialPage();
 }
+function stockGroupRows(groupCode){
+  if(String(groupCode)==='4')return usageStockRecords().map(row=>({...row,grupo:'4',custoTotal:row.valorTotal}));
+  return rawMaterialRecords().filter(row=>String(row.grupo)===String(groupCode));
+}
+function stockGroupSummaryHtml(rows){
+  const total=rows.reduce((sum,row)=>sum+(row.custoTotal||0),0);
+  const highest=[...rows].sort((a,b)=>(b.custoTotal||0)-(a.custoTotal||0))[0]||null;
+  return `<div class="fixed-assets-summary stock-group-summary">
+    <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Valor total do estoque</div></div>
+    <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(highest?.custoTotal||0)}</div><div class="sales-summary-label">Item com maior valor</div><div class="sales-summary-sub">${escapeHTML(highest?.descricao||'—')}</div></div>
+    <div class="sales-summary-card"><div class="sales-summary-value">${rows.length}</div><div class="sales-summary-label">Quantidade de itens</div></div>
+  </div>`;
+}
 function rawMaterialTable(rows,groupCode){
   const limit=rawMaterialLimits[groupCode]||200;
   const visible=rows.slice(0,limit),remaining=Math.max(0,rows.length-visible.length);
   if(!visible.length)return `<div class="finance-empty">Nenhum item deste grupo corresponde ao filtro informado.</div>`;
+  if(String(groupCode)==='4')return `<div class="finance-table-wrap"><table class="finance-table fixed-assets-table"><thead><tr><th>Criado em</th><th>Item</th><th>Descrição</th><th>Quantidade</th><th>Valor unitário</th><th>Valor total</th></tr></thead><tbody>${visible.map(row=>`<tr>
+    <td>${salesDateText(row.criadoEm)}</td>
+    <td>${escapeHTML(row.codigo)}</td>
+    <td>${escapeHTML(row.descricao)}</td>
+    <td>${row.quantidade.toLocaleString('pt-BR',{maximumFractionDigits:5})}</td>
+    <td>${fmtBRL(row.valorUnitario)}</td>
+    <td>${fmtBRL(row.custoTotal)}</td>
+  </tr>`).join('')}</tbody></table>${remaining?`<div style="display:flex;justify-content:center;padding:16px;"><button class="btn btn-ghost" onclick="showMoreRawMaterial('${groupCode}')">Mostrar mais 200 · ${remaining} restante(s)</button></div>`:''}</div>`;
   return `<div class="finance-table-wrap"><table class="finance-table fixed-assets-table raw-material-table"><thead><tr><th>Item</th><th>Descrição</th><th>Quantidade</th><th>Unidade de medida</th><th>Custo unitário</th><th>Custo total</th></tr></thead><tbody>${visible.map(row=>`<tr>
     <td>${escapeHTML(row.codigo)}</td>
     <td>${escapeHTML(row.descricao)}</td>
@@ -5192,26 +5485,29 @@ function rawMaterialTable(rows,groupCode){
 }
 function renderRawMaterialPage(container=document.getElementById('financeiroContent')){
   if(!container)return;
-  const allRows=rawMaterialRecords();
+  const groupRows=Object.fromEntries(STOCK_DISPLAY_GROUPS.map(([groupCode])=>[groupCode,stockGroupRows(groupCode)]));
+  const allRows=STOCK_DISPLAY_GROUPS.flatMap(([groupCode])=>groupRows[groupCode]);
   const query=rawMaterialSearch.trim().toLocaleLowerCase('pt-BR');
   const filtered=query?allRows.filter(row=>[row.codigo,row.descricao,row.unidade].join(' ').toLocaleLowerCase('pt-BR').includes(query)):allRows;
-  const updated=RAW_MATERIAL_CACHE?.updatedAt?new Date(RAW_MATERIAL_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
+  const updatedDates=[RAW_MATERIAL_CACHE?.updatedAt,USAGE_STOCK_CACHE?.updatedAt].filter(Boolean).map(value=>new Date(value)).filter(date=>!Number.isNaN(date.getTime()));
+  const updated=updatedDates.length?new Date(Math.max(...updatedDates)).toLocaleString('pt-BR'):'Ainda não atualizado';
   const grandTotal=allRows.reduce((sum,row)=>sum+row.custoTotal,0);
-  const summaryCards=`<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(grandTotal)}</div><div class="sales-summary-label">Somatória total</div><div class="sales-summary-sub">Grupos 1, 2 e 7</div></div>`+Object.entries(RAW_MATERIAL_GROUPS).map(([groupCode,label])=>{
-    const rows=allRows.filter(row=>String(row.grupo)===groupCode);
+  const summaryCards=`<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(grandTotal)}</div><div class="sales-summary-label">Somatória total</div><div class="sales-summary-sub">Grupos 1, 2, 7 e 4</div></div>`+STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
+    const rows=groupRows[groupCode];
     const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
     return `<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Grupo ${groupCode} · ${escapeHTML(label)}</div><div class="sales-summary-sub">${rows.length} item(ns)</div></div>`;
   }).join('');
-  const blocks=Object.entries(RAW_MATERIAL_GROUPS).map(([groupCode,label])=>{
+  const blocks=STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
     const rows=filtered.filter(row=>String(row.grupo)===groupCode);
     const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
     const open=rawMaterialExpandedGroups.has(groupCode);
-    return `<section class="raw-material-group ${open?'open':''}"><button class="raw-material-group-head" type="button" onclick="toggleRawMaterialGroup('${groupCode}')"><h3>Grupo ${groupCode} — ${escapeHTML(label)}</h3><span>${rows.length} item(ns) · ${fmtBRL(total)}</span><span class="msi raw-material-group-chevron">expand_more</span></button><div class="raw-material-group-body">${rawMaterialTable(rows,groupCode)}</div></section>`;
+    const actions=groupCode==='4'?`<div class="stock-group-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="exportStockReport('usoConsumo','pdf')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportStockReport('usoConsumo','excel')"><span class="msi msi-sm">table_chart</span> Excel</button></div>`:'';
+    return `<section class="raw-material-group ${open?'open':''}"><button class="raw-material-group-head" type="button" onclick="toggleRawMaterialGroup('${groupCode}')"><h3>Grupo ${groupCode} — ${escapeHTML(label)}</h3><span>${rows.length} item(ns) · ${fmtBRL(total)}</span><span class="msi raw-material-group-chevron">expand_more</span></button><div class="raw-material-group-body">${actions}${stockGroupSummaryHtml(rows)}${rawMaterialTable(rows,groupCode)}</div></section>`;
   }).join('');
-  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de matéria-prima: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(rawMaterialRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(rawMaterialRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de estoque: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(rawMaterialRefreshInProgress||usageStockRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(rawMaterialRefreshInProgress||usageStockRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
     ${financeTabsHtml()}
     <div class="fixed-assets-page">
-      <div class="fixed-assets-title"><h2><span class="msi">category</span> Matéria-prima</h2><p>Itens da grade de Estoque dos grupos 1, 2 e 7 no MaxiProd.</p></div>
+      <div class="fixed-assets-title"><h2><span class="msi">inventory_2</span> Estoque</h2><p>Itens da grade de Estoque dos grupos 1, 2, 7 e 4 no MaxiProd.</p></div>
       <div class="fixed-assets-summary raw-material-summary">${summaryCards}</div>
       <div class="finance-toolbar"><input class="search-input" value="${escapeHTML(rawMaterialSearch)}" oninput="filterRawMaterial(this.value)" placeholder="Filtrar por item, descrição ou unidade..."><span class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${allRows.length} item(ns)</span></div>
       <div class="raw-material-groups">${blocks}</div>
@@ -5498,6 +5794,7 @@ Object.assign(window,{
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
+  renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
@@ -5505,6 +5802,7 @@ Object.assign(window,{
   exportStockReport,
 abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,alternarFiltroAtrasadosReceber,mostrarMaisContasReceber,atualizarContasReceberAno,limparContasReceberAno,
   abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,alternarFiltroAtrasadosPagar,mostrarMaisContasPagar,atualizarContasPagarAno,limparContasPagarAno,
+  exportFinanceCalendarPDF,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
 </script>
