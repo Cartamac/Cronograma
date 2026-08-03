@@ -903,6 +903,23 @@ input[type="file"]{display:none;}
 .fixed-assets-table td:nth-child(4){font-family:'JetBrains Mono',monospace;text-align:right;white-space:nowrap;}
 .fixed-assets-table td:nth-child(5),.fixed-assets-table td:nth-child(6){font-family:'JetBrains Mono',monospace;font-weight:750;color:#fff;text-align:right;white-space:nowrap;}
 .fixed-assets-table th:nth-child(4),.fixed-assets-table th:nth-child(5),.fixed-assets-table th:nth-child(6){text-align:right;}
+.raw-material-groups{display:flex;flex-direction:column;gap:18px;}
+.raw-material-group{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);}
+.raw-material-group-head{width:100%;border:0;color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 52px 14px 16px;background:var(--surface2);cursor:pointer;text-align:left;position:relative;}
+.raw-material-group-head:hover{background:rgba(255,255,255,.035);}
+.raw-material-group-head h3{margin:0;font-size:16px;}.raw-material-group-head span{font-size:12px;color:var(--text3);}
+.raw-material-group-chevron{position:absolute;right:16px;color:var(--gold);font-size:22px;transition:transform .18s;}
+.raw-material-group.open .raw-material-group-chevron{transform:rotate(180deg);}
+.raw-material-group-body{display:none;border-top:1px solid var(--border);}
+.raw-material-group.open .raw-material-group-body{display:block;}
+.raw-material-group .finance-table-wrap{border:0;border-radius:0;}
+.raw-material-summary{grid-template-columns:repeat(4,minmax(0,1fr));}
+.raw-material-table td:nth-child(1){font-weight:750;color:var(--gold);}
+.raw-material-table td:nth-child(2){font-weight:400;color:var(--text2);}
+.raw-material-table td:nth-child(3),.raw-material-table td:nth-child(5),.raw-material-table td:nth-child(6){font-family:'JetBrains Mono',monospace;text-align:right;white-space:nowrap;}
+.raw-material-table td:nth-child(4){font-family:inherit;text-align:left;font-weight:400;color:var(--text2);}
+.raw-material-table th:nth-child(3),.raw-material-table th:nth-child(5),.raw-material-table th:nth-child(6){text-align:right;}
+.raw-material-table th:nth-child(4){text-align:left;}
 .payable-year-actions{display:flex;gap:9px;align-items:center;justify-content:flex-start;flex-wrap:wrap;margin:14px 0 20px;padding:12px;border:1px solid var(--border);border-radius:9px;background:var(--bg3);}
 .payable-year-actions .btn{min-width:190px;}
 .payable-year-state{font-size:12px;color:var(--text3);margin-right:auto;}
@@ -917,6 +934,8 @@ input[type="file"]{display:none;}
 .sales-empty{border:1px dashed var(--border2);border-radius:9px;padding:50px 20px;text-align:center;color:var(--text3);}
 @media(max-width:1200px){.sales-summary{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:900px){.fixed-assets-summary{grid-template-columns:1fr;}}
+@media(max-width:1250px){.raw-material-summary{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:700px){.raw-material-summary{grid-template-columns:1fr;}.raw-material-group-head{align-items:flex-start;flex-direction:column;}}
 @media(max-width:760px){
   .sales-summary{grid-template-columns:1fr;}
   .sales-year-toggle,.sales-year-body{padding-left:14px;padding-right:14px;}
@@ -1290,6 +1309,7 @@ const consultarFinanceiroFiscalMaxiprodRemoto = httpsCallable(functions, "consul
 const consultarPedidosVendaMaxiprodRemoto = httpsCallable(functions, "consultarPedidosVendaMaxiprod", {timeout:310000});
 const consultarAtivosImobilizadosMaxiprodRemoto = httpsCallable(functions, "consultarAtivosImobilizadosMaxiprod", {timeout:310000});
 const consultarUsoConsumoMaxiprodRemoto = httpsCallable(functions, "consultarUsoConsumoMaxiprod", {timeout:310000});
+const consultarMateriaPrimaMaxiprodRemoto = httpsCallable(functions, "consultarMateriaPrimaMaxiprod", {timeout:310000});
 const DB_REF   = doc(db, "cartamac", "db");
 const FILE_REF = doc(db, "cartamac", "files");
 
@@ -1376,6 +1396,16 @@ let USAGE_STOCK_CACHE=(()=>{
 if(USAGE_STOCK_CACHE?.version!==2||!Array.isArray(USAGE_STOCK_CACHE?.items))USAGE_STOCK_CACHE={version:2,updatedAt:null,items:[]};
 let usageStockRefreshInProgress=false;
 let usageStockSearch='';
+const RAW_MATERIAL_CACHE_KEY='cartamac_materia_prima_estoque_cache_v1';
+let RAW_MATERIAL_CACHE=(()=>{
+  try{return JSON.parse(localStorage.getItem(RAW_MATERIAL_CACHE_KEY)||'{"version":1,"updatedAt":null,"items":[]}');}
+  catch(_){return {version:1,updatedAt:null,items:[]};}
+})();
+if(RAW_MATERIAL_CACHE?.version!==1||!Array.isArray(RAW_MATERIAL_CACHE?.items))RAW_MATERIAL_CACHE={version:1,updatedAt:null,items:[]};
+let rawMaterialRefreshInProgress=false;
+let rawMaterialSearch='';
+const rawMaterialLimits={1:200,2:200,7:200};
+const rawMaterialExpandedGroups=new Set(['1']);
 
 function scheduleFinanceRender(){
   if(financeRenderQueued)return;
@@ -2119,7 +2149,8 @@ const FINANCE_VIEWS={
   pagar:{title:'Contas a pagar',source:'contaAPagar',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Empresa',['empresaNome','empresa']],['Descrição',['descricao','historico']],['Conta destino',['contaDestinoDescricao','contaDestino']],['Referente a',['referenteA','referencia','referente']],['Observações',['observacoes','observacao']],['Valor original',['valorOriginal','valor']],['Valor pago',['valorPago','valorBaixado']],['Valor a pagar',['valorAPagar','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
   vendas:{title:'Vendas',source:'pedidosDeVenda',columns:[]},
   ativos:{title:'Ativos imobilizados',source:null,columns:[]},
-  usoConsumo:{title:'Uso e consumo',source:null,columns:[]}
+  usoConsumo:{title:'Uso e consumo',source:null,columns:[]},
+  materiaPrima:{title:'Matéria-prima',source:null,columns:[]}
 };
 function financeNormalize(value){return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
 function financeValue(row,keys){
@@ -2214,7 +2245,7 @@ async function refreshFinanceiroFiscal(){
   // Pedidos de venda sao uma fonte auxiliar: usamos id/numero somente para
   // reproduzir a descricao dos adiantamentos e previsoes exatamente como no ERP.
   const sources=[...new Set([...Object.values(FINANCE_VIEWS).map(view=>view.source).filter(Boolean),'pedidosDeVenda'])];
-  const totalStages=sources.length+3;
+  const totalStages=sources.length+4;
   const payableCurrentYear=(new Date()).getFullYear();
   const payableCurrentBounds=payableYearBounds(payableCurrentYear);
   const pageSize=FINANCE_PAGE_SIZE;let updatedAt=new Date().toISOString(),failed=0,totalRecords=0;
@@ -2283,6 +2314,10 @@ async function refreshFinanceiroFiscal(){
     const usageProgress=Math.round(((sources.length+2)/totalStages)*100);
     const usageUpdated=await refreshUsageStockMaxiprod({integrated:true,percent:usageProgress});
     if(usageUpdated)totalRecords+=USAGE_STOCK_CACHE.items.length;
+    else failed++;
+    const rawMaterialProgress=Math.round(((sources.length+3)/totalStages)*100);
+    const rawMaterialUpdated=await refreshRawMaterialMaxiprod({integrated:true,percent:rawMaterialProgress});
+    if(rawMaterialUpdated)totalRecords+=RAW_MATERIAL_CACHE.items.length;
     else failed++;
     FINANCE_CACHE.updatedAt=updatedAt;
     saveFinanceCacheLocal();
@@ -2900,6 +2935,7 @@ function renderFinanceiroFiscal(){
   if(financeiroView==='vendas'){renderSalesPage(target);return;}
   if(financeiroView==='ativos'){renderFixedAssetsPage(target);return;}
   if(financeiroView==='usoConsumo'){renderUsageStockPage(target);return;}
+  if(financeiroView==='materiaPrima'){renderRawMaterialPage(target);return;}
   if(financeiroView==='pagar'){renderContasAPagar(target);return;}
   const view=FINANCE_VIEWS[financeiroView]||FINANCE_VIEWS.receber;
   const search=(document.getElementById('financeSearch')?.value||'').trim().toLowerCase();
@@ -4902,6 +4938,8 @@ function fixedAssetRecord(row){
     criadoEm:salesDate(salesValue(row,['criadoEm','criacaoData','dataCriacao'])),
     codigo:salesText(salesValue(row,['codigo','itemCodigo'])),
     descricao:salesText(salesValue(row,['descricao','nome','itemDescricao'])),
+    grupo:String(salesValue(row,['grupo','grupoCodigo','codigoGrupo'])??'').trim(),
+    unidade:salesText(salesValue(row,['unidade','unid','unidadeDeMedida','siglaUnidade'])),
     estoque:salesText(salesValue(row,['estoque','conta','contaEstoque','contaDeEstoque'])),
     quantidade,
     valorUnitario,
@@ -5095,6 +5133,126 @@ async function refreshUsageStockMaxiprod(options={}){
   }finally{
     usageStockRefreshInProgress=false;
     if(!integrated){hideLoading();renderUsageStockPage();}
+  }
+  return success;
+}
+
+// ─────────────── MATÉRIA-PRIMA · ESTOQUE GRUPOS 1, 2 E 7 ───────────────
+const RAW_MATERIAL_GROUPS={
+  '1':'Matérias-primas',
+  '2':'Elementos de fixação',
+  '7':'Itens comerciais'
+};
+function rawMaterialRecords(){
+  const sourceName=String(RAW_MATERIAL_CACHE?.source||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const apiAlreadyGrouped=/agrup|consolidad|sintetic/.test(sourceName);
+  let rows=(RAW_MATERIAL_CACHE?.items||[]).map(fixedAssetRecord)
+    .filter(row=>Object.hasOwn(RAW_MATERIAL_GROUPS,String(row.grupo)));
+  if(!apiAlreadyGrouped){
+    const grouped=new Map();
+    for(const row of rows){
+      if(Math.abs(row.quantidade)<=0.0000001&&Math.abs(row.valorEstoque)<=0.0000001)continue;
+      const group=String(row.grupo);
+      const code=String(row.codigo||'').trim().toUpperCase();
+      const stock=String(row.estoque||'').trim().toUpperCase();
+      const key=`${group}::${code||row.descricao.toUpperCase()}::${stock}`;
+      const current=grouped.get(key);
+      if(!current){grouped.set(key,{...row});continue;}
+      current.quantidade+=row.quantidade;
+      current.valorEstoque+=row.valorEstoque;
+      if((row.criadoEm?.getTime()||0)>(current.criadoEm?.getTime()||0))current.criadoEm=row.criadoEm;
+    }
+    rows=[...grouped.values()].map(row=>({
+      ...row,
+      valorUnitario:row.quantidade!==0?row.valorEstoque/row.quantidade:row.valorUnitario,
+    }));
+  }
+  return rows.map(row=>({...row,custoTotal:row.valorEstoque}))
+    .sort((a,b)=>Number(a.grupo)-Number(b.grupo)||String(a.codigo).localeCompare(String(b.codigo),'pt-BR',{numeric:true}));
+}
+function filterRawMaterial(value){rawMaterialSearch=String(value||'');renderRawMaterialPage();}
+function showMoreRawMaterial(groupCode){rawMaterialLimits[groupCode]=(rawMaterialLimits[groupCode]||200)+200;renderRawMaterialPage();}
+function toggleRawMaterialGroup(groupCode){
+  const key=String(groupCode);
+  rawMaterialExpandedGroups.has(key)?rawMaterialExpandedGroups.delete(key):rawMaterialExpandedGroups.add(key);
+  renderRawMaterialPage();
+}
+function rawMaterialTable(rows,groupCode){
+  const limit=rawMaterialLimits[groupCode]||200;
+  const visible=rows.slice(0,limit),remaining=Math.max(0,rows.length-visible.length);
+  if(!visible.length)return `<div class="finance-empty">Nenhum item deste grupo corresponde ao filtro informado.</div>`;
+  return `<div class="finance-table-wrap"><table class="finance-table fixed-assets-table raw-material-table"><thead><tr><th>Item</th><th>Descrição</th><th>Quantidade</th><th>Unidade de medida</th><th>Custo unitário</th><th>Custo total</th></tr></thead><tbody>${visible.map(row=>`<tr>
+    <td>${escapeHTML(row.codigo)}</td>
+    <td>${escapeHTML(row.descricao)}</td>
+    <td>${row.quantidade.toLocaleString('pt-BR',{maximumFractionDigits:5})}</td>
+    <td>${escapeHTML(row.unidade)}</td>
+    <td>${fmtBRL(row.valorUnitario)}</td>
+    <td>${fmtBRL(row.custoTotal)}</td>
+  </tr>`).join('')}</tbody></table>${remaining?`<div style="display:flex;justify-content:center;padding:16px;"><button class="btn btn-ghost" onclick="showMoreRawMaterial('${groupCode}')">Mostrar mais 200 · ${remaining} restante(s)</button></div>`:''}</div>`;
+}
+function renderRawMaterialPage(container=document.getElementById('financeiroContent')){
+  if(!container)return;
+  const allRows=rawMaterialRecords();
+  const query=rawMaterialSearch.trim().toLocaleLowerCase('pt-BR');
+  const filtered=query?allRows.filter(row=>[row.codigo,row.descricao,row.unidade].join(' ').toLocaleLowerCase('pt-BR').includes(query)):allRows;
+  const updated=RAW_MATERIAL_CACHE?.updatedAt?new Date(RAW_MATERIAL_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
+  const grandTotal=allRows.reduce((sum,row)=>sum+row.custoTotal,0);
+  const summaryCards=`<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(grandTotal)}</div><div class="sales-summary-label">Somatória total</div><div class="sales-summary-sub">Grupos 1, 2 e 7</div></div>`+Object.entries(RAW_MATERIAL_GROUPS).map(([groupCode,label])=>{
+    const rows=allRows.filter(row=>String(row.grupo)===groupCode);
+    const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
+    return `<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Grupo ${groupCode} · ${escapeHTML(label)}</div><div class="sales-summary-sub">${rows.length} item(ns)</div></div>`;
+  }).join('');
+  const blocks=Object.entries(RAW_MATERIAL_GROUPS).map(([groupCode,label])=>{
+    const rows=filtered.filter(row=>String(row.grupo)===groupCode);
+    const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
+    const open=rawMaterialExpandedGroups.has(groupCode);
+    return `<section class="raw-material-group ${open?'open':''}"><button class="raw-material-group-head" type="button" onclick="toggleRawMaterialGroup('${groupCode}')"><h3>Grupo ${groupCode} — ${escapeHTML(label)}</h3><span>${rows.length} item(ns) · ${fmtBRL(total)}</span><span class="msi raw-material-group-chevron">expand_more</span></button><div class="raw-material-group-body">${rawMaterialTable(rows,groupCode)}</div></section>`;
+  }).join('');
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Dados consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de matéria-prima: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(rawMaterialRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(rawMaterialRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+    ${financeTabsHtml()}
+    <div class="fixed-assets-page">
+      <div class="fixed-assets-title"><h2><span class="msi">category</span> Matéria-prima</h2><p>Itens da grade de Estoque dos grupos 1, 2 e 7 no MaxiProd.</p></div>
+      <div class="fixed-assets-summary raw-material-summary">${summaryCards}</div>
+      <div class="finance-toolbar"><input class="search-input" value="${escapeHTML(rawMaterialSearch)}" oninput="filterRawMaterial(this.value)" placeholder="Filtrar por item, descrição ou unidade..."><span class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${allRows.length} item(ns)</span></div>
+      <div class="raw-material-groups">${blocks}</div>
+    </div>`;
+}
+async function refreshRawMaterialMaxiprod(options={}){
+  const integrated=options?.integrated===true;
+  if(rawMaterialRefreshInProgress)return false;
+  if(!isMaster(loggedUser))return false;
+  rawMaterialRefreshInProgress=true;
+  if(!integrated)renderRawMaterialPage();
+  const items=[],sources=new Set();
+  let updatedAt=new Date().toISOString(),success=false;
+  try{
+    const groups=Object.keys(RAW_MATERIAL_GROUPS);
+    for(let groupIndex=0;groupIndex<groups.length;groupIndex++){
+      const groupCode=groups[groupIndex];
+      let skip=0;
+      for(let page=0;page<250;page++){
+        const progress=integrated?(Number(options.percent)||95):Math.min(95,10+(groupIndex*28)+(page*3));
+        showLoading(`Carregando MaxiProd — ${progress}% · matéria-prima grupo ${groupCode} · página ${page+1}`);
+        const result=await consultarMateriaPrimaMaxiprodRemoto({groupCode,take:200,skip});
+        const pageItems=Array.isArray(result.data?.items)?result.data.items:[];
+        items.push(...pageItems.map(row=>({...row,grupo:String(row.grupo??groupCode)})));
+        updatedAt=result.data?.updatedAt||updatedAt;
+        if(result.data?.source)sources.add(result.data.source);
+        if(result.data?.done===true)break;
+        skip+=200;
+      }
+    }
+    RAW_MATERIAL_CACHE={version:1,updatedAt,source:[...sources].join(','),items};
+    localStorage.setItem(RAW_MATERIAL_CACHE_KEY,JSON.stringify(RAW_MATERIAL_CACHE));
+    rawMaterialLimits[1]=rawMaterialLimits[2]=rawMaterialLimits[7]=200;
+    success=true;
+    if(!integrated)showToast(`${rawMaterialRecords().length} item(ns) de matéria-prima atualizado(s) pelo MaxiProd.`);
+  }catch(error){
+    console.error('Matéria-prima: falha ao consultar grupos 1, 2 e 7',error);
+    if(!integrated)showToast(error?.message||'Não foi possível atualizar Matéria-prima.','err');
+  }finally{
+    rawMaterialRefreshInProgress=false;
+    if(!integrated){hideLoading();renderRawMaterialPage();}
   }
   return success;
 }
@@ -5343,6 +5501,7 @@ Object.assign(window,{
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
+  renderRawMaterialPage,refreshRawMaterialMaxiprod,filterRawMaterial,showMoreRawMaterial,toggleRawMaterialGroup,
   exportStockReport,
 abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,alternarFiltroAtrasadosReceber,mostrarMaisContasReceber,atualizarContasReceberAno,limparContasReceberAno,
   abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,alternarFiltroAtrasadosPagar,mostrarMaisContasPagar,atualizarContasPagarAno,limparContasPagarAno,
