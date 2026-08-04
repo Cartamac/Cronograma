@@ -198,8 +198,18 @@ input[type="file"]{display:none;}
 .cashflow-value-link{border:0;background:transparent;padding:4px 0;color:inherit;font:700 12px 'JetBrains Mono',monospace;cursor:pointer;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;}
 .cashflow-value-link:hover{color:#fff !important;text-decoration-color:var(--gold);}
 .cashflow-formula{border-left:3px solid var(--gold);background:#181713;border-radius:8px;padding:12px 14px;color:var(--text2);font-size:12px;margin-bottom:18px;}
+.cashflow-carry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid #355c40;background:rgba(66,199,91,.08);border-radius:9px;padding:12px 14px;margin:-6px 0 18px;color:var(--text2);font-size:12px;}
+.cashflow-carry b{color:var(--green);font:700 15px 'JetBrains Mono',monospace;}
+.cashflow-chart-section{margin:20px 0;}.cashflow-chart-section>h3{margin:0 0 11px;font-size:15px;}
+.cashflow-chart-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:12px;margin-bottom:18px;}
+.cashflow-chart-card{border:1px solid var(--border);border-radius:10px;background:var(--panel2);padding:16px;min-width:0;}
+.cashflow-chart-card h4{margin:0 0 4px;color:#fff;font-size:13px;}.cashflow-chart-card>p{margin:0 0 15px;color:var(--text3);font-size:10px;}
+.cashflow-hbars{display:grid;gap:12px;}.cashflow-hbar-row{display:grid;grid-template-columns:145px minmax(100px,1fr) 125px;gap:10px;align-items:center;font-size:11px;}.cashflow-hbar-label{color:var(--text2);}.cashflow-hbar-track{height:15px;border-radius:999px;background:#101010;overflow:hidden;border:1px solid #303030;}.cashflow-hbar-fill{height:100%;min-width:2px;border-radius:999px;}.cashflow-hbar-value{text-align:right;color:#fff;font:700 11px 'JetBrains Mono',monospace;white-space:nowrap;}
+.cashflow-pie-wrap{display:grid;grid-template-columns:150px minmax(130px,1fr);gap:17px;align-items:center;min-height:165px;}.cashflow-pie{width:150px;height:150px;border-radius:50%;position:relative;margin:auto;box-shadow:inset 0 0 0 1px #353535;}.cashflow-pie:after{content:'';position:absolute;inset:32%;border-radius:50%;background:var(--panel2);border:1px solid var(--border);}.cashflow-pie-empty{background:#292929!important;}.cashflow-pie-legend{display:grid;gap:9px;}.cashflow-pie-legend div{display:grid;grid-template-columns:10px 1fr;gap:8px;align-items:start;color:var(--text2);font-size:10px;}.cashflow-pie-legend i{width:10px;height:10px;border-radius:3px;margin-top:2px;}.cashflow-pie-legend b{display:block;color:#fff;font:700 11px 'JetBrains Mono',monospace;margin-top:2px;}
+.cashflow-annual-chart{height:225px;display:grid;grid-template-columns:repeat(12,minmax(34px,1fr));gap:7px;align-items:end;padding-top:10px;overflow-x:auto;}.cashflow-annual-month{height:100%;min-width:34px;display:grid;grid-template-rows:1fr auto;gap:7px;}.cashflow-annual-bars{display:flex;align-items:flex-end;justify-content:center;gap:2px;border-bottom:1px solid #454545;}.cashflow-annual-bar{width:8px;min-height:2px;border-radius:3px 3px 0 0;}.cashflow-annual-label{text-align:center;color:var(--text3);font:700 9px 'JetBrains Mono',monospace;}.cashflow-chart-keys{display:flex;gap:15px;flex-wrap:wrap;margin-top:12px;color:var(--text3);font-size:10px;}.cashflow-chart-keys span{display:flex;align-items:center;gap:6px;}.cashflow-chart-keys i{width:9px;height:9px;border-radius:2px;}
 .cashflow-overview h3{margin:0 0 10px;font-size:15px}.cashflow-overview .finance-table th,.cashflow-overview .finance-table td{text-align:right}.cashflow-overview .finance-table th:first-child,.cashflow-overview .finance-table td:first-child{text-align:left}.cashflow-current-row td{background:rgba(212,160,23,.08);}
 .cashflow-gantt{margin-top:22px;min-width:0;max-width:100%;}.cashflow-gantt .cgantt-wrap{margin-bottom:0;max-width:100%;}.cashflow-gantt .cgantt-outer{width:100%;max-width:100%;}
+@media(max-width:980px){.cashflow-chart-grid{grid-template-columns:1fr}.cashflow-hbar-row{grid-template-columns:85px minmax(80px,1fr) 115px}.cashflow-pie-wrap{grid-template-columns:1fr}.cashflow-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 .receber-navegacao,.receber-detalhe{border:1px solid var(--border);border-radius:12px;background:var(--panel);padding:20px;margin-top:16px;}.receber-navegacao h3,.receber-detalhe h3{margin:0 0 6px;font-size:18px;color:#fff;}.receber-navegacao p,.receber-detalhe p{margin:0 0 16px;color:var(--text3);font-size:13px;}.receber-year-grid,.receber-period-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;}.receber-year-card,.receber-period-card{appearance:none;text-align:left;border:1px solid var(--border);background:var(--panel2);border-radius:10px;padding:17px;cursor:pointer;color:var(--text);transition:.16s ease;min-height:112px;}.receber-year-card:hover,.receber-period-card:hover{border-color:var(--gold);transform:translateY(-1px);}.receber-year-card b{display:block;font:700 30px 'JetBrains Mono',monospace;color:var(--gold);}.receber-period-card b{display:block;font-size:15px;color:#fff;}.receber-year-card span,.receber-period-card span{display:block;color:var(--text3);font-size:12px;margin-top:9px;}.receber-year-card strong,.receber-period-card strong{display:block;color:#51cb68;font:700 13px 'JetBrains Mono',monospace;margin-top:5px;}.receber-period-card.general{border-color:#857333;}.receber-period-card.calendar{border-color:#38637e;}.receber-filtros{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:8px;margin:16px 0 12px;max-width:900px;}.receber-filtros input{width:100%;min-width:0;background:#252525;color:#fff;border:1px solid #424242;border-radius:6px;padding:10px;font-size:12px;}.receber-filtros input:focus{outline:none;border-color:var(--gold);}.receber-calendar-months{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0;}.receber-calendar-months button{border:1px solid var(--border);background:#252525;color:var(--text2);border-radius:6px;padding:8px 10px;font-size:11px;cursor:pointer;}.receber-calendar-months button.active,.receber-calendar-months button:hover{border-color:var(--gold);color:#fff;background:#332c16;}.receber-calendar{display:grid;grid-template-columns:repeat(7,minmax(115px,1fr));gap:5px;overflow:auto;}.receber-calendar>div:nth-child(-n+7){background:#252525;color:var(--text3);font-weight:700;font-size:11px;text-align:center;padding:9px;}.receber-calendar-day{min-height:130px;border:1px solid var(--border);background:#151515;padding:8px;}.receber-calendar-day.empty{background:#101010;border-color:#202020;}.receber-calendar-day>b{font:700 14px 'JetBrains Mono',monospace;color:#d8d8d8;}.receber-calendar-item{border-left:3px solid var(--gold);background:#242013;border-radius:4px;margin-top:7px;padding:5px;font-size:10px;overflow:hidden;}.receber-calendar-item span,.receber-calendar-item strong,.receber-calendar-item small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.receber-calendar-item strong{font:700 11px 'JetBrains Mono',monospace;color:#fff;margin-top:2px;}.receber-calendar-item small{color:var(--text3);margin-top:2px;}
 .receber-year-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
 .receber-feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px;}
@@ -1463,6 +1473,7 @@ let PURCHASE_ORDERS_CACHE=(()=>{
 if(PURCHASE_ORDERS_CACHE?.version!==1||!Array.isArray(PURCHASE_ORDERS_CACHE?.items))PURCHASE_ORDERS_CACHE={version:1,updatedAt:null,items:[]};
 let purchaseOrdersRefreshInProgress=false;
 let purchaseOrderSearch='';
+let purchaseOrdersOnlyOverdue=false;
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v2');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v3');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v4');
@@ -3155,8 +3166,8 @@ function renderContasAPagar(target){
 }
 
 // ───────────────── FLUXO DE CAIXA MENSAL ─────────────────
-// Os saldos dos bancos são informados manualmente e preservados por mês.
-// Entradas, saídas e valores previstos são derivados das áreas já existentes.
+// Um saldo bancário informado manualmente funciona como ponto de partida.
+// O fechamento é transportado aos meses seguintes até existir um novo ponto manual.
 function getCashFlowData(){
   if(!DB.cashFlowData||typeof DB.cashFlowData!=='object')DB.cashFlowData={};
   if(!Array.isArray(DB.cashFlowData.bankNames))DB.cashFlowData.bankNames=['Banco 1','Banco 2','Banco 3'];
@@ -3180,18 +3191,60 @@ function cashFlowPlannedCost(key){
     return total+(Number(entry.months?.[key])||0)+(Number(automatic[key])||0);
   },0);
 }
-function cashFlowMonthTotals(key){
+function cashFlowRecordIsManual(record){
+  if(!record||typeof record!=='object')return false;
+  if(record.manualBanks===true)return true;
+  // Compatibilidade: valores não zerados gravados pelas versões anteriores
+  // já eram lançamentos manuais e continuam sendo tratados como âncoras.
+  return record.manualBanks!==false&&Array.isArray(record.banks)&&record.banks.some(value=>Math.abs(Number(value)||0)>.000001);
+}
+function cashFlowPreviousMonthKey(key){
+  const match=String(key||'').match(/^(\d{4})-(\d{2})$/);if(!match)return '';
+  const date=new Date(Number(match[1]),Number(match[2])-2,1);
+  return monthKey(date.getFullYear(),date.getMonth());
+}
+function cashFlowMonthMovement(key){
   const match=String(key||'').match(/^(\d{4})-(\d{2})$/);
   const year=match?Number(match[1]):TODAY.getFullYear();
   const month=match?Number(match[2])-1:TODAY.getMonth();
-  const bankRecord=getCashFlowMonthRecord(key,false);
-  const banks=Array.from({length:3},(_,index)=>Number(bankRecord.banks[index])||0);
   const entradas=receberRegistros().filter(row=>row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month).reduce((sum,row)=>sum+(Number(row.valorParcela)||0),0);
   const saidas=pagarRegistros().filter(row=>row.vencimento?.getFullYear()===year&&row.vencimento?.getMonth()===month).reduce((sum,row)=>sum+(Number(row.valorTitulo)||0),0);
   const previsto=cashFlowPlannedCost(key);
-  const totalBancos=banks.reduce((sum,value)=>sum+value,0);
+  return {year,month,entradas,saidas,previsto};
+}
+function cashFlowOpeningBalance(key){
+  const data=getCashFlowData(),current=data.months[key];
+  if(cashFlowRecordIsManual(current)){
+    const banks=Array.from({length:3},(_,index)=>Number(current.banks?.[index])||0);
+    return {banks,total:banks.reduce((sum,value)=>sum+value,0),mode:'manual',sourceKey:key,anchorKey:key};
+  }
+  const targetMatch=String(key||'').match(/^(\d{4})-(\d{2})$/);if(!targetMatch)return {banks:[0,0,0],total:0,mode:'empty',sourceKey:'',anchorKey:''};
+  const targetDate=new Date(Number(targetMatch[1]),Number(targetMatch[2])-1,1);
+  let cursor=new Date(targetDate.getFullYear(),targetDate.getMonth()-1,1),anchorKey='';
+  // Dez anos de procura são suficientes para os dados históricos do aplicativo
+  // e evitam percorrer meses indefinidamente quando nenhum saldo foi informado.
+  for(let step=0;step<120;step++){
+    const candidate=monthKey(cursor.getFullYear(),cursor.getMonth());
+    if(cashFlowRecordIsManual(data.months[candidate])){anchorKey=candidate;break;}
+    cursor=new Date(cursor.getFullYear(),cursor.getMonth()-1,1);
+  }
+  if(!anchorKey)return {banks:[0,0,0],total:0,mode:'empty',sourceKey:'',anchorKey:''};
+  const anchor=data.months[anchorKey],anchorBanks=Array.from({length:3},(_,index)=>Number(anchor.banks?.[index])||0);
+  let running=anchorBanks.reduce((sum,value)=>sum+value,0);
+  const anchorMatch=anchorKey.match(/^(\d{4})-(\d{2})$/);
+  cursor=new Date(Number(anchorMatch[1]),Number(anchorMatch[2])-1,1);
+  while(cursor<targetDate){
+    const cursorKey=monthKey(cursor.getFullYear(),cursor.getMonth()),movement=cashFlowMonthMovement(cursorKey);
+    running+=movement.entradas-movement.saidas-movement.previsto;
+    cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,1);
+  }
+  return {banks:[0,0,0],total:running,mode:'carried',sourceKey:cashFlowPreviousMonthKey(key),anchorKey};
+}
+function cashFlowMonthTotals(key){
+  const movement=cashFlowMonthMovement(key),opening=cashFlowOpeningBalance(key);
+  const {year,month,entradas,saidas,previsto}=movement,banks=opening.banks,totalBancos=opening.total;
   const saldoProjetado=totalBancos+entradas-saidas-previsto;
-  return {year,month,banks,totalBancos,entradas,saidas,previsto,saldoProjetado};
+  return {year,month,banks,totalBancos,entradas,saidas,previsto,saldoProjetado,bankMode:opening.mode,bankSourceKey:opening.sourceKey,bankAnchorKey:opening.anchorKey};
 }
 function selectCashFlowMonth(value){
   if(!/^\d{4}-\d{2}$/.test(String(value||'')))return;
@@ -3213,6 +3266,13 @@ function updateCashFlowBankName(index,value){
 function updateCashFlowBankBalance(index,value){
   const record=getCashFlowMonthRecord(cashFlowSelectedMonth,true);
   record.banks[index]=Number(value)||0;
+  record.manualBanks=true;
+  persist();
+  renderFinanceiroFiscal();
+}
+function clearCashFlowBankOverride(){
+  const data=getCashFlowData(),record=data.months[cashFlowSelectedMonth];
+  if(record){record.banks=[0,0,0];record.manualBanks=false;}
   persist();
   renderFinanceiroFiscal();
 }
@@ -3241,6 +3301,59 @@ function cashFlowYearOverview(year){
     </tr>`;
   }).join('');
 }
+function cashFlowPieMarkup(items){
+  const positive=items.map(item=>({...item,value:Math.max(0,Math.abs(Number(item.value)||0))}));
+  const total=positive.reduce((sum,item)=>sum+item.value,0);
+  let angle=0;
+  const segments=positive.map(item=>{const start=angle;angle+=total?item.value/total*360:0;return `${item.color} ${start.toFixed(2)}deg ${angle.toFixed(2)}deg`;});
+  const background=total?`conic-gradient(${segments.join(',')})`:'#292929';
+  return `<div class="cashflow-pie-wrap"><div class="cashflow-pie ${total?'':'cashflow-pie-empty'}" style="background:${background}"></div><div class="cashflow-pie-legend">${positive.map(item=>{const percentage=total?item.value/total*100:0;return `<div><i style="background:${item.color}"></i><span>${esc(item.label)} · <strong style="color:${item.color}">${percentage.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</strong><b>${fmtBRL(item.value)}</b></span></div>`;}).join('')}</div></div>`;
+}
+function cashFlowMonthlyBarMarkup(totals){
+  const items=[
+    {label:'Entradas',value:totals.entradas,color:'var(--green)'},
+    {label:'Saídas',value:totals.saidas,color:'var(--red)'},
+    {label:'Previsto',value:totals.previsto,color:'var(--gold)'},
+    {label:'Saldo final',value:totals.saldoProjetado,color:totals.saldoProjetado<0?'#ef4d55':'#4e8cff'}
+  ],max=Math.max(1,...items.map(item=>Math.abs(item.value))),movementTotal=Math.abs(totals.entradas)+Math.abs(totals.saidas)+Math.abs(totals.previsto);
+  return `<div class="cashflow-hbars">${items.map((item,index)=>{const percentage=index<3&&movementTotal?Math.abs(item.value)/movementTotal*100:null;return `<div class="cashflow-hbar-row"><span class="cashflow-hbar-label">${item.label}${percentage===null?'':` · ${percentage.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%`}</span><div class="cashflow-hbar-track"><div class="cashflow-hbar-fill" style="width:${Math.max(item.value?2:0,Math.abs(item.value)/max*100).toFixed(2)}%;background:${item.color}"></div></div><span class="cashflow-hbar-value" style="color:${item.value<0?'var(--red)':'#fff'}">${fmtBRL(item.value)}</span></div>`;}).join('')}</div>`;
+}
+function cashFlowAnnualBarMarkup(year){
+  const months=Array.from({length:12},(_,month)=>cashFlowMonthTotals(monthKey(year,month)));
+  const max=Math.max(1,...months.flatMap(row=>[row.entradas,row.saidas,row.previsto].map(value=>Math.abs(value))));
+  const bars=months.map((row,month)=>`<div class="cashflow-annual-month" title="${receberMesNome(month)} · Entradas ${fmtBRL(row.entradas)} · Saídas ${fmtBRL(row.saidas)} · Previsto ${fmtBRL(row.previsto)}"><div class="cashflow-annual-bars"><i class="cashflow-annual-bar" style="height:${Math.max(row.entradas?2:0,row.entradas/max*100).toFixed(2)}%;background:var(--green)"></i><i class="cashflow-annual-bar" style="height:${Math.max(row.saidas?2:0,row.saidas/max*100).toFixed(2)}%;background:var(--red)"></i><i class="cashflow-annual-bar" style="height:${Math.max(row.previsto?2:0,row.previsto/max*100).toFixed(2)}%;background:var(--gold)"></i></div><span class="cashflow-annual-label">${receberMesNome(month).slice(0,3).toUpperCase()}</span></div>`).join('');
+  return `<div class="cashflow-annual-chart">${bars}</div><div class="cashflow-chart-keys"><span><i style="background:var(--green)"></i>Entradas</span><span><i style="background:var(--red)"></i>Saídas</span><span><i style="background:var(--gold)"></i>Previsto</span></div>`;
+}
+function cashFlowChartsMarkup(totals){
+  const monthItems=[{label:'Entradas',value:totals.entradas,color:'#42c75b'},{label:'Saídas',value:totals.saidas,color:'#ef4d55'},{label:'Previsto',value:totals.previsto,color:'#d4a017'}];
+  const annual=Array.from({length:12},(_,month)=>cashFlowMonthTotals(monthKey(totals.year,month)));
+  const annualItems=[
+    {label:'Entradas no ano',value:annual.reduce((sum,row)=>sum+row.entradas,0),color:'#42c75b'},
+    {label:'Saídas no ano',value:annual.reduce((sum,row)=>sum+row.saidas,0),color:'#ef4d55'},
+    {label:'Previsto no ano',value:annual.reduce((sum,row)=>sum+row.previsto,0),color:'#d4a017'}
+  ];
+  return `<section class="cashflow-chart-section"><h3>Gráficos de ${receberMesNome(totals.month)} de ${totals.year}</h3><div class="cashflow-chart-grid"><div class="cashflow-chart-card"><h4>Movimentação e saldo projetado</h4><p>Comparação dos valores do mês selecionado.</p>${cashFlowMonthlyBarMarkup(totals)}</div><div class="cashflow-chart-card"><h4>Composição da movimentação</h4><p>Distribuição entre entradas, saídas e previsão.</p>${cashFlowPieMarkup(monthItems)}</div></div><h3>Visão gráfica anual de ${totals.year}</h3><div class="cashflow-chart-grid"><div class="cashflow-chart-card"><h4>Comparativo mês a mês</h4><p>Passe o mouse sobre as barras para consultar os valores.</p>${cashFlowAnnualBarMarkup(totals.year)}</div><div class="cashflow-chart-card"><h4>Composição anual</h4><p>Acumulado dos doze meses exibidos.</p>${cashFlowPieMarkup(annualItems)}</div></div></section>`;
+}
+function cashFlowPdfBarImage(title,items){
+  const canvas=document.createElement('canvas');canvas.width=1100;canvas.height=520;const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#202020';ctx.font='700 32px Arial';ctx.fillText(title,34,48);
+  const max=Math.max(1,...items.map(item=>Math.abs(Number(item.value)||0))),movementTotal=items.slice(0,3).reduce((sum,item)=>sum+Math.abs(Number(item.value)||0),0);
+  items.forEach((item,index)=>{const y=100+index*94,value=Number(item.value)||0,width=Math.abs(value)/max*690,percentage=index<3&&movementTotal?Math.abs(value)/movementTotal*100:null;ctx.fillStyle='#555';ctx.font='600 22px Arial';ctx.fillText(`${item.label}${percentage===null?'':` · ${percentage.toLocaleString('pt-BR',{maximumFractionDigits:1})}%`}`,34,y+24);ctx.fillStyle='#ededed';ctx.fillRect(250,y,700,34);ctx.fillStyle=item.color;ctx.fillRect(250,y,Math.max(value?3:0,width),34);ctx.fillStyle=value<0?'#d12d3a':'#202020';ctx.font='700 21px Arial';ctx.textAlign='right';ctx.fillText(fmtBRL(value),1065,y+25);ctx.textAlign='left';});
+  return canvas.toDataURL('image/png');
+}
+function cashFlowPdfPieImage(title,items){
+  const canvas=document.createElement('canvas');canvas.width=1100;canvas.height=520;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#202020';ctx.font='700 32px Arial';ctx.fillText(title,34,48);
+  const values=items.map(item=>({...item,value:Math.abs(Number(item.value)||0)})),total=values.reduce((sum,item)=>sum+item.value,0);let angle=-Math.PI/2;
+  if(total){values.forEach(item=>{const next=angle+(item.value/total)*Math.PI*2;ctx.beginPath();ctx.moveTo(270,290);ctx.arc(270,290,175,angle,next);ctx.closePath();ctx.fillStyle=item.color;ctx.fill();angle=next;});}else{ctx.beginPath();ctx.arc(270,290,175,0,Math.PI*2);ctx.fillStyle='#ededed';ctx.fill();}
+  ctx.beginPath();ctx.arc(270,290,76,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();values.forEach((item,index)=>{const y=145+index*98,percentage=total?item.value/total*100:0;ctx.fillStyle=item.color;ctx.fillRect(520,y-20,22,22);ctx.fillStyle='#353535';ctx.font='600 23px Arial';ctx.fillText(`${item.label} · ${percentage.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%`,558,y);ctx.font='700 24px Arial';ctx.fillText(fmtBRL(item.value),558,y+34);});
+  return canvas.toDataURL('image/png');
+}
+function cashFlowPdfAnnualBarImage(title,months){
+  const canvas=document.createElement('canvas');canvas.width=1100;canvas.height=520;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#202020';ctx.font='700 32px Arial';ctx.fillText(title,34,48);
+  const max=Math.max(1,...months.flatMap(row=>[row.entradas,row.saidas,row.previsto].map(value=>Math.abs(Number(value)||0)))),baseY=440,chartH=310,groupW=82;
+  ctx.strokeStyle='#bdbdbd';ctx.beginPath();ctx.moveTo(55,baseY);ctx.lineTo(1050,baseY);ctx.stroke();months.forEach((row,index)=>{const start=69+index*groupW;[[row.entradas,'#42c75b'],[row.saidas,'#ef4d55'],[row.previsto,'#d4a017']].forEach((entry,bar)=>{const h=Math.abs(entry[0])/max*chartH;ctx.fillStyle=entry[1];ctx.fillRect(start+bar*14,baseY-h,11,h);});ctx.fillStyle='#555';ctx.font='700 15px Arial';ctx.textAlign='center';ctx.fillText(receberMesNome(index).slice(0,3).toUpperCase(),start+15,468);});ctx.textAlign='left';[['Entradas','#42c75b'],['Saídas','#ef4d55'],['Previsto','#d4a017']].forEach((item,index)=>{const x=630+index*145;ctx.fillStyle=item[1];ctx.fillRect(x,28,15,15);ctx.fillStyle='#555';ctx.font='600 17px Arial';ctx.fillText(item[0],x+22,42);});
+  return canvas.toDataURL('image/png');
+}
 function exportCashFlowPDF(){
   const JsPDF=window.jspdf?.jsPDF;
   if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
@@ -3253,27 +3366,45 @@ function exportCashFlowPDF(){
   const cards=[['TOTAL NOS BANCOS',selected.totalBancos],['ENTRADAS',selected.entradas],['SAÍDAS',selected.saidas],['PREVISTO',selected.previsto],['SALDO PROJETADO',selected.saldoProjetado]];
   cards.forEach((card,index)=>{const x=left+index*55;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,31,51,14,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.8);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,35);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(card[1]<0?195:35,card[1]<0?45:125,card[1]<0?55:70);doc.text(fmtBRL(card[1]),x+2.5,41);});
   doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(35,35,35);doc.text(`Saldos bancários de ${receberMesNome(selected.month)}`,left,53);
-  data.bankNames.forEach((name,index)=>{const x=left+index*91;doc.setFillColor(250,250,250);doc.setDrawColor(215,215,215);doc.roundedRect(x,57,87,12,1,1,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(80,80,80);doc.text(String(name||`Banco ${index+1}`),x+2.5,61);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(30,30,30);doc.text(fmtBRL(selected.banks[index]||0),x+2.5,66);});
+  if(selected.bankMode==='carried'){
+    const [sourceYear,sourceMonth]=selected.bankSourceKey.split('-').map(Number);
+    doc.setFillColor(244,250,245);doc.setDrawColor(175,210,182);doc.roundedRect(left,57,269,12,1,1,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(70,100,76);doc.text(`Saldo transportado do fechamento de ${receberMesNome(sourceMonth-1)} de ${sourceYear}`,left+2.5,61);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(35,125,70);doc.text(fmtBRL(selected.totalBancos),left+2.5,66);
+  }else{
+    data.bankNames.forEach((name,index)=>{const x=left+index*91;doc.setFillColor(250,250,250);doc.setDrawColor(215,215,215);doc.roundedRect(x,57,87,12,1,1,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(80,80,80);doc.text(String(name||`Banco ${index+1}`),x+2.5,61);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(30,30,30);doc.text(fmtBRL(selected.banks[index]||0),x+2.5,66);});
+  }
   const headers=['Mês','Total nos bancos','Entradas','Saídas','Previsto','Saldo projetado'],widths=[43,48,48,48,45,45],top=78;
   doc.setFillColor(40,40,40);doc.rect(left,top,277,9,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(7);let x=left;headers.forEach((header,index)=>{doc.text(header,x+2,top+5.8);x+=widths[index];});
   annual.forEach((row,index)=>{const y=top+9+index*8;if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,277,8,'F');}doc.setDrawColor(220,220,220);doc.line(left,y+8,left+277,y+8);const values=[receberMesNome(index),fmtBRL(row.totalBancos),fmtBRL(row.entradas),fmtBRL(row.saidas),fmtBRL(row.previsto),fmtBRL(row.saldoProjetado)];doc.setFont('helvetica',index===selected.month?'bold':'normal');doc.setFontSize(7);doc.setTextColor(30,30,30);let cellX=left;values.forEach((value,column)=>{doc.text(String(value),cellX+2,y+5.2,{maxWidth:widths[column]-4});cellX+=widths[column];});});
   doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(105,105,105);doc.text('Relatório financeiro sem o Gantt de Custos. O valor previsto mensal permanece consolidado na coluna “Previsto”.',left,203);
+  const monthMovement=[{label:'Entradas',value:selected.entradas,color:'#42c75b'},{label:'Saídas',value:selected.saidas,color:'#ef4d55'},{label:'Previsto',value:selected.previsto,color:'#d4a017'}];
+  const monthBars=[...monthMovement,{label:'Saldo final',value:selected.saldoProjetado,color:selected.saldoProjetado<0?'#ef4d55':'#4e8cff'}];
+  const annualMovement=[{label:'Entradas no ano',value:annual.reduce((sum,row)=>sum+row.entradas,0),color:'#42c75b'},{label:'Saídas no ano',value:annual.reduce((sum,row)=>sum+row.saidas,0),color:'#ef4d55'},{label:'Previsto no ano',value:annual.reduce((sum,row)=>sum+row.previsto,0),color:'#d4a017'}];
+  doc.addPage();doc.setFillColor(255,255,255);doc.rect(0,0,297,210,'F');doc.setTextColor(28,28,28);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(`CARTAMAC - Gráficos do Fluxo de Caixa ${selected.year}`,left,13);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Mês selecionado: ${receberMesNome(selected.month)} · Percentuais calculados sobre entradas, saídas e previsto.`,left,19);
+  doc.addImage(cashFlowPdfBarImage(`Movimentação de ${receberMesNome(selected.month)}`,monthBars),'PNG',8,25,137,70);
+  doc.addImage(cashFlowPdfPieImage(`Composição de ${receberMesNome(selected.month)}`,monthMovement),'PNG',152,25,137,70);
+  doc.addImage(cashFlowPdfAnnualBarImage(`Comparativo mensal de ${selected.year}`,annual),'PNG',8,106,137,70);
+  doc.addImage(cashFlowPdfPieImage(`Composição anual de ${selected.year}`,annualMovement),'PNG',152,106,137,70);
+  doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(105,105,105);doc.text('Entradas: Contas a receber · Saídas: Contas a pagar · Previsto: Gantt de Custos.',left,202);
   doc.save(`Fluxo_de_Caixa_${selected.year}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 function renderCashFlowPage(container=document.getElementById('financeiroContent')){
   if(!container)return;
   const data=getCashFlowData(),totals=cashFlowMonthTotals(cashFlowSelectedMonth);
   const monthLabel=`${receberMesNome(totals.month)} de ${totals.year}`;
+  const rawRecord=data.months[cashFlowSelectedMonth],rawBanks=Array.from({length:3},(_,index)=>Number(rawRecord?.banks?.[index])||0);
   const bankCards=data.bankNames.map((name,index)=>`<div class="cashflow-bank-card">
     <label>Conta bancária ${index+1}</label>
     <input class="bank-name" type="text" value="${esc(name)}" maxlength="50" onchange="updateCashFlowBankName(${index},this.value)" aria-label="Nome do banco ${index+1}">
-    <input class="bank-value" type="number" min="0" step="0.01" value="${totals.banks[index]||''}" placeholder="R$ 0,00" onchange="updateCashFlowBankBalance(${index},this.value)" aria-label="Saldo de ${esc(name)}">
+    <input class="bank-value" type="number" min="0" step="0.01" value="${rawBanks[index]||''}" placeholder="R$ 0,00" onchange="updateCashFlowBankBalance(${index},this.value)" aria-label="Saldo de ${esc(name)}">
   </div>`).join('');
+  const sourceLabel=totals.bankSourceKey?(()=>{const [year,month]=totals.bankSourceKey.split('-').map(Number);return `${receberMesNome(month-1)} de ${year}`;})():'';
+  const carryInfo=totals.bankMode==='carried'?`<div class="cashflow-carry"><span>Saldo inicial transportado do fechamento de <b>${sourceLabel}</b></span><b>${fmtBRL(totals.totalBancos)}</b></div>`:totals.bankMode==='manual'?`<div class="cashflow-carry"><span>Este mês possui um saldo bancário informado manualmente e inicia uma nova projeção.</span><button class="btn btn-ghost btn-sm" onclick="clearCashFlowBankOverride()">Usar fechamento do mês anterior</button></div>`:`<div class="cashflow-carry"><span>Nenhum saldo bancário manual anterior foi encontrado. Informe os bancos deste mês para iniciar a projeção automática.</span><b>${fmtBRL(0)}</b></div>`;
   container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Fluxo mensal consolidado com saldos bancários, contas a receber, contas a pagar e previsão do Gantt de Custos.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
     ${financeTabsHtml()}
     <section class="cashflow-shell">
-      <div class="cashflow-period"><div><h3>Fluxo de caixa — ${monthLabel}</h3><p>Os três saldos bancários são manuais e ficam salvos separadamente em cada mês.</p></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-ghost" onclick="exportCashFlowPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(-1)">←</button><input class="cashflow-month-input" type="month" value="${cashFlowSelectedMonth}" onchange="selectCashFlowMonth(this.value)"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(1)">→</button></div></div>
+      <div class="cashflow-period"><div><h3>Fluxo de caixa — ${monthLabel}</h3><p>Informe os bancos em qualquer mês. O fechamento será transportado automaticamente até o próximo lançamento manual.</p></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-ghost" onclick="exportCashFlowPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(-1)">←</button><input class="cashflow-month-input" type="month" value="${cashFlowSelectedMonth}" onchange="selectCashFlowMonth(this.value)"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(1)">→</button></div></div>
       <div class="cashflow-bank-grid">${bankCards}</div>
+      ${carryInfo}
       <div class="cashflow-summary-grid">
         <div class="cashflow-summary-card"><b style="color:var(--text)">${fmtBRL(totals.totalBancos)}</b><span>Total nos três bancos</span></div>
         <button class="cashflow-summary-card cashflow-link" onclick="openCashFlowFinanceDetail('receber')" title="Abrir Contas a receber de ${monthLabel}"><b style="color:var(--green)">${fmtBRL(totals.entradas)}</b><span>Entradas · Contas a receber</span></button>
@@ -3281,7 +3412,8 @@ function renderCashFlowPage(container=document.getElementById('financeiroContent
         <div class="cashflow-summary-card"><b style="color:var(--gold)">${fmtBRL(totals.previsto)}</b><span>Previsto · Gantt de Custos</span></div>
         <div class="cashflow-summary-card"><b style="color:${totals.saldoProjetado<0?'var(--red)':'var(--green)'}">${fmtBRL(totals.saldoProjetado)}</b><span>Saldo projetado do mês</span></div>
       </div>
-      <div class="cashflow-formula"><b>Saldo projetado:</b> total dos bancos + entradas − saídas − valores previstos no Gantt de Custos.</div>
+      <div class="cashflow-formula"><b>Saldo projetado:</b> saldo inicial manual ou transportado + entradas − saídas − valores previstos no Gantt de Custos. O resultado será o saldo inicial do mês seguinte.</div>
+      ${cashFlowChartsMarkup(totals)}
       <div class="cashflow-overview"><h3>Visão mensal de ${totals.year}</h3><div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Mês</th><th>Total nos bancos</th><th>Entradas</th><th>Saídas</th><th>Previsto</th><th>Saldo projetado</th></tr></thead><tbody>${cashFlowYearOverview(totals.year)}</tbody></table></div></div>
       <div class="cashflow-gantt">${buildCostsGanttSection()}</div>
     </section>`;
@@ -5530,16 +5662,20 @@ function purchaseOrderRecords(){
     seen.add(key);return true;
   }).sort((a,b)=>(b.emissao?.getTime()||0)-(a.emissao?.getTime()||0)||String(b.numero).localeCompare(String(a.numero),'pt-BR',{numeric:true}));
 }
+function purchaseOrderIsOverdue(row){
+  const today=new Date();today.setHours(0,0,0,0);
+  return !!row?.previsaoEntrega&&row.previsaoEntrega<today;
+}
 function filteredPurchaseOrderRecords(){
   const term=financeNormalize(purchaseOrderSearch);
-  const rows=purchaseOrderRecords();
+  let rows=purchaseOrderRecords();
+  if(purchaseOrdersOnlyOverdue)rows=rows.filter(purchaseOrderIsOverdue);
   if(!term)return rows;
   return rows.filter(row=>financeNormalize([salesDateText(row.emissao),row.numero,row.fornecedor,row.observacao,fmtBRL(row.valorTotal),salesDateText(row.previsaoEntrega),row.anexos].join(' ')).includes(term));
 }
 function purchaseOrderRowsMarkup(rows){
-  const today=new Date();today.setHours(0,0,0,0);
   return rows.length?rows.map(row=>{
-    const overdue=row.previsaoEntrega&&row.previsaoEntrega<today;
+    const overdue=purchaseOrderIsOverdue(row);
     return `<tr>
       <td>${salesDateText(row.emissao)}</td>
       <td class="order-number">${escapeHTML(row.numero||'—')}</td>
@@ -5555,14 +5691,45 @@ function applyPurchaseOrderSearch(value){
   purchaseOrderSearch=String(value||'');
   const rows=filteredPurchaseOrderRecords();
   const tbody=document.getElementById('purchaseOrdersBody');if(tbody)tbody.innerHTML=purchaseOrderRowsMarkup(rows);
-  const count=document.getElementById('purchaseOrdersVisibleCount');if(count)count.textContent=`${rows.length} de ${purchaseOrderRecords().length} pedido(s)`;
+  const count=document.getElementById('purchaseOrdersVisibleCount');if(count)count.textContent=`${rows.length} de ${purchaseOrdersOnlyOverdue?purchaseOrderRecords().filter(purchaseOrderIsOverdue).length:purchaseOrderRecords().length} pedido(s)`;
+}
+function togglePurchaseOrdersOverdue(){purchaseOrdersOnlyOverdue=!purchaseOrdersOnlyOverdue;renderPurchaseOrdersPage();}
+function exportPurchaseOrdersPDF(){
+  const JsPDF=window.jspdf?.jsPDF;
+  if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const rows=filteredPurchaseOrderRecords();
+  if(!rows.length){showToast('Nenhum pedido de compra corresponde ao filtro atual.','err');return;}
+  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),left=7,pageW=297,pageBottom=202;
+  const headers=['Emissão','Nº','Fornecedor','Observação','Valor total','Previsão entrega','Anexos'],widths=[20,15,61,105,31,30,16];
+  const total=rows.reduce((sum,row)=>sum+row.valorTotal,0),overdueCount=rows.filter(purchaseOrderIsOverdue).length;
+  const drawHeader=(firstPage=false)=>{
+    let y=firstPage?10:8;
+    if(firstPage){
+      doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(25,25,25);doc.text('CARTAMAC - Pedidos de compra',left,y);y+=6;
+      doc.setFontSize(10);doc.text(purchaseOrdersOnlyOverdue?'Relatório de entregas atrasadas':'Relatório de pedidos em aberto',left,y);y+=5;
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · ${rows.length} pedido(s)`,left,y);y+=6;
+      const cards=[['VALOR TOTAL',fmtBRL(total)],['PEDIDOS EXIBIDOS',String(rows.length)],['ENTREGAS ATRASADAS',String(overdueCount)]];
+      cards.forEach((card,index)=>{const x=left+index*94,w=90;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,y,w,12,1.2,1.2,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,y+4);doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(index===2&&overdueCount?205:35,index===2&&overdueCount?45:130,index===2&&overdueCount?58:70);doc.text(card[1],x+2.5,y+9);});y+=17;
+    }
+    doc.setFillColor(40,40,40);doc.rect(left,y,278,8,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(6);let x=left;headers.forEach((header,index)=>{doc.text(header,x+1.2,y+5,{maxWidth:widths[index]-2.4});x+=widths[index];});return y+8;
+  };
+  let y=drawHeader(true);
+  rows.forEach((row,index)=>{
+    const rowValues=[salesDateText(row.emissao),row.numero||'—',row.fornecedor||'—',row.observacao||'—',fmtBRL(row.valorTotal),salesDateText(row.previsaoEntrega),String(row.anexos||0)];
+    const lines=rowValues.map((value,column)=>doc.splitTextToSize(String(value),widths[column]-2.4)),rowHeight=Math.max(6,...lines.map(set=>set.length*3+2)),isOverdue=purchaseOrderIsOverdue(row);
+    if(y+rowHeight>pageBottom){doc.addPage();y=drawHeader(false);}
+    if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,278,rowHeight,'F');}
+    doc.setDrawColor(222,222,222);doc.line(left,y+rowHeight,left+278,y+rowHeight);doc.setFontSize(5.6);let x=left;
+    lines.forEach((set,column)=>{doc.setFont('helvetica',isOverdue&&column===5?'bold':'normal');doc.setTextColor(isOverdue&&column===5?205:28,isOverdue&&column===5?45:28,isOverdue&&column===5?58:28);doc.text(set,x+1.2,y+3.8,{maxWidth:widths[column]-2.4});x+=widths[column];});y+=rowHeight;
+  });
+  const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Pedidos de compra · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
+  doc.save(`Pedidos_de_Compra_${purchaseOrdersOnlyOverdue?'Atrasados':'Em_Aberto'}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 function renderPurchaseOrdersPage(container=document.getElementById('pedidosCompraContent')){
   if(!container)return;
   const records=purchaseOrderRecords(),filtered=filteredPurchaseOrderRecords();
   const total=records.reduce((sum,row)=>sum+row.valorTotal,0);
-  const today=new Date();today.setHours(0,0,0,0);
-  const overdue=records.filter(row=>row.previsaoEntrega&&row.previsaoEntrega<today).length;
+  const overdue=records.filter(purchaseOrderIsOverdue).length;
   const updated=PURCHASE_ORDERS_CACHE?.updatedAt?new Date(PURCHASE_ORDERS_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
   container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">shopping_cart</span> Pedidos de compra</h2><p>Pedidos ainda não recebidos, consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshPurchaseOrdersMaxiprod()" ${purchaseOrdersRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> ${purchaseOrdersRefreshInProgress?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
     <div class="sales-page">
@@ -5572,7 +5739,8 @@ function renderPurchaseOrdersPage(container=document.getElementById('pedidosComp
         <div class="sales-summary-card"><div class="sales-summary-value">${records.length}</div><div class="sales-summary-label">Pedidos em aberto</div></div>
         <div class="sales-summary-card ${overdue?'money':''}"><div class="sales-summary-value" ${overdue?'style="color:var(--red)"':''}>${overdue}</div><div class="sales-summary-label">Entregas previstas atrasadas</div></div>
       </div>
-      <div class="finance-toolbar" style="margin:16px 0 12px;"><input class="search-input" value="${escapeHTML(purchaseOrderSearch)}" oninput="applyPurchaseOrderSearch(this.value)" placeholder="Filtrar número, fornecedor ou observação..."><span id="purchaseOrdersVisibleCount" class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${records.length} pedido(s)</span></div>
+      <div class="pagar-detalhe-actions" style="margin:16px 0 10px;"><button class="btn btn-danger pagar-atrasados-btn ${purchaseOrdersOnlyOverdue?'active':''}" type="button" onclick="togglePurchaseOrdersOverdue()">${purchaseOrdersOnlyOverdue?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" type="button" onclick="exportPurchaseOrdersPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF ${purchaseOrdersOnlyOverdue?'dos atrasados':''}</button></div>
+      <div class="finance-toolbar" style="margin:0 0 12px;"><input class="search-input" value="${escapeHTML(purchaseOrderSearch)}" oninput="applyPurchaseOrderSearch(this.value)" placeholder="Filtrar número, fornecedor ou observação..."><span id="purchaseOrdersVisibleCount" class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${purchaseOrdersOnlyOverdue?overdue:records.length} pedido(s)</span></div>
       <div class="sales-table-wrap"><table class="sales-table">
         <thead><tr><th>Emissão</th><th>Nº</th><th>Fornecedor</th><th>Observação</th><th>Valor total</th><th>Previsão de entrega</th><th>Arquivos anexados</th></tr></thead>
         <tbody id="purchaseOrdersBody">${purchaseOrderRowsMarkup(filtered)}</tbody>
@@ -6239,9 +6407,9 @@ Object.assign(window,{
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
-  renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
+  renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,clearCashFlowBankOverride,openCashFlowFinanceDetail,exportCashFlowPDF,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,exportSalesYearReport,
-  renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,
+  renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,togglePurchaseOrdersOverdue,exportPurchaseOrdersPDF,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
   renderRawMaterialPage,refreshRawMaterialMaxiprod,filterRawMaterial,filterRawMaterialGroup,showMoreRawMaterial,toggleRawMaterialGroup,
