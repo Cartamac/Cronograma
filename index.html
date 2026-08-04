@@ -1068,6 +1068,7 @@ input[type="file"]{display:none;}
       <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">settings</span> Peças de Reposição</button>
       <button class="dev-tab" id="tabSimulador" onclick="switchDevTab('simulador',this)"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
       <button class="dev-tab" id="tabMacroEngenharia" onclick="switchDevTab('macro-engenharia',this)"><span class="msi msi-sm">architecture</span> Macro Engenharia</button>
+      <button class="dev-tab" id="tabCompras" onclick="switchDevTab('compras',this)"><span class="msi msi-sm">shopping_cart</span> Pedidos de compra</button>
       <span class="dev-nav-separator" aria-hidden="true"></span>
       <button class="dev-tab" id="tabCustos" onclick="switchDevTab('custos',this)"><span class="msi msi-sm">payments</span> Custos</button>
       <button class="dev-tab" id="tabFinanceiro" onclick="switchDevTab('financeiro',this)"><span class="msi msi-sm">account_balance</span> Financeiro/Fiscal</button>
@@ -1128,6 +1129,7 @@ input[type="file"]{display:none;}
   </div>
 
   <div class="page" id="page-financeiro"><div id="financeiroContent"></div></div>
+  <div class="page" id="page-compras"><div id="pedidosCompraContent"></div></div>
 
   <!-- PEÇAS DE REPOSIÇÃO -->
   <div class="page" id="page-pecas">
@@ -1380,6 +1382,7 @@ const calcularCustoMaxiprodRemoto = httpsCallable(functions, "calcularCustoMaxip
 const consultarOrdemProducaoMaxiprodRemoto = httpsCallable(functions, "consultarOrdemProducaoMaxiprod", {timeout:130000});
 const consultarFinanceiroFiscalMaxiprodRemoto = httpsCallable(functions, "consultarFinanceiroFiscalMaxiprod", {timeout:310000});
 const consultarPedidosVendaMaxiprodRemoto = httpsCallable(functions, "consultarPedidosVendaMaxiprod", {timeout:310000});
+const consultarPedidosCompraMaxiprodRemoto = httpsCallable(functions, "consultarPedidosCompraMaxiprod", {timeout:310000});
 const consultarAtivosImobilizadosMaxiprodRemoto = httpsCallable(functions, "consultarAtivosImobilizadosMaxiprod", {timeout:310000});
 const consultarUsoConsumoMaxiprodRemoto = httpsCallable(functions, "consultarUsoConsumoMaxiprod", {timeout:310000});
 const consultarMateriaPrimaMaxiprodRemoto = httpsCallable(functions, "consultarMateriaPrimaMaxiprod", {timeout:310000});
@@ -1452,6 +1455,14 @@ let salesRefreshInProgress=false;
 let salesSearch='';
 const salesExpandedYears=new Set();
 let salesCommercialSummaryOpen=true;
+const PURCHASE_ORDERS_CACHE_KEY='cartamac_pedidos_compra_abertos_cache_v1';
+let PURCHASE_ORDERS_CACHE=(()=>{
+  try{return JSON.parse(localStorage.getItem(PURCHASE_ORDERS_CACHE_KEY)||'{"version":1,"updatedAt":null,"items":[]}');}
+  catch(_){return {version:1,updatedAt:null,items:[]};}
+})();
+if(PURCHASE_ORDERS_CACHE?.version!==1||!Array.isArray(PURCHASE_ORDERS_CACHE?.items))PURCHASE_ORDERS_CACHE={version:1,updatedAt:null,items:[]};
+let purchaseOrdersRefreshInProgress=false;
+let purchaseOrderSearch='';
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v2');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v3');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v4');
@@ -1897,6 +1908,7 @@ function doAdminLogin(){
   document.getElementById('btnNewClient').style.display=master?'':'none';
   document.querySelectorAll('.cron-subtab-import').forEach(tab=>tab.style.display=master?'flex':'none');
   document.getElementById('tabCustos').style.display=master?'':'none';
+  document.getElementById('tabCompras').style.display=master?'flex':'none';
   document.getElementById('tabFinanceiro').style.display=(master||seller)?'flex':'none';
   document.getElementById('tabPecas').style.display=(master||seller)?'flex':'none';
   document.getElementById('tabSimulador').style.display=(master||seller)?'flex':'none';
@@ -1921,7 +1933,7 @@ function doLogin(){
 
 // ─────────── DEV TABS ───────────
 function switchDevTab(id,btn){
-  if((id==='importar'||id==='custos')&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
+  if((id==='importar'||id==='custos'||id==='compras')&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
   if(id==='financeiro'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a administradores mestres e vendedores','err');return;}
   if(id==='pecas'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a vendedores e administradores mestres','err');return;}
   if(id==='simulador'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a vendedores e administradores mestres','err');return;}
@@ -1936,6 +1948,7 @@ function switchDevTab(id,btn){
   if(id==='gantt')     renderGantt();
   if(id==='custos')    renderCostsPage();
   if(id==='financeiro'){if(loggedUser?.type==='seller')financeiroView='vendas';renderFinanceiroFiscal();}
+  if(id==='compras')   renderPurchaseOrdersPage();
   if(id==='pecas')     renderPartsPage();
   if(id==='simulador') renderSimulator();
   if(id==='macro-engenharia') renderMacroEngineering();
@@ -5488,6 +5501,121 @@ async function refreshSalesMaxiprod(options={}){
   return success;
 }
 
+// ─────────────── PEDIDOS DE COMPRA EM ABERTO ───────────────
+function purchaseOrderIsOpenFrontend(row){
+  const state=financeNormalize(salesValue(row,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido']));
+  if(state.includes('cancel')||state.includes('excluid'))return false;
+  if(state.includes('recebido')&&!state.includes('entregafutura'))return false;
+  return true;
+}
+function purchaseOrderRecord(row){
+  return {
+    raw:row,
+    id:salesValue(row,['id','pedidoDeCompraId']),
+    emissao:salesDate(salesValue(row,['emissaoDataDetalhe','emissaoData','dataEmissao','emissao'])),
+    numero:salesText(salesValue(row,['numeroDetalhe','numero','numeroPedido','pedidoNumero'])),
+    fornecedor:salesText(salesValue(row,['fornecedorDetalhe','fornecedorNome','fornecedorRazaoSocial','nomeFornecedor'])??row?.fornecedor??row?.pessoa),
+    observacao:salesText(salesValue(row,['observacaoDetalhe','observacoes','observacao','observacoesInternas','comentario','referencia'])),
+    valorTotal:salesNumber(salesValue(row,['valorTotalDetalhe','valorTotal','total','valor'])),
+    previsaoEntrega:salesDate(salesValue(row,['previsaoEntregaDataDetalhe','previsaoDeEntregaData','previsaoEntregaData','dataPrevistaEntrega','entregaData','dataEntrega','entrega'])),
+    anexos:Math.max(0,Math.round(salesNumber(salesValue(row,['anexosQuantidadeDetalhe','anexosQuantidade','quantidadeAnexos','arquivosQuantidade','quantidadeArquivos'])))),
+  };
+}
+function purchaseOrderRecords(){
+  const seen=new Set();
+  return (PURCHASE_ORDERS_CACHE?.items||[]).filter(purchaseOrderIsOpenFrontend).map(purchaseOrderRecord).filter(record=>{
+    const fallback=[record.numero,record.emissao?.toISOString().slice(0,10)||'',record.fornecedor,record.valorTotal.toFixed(2)].join('|');
+    const key=record.id!==null&&record.id!==undefined?`id:${record.id}`:`fallback:${fallback}`;
+    if(seen.has(key))return false;
+    seen.add(key);return true;
+  }).sort((a,b)=>(b.emissao?.getTime()||0)-(a.emissao?.getTime()||0)||String(b.numero).localeCompare(String(a.numero),'pt-BR',{numeric:true}));
+}
+function filteredPurchaseOrderRecords(){
+  const term=financeNormalize(purchaseOrderSearch);
+  const rows=purchaseOrderRecords();
+  if(!term)return rows;
+  return rows.filter(row=>financeNormalize([salesDateText(row.emissao),row.numero,row.fornecedor,row.observacao,fmtBRL(row.valorTotal),salesDateText(row.previsaoEntrega),row.anexos].join(' ')).includes(term));
+}
+function purchaseOrderRowsMarkup(rows){
+  const today=new Date();today.setHours(0,0,0,0);
+  return rows.length?rows.map(row=>{
+    const overdue=row.previsaoEntrega&&row.previsaoEntrega<today;
+    return `<tr>
+      <td>${salesDateText(row.emissao)}</td>
+      <td class="order-number">${escapeHTML(row.numero||'—')}</td>
+      <td>${escapeHTML(row.fornecedor||'—')}</td>
+      <td>${escapeHTML(row.observacao||'—')}</td>
+      <td class="money">${fmtBRL(row.valorTotal)}</td>
+      <td ${overdue?'style="color:var(--red);font-weight:850;"':''}>${salesDateText(row.previsaoEntrega)}</td>
+      <td style="text-align:center;font-weight:850;">${row.anexos.toLocaleString('pt-BR')}</td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="7" class="muted" style="text-align:center;padding:30px;">Nenhum pedido de compra em aberto corresponde ao filtro.</td></tr>`;
+}
+function applyPurchaseOrderSearch(value){
+  purchaseOrderSearch=String(value||'');
+  const rows=filteredPurchaseOrderRecords();
+  const tbody=document.getElementById('purchaseOrdersBody');if(tbody)tbody.innerHTML=purchaseOrderRowsMarkup(rows);
+  const count=document.getElementById('purchaseOrdersVisibleCount');if(count)count.textContent=`${rows.length} de ${purchaseOrderRecords().length} pedido(s)`;
+}
+function renderPurchaseOrdersPage(container=document.getElementById('pedidosCompraContent')){
+  if(!container)return;
+  const records=purchaseOrderRecords(),filtered=filteredPurchaseOrderRecords();
+  const total=records.reduce((sum,row)=>sum+row.valorTotal,0);
+  const today=new Date();today.setHours(0,0,0,0);
+  const overdue=records.filter(row=>row.previsaoEntrega&&row.previsaoEntrega<today).length;
+  const updated=PURCHASE_ORDERS_CACHE?.updatedAt?new Date(PURCHASE_ORDERS_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">shopping_cart</span> Pedidos de compra</h2><p>Pedidos ainda não recebidos, consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshPurchaseOrdersMaxiprod()" ${purchaseOrdersRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> ${purchaseOrdersRefreshInProgress?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+    <div class="sales-page">
+      <div class="sales-head"><div><p>Recebidos, cancelados e excluídos não são armazenados no app.</p></div></div>
+      <div class="sales-summary">
+        <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Valor total em aberto</div></div>
+        <div class="sales-summary-card"><div class="sales-summary-value">${records.length}</div><div class="sales-summary-label">Pedidos em aberto</div></div>
+        <div class="sales-summary-card ${overdue?'money':''}"><div class="sales-summary-value" ${overdue?'style="color:var(--red)"':''}>${overdue}</div><div class="sales-summary-label">Entregas previstas atrasadas</div></div>
+      </div>
+      <div class="finance-toolbar" style="margin:16px 0 12px;"><input class="search-input" value="${escapeHTML(purchaseOrderSearch)}" oninput="applyPurchaseOrderSearch(this.value)" placeholder="Filtrar número, fornecedor ou observação..."><span id="purchaseOrdersVisibleCount" class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${records.length} pedido(s)</span></div>
+      <div class="sales-table-wrap"><table class="sales-table">
+        <thead><tr><th>Emissão</th><th>Nº</th><th>Fornecedor</th><th>Observação</th><th>Valor total</th><th>Previsão de entrega</th><th>Arquivos anexados</th></tr></thead>
+        <tbody id="purchaseOrdersBody">${purchaseOrderRowsMarkup(filtered)}</tbody>
+      </table></div>
+    </div>`;
+}
+async function refreshPurchaseOrdersMaxiprod(options={}){
+  const integrated=options?.integrated===true;
+  if(purchaseOrdersRefreshInProgress)return false;
+  if(!isMaster(loggedUser)){showToast('Acesso restrito à área financeira','err');return false;}
+  purchaseOrdersRefreshInProgress=true;
+  if(!integrated)renderPurchaseOrdersPage();
+  const items=[],seenIds=new Set();let skip=0,updatedAt=new Date().toISOString(),success=false;
+  try{
+    for(let page=0;page<100;page++){
+      const progress=integrated?(Number(options.percent)||70):Math.min(95,Math.max(5,(page+1)*8));
+      showLoading(`Carregando MaxiProd — ${progress}% · pedidos de compra · página ${page+1}`);
+      const result=await consultarPedidosCompraMaxiprodRemoto({take:200,skip});
+      const pageItems=Array.isArray(result.data?.items)?result.data.items:[];
+      for(const item of pageItems){
+        if(!purchaseOrderIsOpenFrontend(item))continue;
+        const id=salesValue(item,['id','pedidoDeCompraId']);
+        if(id!==null&&id!==undefined){const key=String(id);if(seenIds.has(key))continue;seenIds.add(key);}
+        items.push(item);
+      }
+      updatedAt=result.data?.updatedAt||updatedAt;
+      if(result.data?.done===true)break;
+      skip+=200;
+    }
+    PURCHASE_ORDERS_CACHE={version:1,updatedAt,items};
+    localStorage.setItem(PURCHASE_ORDERS_CACHE_KEY,JSON.stringify(PURCHASE_ORDERS_CACHE));
+    success=true;
+    if(!integrated)showToast(`${items.length} pedido(s) de compra em aberto atualizado(s).`);
+  }catch(error){
+    console.error('Pedidos de compra: falha na consulta',error);
+    if(!integrated)showToast(error?.message||'Não foi possível atualizar os pedidos de compra.','err');
+  }finally{
+    purchaseOrdersRefreshInProgress=false;
+    if(!integrated){hideLoading();renderPurchaseOrdersPage();}
+  }
+  return success;
+}
+
 // ─────────────── ATIVOS IMOBILIZADOS · GRUPO 8 ───────────────
 function fixedAssetRecord(row){
   const quantidade=salesNumber(salesValue(row,['quantidade','quantidadeAtual','quantidadeEmEstoque','estoqueQuantidade','saldoAtual','saldoQuantidade','quantidadeTotal']));
@@ -6042,6 +6170,7 @@ function refreshUIFromDB(){
   if(document.getElementById('page-admins')?.classList.contains('active')&&typeof renderAdminsPanel==='function')renderAdminsPanel();
   if(document.getElementById('page-custos')?.classList.contains('active')&&costsUnlocked)renderCostsPage();
   if(document.getElementById('page-financeiro')?.classList.contains('active')&&typeof renderFinanceiroFiscal==='function')renderFinanceiroFiscal();
+  if(document.getElementById('page-compras')?.classList.contains('active')&&typeof renderPurchaseOrdersPage==='function')renderPurchaseOrdersPage();
 }
 
 let _initialLoadDone=false;
@@ -6112,6 +6241,7 @@ Object.assign(window,{
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,exportSalesYearReport,
+  renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
   renderRawMaterialPage,refreshRawMaterialMaxiprod,filterRawMaterial,filterRawMaterialGroup,showMoreRawMaterial,toggleRawMaterialGroup,
