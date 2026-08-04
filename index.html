@@ -198,8 +198,6 @@ input[type="file"]{display:none;}
 .cashflow-value-link{border:0;background:transparent;padding:4px 0;color:inherit;font:700 12px 'JetBrains Mono',monospace;cursor:pointer;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;}
 .cashflow-value-link:hover{color:#fff !important;text-decoration-color:var(--gold);}
 .cashflow-formula{border-left:3px solid var(--gold);background:#181713;border-radius:8px;padding:12px 14px;color:var(--text2);font-size:12px;margin-bottom:18px;}
-.cashflow-carry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid #355c40;background:rgba(66,199,91,.08);border-radius:9px;padding:12px 14px;margin:-6px 0 18px;color:var(--text2);font-size:12px;}
-.cashflow-carry b{color:var(--green);font:700 15px 'JetBrains Mono',monospace;}
 .cashflow-chart-section{margin:20px 0;}.cashflow-chart-section>h3{margin:0 0 11px;font-size:15px;}
 .cashflow-chart-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:12px;margin-bottom:18px;}
 .cashflow-chart-card{border:1px solid var(--border);border-radius:10px;background:var(--panel2);padding:16px;min-width:0;}
@@ -1017,7 +1015,23 @@ input[type="file"]{display:none;}
 .raw-material-group-body{display:none;border-top:1px solid var(--border);}
 .raw-material-group.open .raw-material-group-body{display:block;}
 .raw-material-group .finance-table-wrap{border:0;border-radius:0;}
-.raw-material-summary{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+.stock-overview{display:flex;flex-direction:column;gap:12px;}
+.stock-overview-total{min-height:124px;border:1px solid rgba(66,199,91,.42);border-radius:12px;background:linear-gradient(135deg,rgba(66,199,91,.11),rgba(66,199,91,.025));display:grid;grid-template-columns:minmax(260px,1.2fr) minmax(220px,.8fr);align-items:center;gap:24px;padding:22px 28px;}
+.stock-overview-total-copy{display:flex;flex-direction:column;gap:6px;}
+.stock-overview-kicker{color:var(--green);font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.11em;}
+.stock-overview-total-value{color:var(--green);font-family:'JetBrains Mono','Roboto Mono',monospace;font-size:31px;font-weight:900;line-height:1.1;}
+.stock-overview-total-label{color:#fff;font-size:15px;font-weight:800;}
+.stock-overview-total-meta{color:var(--text3);font-size:12px;line-height:1.5;}
+.stock-overview-count{border-left:1px solid var(--border2);padding-left:26px;text-align:center;}
+.stock-overview-count b{display:block;color:#fff;font-family:'JetBrains Mono','Roboto Mono',monospace;font-size:28px;line-height:1.1;}
+.stock-overview-count span{display:block;color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-top:7px;}
+.stock-overview-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.stock-overview-group{min-height:112px;border:1px solid var(--border);border-radius:10px;background:var(--bg3);display:flex;flex-direction:column;justify-content:center;padding:16px 18px;}
+.stock-overview-group-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.stock-overview-group-code{color:var(--gold);font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;}
+.stock-overview-group-count{color:var(--text3);font-size:11px;white-space:nowrap;}
+.stock-overview-group-name{color:#fff;font-size:13px;font-weight:800;margin-bottom:7px;}
+.stock-overview-group-value{color:var(--green);font-family:'JetBrains Mono','Roboto Mono',monospace;font-size:20px;font-weight:900;}
 .stock-group-summary{padding:14px;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid var(--border);}
 .stock-group-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:12px 14px 0;}
 .raw-material-table td:nth-child(1){font-weight:750;color:var(--gold);}
@@ -1040,8 +1054,8 @@ input[type="file"]{display:none;}
 .sales-empty{border:1px dashed var(--border2);border-radius:9px;padding:50px 20px;text-align:center;color:var(--text3);}
 @media(max-width:1200px){.sales-summary{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:900px){.fixed-assets-summary{grid-template-columns:1fr;}}
-@media(max-width:1250px){.raw-material-summary{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media(max-width:700px){.raw-material-summary{grid-template-columns:1fr;}.raw-material-group-head{align-items:flex-start;flex-direction:column;}}
+@media(max-width:1150px){.stock-overview-groups{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:700px){.stock-overview-total{grid-template-columns:1fr;padding:20px;}.stock-overview-count{border-left:0;border-top:1px solid var(--border2);padding:18px 0 0;text-align:left;}.stock-overview-groups{grid-template-columns:1fr;}.raw-material-group-head{align-items:flex-start;flex-direction:column;}}
 @media(max-width:900px){.stock-group-summary{grid-template-columns:1fr;}}
 @media(max-width:760px){
   .sales-summary{grid-template-columns:1fr;}
@@ -1428,8 +1442,11 @@ const consultarPedidosCompraMaxiprodRemoto = httpsCallable(functions, "consultar
 const consultarAtivosImobilizadosMaxiprodRemoto = httpsCallable(functions, "consultarAtivosImobilizadosMaxiprod", {timeout:310000});
 const consultarUsoConsumoMaxiprodRemoto = httpsCallable(functions, "consultarUsoConsumoMaxiprod", {timeout:310000});
 const consultarMateriaPrimaMaxiprodRemoto = httpsCallable(functions, "consultarMateriaPrimaMaxiprod", {timeout:310000});
+const atualizarCacheCompartilhadoMaxiprodRemoto = httpsCallable(functions, "atualizarCacheCompartilhadoMaxiprod", {timeout:1810000});
 const DB_REF   = doc(db, "cartamac", "db");
 const FILE_REF = doc(db, "cartamac", "files");
+const SHARED_MAXIPROD_CACHE_REF = doc(db, "cartamac", "maxiprod-shared-cache");
+const SHARED_MAXIPROD_CACHE_ID = 'maxiprod-shared-cache';
 
 const MASTER_EMAILS = [];
 
@@ -1554,8 +1571,9 @@ function scheduleFinanceRender(){
   financeRenderQueued=true;
   requestAnimationFrame(()=>{financeRenderQueued=false;renderFinanceiroFiscal();});
 }
-// Dados financeiros podem ultrapassar o limite de 1 MB de um documento Firestore.
-// O cache detalhado fica no navegador; no banco é gravada apenas a data da consulta.
+// Os dados detalhados são divididos em documentos menores no Firestore. Assim,
+// todos os computadores usam a mesma fotografia do MaxiProd e o cache local é
+// apenas uma cópia rápida para a máquina que estiver aberta.
 let FINANCE_CACHE=(()=>{
   try{return JSON.parse(localStorage.getItem('cartamac_financeiro_fiscal_cache')||'{"updatedAt":null,"datasets":{}}');}
   catch(_){return {updatedAt:null,datasets:{}};}
@@ -1649,6 +1667,99 @@ function receivableLoadedYears(){
 }
 function trimFinanceItems(items){
   return (Array.isArray(items)?items:[]).sort((a,b)=>financeCacheDate(b)-financeCacheDate(a)).slice(0,FINANCE_FAST_LIMIT);
+}
+
+let sharedMaxiprodCacheUpdatedAt=null;
+let sharedMaxiprodCacheLoadInProgress=null;
+
+function mergeSharedFinanceYear(previousItems,incomingItems,currentYear){
+  const historical=(Array.isArray(previousItems)?previousItems:[])
+    .filter(item=>{const year=payableRawYear(item);return year&&year!==currentYear;});
+  return [...historical,...(Array.isArray(incomingItems)?incomingItems:[])];
+}
+
+function applySharedMaxiprodCache(payload){
+  if(!payload||typeof payload!=='object')throw new Error('Cache compartilhado inválido.');
+  const currentYear=Number(payload.currentYear)||(new Date()).getFullYear();
+  const sharedFinance=payload.finance||{};
+  const previousFinance=FINANCE_CACHE||{};
+  const previousDatasets=previousFinance.datasets||{};
+  const sharedDatasets=sharedFinance.datasets||{};
+  const previousPayableYears=(Array.isArray(previousFinance.payableLoadedYears)?previousFinance.payableLoadedYears:[])
+    .map(Number).filter(year=>year!==currentYear);
+  const previousReceivableYears=(Array.isArray(previousFinance.receivableLoadedYears)?previousFinance.receivableLoadedYears:[])
+    .map(Number).filter(year=>year!==currentYear);
+
+  FINANCE_CACHE={
+    ...previousFinance,
+    ...sharedFinance,
+    version:FINANCE_CACHE_VERSION,
+    updatedAt:payload.updatedAt||sharedFinance.updatedAt||new Date().toISOString(),
+    datasets:{
+      ...previousDatasets,
+      ...sharedDatasets,
+      contaAReceber:{
+        ...(sharedDatasets.contaAReceber||{}),
+        items:mergeSharedFinanceYear(previousDatasets.contaAReceber?.items,sharedDatasets.contaAReceber?.items,currentYear),
+        available:true
+      },
+      contaAPagar:{
+        ...(sharedDatasets.contaAPagar||{}),
+        items:mergeSharedFinanceYear(previousDatasets.contaAPagar?.items,sharedDatasets.contaAPagar?.items,currentYear),
+        available:true
+      }
+    },
+    payableLoadedYears:[...new Set([...previousPayableYears,currentYear])].sort((a,b)=>b-a),
+    receivableLoadedYears:[...new Set([...previousReceivableYears,currentYear])].sort((a,b)=>b-a),
+    payableCurrentYear:currentYear,
+    receivableCurrentYear:currentYear,
+    payableYearCacheVersion:PAYABLE_YEAR_CACHE_VERSION,
+    receivableYearCacheVersion:RECEIVABLE_YEAR_CACHE_VERSION
+  };
+
+  if(payload.sales?.version===8&&Array.isArray(payload.sales.items))SALES_CACHE=payload.sales;
+  if(payload.purchaseOrders?.version===1&&Array.isArray(payload.purchaseOrders.items))PURCHASE_ORDERS_CACHE=payload.purchaseOrders;
+  if(payload.fixedAssets?.version===9&&Array.isArray(payload.fixedAssets.items))FIXED_ASSETS_CACHE=payload.fixedAssets;
+  if(payload.usageStock?.version===2&&Array.isArray(payload.usageStock.items))USAGE_STOCK_CACHE=payload.usageStock;
+  if(payload.rawMaterial?.version===1&&Array.isArray(payload.rawMaterial.items))RAW_MATERIAL_CACHE=payload.rawMaterial;
+
+  saveFinanceCacheLocal();
+  try{localStorage.setItem(SALES_CACHE_KEY,JSON.stringify(SALES_CACHE));}catch(_){ }
+  try{localStorage.setItem(PURCHASE_ORDERS_CACHE_KEY,JSON.stringify(PURCHASE_ORDERS_CACHE));}catch(_){ }
+  try{localStorage.setItem(FIXED_ASSETS_CACHE_KEY,JSON.stringify(FIXED_ASSETS_CACHE));}catch(_){ }
+  try{localStorage.setItem(USAGE_STOCK_CACHE_KEY,JSON.stringify(USAGE_STOCK_CACHE));}catch(_){ }
+  try{localStorage.setItem(RAW_MATERIAL_CACHE_KEY,JSON.stringify(RAW_MATERIAL_CACHE));}catch(_){ }
+  sharedMaxiprodCacheUpdatedAt=String(payload.updatedAt||'');
+  DB.financeiroFiscalMeta={...(DB.financeiroFiscalMeta||{}),updatedAt:payload.updatedAt||null};
+  refreshUIFromDB();
+}
+
+async function loadSharedMaxiprodCache(manifestData=null,{force=false,silent=true}={}){
+  if(sharedMaxiprodCacheLoadInProgress)return sharedMaxiprodCacheLoadInProgress;
+  sharedMaxiprodCacheLoadInProgress=(async()=>{
+    const manifest=manifestData||((await getDoc(SHARED_MAXIPROD_CACHE_REF)).data()||null);
+    if(!manifest||manifest.format!=='json-chunks-v1')return false;
+    const updatedAt=String(manifest.updatedAt||'');
+    if(!force&&updatedAt&&updatedAt===sharedMaxiprodCacheUpdatedAt)return false;
+    const chunkCount=Math.max(0,Number(manifest.chunkCount)||0);
+    if(!chunkCount)throw new Error('O cache compartilhado ainda não possui dados.');
+    if(!silent)showLoading('Carregando dados compartilhados do MaxiProd...');
+    const snapshots=await Promise.all(Array.from({length:chunkCount},(_,index)=>
+      getDoc(doc(db,'cartamac',`${SHARED_MAXIPROD_CACHE_ID}-chunk-${index}`))
+    ));
+    const json=snapshots.map((snapshot,index)=>{
+      if(!snapshot.exists())throw new Error(`Parte ${index+1} do cache não foi encontrada.`);
+      return String(snapshot.data()?.content||'');
+    }).join('');
+    if(Number(manifest.characterCount)&&json.length!==Number(manifest.characterCount)){
+      throw new Error('O cache compartilhado foi recebido de forma incompleta.');
+    }
+    applySharedMaxiprodCache(JSON.parse(json));
+    return true;
+  })();
+  try{return await sharedMaxiprodCacheLoadInProgress;}
+  catch(error){console.error('Cache compartilhado do MaxiProd:',error);if(!silent)showToast('Não foi possível carregar os dados compartilhados.','err');return false;}
+  finally{sharedMaxiprodCacheLoadInProgress=null;if(!silent)hideLoading();}
 }
 // Remove o cache antigo de milhares de linhas deixado pelas versões anteriores.
 // O historico nao e truncado: a navegacao anual depende de todos os titulos.
@@ -2389,6 +2500,34 @@ async function refreshFinanceiroFiscalAbaAtual(){
 // Atualiza todas as fontes únicas uma vez. As subabas de itens reutilizam a mesma
 // consulta, evitando cinco leituras idênticas do MaxiProd.
 async function refreshFinanceiroFiscal(){
+  if(!isMaster(loggedUser)){
+    if(loggedUser?.type==='seller')return;
+    return;
+  }
+  if(financeRefreshInProgress){showToast('A atualização compartilhada já está em andamento.');return;}
+  financeRefreshInProgress=true;
+  try{
+    showLoading('Atualizando MaxiProd para todos os usuários...');
+    const result=await atualizarCacheCompartilhadoMaxiprodRemoto({});
+    showLoading('Distribuindo os dados atualizados...');
+    const loaded=await loadSharedMaxiprodCache(result.data||null,{force:true,silent:true});
+    if(!loaded)throw new Error('O servidor concluiu a atualização, mas o cache não pôde ser carregado.');
+    const stats=result.data?.stats||{};
+    const total=Object.values(stats).reduce((sum,value)=>sum+(Number(value)||0),0);
+    showToast(`MaxiProd atualizado para todos: ${total} registro(s)`);
+  }catch(error){
+    console.error('Atualização compartilhada do MaxiProd:',error);
+    showToast(error?.message||'Não foi possível atualizar o MaxiProd agora.','err');
+  }finally{
+    financeRefreshInProgress=false;
+    hideLoading();
+    renderFinanceiroFiscal();
+  }
+}
+
+// Mantido apenas como referência de compatibilidade das revisões anteriores.
+// A interface usa a função compartilhada acima.
+async function refreshFinanceiroFiscalLegacy(){
   if(!isMaster(loggedUser)){
     if(loggedUser?.type==='seller')return refreshSalesMaxiprod();
     return;
@@ -3236,11 +3375,6 @@ function cashFlowRecordIsManual(record){
   // já eram lançamentos manuais e continuam sendo tratados como âncoras.
   return record.manualBanks!==false&&Array.isArray(record.banks)&&record.banks.some(value=>Math.abs(Number(value)||0)>.000001);
 }
-function cashFlowPreviousMonthKey(key){
-  const match=String(key||'').match(/^(\d{4})-(\d{2})$/);if(!match)return '';
-  const date=new Date(Number(match[1]),Number(match[2])-2,1);
-  return monthKey(date.getFullYear(),date.getMonth());
-}
 function cashFlowMonthMovement(key){
   const match=String(key||'').match(/^(\d{4})-(\d{2})$/);
   const year=match?Number(match[1]):TODAY.getFullYear();
@@ -3251,32 +3385,12 @@ function cashFlowMonthMovement(key){
   return {year,month,entradas,saidas,previsto};
 }
 function cashFlowOpeningBalance(key){
-  const data=getCashFlowData(),current=data.months[key];
-  if(cashFlowRecordIsManual(current)){
-    const banks=Array.from({length:3},(_,index)=>Number(current.banks?.[index])||0);
-    return {banks,total:banks.reduce((sum,value)=>sum+value,0),mode:'manual',sourceKey:key,anchorKey:key};
-  }
-  const targetMatch=String(key||'').match(/^(\d{4})-(\d{2})$/);if(!targetMatch)return {banks:[0,0,0],total:0,mode:'empty',sourceKey:'',anchorKey:''};
-  const targetDate=new Date(Number(targetMatch[1]),Number(targetMatch[2])-1,1);
-  let cursor=new Date(targetDate.getFullYear(),targetDate.getMonth()-1,1),anchorKey='';
-  // Dez anos de procura são suficientes para os dados históricos do aplicativo
-  // e evitam percorrer meses indefinidamente quando nenhum saldo foi informado.
-  for(let step=0;step<120;step++){
-    const candidate=monthKey(cursor.getFullYear(),cursor.getMonth());
-    if(cashFlowRecordIsManual(data.months[candidate])){anchorKey=candidate;break;}
-    cursor=new Date(cursor.getFullYear(),cursor.getMonth()-1,1);
-  }
-  if(!anchorKey)return {banks:[0,0,0],total:0,mode:'empty',sourceKey:'',anchorKey:''};
-  const anchor=data.months[anchorKey],anchorBanks=Array.from({length:3},(_,index)=>Number(anchor.banks?.[index])||0);
-  let running=anchorBanks.reduce((sum,value)=>sum+value,0);
-  const anchorMatch=anchorKey.match(/^(\d{4})-(\d{2})$/);
-  cursor=new Date(Number(anchorMatch[1]),Number(anchorMatch[2])-1,1);
-  while(cursor<targetDate){
-    const cursorKey=monthKey(cursor.getFullYear(),cursor.getMonth()),movement=cashFlowMonthMovement(cursorKey);
-    running+=movement.entradas-movement.saidas-movement.previsto;
-    cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,1);
-  }
-  return {banks:[0,0,0],total:running,mode:'carried',sourceKey:cashFlowPreviousMonthKey(key),anchorKey};
+  // Cada mês utiliza apenas os saldos informados nele. Assim a tela não percorre
+  // e recalcula uma cadeia de fechamentos anteriores sempre que é renderizada.
+  const current=getCashFlowData().months[key];
+  if(!cashFlowRecordIsManual(current))return {banks:[0,0,0],total:0,mode:'empty',sourceKey:'',anchorKey:''};
+  const banks=Array.from({length:3},(_,index)=>Number(current.banks?.[index])||0);
+  return {banks,total:banks.reduce((sum,value)=>sum+value,0),mode:'manual',sourceKey:key,anchorKey:key};
 }
 function cashFlowMonthTotals(key){
   const movement=cashFlowMonthMovement(key),opening=cashFlowOpeningBalance(key);
@@ -3305,12 +3419,6 @@ function updateCashFlowBankBalance(index,value){
   const record=getCashFlowMonthRecord(cashFlowSelectedMonth,true);
   record.banks[index]=Number(value)||0;
   record.manualBanks=true;
-  persist();
-  renderFinanceiroFiscal();
-}
-function clearCashFlowBankOverride(){
-  const data=getCashFlowData(),record=data.months[cashFlowSelectedMonth];
-  if(record){record.banks=[0,0,0];record.manualBanks=false;}
   persist();
   renderFinanceiroFiscal();
 }
@@ -3404,12 +3512,7 @@ function exportCashFlowPDF(){
   const cards=[['TOTAL NOS BANCOS',selected.totalBancos],['ENTRADAS',selected.entradas],['SAÍDAS',selected.saidas],['PREVISTO',selected.previsto],['SALDO PROJETADO',selected.saldoProjetado]];
   cards.forEach((card,index)=>{const x=left+index*55;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,31,51,14,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.8);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,35);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(card[1]<0?195:35,card[1]<0?45:125,card[1]<0?55:70);doc.text(fmtBRL(card[1]),x+2.5,41);});
   doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(35,35,35);doc.text(`Saldos bancários de ${receberMesNome(selected.month)}`,left,53);
-  if(selected.bankMode==='carried'){
-    const [sourceYear,sourceMonth]=selected.bankSourceKey.split('-').map(Number);
-    doc.setFillColor(244,250,245);doc.setDrawColor(175,210,182);doc.roundedRect(left,57,269,12,1,1,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(70,100,76);doc.text(`Saldo transportado do fechamento de ${receberMesNome(sourceMonth-1)} de ${sourceYear}`,left+2.5,61);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(35,125,70);doc.text(fmtBRL(selected.totalBancos),left+2.5,66);
-  }else{
-    data.bankNames.forEach((name,index)=>{const x=left+index*91;doc.setFillColor(250,250,250);doc.setDrawColor(215,215,215);doc.roundedRect(x,57,87,12,1,1,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(80,80,80);doc.text(String(name||`Banco ${index+1}`),x+2.5,61);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(30,30,30);doc.text(fmtBRL(selected.banks[index]||0),x+2.5,66);});
-  }
+  data.bankNames.forEach((name,index)=>{const x=left+index*91;doc.setFillColor(250,250,250);doc.setDrawColor(215,215,215);doc.roundedRect(x,57,87,12,1,1,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(80,80,80);doc.text(String(name||`Banco ${index+1}`),x+2.5,61);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(30,30,30);doc.text(fmtBRL(selected.banks[index]||0),x+2.5,66);});
   const headers=['Mês','Total nos bancos','Entradas','Saídas','Previsto','Saldo projetado'],widths=[43,48,48,48,45,45],top=78;
   doc.setFillColor(40,40,40);doc.rect(left,top,277,9,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(7);let x=left;headers.forEach((header,index)=>{doc.text(header,x+2,top+5.8);x+=widths[index];});
   annual.forEach((row,index)=>{const y=top+9+index*8;if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,277,8,'F');}doc.setDrawColor(220,220,220);doc.line(left,y+8,left+277,y+8);const values=[receberMesNome(index),fmtBRL(row.totalBancos),fmtBRL(row.entradas),fmtBRL(row.saidas),fmtBRL(row.previsto),fmtBRL(row.saldoProjetado)];doc.setFont('helvetica',index===selected.month?'bold':'normal');doc.setFontSize(7);doc.setTextColor(30,30,30);let cellX=left;values.forEach((value,column)=>{doc.text(String(value),cellX+2,y+5.2,{maxWidth:widths[column]-4});cellX+=widths[column];});});
@@ -3435,14 +3538,11 @@ function renderCashFlowPage(container=document.getElementById('financeiroContent
     <input class="bank-name" type="text" value="${esc(name)}" maxlength="50" onchange="updateCashFlowBankName(${index},this.value)" aria-label="Nome do banco ${index+1}">
     <input class="bank-value" type="number" min="0" step="0.01" value="${rawBanks[index]||''}" placeholder="R$ 0,00" onchange="updateCashFlowBankBalance(${index},this.value)" aria-label="Saldo de ${esc(name)}">
   </div>`).join('');
-  const sourceLabel=totals.bankSourceKey?(()=>{const [year,month]=totals.bankSourceKey.split('-').map(Number);return `${receberMesNome(month-1)} de ${year}`;})():'';
-  const carryInfo=totals.bankMode==='carried'?`<div class="cashflow-carry"><span>Saldo inicial transportado do fechamento de <b>${sourceLabel}</b></span><b>${fmtBRL(totals.totalBancos)}</b></div>`:totals.bankMode==='manual'?`<div class="cashflow-carry"><span>Este mês possui um saldo bancário informado manualmente e inicia uma nova projeção.</span><button class="btn btn-ghost btn-sm" onclick="clearCashFlowBankOverride()">Usar fechamento do mês anterior</button></div>`:`<div class="cashflow-carry"><span>Nenhum saldo bancário manual anterior foi encontrado. Informe os bancos deste mês para iniciar a projeção automática.</span><b>${fmtBRL(0)}</b></div>`;
   container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Fluxo mensal consolidado com saldos bancários, contas a receber, contas a pagar e previsão do Gantt de Custos.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
     ${financeTabsHtml()}
     <section class="cashflow-shell">
-      <div class="cashflow-period"><div><h3>Fluxo de caixa — ${monthLabel}</h3><p>Informe os bancos em qualquer mês. O fechamento será transportado automaticamente até o próximo lançamento manual.</p></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-ghost" onclick="exportCashFlowPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(-1)">←</button><input class="cashflow-month-input" type="month" value="${cashFlowSelectedMonth}" onchange="selectCashFlowMonth(this.value)"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(1)">→</button></div></div>
+      <div class="cashflow-period"><div><h3>Fluxo de caixa — ${monthLabel}</h3><p>Informe os saldos dos três bancos para o mês selecionado.</p></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-ghost" onclick="exportCashFlowPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(-1)">←</button><input class="cashflow-month-input" type="month" value="${cashFlowSelectedMonth}" onchange="selectCashFlowMonth(this.value)"><button class="btn btn-ghost btn-sm" onclick="shiftCashFlowMonth(1)">→</button></div></div>
       <div class="cashflow-bank-grid">${bankCards}</div>
-      ${carryInfo}
       <div class="cashflow-summary-grid">
         <div class="cashflow-summary-card"><b style="color:var(--text)">${fmtBRL(totals.totalBancos)}</b><span>Total nos três bancos</span></div>
         <button class="cashflow-summary-card cashflow-link" onclick="openCashFlowFinanceDetail('receber')" title="Abrir Contas a receber de ${monthLabel}"><b style="color:var(--green)">${fmtBRL(totals.entradas)}</b><span>Entradas · Contas a receber</span></button>
@@ -5917,6 +6017,10 @@ function renderPurchaseOrdersPage(container=document.getElementById('pedidosComp
 }
 async function refreshPurchaseOrdersMaxiprod(options={}){
   const integrated=options?.integrated===true;
+  // O botao independente de Pedidos de compra tambem publica o mesmo
+  // snapshot central. Assim, qualquer ponto de atualizacao do app alimenta
+  // todas as maquinas, em vez de criar um cache exclusivo deste navegador.
+  if(!integrated)return refreshFinanceiroFiscal();
   if(purchaseOrdersRefreshInProgress)return false;
   if(!isMaster(loggedUser)){showToast('Acesso restrito à área financeira','err');return false;}
   purchaseOrdersRefreshInProgress=true;
@@ -6266,11 +6370,13 @@ function renderRawMaterialPage(container=document.getElementById('financeiroCont
   const updatedDates=[RAW_MATERIAL_CACHE?.updatedAt,USAGE_STOCK_CACHE?.updatedAt,FIXED_ASSETS_CACHE?.updatedAt].filter(Boolean).map(value=>new Date(value)).filter(date=>!Number.isNaN(date.getTime()));
   const updated=updatedDates.length?new Date(Math.max(...updatedDates)).toLocaleString('pt-BR'):'Ainda não atualizado';
   const grandTotal=allRows.reduce((sum,row)=>sum+row.custoTotal,0);
-  const summaryCards=`<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(grandTotal)}</div><div class="sales-summary-label">Somatória total</div><div class="sales-summary-sub">Grupos 1, 2, 4, 7, 8 e 11</div></div>`+STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
+  const grandCount=allRows.length;
+  const groupSummaryCards=STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
     const rows=groupRows[groupCode];
     const total=rows.reduce((sum,row)=>sum+row.custoTotal,0);
-    return `<div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Grupo ${groupCode} · ${escapeHTML(label)}</div><div class="sales-summary-sub">${rows.length} item(ns)</div></div>`;
+    return `<div class="stock-overview-group"><div class="stock-overview-group-head"><span class="stock-overview-group-code">Grupo ${groupCode}</span><span class="stock-overview-group-count">${rows.length} item(ns)</span></div><div class="stock-overview-group-name">${escapeHTML(label)}</div><div class="stock-overview-group-value">${fmtBRL(total)}</div></div>`;
   }).join('');
+  const summaryCards=`<div class="stock-overview"><div class="stock-overview-total"><div class="stock-overview-total-copy"><span class="stock-overview-kicker">Visão consolidada</span><div class="stock-overview-total-value">${fmtBRL(grandTotal)}</div><div class="stock-overview-total-label">Valor total do estoque</div><div class="stock-overview-total-meta">Soma dos grupos 1, 2, 4, 7, 8 e 11 consultados no MaxiProd.</div></div><div class="stock-overview-count"><b>${grandCount}</b><span>Registros no estoque</span></div></div><div class="stock-overview-groups">${groupSummaryCards}</div></div>`;
   const blocks=STOCK_DISPLAY_GROUPS.map(([groupCode,label])=>{
     const allGroupRows=groupRows[groupCode];
     const query=String(rawMaterialGroupSearch[groupCode]||'').trim().toLocaleLowerCase('pt-BR');
@@ -6286,7 +6392,7 @@ function renderRawMaterialPage(container=document.getElementById('financeiroCont
     ${financeTabsHtml()}
     <div class="fixed-assets-page">
       <div class="fixed-assets-title"><h2><span class="msi">inventory_2</span> Estoque</h2><p>Itens da grade de Estoque dos grupos 1, 2, 4, 7, 8 e 11 no MaxiProd.</p></div>
-      <div class="fixed-assets-summary raw-material-summary">${summaryCards}</div>
+      ${summaryCards}
       <div class="raw-material-groups">${blocks}</div>
     </div>`;
 }
@@ -6547,6 +6653,18 @@ function startRealtimeSync(){
   },err=>{
     console.error('Files sync error:',err);
   });
+
+  // O manifesto é pequeno e funciona como um aviso global. Quando a rotina
+  // manual ou agendada publica uma nova versão, todos os computadores baixam
+  // os mesmos blocos automaticamente, sem consultar o MaxiProd novamente.
+  onSnapshot(SHARED_MAXIPROD_CACHE_REF,(snap)=>{
+    if(!snap.exists())return;
+    loadSharedMaxiprodCache(snap.data(),{silent:true}).then((changed)=>{
+      if(changed)showToast('Dados do MaxiProd sincronizados automaticamente');
+    });
+  },err=>{
+    console.error('Shared MaxiProd cache sync error:',err);
+  });
 }
 
 // Garante uma sessão de autenticação (anônima) antes de falar com o Firestore.
@@ -6575,7 +6693,7 @@ Object.assign(window,{
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
-  renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,clearCashFlowBankOverride,openCashFlowFinanceDetail,exportCashFlowPDF,
+  renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,toggleSalesGeography,setSalesGeographyYear,selectSalesGeographyUf,exportSalesYearReport,
   renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,togglePurchaseOrdersOverdue,exportPurchaseOrdersPDF,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
