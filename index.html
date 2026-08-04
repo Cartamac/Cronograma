@@ -978,24 +978,27 @@ input[type="file"]{display:none;}
 .sales-geo-map-title h4,.sales-geo-table-title h4{margin:0;font-size:14px;color:#fff;}.sales-geo-map-title span,.sales-geo-table-title span{color:var(--text3);font-size:11px;}
 .sales-geo-map{min-height:430px;display:flex;align-items:center;justify-content:center;padding:13px;background:radial-gradient(circle at 50% 44%,rgba(79,124,150,.12),transparent 64%);}
 .sales-geo-map svg{width:100%;max-width:440px;height:auto;filter:drop-shadow(0 10px 24px rgba(0,0,0,.32));}
-.sales-state-shape{stroke:#f3f3f3;stroke-width:1.35;vector-effect:non-scaling-stroke;transition:filter .18s,opacity .18s;cursor:default;}.sales-state-shape:hover{filter:brightness(1.22);stroke-width:2.2;}
+.sales-state-shape{stroke:#f3f3f3;stroke-width:1.35;vector-effect:non-scaling-stroke;transition:filter .18s,opacity .18s;cursor:pointer;}.sales-state-shape:hover{filter:brightness(1.22);stroke-width:2.2;}.sales-state-shape.selected{stroke:var(--gold);stroke-width:3;filter:brightness(1.24) drop-shadow(0 0 5px rgba(211,174,65,.55));}
 .sales-state-label{font-size:10px;font-weight:900;fill:#fff;stroke:#111;stroke-width:2.6px;paint-order:stroke;pointer-events:none;text-anchor:middle;dominant-baseline:central;}
 .sales-map-loading{color:var(--text3);font-size:13px;text-align:center;padding:40px 18px;line-height:1.6;}
 .sales-map-credit{padding:0 14px 10px;color:var(--text3);font-size:9px;text-align:right;}
 .sales-geo-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 14px 14px;max-height:180px;overflow:auto;}
 .sales-geo-legend-row{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:7px;padding:8px 9px;background:var(--bg2);min-width:0;}
 .sales-geo-legend-row i{width:11px;height:11px;border-radius:3px;flex:0 0 auto;}.sales-geo-legend-row span{font-size:11px;color:var(--text2);min-width:0;}.sales-geo-legend-row b{margin-left:auto;color:#fff;font-family:'Roboto Mono',monospace;font-size:11px;white-space:nowrap;}
-.sales-state-regions{padding:0 14px 14px;display:flex;flex-direction:column;gap:9px;max-height:265px;overflow:auto;}
-.sales-state-region-group{border:1px solid var(--border);border-radius:8px;background:var(--bg2);overflow:hidden;}
-.sales-state-region-title{padding:7px 9px;background:rgba(255,255,255,.035);color:var(--gold);font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.07em;}
-.sales-state-region-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:6px;}
-.sales-state-region-list .sales-geo-legend-row{padding:6px 7px;background:transparent;}
-.sales-geo-tables{display:grid;grid-template-rows:1fr 1fr;gap:16px;min-height:0;}
+.sales-state-regions{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px;max-height:none;overflow:visible;}
+.sales-state-region-group{border:1px solid var(--border);border-radius:8px;background:var(--bg2);overflow:hidden;flex:0 0 auto;min-height:max-content;}
+.sales-state-region-title{padding:11px 12px;background:rgba(255,255,255,.045);color:var(--gold);font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:850;text-transform:uppercase;letter-spacing:.055em;display:flex;justify-content:space-between;gap:12px;align-items:center;}.sales-state-region-title b{color:#fff;font-family:'JetBrains Mono','Roboto Mono',monospace;font-size:13px;letter-spacing:0;white-space:nowrap;}
+.sales-state-region-list{display:grid;grid-template-columns:repeat(3,minmax(145px,1fr));gap:6px;padding:7px;align-items:stretch;}
+.sales-state-region-list .sales-geo-legend-row{padding:10px 11px;background:transparent;min-height:62px;box-sizing:border-box;position:static;cursor:pointer;font-family:'Inter',system-ui,sans-serif;display:grid;grid-template-columns:11px minmax(0,1fr);grid-template-rows:auto auto;column-gap:8px;row-gap:5px;align-content:center;}.sales-state-region-list .sales-geo-legend-row:hover,.sales-state-region-list .sales-geo-legend-row.selected{border-color:var(--gold);background:rgba(211,174,65,.08);}
+.sales-state-region-list .sales-geo-legend-row i{grid-column:1;grid-row:1;align-self:center;}.sales-state-region-list .sales-geo-legend-row span{grid-column:2;grid-row:1;white-space:nowrap;overflow:visible;text-overflow:clip;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:750;}.sales-state-region-list .sales-geo-legend-row b{grid-column:2;grid-row:2;margin-left:0;text-align:left;font-family:'JetBrains Mono','Roboto Mono',monospace;font-size:13px;}
+.sales-geo-tables{display:grid;grid-template-rows:auto minmax(0,1fr);gap:16px;min-height:0;align-content:stretch;height:100%;}.sales-geo-table-card{align-self:start;}.sales-geo-tables .sales-geo-table-card:last-child{align-self:stretch;height:100%;display:flex;flex-direction:column;min-height:0;}.sales-geo-tables .sales-geo-table-card:last-child .sales-geo-table-scroll{flex:1;max-height:none;min-height:0;}
 .sales-geo-table-scroll{max-height:250px;overflow:auto;}
 .sales-geo-table{width:100%;border-collapse:collapse;min-width:570px;}.sales-geo-table th{position:sticky;top:0;z-index:1;background:var(--bg4);color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:9px 11px;}.sales-geo-table th:last-child,.sales-geo-table th:nth-last-child(2){text-align:right;}.sales-geo-table td{border-top:1px solid var(--border);padding:9px 11px;font-size:12px;color:var(--text2);}.sales-geo-table td.money{text-align:right;color:var(--green);font-family:'Roboto Mono',monospace;font-weight:800;white-space:nowrap;}.sales-geo-table td.percent{text-align:right;color:var(--gold);font-family:'Roboto Mono',monospace;font-weight:700;white-space:nowrap;}
 .sales-geo-table-empty{padding:28px;text-align:center;color:var(--text3);font-size:13px;}
+.sales-geo-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 14px;border:1px solid var(--border);border-radius:9px;background:var(--bg3);}.sales-geo-toolbar label{color:var(--text2);font-size:12px;font-weight:750;}.sales-geo-toolbar select{min-width:150px;background:var(--bg2);color:#fff;border:1px solid var(--border2);border-radius:7px;padding:8px 10px;}.sales-geo-toolbar small{margin-left:auto;color:var(--text3);}
+.sales-state-detail{margin-top:16px;border:1px solid var(--border);border-radius:10px;background:var(--bg3);overflow:hidden;}.sales-state-detail-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;}.sales-state-detail-head h4{margin:0;color:#fff;font-size:15px;}.sales-state-detail-head span{color:var(--text3);font-size:11px;}.sales-state-detail .sales-geo-table-scroll{max-height:340px;}.sales-state-clear{border:0;background:transparent;color:var(--gold);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.sales-state-clear:hover{color:#fff}
 @media(max-width:1100px){.sales-geo-layout{grid-template-columns:1fr;}.sales-geo-map{min-height:360px;}.sales-geo-tables{grid-template-rows:auto;}.sales-geo-table-scroll{max-height:310px;}}
-@media(max-width:640px){.sales-geo-body{padding:10px;}.sales-geo-map{min-height:300px;padding:6px;}.sales-geo-legend,.sales-state-region-list{grid-template-columns:repeat(2,minmax(0,1fr));}.sales-geo-head{align-items:flex-start;}.sales-geo-layout{display:block;}.sales-geo-tables{margin-top:10px;display:flex;flex-direction:column;}}
+@media(max-width:640px){.sales-geo-body{padding:10px;}.sales-geo-map{min-height:300px;padding:6px;}.sales-geo-legend,.sales-state-region-list{grid-template-columns:1fr;}.sales-geo-head{align-items:flex-start;}.sales-geo-layout{display:block;}.sales-geo-tables{margin-top:10px;display:flex;flex-direction:column;}}
 .fixed-assets-page{display:flex;flex-direction:column;gap:16px;}
 .fixed-assets-title h2{margin:0 0 5px;display:flex;align-items:center;gap:7px;}
 .fixed-assets-title p{margin:0;color:var(--text3);font-size:13px;}
@@ -1486,18 +1489,20 @@ let pagarRegistrosMemo=[];
 localStorage.removeItem('cartamac_vendas_maxiprod_cache_v2');
 localStorage.removeItem('cartamac_vendas_maxiprod_cache_v3');
 localStorage.removeItem('cartamac_vendas_maxiprod_cache_v4');
-try{localStorage.removeItem('cartamac_vendas_maxiprod_cache_v5');localStorage.removeItem('cartamac_vendas_maxiprod_cache_v6');}catch(_){ }
-const SALES_CACHE_KEY='cartamac_vendas_maxiprod_cache_v7';
+try{localStorage.removeItem('cartamac_vendas_maxiprod_cache_v5');localStorage.removeItem('cartamac_vendas_maxiprod_cache_v6');localStorage.removeItem('cartamac_vendas_maxiprod_cache_v7');}catch(_){ }
+const SALES_CACHE_KEY='cartamac_vendas_maxiprod_cache_v8';
 let SALES_CACHE=(()=>{
-  try{return JSON.parse(localStorage.getItem(SALES_CACHE_KEY)||'{"version":7,"updatedAt":null,"items":[]}');}
-  catch(_){return {version:7,updatedAt:null,items:[]};}
+  try{return JSON.parse(localStorage.getItem(SALES_CACHE_KEY)||'{"version":8,"updatedAt":null,"items":[]}');}
+  catch(_){return {version:8,updatedAt:null,items:[]};}
 })();
-if(SALES_CACHE?.version!==7||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={version:7,updatedAt:null,items:[]};
+if(SALES_CACHE?.version!==8||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={version:8,updatedAt:null,items:[]};
 let salesRefreshInProgress=false;
 let salesSearch='';
 const salesExpandedYears=new Set();
 let salesCommercialSummaryOpen=true;
 let salesGeographyOpen=true;
+let salesGeographyYear='all';
+let salesSelectedUf='';
 const PURCHASE_ORDERS_CACHE_KEY='cartamac_pedidos_compra_abertos_cache_v1';
 let PURCHASE_ORDERS_CACHE=(()=>{
   try{return JSON.parse(localStorage.getItem(PURCHASE_ORDERS_CACHE_KEY)||'{"version":1,"updatedAt":null,"items":[]}');}
@@ -5553,7 +5558,12 @@ function salesGeographyData(records){
   });
   return {grandTotal,regions:[...regions.values()],states:[...states.values()],municipalities:[...municipalities.values()].sort((a,b)=>b.total-a.total),clients:[...clients.values()].sort((a,b)=>b.total-a.total)};
 }
-function salesRegionFill(total,max){if(!(total>0))return '#3a3d40';const ratio=Math.max(.15,Math.min(1,total/Math.max(1,max)));return `hsl(${205-ratio*42} ${30+ratio*32}% ${28+ratio*17}%)`;}
+function salesRegionFill(total,max){
+  if(!(total>0))return '#34383d';
+  const ratio=Math.max(0,Math.min(1,Math.log1p(total)/Math.log1p(Math.max(1,max))));
+  const hue=212-(ratio*57),saturation=34+(ratio*40),lightness=27+(ratio*20);
+  return `hsl(${hue.toFixed(1)} ${saturation.toFixed(1)}% ${lightness.toFixed(1)}%)`;
+}
 let SALES_BRAZIL_MAP=null,salesBrazilMapPromise=null;
 function ensureSalesBrazilMap(){
   if(SALES_BRAZIL_MAP)return Promise.resolve(SALES_BRAZIL_MAP);
@@ -5590,14 +5600,15 @@ function salesGeographyMarkup(records){
     <div class="sales-geo-tables"><div class="sales-geo-table-card"><div class="sales-geo-table-title"><h4>Totais por município / estado</h4><span>${geo.municipalities.length} localidade(s)</span></div><div class="sales-geo-table-scroll">${municipalityRows?`<table class="sales-geo-table"><thead><tr><th>Município</th><th>UF</th><th>Região</th><th>% total</th><th>Valor total</th></tr></thead><tbody>${municipalityRows}</tbody></table>`:'<div class="sales-geo-table-empty">Localização ainda não informada pelo MaxiProd.</div>'}</div></div><div class="sales-geo-table-card"><div class="sales-geo-table-title"><h4>Totais por cliente</h4><span>${geo.clients.length} cliente(s)</span></div><div class="sales-geo-table-scroll">${clientRows?`<table class="sales-geo-table"><thead><tr><th>Cliente</th><th>Pedidos</th><th>% total</th><th>% acumulado</th><th>Valor total</th></tr></thead><tbody>${clientRows}</tbody></table>`:'<div class="sales-geo-table-empty">Nenhum cliente disponível.</div>'}</div></div></div>
   </div></div></section>`;
 }
-function salesStateGeographyMarkup(records){
+function salesStateGeographyMarkupLegacy(records){
   const geo=salesGeographyData(records),dated=records.filter(row=>row.emissao).sort((a,b)=>a.emissao-b.emissao),period=dated.length?`${salesDateText(dated[0].emissao)} a ${salesDateText(dated[dated.length-1].emissao)}`:'Período sem data',stateMap=new Map(geo.states.map(row=>[row.uf,row])),maxState=Math.max(1,...geo.states.map(row=>row.total));
   if(!SALES_BRAZIL_MAP)ensureSalesBrazilMap();
   const stateShapes=SALES_BRAZIL_MAP?.locations?.map(location=>{const uf=salesMapLocationUF(location),row=stateMap.get(uf)||{total:0,count:0},percent=geo.grandTotal?row.total/geo.grandTotal*100:0;return `<path class="sales-state-shape" data-uf="${escapeHTML(uf)}" d="${escapeHTML(location.path)}" fill="${salesRegionFill(row.total,maxState)}"><title>${escapeHTML(uf)}: ${fmtBRL(row.total)} · ${percent.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}% · ${row.count} pedido(s)</title></path>`;}).join('')||'';
   const stateRegionOrder=['NORTE','NORDESTE','CENTRO-OESTE','SUDESTE','SUL'];
   const stateLegendByRegion=stateRegionOrder.map(region=>({region,states:[...geo.states].filter(row=>SALES_UF_REGIONS[row.uf]===region).sort((a,b)=>b.total-a.total||a.uf.localeCompare(b.uf))}));
   const stateLegendMarkup=stateLegendByRegion.map(group=>`<div class="sales-state-region-group"><div class="sales-state-region-title">${escapeHTML(group.region)}</div><div class="sales-state-region-list">${group.states.map(row=>`<div class="sales-geo-legend-row"><i style="background:${salesRegionFill(row.total,maxState)}"></i><span>${row.uf} · ${(geo.grandTotal?row.total/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</span><b>${fmtBRL(row.total)}</b></div>`).join('')}</div></div>`).join('');
-  const municipalityRows=geo.municipalities.map(row=>`<tr><td>${escapeHTML(row.municipio)}</td><td>${escapeHTML(row.uf)}</td><td>${escapeHTML(row.region)}</td><td class="percent">${(geo.grandTotal?row.total/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</td><td class="money">${fmtBRL(row.total)}</td></tr>`).join('');
+  const stateTableData=geo.states.filter(row=>row.count>0).sort((a,b)=>b.total-a.total||a.uf.localeCompare(b.uf));
+  const stateTableRows=stateTableData.map(row=>`<tr><td>${escapeHTML(row.uf)}</td><td>${escapeHTML(SALES_UF_REGIONS[row.uf]||'NÃO INFORMADO')}</td><td>${row.count.toLocaleString('pt-BR')}</td><td class="percent">${(geo.grandTotal?row.total/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</td><td class="money">${fmtBRL(row.total)}</td></tr>`).join('');
   let accumulated=0;const clientRows=geo.clients.map(row=>{accumulated+=row.total;return `<tr><td>${escapeHTML(row.client)}</td><td>${row.count.toLocaleString('pt-BR')}</td><td class="percent">${(geo.grandTotal?row.total/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</td><td class="percent">${(geo.grandTotal?accumulated/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}% acum.</td><td class="money">${fmtBRL(row.total)}</td></tr>`;}).join('');
   if(SALES_BRAZIL_MAP)setTimeout(salesDecorateStateMap,0);
   return `<section class="sales-geo ${salesGeographyOpen?'open':''}"><button class="sales-geo-head" type="button" onclick="toggleSalesGeography()"><div><h3>Mapa comercial do Brasil</h3><p>Distribuição do valor dos pedidos por estado, município e cliente · ${escapeHTML(period)}</p></div><span class="msi sales-geo-chevron">expand_more</span></button><div class="sales-geo-body"><div class="sales-geo-layout">
@@ -5606,6 +5617,46 @@ function salesStateGeographyMarkup(records){
   </div></div></section>`;
 }
 function salesDateText(date){return date?date.toLocaleDateString('pt-BR'):'—';}
+function setSalesGeographyYear(value){
+  salesGeographyYear=value==='all'?'all':String(value);
+  salesSelectedUf='';
+  renderSalesPage();
+}
+function selectSalesGeographyUf(value){
+  const uf=salesNormalizeUF(value);
+  salesSelectedUf=salesSelectedUf===uf?'':uf;
+  renderSalesPage();
+}
+function salesStateGeographyMarkup(records){
+  const availableYears=[...new Set(records.map(row=>row.ano).filter(Number.isFinite))].sort((a,b)=>b-a);
+  if(salesGeographyYear!=='all'&&!availableYears.map(String).includes(String(salesGeographyYear)))salesGeographyYear='all';
+  const filteredRecords=salesGeographyYear==='all'?records:records.filter(row=>String(row.ano)===String(salesGeographyYear));
+  const geo=salesGeographyData(filteredRecords),dated=filteredRecords.filter(row=>row.emissao).sort((a,b)=>a.emissao-b.emissao);
+  const period=dated.length?`${salesDateText(dated[0].emissao)} a ${salesDateText(dated[dated.length-1].emissao)}`:'Período sem data';
+  const stateMap=new Map(geo.states.map(row=>[row.uf,row])),maxState=Math.max(1,...geo.states.map(row=>row.total));
+  if(!SALES_BRAZIL_MAP)ensureSalesBrazilMap();
+  const stateShapes=SALES_BRAZIL_MAP?.locations?.map(location=>{const uf=salesMapLocationUF(location),row=stateMap.get(uf)||{total:0,count:0},percent=geo.grandTotal?row.total/geo.grandTotal*100:0,selected=salesSelectedUf===uf;return `<path class="sales-state-shape${selected?' selected':''}" data-uf="${escapeHTML(uf)}" onclick="selectSalesGeographyUf('${escapeHTML(uf)}')" d="${escapeHTML(location.path)}" fill="${salesRegionFill(row.total,maxState)}"><title>${escapeHTML(uf)}: ${fmtBRL(row.total)} · ${percent.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}% · ${row.count} pedido(s) — clique para detalhar</title></path>`;}).join('')||'';
+  const stateRegionOrder=['NORTE','NORDESTE','CENTRO-OESTE','SUDESTE','SUL'];
+  const stateLegendByRegion=stateRegionOrder.map(region=>({region,states:[...geo.states].filter(row=>SALES_UF_REGIONS[row.uf]===region).sort((a,b)=>b.total-a.total||a.uf.localeCompare(b.uf))}));
+  const stateLegendMarkup=stateLegendByRegion.map(group=>{const regionTotal=group.states.reduce((sum,row)=>sum+row.total,0),regionPercent=geo.grandTotal?regionTotal/geo.grandTotal*100:0;return `<div class="sales-state-region-group"><div class="sales-state-region-title"><span>${escapeHTML(group.region)}</span><b>${fmtBRL(regionTotal)} · ${regionPercent.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</b></div><div class="sales-state-region-list">${group.states.map(row=>`<div class="sales-geo-legend-row${salesSelectedUf===row.uf?' selected':''}" role="button" tabindex="0" onclick="selectSalesGeographyUf('${row.uf}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectSalesGeographyUf('${row.uf}')}" title="Ver clientes e vendas de ${row.uf}"><i style="background:${salesRegionFill(row.total,maxState)}"></i><span>${row.uf} · ${(geo.grandTotal?row.total/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</span><b>${fmtBRL(row.total)}</b></div>`).join('')}</div></div>`;}).join('');
+  const stateTableData=geo.states.filter(row=>row.count>0).sort((a,b)=>b.total-a.total||a.uf.localeCompare(b.uf));
+  const stateTableRows=stateTableData.map(row=>`<tr><td>${escapeHTML(row.uf)}</td><td>${escapeHTML(SALES_UF_REGIONS[row.uf]||'NÃO INFORMADO')}</td><td>${row.count.toLocaleString('pt-BR')}</td><td class="percent">${(geo.grandTotal?row.total/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</td><td class="money">${fmtBRL(row.total)}</td></tr>`).join('');
+  let accumulated=0;const clientRows=geo.clients.map(row=>{accumulated+=row.total;return `<tr><td>${escapeHTML(row.client)}</td><td>${row.count.toLocaleString('pt-BR')}</td><td class="percent">${(geo.grandTotal?row.total/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</td><td class="percent">${(geo.grandTotal?accumulated/geo.grandTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}% acum.</td><td class="money">${fmtBRL(row.total)}</td></tr>`;}).join('');
+  const stateRecords=salesSelectedUf?filteredRecords.filter(row=>salesNormalizeUF(row.uf)===salesSelectedUf):[],clientYearMap=new Map();
+  stateRecords.forEach(row=>{const year=Number.isFinite(row.ano)?String(row.ano):'Sem data',client=salesGeoClean(row.cliente)||'Cliente não informado',key=`${year}|${client}`,current=clientYearMap.get(key)||{year,client,count:0,total:0};current.count++;current.total+=Number(row.valorTotal)||0;clientYearMap.set(key,current);});
+  const stateTotal=stateRecords.reduce((sum,row)=>sum+(Number(row.valorTotal)||0),0);
+  const stateDetailRows=[...clientYearMap.values()].sort((a,b)=>(Number(b.year)||0)-(Number(a.year)||0)||b.total-a.total||a.client.localeCompare(b.client)).map(row=>`<tr><td>${escapeHTML(row.year)}</td><td>${escapeHTML(row.client)}</td><td>${row.count.toLocaleString('pt-BR')}</td><td class="percent">${(stateTotal?row.total/stateTotal*100:0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</td><td class="money">${fmtBRL(row.total)}</td></tr>`).join('');
+  const clientPanelTitle=salesSelectedUf?`Clientes de ${salesSelectedUf} por ano`:'Totais por cliente';
+  const clientPanelMeta=salesSelectedUf?`${stateRecords.length} pedido(s) · ${fmtBRL(stateTotal)}`:`${geo.clients.length} cliente(s)`;
+  const clientPanelTable=salesSelectedUf
+    ?(stateDetailRows?`<table class="sales-geo-table"><thead><tr><th>Ano</th><th>Cliente</th><th>Pedidos</th><th>% do estado</th><th>Valor vendido</th></tr></thead><tbody>${stateDetailRows}</tbody></table>`:'<div class="sales-geo-table-empty">Nenhuma venda encontrada para este estado no período selecionado.</div>')
+    :(clientRows?`<table class="sales-geo-table"><thead><tr><th>Cliente</th><th>Pedidos</th><th>% total</th><th>% acumulado</th><th>Valor total</th></tr></thead><tbody>${clientRows}</tbody></table>`:'<div class="sales-geo-table-empty">Nenhum cliente disponível.</div>');
+  if(SALES_BRAZIL_MAP)setTimeout(salesDecorateStateMap,0);
+  return `<section class="sales-geo ${salesGeographyOpen?'open':''}"><button class="sales-geo-head" type="button" onclick="toggleSalesGeography()"><div><h3>Mapa comercial do Brasil</h3><p>Distribuição do valor dos pedidos por estado, região e cliente · ${escapeHTML(period)}</p></div><span class="msi sales-geo-chevron">expand_more</span></button><div class="sales-geo-body"><div class="sales-geo-toolbar"><label for="salesGeographyYear">Ano do mapa</label><select id="salesGeographyYear" onchange="setSalesGeographyYear(this.value)"><option value="all" ${salesGeographyYear==='all'?'selected':''}>Todos os anos</option>${availableYears.map(year=>`<option value="${year}" ${String(salesGeographyYear)===String(year)?'selected':''}>${year}</option>`).join('')}</select><small>${filteredRecords.length.toLocaleString('pt-BR')} pedido(s) no período</small></div><div class="sales-geo-layout">
+    <div class="sales-geo-map-card"><div class="sales-geo-map-title"><h4>Valor vendido por estado</h4><span>${fmtBRL(geo.grandTotal)}</span></div><div class="sales-geo-map">${SALES_BRAZIL_MAP?`<svg id="sales-brazil-state-map" viewBox="${escapeHTML(SALES_BRAZIL_MAP.viewBox)}" role="img" aria-label="Mapa comercial do Brasil por estado">${stateShapes}</svg>`:'<div class="sales-map-loading">Carregando o mapa completo do Brasil<br>com os 26 estados e o Distrito Federal...</div>'}</div><div class="sales-state-regions">${stateLegendMarkup}</div><div class="sales-map-credit">Mapa: @svg-maps/brazil (CC BY 4.0)</div></div>
+    <div class="sales-geo-tables"><div class="sales-geo-table-card"><div class="sales-geo-table-title"><h4>Totais por estado</h4><span>${stateTableData.length} estado(s) com vendas</span></div><div class="sales-geo-table-scroll">${stateTableRows?`<table class="sales-geo-table"><thead><tr><th>UF</th><th>Região</th><th>Pedidos</th><th>% total</th><th>Valor total</th></tr></thead><tbody>${stateTableRows}</tbody></table>`:'<div class="sales-geo-table-empty">Estado ainda não informado pelo MaxiProd.</div>'}</div></div><div class="sales-geo-table-card"><div class="sales-geo-table-title"><h4>${escapeHTML(clientPanelTitle)}</h4><span>${escapeHTML(clientPanelMeta)}${salesSelectedUf?` · <button class="sales-state-clear" type="button" onclick="selectSalesGeographyUf('${salesSelectedUf}')">mostrar todos</button>`:''}</span></div><div class="sales-geo-table-scroll">${clientPanelTable}</div></div></div>
+  </div></div></section>`;
+}
 function exportSalesYearReport(year,format){
   const key=String(year),rows=salesRecords().filter(row=>(row.ano===null?'Sem data':String(row.ano))===key).sort((a,b)=>(b.emissao?.getTime()||0)-(a.emissao?.getTime()||0));
   if(!rows.length){showToast('Não há pedidos neste ano para exportar.','err');return;}
@@ -5734,7 +5785,7 @@ async function refreshSalesMaxiprod(options={}){
       if(result.data?.done===true)break;
       skip+=200;
     }
-    SALES_CACHE={version:7,updatedAt,items};
+    SALES_CACHE={version:8,updatedAt,items};
     localStorage.setItem(SALES_CACHE_KEY,JSON.stringify(SALES_CACHE));
     salesExpandedYears.clear();
     salesExpandedInitialized=false;
@@ -6525,7 +6576,7 @@ Object.assign(window,{
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,clearCashFlowBankOverride,openCashFlowFinanceDetail,exportCashFlowPDF,
-  renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,toggleSalesGeography,exportSalesYearReport,
+  renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,toggleSalesGeography,setSalesGeographyYear,selectSalesGeographyUf,exportSalesYearReport,
   renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,togglePurchaseOrdersOverdue,exportPurchaseOrdersPDF,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
