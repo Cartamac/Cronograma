@@ -1734,18 +1734,16 @@ function applySharedMaxiprodCache(payload){
   refreshUIFromDB();
 }
 
-async function loadSharedMaxiprodCache(manifestData=null,{force=false,silent=true}={}){
-  if(sharedMaxiprodCacheLoadInProgress)return sharedMaxiprodCacheLoadInProgress;
-  sharedMaxiprodCacheLoadInProgress=(async()=>{
-    const manifest=manifestData||((await getDoc(SHARED_MAXIPROD_CACHE_REF)).data()||null);
+async function readSharedMaxiprodManifest(manifest,{force=false}={}){
     if(!manifest||manifest.format!=='json-chunks-v1')return false;
     const updatedAt=String(manifest.updatedAt||'');
     if(!force&&updatedAt&&updatedAt===sharedMaxiprodCacheUpdatedAt)return false;
     const chunkCount=Math.max(0,Number(manifest.chunkCount)||0);
     if(!chunkCount)throw new Error('O cache compartilhado ainda não possui dados.');
-    if(!silent)showLoading('Carregando dados compartilhados do MaxiProd...');
+    const chunkBaseId=String(manifest.chunkBaseId||SHARED_MAXIPROD_CACHE_ID);
+    if(!/^[A-Za-z0-9_-]+$/.test(chunkBaseId))throw new Error('A gravação compartilhada possui um identificador inválido.');
     const snapshots=await Promise.all(Array.from({length:chunkCount},(_,index)=>
-      getDoc(doc(db,'cartamac',`${SHARED_MAXIPROD_CACHE_ID}-chunk-${index}`))
+      getDoc(doc(db,'cartamac',`${chunkBaseId}-chunk-${index}`))
     ));
     const json=snapshots.map((snapshot,index)=>{
       if(!snapshot.exists())throw new Error(`Parte ${index+1} do cache não foi encontrada.`);
@@ -1756,6 +1754,24 @@ async function loadSharedMaxiprodCache(manifestData=null,{force=false,silent=tru
     }
     applySharedMaxiprodCache(JSON.parse(json));
     return true;
+}
+
+async function loadSharedMaxiprodCache(manifestData=null,{force=false,silent=true}={}){
+  if(sharedMaxiprodCacheLoadInProgress)return sharedMaxiprodCacheLoadInProgress;
+  sharedMaxiprodCacheLoadInProgress=(async()=>{
+    let manifest=manifestData||((await getDoc(SHARED_MAXIPROD_CACHE_REF)).data()||null);
+    if(!silent)showLoading('Carregando dados compartilhados do MaxiProd...');
+    try{
+      return await readSharedMaxiprodManifest(manifest,{force});
+    }catch(firstError){
+      // Se outra atualizacao terminou enquanto estes blocos eram baixados, o
+      // manifesto pode ter mudado. Rele a versao atual uma vez antes de falhar.
+      const latest=(await getDoc(SHARED_MAXIPROD_CACHE_REF)).data()||null;
+      const firstId=String(manifest?.chunkBaseId||manifest?.updatedAt||'');
+      const latestId=String(latest?.chunkBaseId||latest?.updatedAt||'');
+      if(latestId&&latestId!==firstId)return readSharedMaxiprodManifest(latest,{force:true});
+      throw firstError;
+    }
   })();
   try{return await sharedMaxiprodCacheLoadInProgress;}
   catch(error){console.error('Cache compartilhado do MaxiProd:',error);if(!silent)showToast('Não foi possível carregar os dados compartilhados.','err');return false;}
