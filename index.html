@@ -55,6 +55,7 @@ input[type="file"]{display:none;}
 .btn-ghost:hover{background:var(--bg3);border-color:var(--border3);color:var(--text);}
 .btn-danger{background:transparent;border-color:var(--red);color:var(--red);}
 .btn-danger:hover{background:rgba(224,82,82,.1);}
+body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.master-session) button[onclick^="refreshPurchaseOrdersMaxiprod"],body:not(.master-session) button[onclick^="refreshSalesMaxiprod"],body:not(.master-session) button[onclick^="atualizarContasReceberAno"],body:not(.master-session) button[onclick^="atualizarContasPagarAno"],body:not(.master-session) button[onclick^="consultMaxiprodCost"]{display:none!important;}
 .btn-gold{background:var(--gold);border-color:var(--gold);color:#000;}
 .btn-gold:hover{background:var(--gold2);}
 .btn-full{width:100%;}
@@ -203,7 +204,7 @@ input[type="file"]{display:none;}
 .cashflow-chart-card{border:1px solid var(--border);border-radius:10px;background:var(--panel2);padding:16px;min-width:0;}
 .cashflow-chart-card h4{margin:0 0 4px;color:#fff;font-size:13px;}.cashflow-chart-card>p{margin:0 0 15px;color:var(--text3);font-size:10px;}
 .cashflow-hbars{display:grid;gap:12px;}.cashflow-hbar-row{display:grid;grid-template-columns:145px minmax(100px,1fr) 125px;gap:10px;align-items:center;font-size:11px;}.cashflow-hbar-label{color:var(--text2);}.cashflow-hbar-track{height:15px;border-radius:999px;background:#101010;overflow:hidden;border:1px solid #303030;}.cashflow-hbar-fill{height:100%;min-width:2px;border-radius:999px;}.cashflow-hbar-value{text-align:right;color:#fff;font:700 11px 'JetBrains Mono',monospace;white-space:nowrap;}
-.cashflow-pie-wrap{display:grid;grid-template-columns:150px minmax(130px,1fr);gap:17px;align-items:center;min-height:165px;}.cashflow-pie{width:150px;height:150px;border-radius:50%;position:relative;margin:auto;box-shadow:inset 0 0 0 1px #353535;}.cashflow-pie:after{content:'';position:absolute;inset:32%;border-radius:50%;background:var(--panel2);border:1px solid var(--border);}.cashflow-pie-empty{background:#292929!important;}.cashflow-pie-legend{display:grid;gap:9px;}.cashflow-pie-legend div{display:grid;grid-template-columns:10px 1fr;gap:8px;align-items:start;color:var(--text2);font-size:10px;}.cashflow-pie-legend i{width:10px;height:10px;border-radius:3px;margin-top:2px;}.cashflow-pie-legend b{display:block;color:#fff;font:700 11px 'JetBrains Mono',monospace;margin-top:2px;}
+.cashflow-pie-wrap{display:grid;grid-template-columns:150px minmax(130px,1fr);gap:17px;align-items:center;min-height:165px;}.cashflow-pie{width:150px;height:150px;border-radius:50%;position:relative;margin:auto;box-shadow:inset 0 0 0 1px #353535;-webkit-mask:radial-gradient(circle at center,transparent 0 34%,#000 35%);mask:radial-gradient(circle at center,transparent 0 34%,#000 35%);}.cashflow-pie:after{display:none;}.cashflow-pie-empty{background:#292929!important;}.cashflow-pie-legend{display:grid;gap:9px;}.cashflow-pie-legend div{display:grid;grid-template-columns:10px 1fr;gap:8px;align-items:start;color:var(--text2);font-size:10px;}.cashflow-pie-legend i{width:10px;height:10px;border-radius:3px;margin-top:2px;}.cashflow-pie-legend b{display:block;color:#fff;font:700 11px 'JetBrains Mono',monospace;margin-top:2px;}
 .cashflow-annual-chart{height:225px;display:grid;grid-template-columns:repeat(12,minmax(34px,1fr));gap:7px;align-items:end;padding-top:10px;overflow-x:auto;}.cashflow-annual-month{height:100%;min-width:34px;display:grid;grid-template-rows:1fr auto;gap:7px;}.cashflow-annual-bars{display:flex;align-items:flex-end;justify-content:center;gap:2px;border-bottom:1px solid #454545;}.cashflow-annual-bar{width:8px;min-height:2px;border-radius:3px 3px 0 0;}.cashflow-annual-label{text-align:center;color:var(--text3);font:700 9px 'JetBrains Mono',monospace;}.cashflow-chart-keys{display:flex;gap:15px;flex-wrap:wrap;margin-top:12px;color:var(--text3);font-size:10px;}.cashflow-chart-keys span{display:flex;align-items:center;gap:6px;}.cashflow-chart-keys i{width:9px;height:9px;border-radius:2px;}
 .cashflow-overview h3{margin:0 0 10px;font-size:15px}.cashflow-overview .finance-table th,.cashflow-overview .finance-table td{text-align:right}.cashflow-overview .finance-table th:first-child,.cashflow-overview .finance-table td:first-child{text-align:left}.cashflow-current-row td{background:rgba(212,160,23,.08);}
 .cashflow-gantt{margin-top:22px;min-width:0;max-width:100%;}.cashflow-gantt .cgantt-wrap{margin-bottom:0;max-width:100%;}.cashflow-gantt .cgantt-outer{width:100%;max-width:100%;}
@@ -282,10 +283,17 @@ input[type="file"]{display:none;}
 .client-date-pair{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;}
 .client-date-pair span{display:flex;flex-direction:column;gap:2px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:6px 9px;min-width:96px;color:var(--text2);font-size:12px;line-height:1.2;}
 .client-date-pair b{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
+.client-progress-list{display:grid;gap:18px;}.client-progress-card{background:var(--bg2);border:1px solid var(--border2);border-left:4px solid var(--gold);border-radius:var(--radius2);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.13)}.client-progress-card.archived{border-left-color:var(--green)}
+.client-progress-head{display:flex;align-items:center;gap:13px;padding:17px 19px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(200,168,75,.055),transparent 55%)}.client-progress-code{font:800 13px 'JetBrains Mono',monospace;color:var(--gold);background:rgba(200,168,75,.10);border:1px solid rgba(200,168,75,.18);border-radius:6px;padding:7px 9px;white-space:nowrap}.client-progress-title{flex:1;min-width:0}.client-progress-title h3{font-size:17px;margin:0;color:var(--text)}.client-progress-title p{font-size:12px;color:var(--text3);margin:4px 0 0}.client-progress-total{display:flex;align-items:baseline;gap:6px;white-space:nowrap}.client-progress-total b{font:800 22px 'JetBrains Mono',monospace;color:var(--gold)}.client-progress-total span{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.client-current-stage{margin:16px 18px 0;padding:14px 16px;border:1px solid rgba(200,168,75,.24);border-radius:9px;background:rgba(200,168,75,.075);display:flex;align-items:center;gap:12px}.client-current-stage .msi{color:var(--gold)}.client-current-stage span{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;font-weight:750}.client-current-stage strong{display:block;color:var(--text);font-size:16px;margin-top:2px}.client-current-stage.done{border-color:rgba(73,190,100,.28);background:rgba(73,190,100,.07)}.client-current-stage.done .msi{color:var(--green)}
+.client-sector-rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;padding:17px 18px}.client-sector-card{position:relative;border:1px solid var(--border);border-radius:9px;background:var(--bg3);padding:14px 10px 12px;text-align:center;min-width:0}.client-sector-card.current{border-color:var(--gold);background:rgba(200,168,75,.055)}.client-sector-card.current:before{content:'SETOR ATUAL';position:absolute;top:7px;right:7px;font-size:8px;font-weight:850;letter-spacing:.45px;color:var(--gold)}.client-sector-donut{width:92px;height:92px;margin:5px auto 8px;position:relative}.client-sector-donut svg{display:block;width:100%;height:100%;overflow:visible}.client-sector-donut .track{fill:none;stroke:#303030;stroke-width:11}.client-sector-donut .progress{fill:none;stroke-width:11;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dasharray .35s ease}.client-sector-value{position:absolute;inset:0;display:grid;place-items:center;font:800 17px 'JetBrains Mono',monospace;color:var(--text)}.client-sector-name{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.35px;white-space:normal;overflow-wrap:anywhere}.client-progress-docs{padding:0 18px 18px}.client-progress-docs .docs-section{margin:0}
+.client-progress-overview{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(340px,1.2fr);align-items:center;gap:26px;padding:24px 28px 26px}.client-main-donut{width:min(310px,100%);aspect-ratio:1;margin:auto;position:relative}.client-main-donut svg{width:100%;height:100%;display:block;overflow:visible}.client-main-donut .stage-track,.client-main-donut .stage-progress{fill:none;stroke-width:16;transform:rotate(-90deg);transform-origin:50% 50%}.client-main-donut .stage-track{stroke:#303030}.client-main-donut .stage-progress{stroke-linecap:butt;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}.client-main-donut-center{position:absolute;inset:26%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--bg2);border:1px solid var(--border)}.client-main-donut-center b{font:850 clamp(30px,5vw,48px) 'JetBrains Mono',monospace;color:var(--text);line-height:1}.client-main-donut-center span{font-size:10px;color:var(--text3);font-weight:800;letter-spacing:.65px;text-transform:uppercase;margin-top:8px}.client-main-donut-center strong{font-size:12px;color:var(--gold);margin-top:5px;max-width:115px;line-height:1.25}.client-stage-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.client-stage-legend-item{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:9px;align-items:center;border:1px solid var(--border);border-radius:8px;background:var(--bg3);padding:11px 12px;min-width:0}.client-stage-legend-item.current{border-color:var(--gold);background:rgba(200,168,75,.065)}.client-stage-color{width:11px;height:11px;border-radius:3px}.client-stage-copy{min-width:0}.client-stage-copy b{display:block;font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}.client-stage-copy small{display:block;color:var(--text3);font-size:10px;margin-top:3px}.client-stage-copy small.current{color:var(--gold);font-weight:800}.client-stage-copy small.done{color:var(--green);font-weight:800}.client-stage-pct{font:800 13px 'JetBrains Mono',monospace;color:var(--text);white-space:nowrap}
 @media(max-width:700px){
   .client-stats-row{grid-template-columns:1fr;}
   .client-date-pair{width:100%;}
   .client-date-pair span{flex:1;min-width:120px;}
+  .client-progress-head{align-items:flex-start;flex-wrap:wrap}.client-progress-title{min-width:calc(100% - 95px)}.client-progress-total{width:100%;justify-content:flex-end}.client-current-stage{margin:12px}.client-sector-rings{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px}.client-progress-docs{padding:0 12px 12px}
+  .client-progress-overview{grid-template-columns:1fr;padding:18px 14px;gap:18px}.client-main-donut{width:min(260px,85vw)}.client-stage-legend{grid-template-columns:1fr}
 }
 
 #page-cronograma .stats-row{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 14px;margin-bottom:16px;}
@@ -667,11 +675,20 @@ input[type="file"]{display:none;}
 .role-badge-client{background:rgba(92,184,92,.1);border:1px solid rgba(92,184,92,.2);color:var(--green);font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;}
 .role-badge-engineering{background:rgba(94,151,205,.13);border:1px solid rgba(94,151,205,.35);color:#9bc7f4;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;}
 .readonly-notice{background:rgba(46,134,171,.08);border:1px solid rgba(46,134,171,.25);border-radius:var(--radius);padding:12px 14px;font-size:14px;color:#6ab0c8;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.access-editor{margin:18px 0;border:1px solid var(--border2);border-radius:var(--radius2);overflow:hidden;background:var(--bg3);}
+.access-editor-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(200,168,75,.055);}
+.access-editor-head strong{font-size:14px;color:var(--text);}.access-editor-head span{font-size:12px;color:var(--text3);}
+.access-editor-actions{display:flex;gap:7px;flex-wrap:wrap}.access-editor-actions button{border:1px solid var(--border2);background:var(--bg2);color:var(--text2);border-radius:6px;padding:6px 9px;font-size:11px;font-weight:700;cursor:pointer}.access-editor-actions button:hover{border-color:var(--gold);color:var(--gold)}
+.access-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px;}
+.access-group{border:1px solid var(--border);border-radius:8px;background:var(--bg2);padding:12px;min-width:0}.access-group-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px}.access-group-title .msi{color:var(--gold)}
+.access-options{display:grid;gap:6px}.access-option{display:flex;align-items:flex-start;gap:9px;padding:7px 8px;border-radius:6px;color:var(--text2);font-size:13px;cursor:pointer}.access-option:hover{background:rgba(255,255,255,.035)}.access-option input{width:16px;height:16px;margin-top:1px;accent-color:var(--gold);flex:none}.access-option small{display:block;color:var(--text3);margin-top:2px}
+.sector-badge{background:rgba(94,151,205,.12);border:1px solid rgba(94,151,205,.3);color:#a9d1f5;font-size:11px;font-weight:750;padding:2px 7px;border-radius:4px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;}
 
 /* MACRO ENGENHARIA */
 .macro-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px;}.macro-head h2{font-size:24px;margin:0 0 6px;}.macro-head p{font-size:14px;color:var(--text3);margin:0;max-width:760px;}
 .macro-tabs{display:flex;gap:8px;border-bottom:1px solid var(--border);margin-bottom:18px;padding-bottom:12px;flex-wrap:wrap;}.macro-tabs button{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:9px 14px;border-radius:7px;font-weight:600;cursor:pointer;}.macro-tabs button.active{color:var(--gold);border-color:var(--gold);background:rgba(200,168,75,.09);}
 .macro-order{background:var(--bg2);border:1px solid var(--border2);border-left:4px solid var(--gold);border-radius:var(--radius2);margin-bottom:16px;overflow:hidden;}.macro-order.done{border-left-color:var(--green);opacity:.88;}.macro-order-summary{display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;}.macro-order-summary:hover{background:rgba(255,255,255,.018);}.macro-op{font-family:monospace;color:var(--gold);font-weight:700;background:rgba(200,168,75,.09);padding:5px 8px;border-radius:5px;white-space:nowrap;}.macro-order-title{font-size:16px;font-weight:700;flex:1;min-width:0;}.macro-order-sub{font-size:12px;color:var(--text3);margin-top:3px;}.macro-deadline{font-size:13px;color:var(--text2);white-space:nowrap;}.macro-deadline.warn{color:var(--warn);}.macro-deadline.bad{color:var(--red);}.macro-detail{border-top:1px solid var(--border);padding:18px;display:none;}.macro-order.open .macro-detail{display:block;}.macro-order.open .macro-chevron{transform:rotate(180deg);}
+.macro-order-reports{display:flex;gap:6px;align-items:center;flex:none}.macro-report-btn{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:6px;padding:7px 9px;font-size:11px;font-weight:750;cursor:pointer;white-space:nowrap}.macro-report-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(200,168,75,.07)}.macro-report-btn .msi{font-size:15px}
 .macro-info-grid{display:grid;grid-template-columns:repeat(5,minmax(135px,1fr));gap:10px;margin-bottom:16px;}.macro-field{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 10px;}.macro-field label{display:block;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-size:10px;font-weight:700;margin-bottom:5px;}.macro-field input,.macro-field select,.macro-field textarea{width:100%;background:transparent;border:0;color:var(--text);font:inherit;outline:0;padding:0;}.macro-field input:disabled{color:var(--text2);opacity:1;}.macro-field textarea{resize:vertical;min-height:48px;}.macro-field.observations{grid-column:span 2;}
 .macro-block{border:1px solid var(--border2);border-radius:9px;margin-top:14px;overflow:hidden;}.macro-block-title{padding:10px 14px;background:rgba(200,168,75,.10);color:var(--gold);text-align:center;font-size:12px;letter-spacing:.07em;font-weight:800;text-transform:uppercase;}.macro-block.machine .macro-block-title{background:rgba(99,141,171,.11);color:#b7d8ec;}.macro-block.verify .macro-block-title{background:rgba(116,156,112,.10);color:#9cd19a;}.macro-block.validate .macro-block-title{background:rgba(155,124,183,.11);color:#d1b5ea;}.macro-stage-grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:0;}.macro-stage{padding:11px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}.macro-stage:nth-child(4n){border-right:0;}.macro-stage-name{font-size:11px;font-weight:800;color:var(--text2);min-height:30px;}.macro-stage-inputs{display:grid;grid-template-columns:1fr 72px;gap:7px;}.macro-stage input{min-width:0;width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:7px;font-size:12px;}.macro-stage input[type=number]{text-align:center;}
 .macro-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:17px;}.macro-revision-list{margin-top:14px;border-top:1px solid var(--border);padding-top:11px;font-size:12px;color:var(--text3);}.macro-revision-list strong{color:var(--text2);}.macro-person-box{max-width:650px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2);padding:18px;}.macro-person-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}.macro-person-row:last-child{border-bottom:0;}.macro-person-row span{flex:1;font-weight:600;}
@@ -687,7 +704,8 @@ input[type="file"]{display:none;}
   .toast{bottom:16px;right:10px;left:10px;max-width:unset;}
   .login-box{padding:24px 20px;}
   .user-detail{padding:16px;}
-  .macro-head{display:block;}.macro-head .btn{margin-top:12px;width:100%;}.macro-order-summary{padding:13px;align-items:flex-start;flex-wrap:wrap;}.macro-order-title{min-width:calc(100% - 90px);font-size:14px;}.macro-deadline{width:calc(100% - 28px);padding-left:0;}.macro-detail{padding:12px;}.macro-info-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.macro-field.observations{grid-column:span 2;}.macro-stage-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.macro-stage:nth-child(4n){border-right:1px solid var(--border);}.macro-stage:nth-child(2n){border-right:0;}.macro-stage{padding:9px;}.macro-stage-name{font-size:10px;min-height:27px;}.macro-stage-inputs{grid-template-columns:1fr 58px;gap:5px;}.macro-stage input{padding:6px 4px;font-size:11px;}.macro-actions .btn{flex:1;justify-content:center;}
+  .access-groups{grid-template-columns:1fr}.access-editor-head{align-items:flex-start;flex-direction:column}
+  .macro-head{display:block;}.macro-head .btn{margin-top:12px;width:100%;}.macro-order-summary{padding:13px;align-items:flex-start;flex-wrap:wrap;}.macro-order-title{min-width:calc(100% - 90px);font-size:14px;}.macro-order-reports{order:3;width:100%;padding-left:0}.macro-report-btn{flex:1;justify-content:center}.macro-deadline{width:calc(100% - 28px);padding-left:0;}.macro-detail{padding:12px;}.macro-info-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.macro-field.observations{grid-column:span 2;}.macro-stage-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.macro-stage:nth-child(4n){border-right:1px solid var(--border);}.macro-stage:nth-child(2n){border-right:0;}.macro-stage{padding:9px;}.macro-stage-name{font-size:10px;min-height:27px;}.macro-stage-inputs{grid-template-columns:1fr 58px;gap:5px;}.macro-stage input{padding:6px 4px;font-size:11px;}.macro-actions .btn{flex:1;justify-content:center;}
 }
 
 /* ═══ LOGOS ═══ */
@@ -1063,6 +1081,82 @@ input[type="file"]{display:none;}
   .sales-update{width:100%;}
   .sales-update .btn{width:100%;justify-content:center;}
 }
+/* CONTABILIDADE */
+#page-contabilidade{max-width:100%;overflow-x:hidden;}
+.accounting-shell{display:flex;flex-direction:column;gap:16px;}
+.accounting-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+.accounting-tab{border:1px solid var(--border2);background:var(--bg2);color:var(--text2);border-radius:8px;padding:11px 17px;font-size:14px;font-weight:750;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+.accounting-tab:hover{border-color:var(--gold);color:var(--text);}
+.accounting-tab.active{background:rgba(200,168,75,.12);border-color:var(--gold);color:var(--gold);}
+.accounting-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.accounting-summary-card{border:1px solid var(--border2);border-radius:10px;background:var(--bg2);padding:16px;min-width:0;}
+.accounting-summary-card span{display:block;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;font-weight:750;}
+.accounting-summary-card b{display:block;font-family:'JetBrains Mono',monospace;font-size:20px;line-height:1.15;overflow-wrap:anywhere;}
+.accounting-summary-card.advance b{color:var(--gold);}
+.accounting-summary-card.settled b{color:var(--green);}
+.accounting-summary-card.open b{color:var(--warn);}
+.accounting-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.accounting-toolbar .search-input{flex:1;min-width:260px;}
+.accounting-filter{border:1px solid var(--border2);background:var(--bg2);color:var(--text2);border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;}
+.accounting-filter.active{border-color:var(--gold);color:var(--gold);background:rgba(200,168,75,.10);}
+.accounting-table-wrap{border:1px solid var(--border2);border-radius:10px;overflow:auto;background:var(--bg2);}
+.accounting-table{width:100%;min-width:1120px;border-collapse:collapse;font-size:12px;}
+.accounting-table th{position:sticky;top:0;z-index:1;background:#202020;color:var(--text2);text-align:left;padding:11px 10px;border-bottom:1px solid var(--border2);white-space:nowrap;font-size:10px;text-transform:uppercase;letter-spacing:.45px;}
+.accounting-table td{padding:11px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.accounting-table tbody tr:hover{background:rgba(255,255,255,.025);}
+.accounting-table .order-number{color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:800;}
+.accounting-table .money,.accounting-table .percent{font-family:'JetBrains Mono',monospace;font-weight:750;text-align:right;white-space:nowrap;}
+.accounting-kind{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;white-space:nowrap;border:1px solid var(--border2);}
+.accounting-kind.advance{color:var(--gold);border-color:rgba(200,168,75,.5);background:rgba(200,168,75,.09);}
+.accounting-kind.delivery{color:#a9c7ff;border-color:rgba(96,165,250,.45);background:rgba(96,165,250,.08);}
+.accounting-kind.document{color:var(--text2);}
+.accounting-status{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;white-space:nowrap;}
+.accounting-status.done{color:var(--green);background:rgba(50,190,90,.10);}
+.accounting-status.partial{color:var(--gold);background:rgba(200,168,75,.10);}
+.accounting-status.overdue{color:var(--red);background:rgba(235,70,80,.10);}
+.accounting-status.open{color:var(--text2);background:rgba(255,255,255,.06);}
+.accounting-note{border-left:3px solid var(--gold);background:rgba(200,168,75,.07);padding:11px 13px;border-radius:7px;color:var(--text2);font-size:12px;line-height:1.45;}
+.accounting-empty{padding:38px 20px;text-align:center;color:var(--text3);}
+.accounting-orders{display:flex;flex-direction:column;gap:26px;padding:4px 0 18px;}
+.accounting-order-card{border:1px solid #414141;border-radius:13px;background:#111;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.22);}
+.accounting-order-card[open]{border-color:#555;box-shadow:0 11px 28px rgba(0,0,0,.28);}
+.accounting-order-summary{list-style:none;cursor:pointer;padding:19px 20px;display:grid;grid-template-columns:minmax(300px,1.05fr) repeat(4,minmax(120px,.72fr)) auto 24px;gap:14px;align-items:center;background:linear-gradient(90deg,rgba(200,168,75,.11),rgba(255,255,255,.015) 58%,transparent);}
+.accounting-order-summary::-webkit-details-marker{display:none;}
+.accounting-order-main{min-width:0;}
+.accounting-order-title{display:flex;align-items:center;gap:9px;min-width:0;margin-bottom:5px;}
+.accounting-order-title strong{font-family:'JetBrains Mono',monospace;color:var(--gold);font-size:16px;white-space:nowrap;}
+.accounting-order-title span{font-weight:800;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.accounting-order-main small{display:block;color:var(--text3);font-size:11px;margin-top:7px;}
+.accounting-order-highlights{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px;}
+.accounting-delivery-chip,.accounting-paid-chip{display:inline-flex;align-items:center;gap:5px;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;line-height:1;border:1px solid;white-space:nowrap;}
+.accounting-delivery-chip{color:#e6c45e;border-color:rgba(200,168,75,.38);background:rgba(200,168,75,.07);}
+.accounting-delivery-chip.missing{color:var(--text3);border-color:var(--border2);background:rgba(255,255,255,.035);}
+.accounting-paid-chip{color:#5de47a;border-color:rgba(50,190,90,.5);background:rgba(50,190,90,.11);}
+.accounting-order-metric{min-width:0;border-left:1px solid var(--border2);padding-left:13px;}
+.accounting-order-metric span{display:block;color:var(--text3);font-size:9px;text-transform:uppercase;letter-spacing:.55px;margin-bottom:5px;font-weight:750;}
+.accounting-order-metric b{display:block;font-family:'JetBrains Mono',monospace;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.accounting-order-metric.advance b{color:var(--gold);}
+.accounting-order-metric.settled b{color:var(--green);}
+.accounting-order-metric.open b{color:var(--warn);}
+.accounting-order-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap;}
+.accounting-order-actions .btn{min-width:68px;padding-left:10px;padding-right:10px;}
+.accounting-order-chevron{color:var(--text3);font-size:18px;transition:transform .18s;}
+.accounting-order-card[open] .accounting-order-chevron{transform:rotate(180deg);color:var(--gold);}
+.accounting-order-body{border-top:1px solid #3b3b3b;padding:16px 18px 19px;background:#0d0d0d;}
+.accounting-order-body .accounting-table-wrap{border-radius:9px;border:1px solid #383838;}
+.accounting-order-body .accounting-table{min-width:820px;}
+.accounting-order-body .accounting-table th{position:static;background:#1c1c1c;padding-top:13px;padding-bottom:13px;}
+.accounting-order-body .accounting-table td{padding-top:14px;padding-bottom:14px;}
+.accounting-report-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:7px 11px;border-radius:7px;border:1px solid var(--border2);font-size:11px;font-weight:800;cursor:pointer;color:var(--text2);background:transparent;transition:.15s;}
+.accounting-report-btn:hover{color:var(--text);border-color:#555;background:rgba(255,255,255,.045);}
+.accounting-general-reports{display:flex;align-items:center;gap:7px;padding-left:10px;border-left:1px solid var(--border2);}
+.accounting-order-warning{margin:12px 0 0;color:var(--warn);font-size:11px;display:flex;align-items:center;gap:6px;}
+.accounting-block-actions{display:flex;gap:7px;margin-left:auto;}
+@media(max-width:1000px){.accounting-summary{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:1100px){.accounting-order-summary{grid-template-columns:minmax(220px,1fr) repeat(2,minmax(120px,.65fr)) auto 24px}.accounting-order-metric.optional{display:none;}}
+@media(max-width:620px){.accounting-summary{grid-template-columns:1fr}.accounting-toolbar .search-input{min-width:100%;}}
+@media(max-width:700px){.accounting-order-summary{grid-template-columns:minmax(0,1fr) auto 24px}.accounting-order-metric{display:none}.accounting-order-title{align-items:flex-start;flex-direction:column;gap:3px}.accounting-order-title span{white-space:normal}.accounting-order-actions .btn{min-width:40px;padding:8px}.accounting-order-actions .btn-label{display:none}.accounting-block-actions{width:100%;margin-left:0}.accounting-block-actions .btn{flex:1;}}
+@media(max-width:760px){.accounting-general-reports{width:100%;padding-left:0;border-left:0}.accounting-general-reports .accounting-report-btn{flex:1}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -1128,6 +1222,7 @@ input[type="file"]{display:none;}
       <span class="dev-nav-separator" aria-hidden="true"></span>
       <button class="dev-tab" id="tabCustos" onclick="switchDevTab('custos',this)"><span class="msi msi-sm">payments</span> Custos</button>
       <button class="dev-tab" id="tabFinanceiro" onclick="switchDevTab('financeiro',this)"><span class="msi msi-sm">account_balance</span> Financeiro/Fiscal</button>
+      <button class="dev-tab" id="tabContabilidade" onclick="switchDevTab('contabilidade',this)"><span class="msi msi-sm">request_quote</span> Contabilidade</button>
     </nav>
     <div class="header-actions">
       <div class="admin-user-badge"><span class="msi msi-sm">person</span> <strong id="adminNameBadge">Admin</strong></div>
@@ -1186,6 +1281,7 @@ input[type="file"]{display:none;}
 
   <div class="page" id="page-financeiro"><div id="financeiroContent"></div></div>
   <div class="page" id="page-compras"><div id="pedidosCompraContent"></div></div>
+  <div class="page" id="page-contabilidade"><div id="contabilidadeContent"></div></div>
 
   <!-- PEÇAS DE REPOSIÇÃO -->
   <div class="page" id="page-pecas">
@@ -1354,12 +1450,10 @@ input[type="file"]{display:none;}
     <div class="update-badge" id="clientUpdateBadge" style="display:none;"><span class="msi msi-sm">sync</span> <span id="clientLastUpdate">—</span></div>
     <button class="btn btn-sm btn-ghost" onclick="backToLogin()"><span class="msi msi-sm">logout</span> Sair</button>
     <nav class="client-nav">
-      <button class="client-tab active" onclick="switchClientTab('cron',this)"><span class="msi">assignment</span> Cronograma</button>
-      <button class="client-tab" onclick="switchClientTab('gantt',this)"><span class="msi">bar_chart_4_bars</span> Gantt</button>
+      <button class="client-tab active" onclick="switchClientTab('cron',this)"><span class="msi">donut_large</span> Acompanhamento</button>
     </nav>
   </header>
   <div class="client-page active" id="cpg-cron"><div class="client-stats-row" id="clientStatsRow"></div><div id="clientOrdersList"></div></div>
-  <div class="client-page" id="cpg-gantt"><div id="clientGanttContainer"></div></div>
 </div>
 
 <!-- MODALS -->
@@ -1378,23 +1472,16 @@ input[type="file"]{display:none;}
 </div>
 
 <div class="modal-overlay" id="addAdminModal">
-  <div class="modal">
+  <div class="modal modal-wide">
     <h3><span class="msi msi-sm">shield_person</span> Novo Administrador</h3>
     <div style="background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.2);border-radius:var(--radius);padding:12px 14px;margin-bottom:18px;font-size:14px;color:var(--text2);">
-      <strong>Mestre</strong> tem acesso total. <strong>Vendedor</strong> acessa cronograma, Gantt e peças. <strong>Visualizador</strong> só leitura.
+      O <strong>setor</strong> identifica o funcionário e aparece abaixo do nome. Os acessos são definidos separadamente, aba por aba.
     </div>
     <div class="form-group"><label>Nome completo *</label><input type="text" id="naName" placeholder="Ex: Fernanda Souza"></div>
     <div class="form-group"><label>E-mail / Login *</label><input type="email" id="naEmail" placeholder="nome@cartamac.com"></div>
     <div class="form-group"><label>Senha *</label><div class="password-wrap"><input type="password" id="naPass" placeholder="Mínimo 6 caracteres"><button type="button" class="password-toggle" onclick="togglePassword('naPass',this)" title="Mostrar senha"><span class="msi msi-sm">visibility</span></button></div></div>
-    <div class="form-group">
-      <label>Nível de acesso *</label>
-      <select id="naRole">
-        <option value="viewer">Visualizador (somente leitura)</option>
-        <option value="seller">Vendedor (cronograma, Gantt e peças)</option>
-        <option value="engineering">Engenharia (cronograma, Gantt e Macro Engenharia)</option>
-        <option value="master">Mestre (acesso total)</option>
-      </select>
-    </div>
+    <div class="form-group"><label>Setor *</label><input type="text" id="naSector" placeholder="Ex: Engenharia, Comercial ou Financeiro"></div>
+    <div id="newAdminPermissions"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('addAdminModal')">Cancelar</button>
       <button class="btn btn-gold" onclick="saveNewAdmin()">Criar Administrador</button>
@@ -1480,6 +1567,9 @@ let financeiroView='fluxoCaixa';
 let financeColumnFilters={};
 let financeRefreshInProgress=null;
 let financeRenderQueued=false;
+let accountingView='receber';
+let accountingSearch='';
+let accountingOnlyAdvances=false;
 let cashFlowSelectedMonth=monthKey((new Date()).getFullYear(),(new Date()).getMonth());
 let costMonthRolloverInProgress=false;
 let costMonthRolloverTimer=null;
@@ -1529,6 +1619,12 @@ if(PURCHASE_ORDERS_CACHE?.version!==1||!Array.isArray(PURCHASE_ORDERS_CACHE?.ite
 let purchaseOrdersRefreshInProgress=false;
 let purchaseOrderSearch='';
 let purchaseOrdersOnlyOverdue=false;
+const ACCOUNTING_CACHE_KEY='cartamac_contabilidade_historica_cache_v1';
+let ACCOUNTING_CACHE=(()=>{
+  try{return JSON.parse(localStorage.getItem(ACCOUNTING_CACHE_KEY)||'{"version":1,"updatedAt":null,"receivable":{"items":[]},"payable":{"items":[]}}');}
+  catch(_){return {version:1,updatedAt:null,receivable:{items:[]},payable:{items:[]}};}
+})();
+if(ACCOUNTING_CACHE?.version!==1)ACCOUNTING_CACHE={version:1,updatedAt:null,receivable:{items:[]},payable:{items:[]}};
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v2');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v3');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v4');
@@ -1719,6 +1815,16 @@ function applySharedMaxiprodCache(payload){
 
   if(payload.sales?.version===8&&Array.isArray(payload.sales.items))SALES_CACHE=payload.sales;
   if(payload.purchaseOrders?.version===1&&Array.isArray(payload.purchaseOrders.items))PURCHASE_ORDERS_CACHE=payload.purchaseOrders;
+  if(payload.accounting?.version===1){
+    ACCOUNTING_CACHE={
+      version:1,
+      updatedAt:payload.accounting.updatedAt||payload.updatedAt||null,
+      dateFrom:payload.accounting.dateFrom||null,
+      dateTo:payload.accounting.dateTo||null,
+      receivable:{items:Array.isArray(payload.accounting.receivable?.items)?payload.accounting.receivable.items:[]},
+      payable:{items:Array.isArray(payload.accounting.payable?.items)?payload.accounting.payable.items:[]}
+    };
+  }
   if(payload.fixedAssets?.version===9&&Array.isArray(payload.fixedAssets.items))FIXED_ASSETS_CACHE=payload.fixedAssets;
   if(payload.usageStock?.version===2&&Array.isArray(payload.usageStock.items))USAGE_STOCK_CACHE=payload.usageStock;
   if(payload.rawMaterial?.version===1&&Array.isArray(payload.rawMaterial.items))RAW_MATERIAL_CACHE=payload.rawMaterial;
@@ -1726,6 +1832,7 @@ function applySharedMaxiprodCache(payload){
   saveFinanceCacheLocal();
   try{localStorage.setItem(SALES_CACHE_KEY,JSON.stringify(SALES_CACHE));}catch(_){ }
   try{localStorage.setItem(PURCHASE_ORDERS_CACHE_KEY,JSON.stringify(PURCHASE_ORDERS_CACHE));}catch(_){ }
+  try{localStorage.setItem(ACCOUNTING_CACHE_KEY,JSON.stringify(ACCOUNTING_CACHE));}catch(_){ }
   try{localStorage.setItem(FIXED_ASSETS_CACHE_KEY,JSON.stringify(FIXED_ASSETS_CACHE));}catch(_){ }
   try{localStorage.setItem(USAGE_STOCK_CACHE_KEY,JSON.stringify(USAGE_STOCK_CACHE));}catch(_){ }
   try{localStorage.setItem(RAW_MATERIAL_CACHE_KEY,JSON.stringify(RAW_MATERIAL_CACHE));}catch(_){ }
@@ -1869,6 +1976,63 @@ async function deleteCostStructureDocument(orderId){
 // ─────────── HELPERS ───────────
 const isMaster = u => u && (u.type==='master' || MASTER_EMAILS.includes(u.ref?.email));
 const isEngineering = u => u && ['engineering','engenharia'].includes(String(u.type||'').toLowerCase());
+const ADMIN_ACCESS_GROUPS=[
+  {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.gantt','Gantt'],['cronograma.importar','Importar e históricos']]},
+  {id:'cadastros',label:'Cadastros',icon:'group',items:[['clientes','Clientes'],['admins','Administradores']]},
+  {id:'pecas',label:'Peças de Reposição',icon:'settings',items:[['pecas.catalog','Tabela de peças'],['pecas.price','Formação de preço']]},
+  {id:'planejamento',label:'Planejamento',icon:'event_available',items:[['simulador','Simular Cronograma']]},
+  {id:'macro',label:'Macro Engenharia',icon:'architecture',items:[['macro-engenharia.active','OPs abertas'],['macro-engenharia.completed','Finalizadas'],['macro-engenharia.people','Responsáveis']]},
+  {id:'compras',label:'Compras',icon:'shopping_cart',items:[['compras','Pedidos de compra']]},
+  {id:'custos',label:'Custos',icon:'payments',items:[['custos.orders','Custos dos pedidos'],['custos.closed','Projetos fechados'],['custos.structure','Estrutura multinível']]},
+  {id:'financeiro',label:'Financeiro / Fiscal',icon:'account_balance',items:[['financeiro.fluxoCaixa','Fluxo de caixa mensal'],['financeiro.receber','Contas a receber'],['financeiro.pagar','Contas a pagar'],['financeiro.vendas','Vendas'],['financeiro.materiaPrima','Estoque']]},
+  {id:'contabilidade',label:'Contabilidade',icon:'request_quote',items:[['contabilidade.receber','A receber · Pedidos de venda'],['contabilidade.pagar','A pagar · Pedidos de compra']]}
+];
+const ADMIN_ACCESS_KEYS=ADMIN_ACCESS_GROUPS.flatMap(group=>group.items.map(item=>item[0]));
+function legacyAdminPermissions(admin){
+  const role=String(admin?.role||'viewer').toLowerCase();
+  if(role==='master'||MASTER_EMAILS.includes(admin?.email))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,true]));
+  const keys=['cronograma.cronograma','cronograma.gantt'];
+  if(role==='seller')keys.push('pecas.catalog','pecas.price','simulador','financeiro.vendas');
+  else keys.push('clientes','admins');
+  if(['engineering','engenharia'].includes(role))keys.push('macro-engenharia.active','macro-engenharia.completed','macro-engenharia.people');
+  return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,keys.includes(key)]));
+}
+function adminPermissions(admin){
+  if(!admin)return {};
+  if(admin.role==='master'||MASTER_EMAILS.includes(admin.email))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,true]));
+  if(Array.isArray(admin.permissions))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,admin.permissions.includes(key)]));
+  if(admin.permissions&&typeof admin.permissions==='object')return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,admin.permissions[key]===true]));
+  return legacyAdminPermissions(admin);
+}
+function hasAccess(key,user=loggedUser){return isMaster(user)||adminPermissions(user?.ref)[key]===true;}
+function hasAnyAccess(prefix,user=loggedUser){return isMaster(user)||ADMIN_ACCESS_KEYS.some(key=>(key===prefix||key.startsWith(prefix+'.'))&&hasAccess(key,user));}
+function sectorLabel(admin){
+  if(admin?.role==='master'||MASTER_EMAILS.includes(admin?.email))return admin?.sector||'Administração';
+  if(admin?.sector)return admin.sector;
+  const role=String(admin?.role||'viewer').toLowerCase();return role==='seller'?'Comercial':['engineering','engenharia'].includes(role)?'Engenharia':'Administrativo';
+}
+function accessEditorHTML(prefix,permissions,disabled=false){
+  const checked=permissions||{};
+  return `<div class="access-editor"><div class="access-editor-head"><div><strong>Permissões de acesso</strong><br><span>Marque exatamente as abas e subabas que esta pessoa poderá abrir.</span></div>${disabled?'':`<div class="access-editor-actions"><button type="button" onclick="setAccessEditor('${prefix}',true)">Marcar todas</button><button type="button" onclick="setAccessEditor('${prefix}',false)">Limpar</button></div>`}</div><div class="access-groups">${ADMIN_ACCESS_GROUPS.map(group=>`<section class="access-group"><div class="access-group-title"><span class="msi msi-sm">${group.icon}</span>${group.label}</div><div class="access-options">${group.items.map(([key,label])=>`<label class="access-option"><input type="checkbox" data-access-prefix="${prefix}" data-access-key="${key}" ${checked[key]?'checked':''} ${disabled?'disabled':''}><span>${label}</span></label>`).join('')}</div></section>`).join('')}</div></div>`;
+}
+function setAccessEditor(prefix,value){if(!isMaster(loggedUser)){showToast('Somente administradores mestres podem alterar acessos.','err');return;}document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>input.checked=value);}
+function readAccessEditor(prefix){const result={};ADMIN_ACCESS_KEYS.forEach(key=>result[key]=false);document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>result[input.dataset.accessKey]=input.checked);return result;}
+function devTabAllowed(id){
+  if(['cronograma','gantt','importar'].includes(id))return hasAccess(`cronograma.${id}`);
+  if(['pecas','macro-engenharia','custos','financeiro','contabilidade'].includes(id))return hasAnyAccess(id);
+  return hasAccess(id);
+}
+function showAccessDenied(){showToast('Você não possui permissão para acessar esta área.','err');}
+function applyNavigationPermissions(){
+  const map={tabCronograma:'cronograma',tabClientes:'clientes',tabAdmins:'admins',tabPecas:'pecas',tabSimulador:'simulador',tabMacroEngenharia:'macro-engenharia',tabCompras:'compras',tabCustos:'custos',tabFinanceiro:'financeiro',tabContabilidade:'contabilidade'};
+  Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAnyAccess(key)?'flex':'none';});
+  document.querySelectorAll('.cronograma-subtab').forEach(tab=>tab.style.display=hasAccess(`cronograma.${tab.dataset.cronSubtab}`)?'flex':'none');
+  [['partsCatalogTab','pecas.catalog'],['partsPriceTab','pecas.price'],['macroTabActive','macro-engenharia.active'],['macroTabCompleted','macro-engenharia.completed'],['macroTabPeople','macro-engenharia.people']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAccess(key)?'':'none';});
+}
+function firstAllowedDestination(){
+  const order=[['cronograma','cronograma.cronograma'],['gantt','cronograma.gantt'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['simulador','simulador'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade']];
+  return order.find(([id])=>devTabAllowed(id))?.[0]||null;
+}
 const TODAY    = new Date();
 const fmtDate  = d => { if(!d) return '—'; const[y,m,dd]=d.split('-'); return `${dd}/${m}/${y}`; };
 const daysDiff = d => Math.floor((new Date(d) - TODAY) / 86400000);
@@ -1945,6 +2109,7 @@ function showScreen(id){
 }
 function backToLogin(){
   loggedUser=null;
+  document.body.classList.remove('master-session');
   document.getElementById('loginUser').value='';
   document.getElementById('loginPass').value='';
   document.getElementById('loginError').style.display='none';
@@ -2072,28 +2237,19 @@ function doAdminLogin(){
   const admin=DB.admins.find(a=>a.email===email&&a.pass===pass);
   if(!admin){document.getElementById('adminLoginError').style.display='block';return;}
   closeAdminLogin();
-  let role=MASTER_EMAILS.includes(admin.email)?'master':String(admin.role||'viewer').toLowerCase();
-  if(role==='engenharia')role='engineering';
-  loggedUser={type:role,ref:admin};
+  loggedUser={type:(MASTER_EMAILS.includes(admin.email)||admin.role==='master')?'master':'custom',ref:admin};
   costsUnlocked=false;
   document.getElementById('adminNameBadge').textContent=admin.name;
   const master=isMaster(loggedUser);
-  const seller=loggedUser.type==='seller';
-  const engineering=isEngineering(loggedUser);
+  document.body.classList.toggle('master-session',master);
   document.getElementById('btnNewAdmin').style.display=master?'':'none';
   document.getElementById('btnNewClient').style.display=master?'':'none';
-  document.querySelectorAll('.cron-subtab-import').forEach(tab=>tab.style.display=master?'flex':'none');
-  document.getElementById('tabCustos').style.display=master?'':'none';
-  document.getElementById('tabCompras').style.display=master?'flex':'none';
-  document.getElementById('tabFinanceiro').style.display=(master||seller)?'flex':'none';
-  document.getElementById('tabPecas').style.display=(master||seller)?'flex':'none';
-  document.getElementById('tabSimulador').style.display=(master||seller)?'flex':'none';
-  document.getElementById('tabMacroEngenharia').style.display=(master||engineering)?'flex':'none';
-  document.getElementById('tabClientes').style.display=seller?'none':'flex';
-  document.getElementById('tabAdmins').style.display=seller?'none':'flex';
   document.getElementById('costsSettingsPanel').style.display=master?'':'none';
   showScreen('dev');
-  renderDevAll();
+  applyNavigationPermissions();
+  const first=firstAllowedDestination();
+  if(first){if(['cronograma','gantt','importar'].includes(first))switchCronogramaSubtab(first);else switchDevTab(first,document.getElementById({clientes:'tabClientes',admins:'tabAdmins',pecas:'tabPecas',simulador:'tabSimulador','macro-engenharia':'tabMacroEngenharia',compras:'tabCompras',custos:'tabCustos',financeiro:'tabFinanceiro',contabilidade:'tabContabilidade'}[first]));}
+  else showToast('Este usuário ainda não possui nenhuma aba liberada.','err');
   showToast(`Bem-vindo, ${admin.name}!`);
 }
 function doLogin(){
@@ -2103,31 +2259,28 @@ function doLogin(){
   if(!c){document.getElementById('loginError').style.display='block';return;}
   document.getElementById('loginError').style.display='none';
   loggedUser={type:'client',ref:c};
+  document.body.classList.remove('master-session');
   showScreen('client');
   renderClientScreen();
 }
 
 // ─────────── DEV TABS ───────────
 function switchDevTab(id,btn){
-  if((id==='importar'||id==='custos'||id==='compras')&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
-  if(id==='financeiro'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a administradores mestres e vendedores','err');return;}
-  if(id==='pecas'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a vendedores e administradores mestres','err');return;}
-  if(id==='simulador'&&!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito a vendedores e administradores mestres','err');return;}
-  if(id==='macro-engenharia'&&!(isMaster(loggedUser)||isEngineering(loggedUser))){showToast('Acesso restrito à Engenharia e administradores mestres','err');return;}
-  if((id==='clientes'||id==='admins')&&loggedUser?.type==='seller'){showToast('Acesso não disponível para este perfil','err');return;}
+  if(!devTabAllowed(id)){showAccessDenied();return;}
   if(document.getElementById('page-simulador')?.classList.contains('active'))saveSimulatorDraft(true);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.dev-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
+  if(btn)btn.classList.add('active');
   if(id==='cronograma')renderDevAll();
   if(id==='gantt')     renderGantt();
-  if(id==='custos')    renderCostsPage();
-  if(id==='financeiro'){if(loggedUser?.type==='seller')financeiroView='vendas';renderFinanceiroFiscal();}
+  if(id==='custos'){if(!hasAccess(`custos.${costsView}`))costsView=['orders','closed','structure'].find(view=>hasAccess(`custos.${view}`))||'orders';renderCostsPage();}
+  if(id==='financeiro'){if(!hasAccess(`financeiro.${financeiroView}`))financeiroView=Object.keys(FINANCE_VIEWS).find(view=>hasAccess(`financeiro.${view}`))||'fluxoCaixa';renderFinanceiroFiscal();}
   if(id==='compras')   renderPurchaseOrdersPage();
-  if(id==='pecas')     renderPartsPage();
+  if(id==='contabilidade'){if(!hasAccess(`contabilidade.${accountingView}`))accountingView=hasAccess('contabilidade.receber')?'receber':'pagar';renderAccountingPage();}
+  if(id==='pecas'){switchPartsView(hasAccess('pecas.catalog')?'catalog':'price');renderPartsPage();}
   if(id==='simulador') renderSimulator();
-  if(id==='macro-engenharia') renderMacroEngineering();
+  if(id==='macro-engenharia'){if(!hasAccess(`macro-engenharia.${macroView}`))macroView=['active','completed','people'].find(view=>hasAccess(`macro-engenharia.${view}`))||'active';renderMacroEngineering();}
   if(id==='clientes')  renderClientsPanel();
   if(id==='admins')    renderAdminsPanel();
   if(id==='importar')  renderImportHistory();
@@ -2136,7 +2289,7 @@ function syncCronogramaSubtabs(id){
   document.querySelectorAll('.cronograma-subtab').forEach(tab=>tab.classList.toggle('active',tab.dataset.cronSubtab===id));
 }
 function switchCronogramaSubtab(id){
-  if(id==='importar'&&!isMaster(loggedUser)){showToast('Acesso restrito a administradores mestres','err');return;}
+  if(!hasAccess(`cronograma.${id}`)){showAccessDenied();return;}
   const headerTab=document.getElementById('tabCronograma');
   if(!headerTab)return;
   switchDevTab(id,headerTab);
@@ -2419,6 +2572,79 @@ function fmtBRL(v){
   return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 }
 
+// Papel timbrado único para todos os PDFs do aplicativo.
+// O finalizador é aplicado depois que o conteúdo foi montado, inclusive nas páginas
+// adicionadas automaticamente pelos relatórios longos.
+const CARTAMAC_PDF_THEME={
+  charcoal:[40,40,40],gold:[200,168,75],text:[31,31,31],muted:[104,104,104],
+  tableHeader:[40,40,40],rowAlternate:[248,248,248],grid:[222,222,222]
+};
+const CARTAMAC_PDF_WATERMARK='data:image/png;base64,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';
+const CARTAMAC_PDF_WATERMARK_TRANSPARENT='data:image/png;base64,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';
+const CARTAMAC_PDF_WATERMARK_SUBTLE='data:image/png;base64,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';
+function cartamacPdfWithOpacity(doc,opacity,draw){
+  let saved=false;
+  try{
+    if(typeof doc.saveGraphicsState==='function'&&typeof doc.setGState==='function'&&typeof doc.GState==='function'){
+      doc.saveGraphicsState();saved=true;doc.setGState(new doc.GState({opacity}));
+    }
+    draw();
+  }catch(error){console.warn('Transparência do PDF não disponível:',error);draw(true);}
+  finally{if(saved)try{doc.restoreGraphicsState();}catch(_){}}
+}
+function cartamacPdfDrawWatermark(doc,pageW,pageH){
+  const portrait=pageH>pageW,w=portrait?pageW*.54:pageH*.58,h=w*1.31,x=(pageW-w)/2,y=(pageH-h)/2;
+  try{
+    doc.addImage(CARTAMAC_PDF_WATERMARK_SUBTLE,'PNG',x,y,w,h,undefined,'FAST');
+    return;
+  }catch(error){console.warn('Marca d’água original indisponível, usando símbolo vetorial:',error);}
+  cartamacPdfWithOpacity(doc,.045,opaqueFallback=>{
+    doc.setDrawColor(...(opaqueFallback?[246,246,246]:[70,70,70]));
+    doc.setLineWidth(Math.max(5,w*.075));
+    if(typeof doc.setLineCap==='function')doc.setLineCap(1);
+    // Fallback vetorial baseado no símbolo do documento-modelo.
+    doc.line(x+w*.18,y+h*.18,x+w*.18,y+h*.72);
+    doc.line(x+w*.18,y+h*.18,x+w*.82,y+h*.18);
+    doc.line(x+w*.18,y+h*.72,x+w*.49,y+h*.72);
+    doc.line(x+w*.49,y+h*.38,x+w*.82,y+h*.38);
+    doc.line(x+w*.82,y+h*.18,x+w*.82,y+h*.64);
+    doc.line(x+w*.49,y+h*.38,x+w*.49,y+h*.82);
+    doc.line(x+w*.49,y+h*.82,x+w*.82,y+h*.82);
+  });
+}
+function cartamacPdfInit(doc){
+  if(!doc||doc.__cartamacWatermarkReady)return doc;
+  const drawCurrentPage=()=>cartamacPdfDrawWatermark(doc,doc.internal.pageSize.getWidth(),doc.internal.pageSize.getHeight());
+  drawCurrentPage();
+  const originalAddPage=doc.addPage.bind(doc);
+  doc.addPage=(...args)=>{const result=originalAddPage(...args);drawCurrentPage();return result;};
+  doc.__cartamacWatermarkReady=true;
+  return doc;
+}
+function cartamacPdfFinalize(doc,options={}){
+  const pages=doc.getNumberOfPages(),footerText=options.footerText||'Documento gerado pelo aplicativo CARTAMAC · Fonte: MaxiProd · Somente leitura';
+  for(let page=1;page<=pages;page++){
+    doc.setPage(page);
+    const pageW=doc.internal.pageSize.getWidth(),pageH=doc.internal.pageSize.getHeight();
+    // Cabeçalho do papel timbrado: linhas no extremo superior e assinatura com respiro.
+    // Somente a área central recebe fundo branco; títulos existentes nas laterais não são cobertos.
+    doc.setDrawColor(25,25,25);doc.setLineWidth(.25);doc.line(0,.7,pageW,.7);doc.setLineWidth(.14);doc.line(0,1.7,pageW,1.7);
+    doc.setFillColor(255,255,255);doc.rect(pageW/2-17,0,34,6.4,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(5.5);doc.setTextColor(25,25,25);doc.text('CARTAMAC',pageW/2,5,{align:'center'});
+    // Rodapé do modelo: reserva branca, traço preto, detalhe dourado e paginação.
+    doc.setFillColor(255,255,255);doc.rect(0,pageH-10.5,pageW,10.5,'F');
+    doc.setDrawColor(25,25,25);doc.setLineWidth(.75);doc.line(0,pageH-9.4,pageW,pageH-9.4);
+    doc.setDrawColor(...CARTAMAC_PDF_THEME.gold);doc.setLineWidth(.2);doc.line(0,pageH-8.2,pageW,pageH-8.2);
+    doc.setFont('helvetica','normal');doc.setFontSize(5.8);doc.setTextColor(...CARTAMAC_PDF_THEME.muted);
+    doc.text(footerText,7,pageH-4.1,{maxWidth:pageW-45});
+    doc.text(`Página ${page} de ${pages}`,pageW-7,pageH-4.1,{align:'right'});
+  }
+  return doc;
+}
+function cartamacPdfSave(doc,filename,options={}){
+  cartamacPdfFinalize(doc,options);doc.save(filename);
+}
+
 // ───────────────── FINANCEIRO / FISCAL ─────────────────
 // Os nomes de campo do MaxiProd podem variar entre contas. Por isso a tela
 // A tela Financeiro/Fiscal também usa a função de escape do restante do app.
@@ -2469,6 +2695,7 @@ function financeNumber(value){
   return Number.isFinite(parsed)?parsed:0;
 }
 function getFinanceDataStamp(){const date=FINANCE_CACHE?.updatedAt||DB.financeiroFiscalMeta?.updatedAt;return date?new Date(date).toLocaleString('pt-BR'):'Ainda não atualizado';}
+function maxiprodRefreshHint(masterText='Clique em “Atualizar MaxiProd” para carregar os dados.'){return isMaster(loggedUser)?masterText:'Os dados serão disponibilizados automaticamente após a próxima atualização do MaxiProd.';}
 function financeColumnId(index){return `${financeiroView}:${index}`;}
 function financeCell(row,column){return financeFormat(financeValue(row,column[1]),column[0]);}
 function financeColumnValues(view,index){return [...new Set(financeRows(view).map(row=>financeCell(row,view.columns[index])))].sort((a,b)=>String(a).localeCompare(String(b),'pt-BR',{numeric:true}));}
@@ -2480,13 +2707,13 @@ function financeRowsFiltered(view,search){
 function toggleFinanceColumnFilter(index,value,checked){const view=FINANCE_VIEWS[financeiroView],values=financeColumnValues(view,index),id=financeColumnId(index),selected=new Set(Array.isArray(financeColumnFilters[id])?financeColumnFilters[id]:values);if(checked)selected.add(value);else selected.delete(value);financeColumnFilters[id]=[...selected];renderFinanceiroFiscal();}
 function toggleAllFinanceColumnFilter(index,checked){const view=FINANCE_VIEWS[financeiroView];financeColumnFilters[financeColumnId(index)]=checked?financeColumnValues(view,index):[];renderFinanceiroFiscal();}
 function financeVisibleEntries(){
-  return loggedUser?.type==='seller'?[['vendas',FINANCE_VIEWS.vendas]]:Object.entries(FINANCE_VIEWS);
+  return Object.entries(FINANCE_VIEWS).filter(([key])=>hasAccess(`financeiro.${key}`));
 }
 function financeTabsHtml(){
   return `<div class="finance-tabs">${financeVisibleEntries().map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
 }
 function switchFinanceView(key){
-  if(loggedUser?.type==='seller'&&key!=='vendas'){showToast('Acesso restrito à área financeira','err');return;}
+  if(!hasAccess(`financeiro.${key}`)){showAccessDenied();return;}
   // A troca de subaba usa somente o cache já baixado, sem consultar o MaxiProd.
   financeiroView=key;
   scheduleFinanceRender();
@@ -2516,10 +2743,7 @@ async function refreshFinanceiroFiscalAbaAtual(){
 // Atualiza todas as fontes únicas uma vez. As subabas de itens reutilizam a mesma
 // consulta, evitando cinco leituras idênticas do MaxiProd.
 async function refreshFinanceiroFiscal(){
-  if(!isMaster(loggedUser)){
-    if(loggedUser?.type==='seller')return;
-    return;
-  }
+  if(!isMaster(loggedUser)){showToast('Somente administradores mestres podem atualizar o MaxiProd.','err');return;}
   if(financeRefreshInProgress){showToast('A atualização compartilhada já está em andamento.');return;}
   financeRefreshInProgress=true;
   try{
@@ -2538,16 +2762,14 @@ async function refreshFinanceiroFiscal(){
     financeRefreshInProgress=false;
     hideLoading();
     renderFinanceiroFiscal();
+    if(document.getElementById('page-contabilidade')?.classList.contains('active'))renderAccountingPage();
   }
 }
 
 // Mantido apenas como referência de compatibilidade das revisões anteriores.
 // A interface usa a função compartilhada acima.
 async function refreshFinanceiroFiscalLegacy(){
-  if(!isMaster(loggedUser)){
-    if(loggedUser?.type==='seller')return refreshSalesMaxiprod();
-    return;
-  }
+  if(!isMaster(loggedUser)){showToast('Somente administradores mestres podem atualizar o MaxiProd.','err');return;}
   if(financeRefreshInProgress){showToast('A atualização completa já está em andamento.');return;}
   financeRefreshInProgress=true;
   // Pedidos de venda sao uma fonte auxiliar: usamos id/numero somente para
@@ -3237,8 +3459,7 @@ function exportFinanceCalendarPDF(kind,mode='curto'){
   const open=records.reduce((sum,row)=>sum+(row.aberto||0),0);
   const overdue=records.reduce((sum,row)=>sum+((isReceive?receberEstaAtrasado(row):pagarEstaAtrasado(row))?(row.aberto||0):0),0);
   const byDay={};records.forEach(row=>{const day=row.vencimento.getDate();(byDay[day]||=[]).push(row);});
-  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),pageW=297,left=10,right=10,contentW=277;
-  doc.setFillColor(255,255,255);doc.rect(0,0,pageW,210,'F');
+  const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),pageW=297,left=10,right=10,contentW=277;
   doc.setTextColor(28,28,28);doc.setFont('helvetica','bold');doc.setFontSize(16);
   doc.text(`CARTAMAC - ${isReceive?'Contas a receber':'Contas a pagar'}`,left,13);
   doc.setFontSize(11);doc.text(`Calendário de vencimentos - ${receberMesNome(month)} de ${year}`,left,20);
@@ -3263,7 +3484,7 @@ function exportFinanceCalendarPDF(kind,mode='curto'){
     if(items.length>maxItems){doc.setFont('helvetica','bold');doc.setFontSize(5);doc.setTextColor(200,168,75);doc.text(`+ ${items.length-maxItems} item(ns)`,x+2,y+cellH-2);}
   }
   doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(120,120,120);doc.text('Valores organizados pela data de vencimento.',left,205);doc.text('CARTAMAC',pageW-right,205,{align:'right'});
-  doc.save(`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${year}-${String(month+1).padStart(2,'0')}.pdf`);
+  cartamacPdfSave(doc,`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${year}-${String(month+1).padStart(2,'0')}.pdf`);
 }
 function exportFinancePeriodPDF(kind){
   const isReceive=kind==='receber';
@@ -3302,7 +3523,7 @@ function exportFinanceCalendarExpandedPDF(kind,year,month,records,options={}){
   const values=row=>isReceive
     ?[receberDataFormat(row.vencimento),receberDataFormat(row.emissao),row.descricao,row.cliente,row.parcela.numero,row.parcela.total,fmtBRL(row.negociacao),fmtBRL(row.valorParcela),fmtBRL(row.recebido),fmtBRL(row.aberto)]
     :[receberDataFormat(row.vencimento),receberDataFormat(row.emissao),row.descricao,row.fornecedor,row.referenteA,row.parcela.numero,row.parcela.total,fmtBRL(row.valorTitulo),fmtBRL(row.pago),fmtBRL(row.aberto)];
-  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),left=7,pageW=297,pageBottom=202;
+  const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),left=7,pageW=297,pageBottom=202;
   const drawHeader=(firstPage=false)=>{
     let y=firstPage?10:8;
     if(firstPage){
@@ -3335,7 +3556,7 @@ function exportFinanceCalendarExpandedPDF(kind,year,month,records,options={}){
     });y+=rowHeight;
   });
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`${options.footerLabel||'Relatório expandido'} · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
-  doc.save(options.filename||`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_Expandido_${year}-${String(month+1).padStart(2,'0')}.pdf`);
+  cartamacPdfSave(doc,options.filename||`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_Expandido_${year}-${String(month+1).padStart(2,'0')}.pdf`);
 }
 function renderContasAPagar(target){
   const rows=pagarRegistros();
@@ -3521,7 +3742,7 @@ function exportCashFlowPDF(){
   if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
   const selected=cashFlowMonthTotals(cashFlowSelectedMonth),data=getCashFlowData();
   const annual=Array.from({length:12},(_,month)=>cashFlowMonthTotals(monthKey(selected.year,month)));
-  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),left=12;
+  const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),left=12;
   doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text('CARTAMAC - Fluxo de Caixa Mensal',left,14);
   doc.setFontSize(10);doc.text(`Visão consolidada de ${selected.year}`,left,21);
   doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · mês selecionado: ${receberMesNome(selected.month)}`,left,26);
@@ -3536,13 +3757,13 @@ function exportCashFlowPDF(){
   const monthMovement=[{label:'Entradas',value:selected.entradas,color:'#42c75b'},{label:'Saídas',value:selected.saidas,color:'#ef4d55'},{label:'Previsto',value:selected.previsto,color:'#d4a017'}];
   const monthBars=[...monthMovement,{label:'Saldo final',value:selected.saldoProjetado,color:selected.saldoProjetado<0?'#ef4d55':'#4e8cff'}];
   const annualMovement=[{label:'Entradas no ano',value:annual.reduce((sum,row)=>sum+row.entradas,0),color:'#42c75b'},{label:'Saídas no ano',value:annual.reduce((sum,row)=>sum+row.saidas,0),color:'#ef4d55'},{label:'Previsto no ano',value:annual.reduce((sum,row)=>sum+row.previsto,0),color:'#d4a017'}];
-  doc.addPage();doc.setFillColor(255,255,255);doc.rect(0,0,297,210,'F');doc.setTextColor(28,28,28);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(`CARTAMAC - Gráficos do Fluxo de Caixa ${selected.year}`,left,13);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Mês selecionado: ${receberMesNome(selected.month)} · Percentuais calculados sobre entradas, saídas e previsto.`,left,19);
+  doc.addPage();doc.setTextColor(28,28,28);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(`CARTAMAC - Gráficos do Fluxo de Caixa ${selected.year}`,left,13);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Mês selecionado: ${receberMesNome(selected.month)} · Percentuais calculados sobre entradas, saídas e previsto.`,left,19);
   doc.addImage(cashFlowPdfBarImage(`Movimentação de ${receberMesNome(selected.month)}`,monthBars),'PNG',8,25,137,70);
   doc.addImage(cashFlowPdfPieImage(`Composição de ${receberMesNome(selected.month)}`,monthMovement),'PNG',152,25,137,70);
   doc.addImage(cashFlowPdfAnnualBarImage(`Comparativo mensal de ${selected.year}`,annual),'PNG',8,106,137,70);
   doc.addImage(cashFlowPdfPieImage(`Composição anual de ${selected.year}`,annualMovement),'PNG',152,106,137,70);
   doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(105,105,105);doc.text('Entradas: Contas a receber · Saídas: Contas a pagar · Previsto: Gantt de Custos.',left,202);
-  doc.save(`Fluxo_de_Caixa_${selected.year}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(doc,`Fluxo_de_Caixa_${selected.year}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 function renderCashFlowPage(container=document.getElementById('financeiroContent')){
   if(!container)return;
@@ -3591,7 +3812,7 @@ function renderFinanceiroFiscal(){
   <div class="finance-card-grid"><div class="finance-card"><b>${fmtBRL(totalReceber)}</b><span>A receber (amostra)</span></div><div class="finance-card"><b>${fmtBRL(totalPagar)}</b><span>A pagar (amostra)</span></div><div class="finance-card"><b>${fmtBRL(totalVendas)}</b><span>Vendas (amostra)</span></div><div class="finance-card"><b>${Object.values(data).reduce((n,d)=>n+(d?.items?.length||0),0)}</b><span>Registros consultados</span></div></div>
   ${financeTabsHtml()}
   <div class="finance-toolbar"><input id="financeSearch" class="search-input" value="${esc(search)}" oninput="renderFinanceiroFiscal()" placeholder="Filtrar ${esc(view.title.toLowerCase())}..."><span class="muted" style="font-size:12px;white-space:nowrap;">${rows.length} registro(s)</span></div>
-  <div class="finance-table-wrap">${rows.length?`<table class="finance-table"><thead><tr>${view.columns.map((column,index)=>{const values=financeColumnValues(view,index),selected=financeColumnFilters[financeColumnId(index)],allSelected=!Array.isArray(selected)||selected.length===values.length;return `<th><details class="finance-column-filter"><summary>${esc(column[0])} <span>▾</span></summary><div class="finance-filter-menu"><label><input type="checkbox" ${allSelected?'checked':''} onchange="toggleAllFinanceColumnFilter(${index},this.checked)"> Selecionar tudo</label>${values.slice(0,300).map(value=>`<label><input type="checkbox" value="${esc(value)}" ${(allSelected||selected.includes(value))?'checked':''} onchange="toggleFinanceColumnFilter(${index},this.value,this.checked)"> ${esc(value)}</label>`).join('')}${values.length>300?'<small>Exibidos os primeiros 300 valores.</small>':''}</div></details></th>`;}).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${view.columns.map(column=>{const val=financeCell(row,column);return `<td class="${financeIsMoney(column[0])&&val!=='—'?'money':''}">${esc(val)}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`:`<div class="finance-empty">${FINANCE_CACHE?.updatedAt?'Nenhum registro correspondente nesta categoria.':'Clique em “Atualizar MaxiProd” para trazer os dados desta área.'}</div>`}</div>`;
+  <div class="finance-table-wrap">${rows.length?`<table class="finance-table"><thead><tr>${view.columns.map((column,index)=>{const values=financeColumnValues(view,index),selected=financeColumnFilters[financeColumnId(index)],allSelected=!Array.isArray(selected)||selected.length===values.length;return `<th><details class="finance-column-filter"><summary>${esc(column[0])} <span>▾</span></summary><div class="finance-filter-menu"><label><input type="checkbox" ${allSelected?'checked':''} onchange="toggleAllFinanceColumnFilter(${index},this.checked)"> Selecionar tudo</label>${values.slice(0,300).map(value=>`<label><input type="checkbox" value="${esc(value)}" ${(allSelected||selected.includes(value))?'checked':''} onchange="toggleFinanceColumnFilter(${index},this.value,this.checked)"> ${esc(value)}</label>`).join('')}${values.length>300?'<small>Exibidos os primeiros 300 valores.</small>':''}</div></details></th>`;}).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${view.columns.map(column=>{const val=financeCell(row,column);return `<td class="${financeIsMoney(column[0])&&val!=='—'?'money':''}">${esc(val)}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`:`<div class="finance-empty">${FINANCE_CACHE?.updatedAt?'Nenhum registro correspondente nesta categoria.':maxiprodRefreshHint('Clique em “Atualizar MaxiProd” para trazer os dados desta área.')}</div>`}</div>`;
 }
 function getCostEntry(orderId){
   if(!DB.costsData)DB.costsData={};
@@ -3805,12 +4026,8 @@ function renderCostsContent(){
       ${!master?'<div class="readonly-notice" style="margin:0;"><span class="msi msi-sm">visibility</span> Modo visualização — somente mestres podem editar valores</div>':''}
     </div>`;
 
-  const subtabsHTML=`
-    <div class="cost-subtabs">
-      <button class="cost-subtab ${costsView==='orders'?'active':''}" onclick="switchCostsView('orders')"><span class="msi msi-sm">payments</span> Custos dos pedidos</button>
-      <button class="cost-subtab ${costsView==='closed'?'active':''}" onclick="switchCostsView('closed')"><span class="msi msi-sm">inventory_2</span> Projetos fechados</button>
-      <button class="cost-subtab ${costsView==='structure'?'active':''}" onclick="switchCostsView('structure')"><span class="msi msi-sm">account_tree</span> Estrutura multinível</button>
-    </div>`;
+  const costTabs=[['orders','payments','Custos dos pedidos'],['closed','inventory_2','Projetos fechados'],['structure','account_tree','Estrutura multinível']].filter(([view])=>hasAccess(`custos.${view}`));
+  const subtabsHTML=`<div class="cost-subtabs">${costTabs.map(([view,icon,label])=>`<button class="cost-subtab ${costsView===view?'active':''}" onclick="switchCostsView('${view}')"><span class="msi msi-sm">${icon}</span> ${label}</button>`).join('')}</div>`;
 
   const visibleOrders=ORDERS.filter(o=>costsView==='closed'?isClosedCostEntry(getCostEntry(o.id)):!isClosedCostEntry(getCostEntry(o.id)));
   const cardsHTML=visibleOrders.length
@@ -4172,6 +4389,7 @@ async function consultMaxiprodCost(orderId,options={}){
   }
 }
 function switchCostsView(view){
+  if(!hasAccess(`custos.${view}`)){showAccessDenied();return;}
   costsView=['structure','closed'].includes(view)?view:'orders';
   selectedStructureOrderId=null;
   renderCostsContent();
@@ -4360,14 +4578,21 @@ function exportCostStructurePDF(orderId){
   const report=buildStructureReportData(orderId), js=window.jspdf?.jsPDF;
   if(!report){showToast('OP não encontrada.','err');return;}
   if(!js){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
-  const pdf=new js({unit:'mm',format:'a4'});let y=16;
-  const line=(text,size=8,bold=false)=>{if(y>280){pdf.addPage();y=16;}pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(size);const lines=pdf.splitTextToSize(String(text),185);pdf.text(lines,12,y);y+=lines.length*(size*.48+1.4)+1.5;};
-  line('CARTAMAC — Estrutura Multinível',15,true);line(`${report.order.code||report.order.op||'—'} — ${report.order.name||'Equipamento'}`,11,true);line(`Código MaxiProd: ${report.mp.itemCode||'—'} · Emitido em ${new Date().toLocaleString('pt-BR')}`);y+=2;
-  line(`TOTAL DA ESTRUTURA MULTINÍVEL: ${fmtBRL(report.totals.estruturaTotal)}`,10,true);line(`TOTAL INSUMOS: ${fmtBRL(report.totals.insumosTotal)}`,10,true);line(`TOTAL OPERAÇÕES: ${fmtBRL(report.totals.operacoesTotal)}`,10,true);line(`TOTAL DA OP: ${fmtBRL(report.totals.total)}`,11,true);y+=3;
-  line('ESTRUTURA MULTINÍVEL',11,true);report.rows.forEach(r=>line(`${'  '.repeat(Math.max(0,r.nivel-1))}${r.codigo} — ${r.descricao} | ${r.quantidade} ${r.unidade} | ${r.preco==null?'—':fmtBRL(r.preco)} | ${fmtBRL(r.total)}`));
-  y+=2;line('INSUMOS',11,true);report.insumos.forEach(r=>line(`${r.codigo||'—'} — ${r.descricao||'—'} | Qtd.: ${r.quantidadeBaixada||0} | Unit.: ${fmtBRL(r.valorUnitario)} | Total: ${fmtBRL(r.valorTotal)}`));
-  y+=2;line('OPERAÇÕES',11,true);report.operacoes.forEach(r=>line(`${r.descricao} — ${r.estacao} | ${fmtStructureNumber(r.horas)} h | ${fmtBRL(r.valorHora)}/h | ${fmtBRL(r.total)}`));
-  pdf.save(`${safeReportFileName(`Estrutura Multinivel - ${report.order.code||report.order.op||'OP'} — ${report.order.name||'Equipamento'}`)}.pdf`);
+  const pdf=cartamacPdfInit(new js({unit:'mm',format:'a4'})),left=12,tableW=186,pageBottom=282;let y=16;
+  pdf.setFont('helvetica','bold');pdf.setFontSize(15);pdf.setTextColor(...CARTAMAC_PDF_THEME.text);pdf.text('Estrutura Multinível',left,y);y+=6;
+  pdf.setFontSize(10);pdf.text(`${report.order.code||report.order.op||'—'} — ${report.order.name||'Equipamento'}`,left,y,{maxWidth:tableW});y+=5;
+  pdf.setFont('helvetica','normal');pdf.setFontSize(7);pdf.setTextColor(...CARTAMAC_PDF_THEME.muted);pdf.text(`Código MaxiProd: ${report.mp.itemCode||'—'} · Emitido em ${new Date().toLocaleString('pt-BR')}`,left,y);y+=7;
+  const cards=[['ESTRUTURA',report.totals.estruturaTotal],['INSUMOS',report.totals.insumosTotal],['OPERAÇÕES',report.totals.operacoesTotal],['TOTAL DA OP',report.totals.total]],gap=2,cardW=(tableW-gap*3)/4;
+  cards.forEach((card,index)=>{const x=left+index*(cardW+gap);pdf.setFillColor(246,246,246);pdf.setDrawColor(...CARTAMAC_PDF_THEME.grid);pdf.roundedRect(x,y,cardW,14,1.2,1.2,'FD');pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);pdf.setTextColor(...CARTAMAC_PDF_THEME.muted);pdf.text(card[0],x+2.5,y+4.5);pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(index===3?170:40,index===3?120:40,index===3?22:40);pdf.text(fmtBRL(card[1]),x+2.5,y+10.5);});y+=20;
+  const drawTable=(heading,headers,widths,rows,alignRight=[])=>{
+    const drawSection=continuation=>{if(y+17>pageBottom){pdf.addPage();y=11;}pdf.setFillColor(239,239,239);pdf.setDrawColor(...CARTAMAC_PDF_THEME.grid);pdf.rect(left,y,tableW,8,'FD');pdf.setFillColor(...CARTAMAC_PDF_THEME.gold);pdf.rect(left,y,2,8,'F');pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(...CARTAMAC_PDF_THEME.text);pdf.text(`${heading}${continuation?' · CONTINUAÇÃO':''}`,left+4,y+5.3);y+=8;pdf.setFillColor(...CARTAMAC_PDF_THEME.tableHeader);pdf.rect(left,y,tableW,8,'F');pdf.setTextColor(255,255,255);pdf.setFontSize(5.8);let x=left;headers.forEach((header,index)=>{pdf.text(header,alignRight.includes(index)?x+widths[index]-2:x+2,y+5.2,{align:alignRight.includes(index)?'right':'left',maxWidth:widths[index]-4});x+=widths[index];});y+=8;};
+    drawSection(false);
+    (rows.length?rows:[['—','Nenhum registro disponível']]).forEach((values,rowIndex)=>{const lineSets=values.map((value,index)=>pdf.splitTextToSize(String(value??'—'),(widths[index]||widths.at(-1))-4)),rowHeight=Math.max(7,...lineSets.map(set=>set.length*3.3+3));if(y+rowHeight>pageBottom){pdf.addPage();y=11;drawSection(true);}if(rowIndex%2===0){pdf.setFillColor(...CARTAMAC_PDF_THEME.rowAlternate);pdf.rect(left,y,tableW,rowHeight,'F');}pdf.setDrawColor(...CARTAMAC_PDF_THEME.grid);pdf.line(left,y+rowHeight,left+tableW,y+rowHeight);pdf.setFont('helvetica','normal');pdf.setFontSize(6.4);pdf.setTextColor(...CARTAMAC_PDF_THEME.text);let x=left;lineSets.forEach((set,index)=>{const right=alignRight.includes(index);pdf.setFont('helvetica',right?'bold':'normal');pdf.text(set,right?x+widths[index]-2:x+2,y+4.5,{align:right?'right':'left',maxWidth:widths[index]-4});x+=widths[index];});y+=rowHeight;});y+=5;
+  };
+  drawTable('ESTRUTURA MULTINÍVEL',['NÍVEL','CÓDIGO','ITEM / DESCRIÇÃO','UNID.','QTD.','TOTAL'],[13,29,72,15,21,36],report.rows.map(r=>[r.nivel,r.codigo,`${'  '.repeat(Math.max(0,r.nivel-1))}${r.descricao}`,r.unidade,fmtStructureNumber(r.quantidade),fmtBRL(r.total)]),[4,5]);
+  drawTable('INSUMOS',['CÓDIGO','DESCRIÇÃO','QTD. BAIXADA','VALOR UNIT.','TOTAL'],[29,77,25,27,28],report.insumos.map(r=>[r.codigo||'—',r.descricao||'—',fmtStructureNumber(r.quantidadeBaixada),fmtBRL(r.valorUnitario),fmtBRL(r.valorTotal)]),[2,3,4]);
+  drawTable('OPERAÇÕES',['DESCRIÇÃO','ESTAÇÃO','HORAS','R$/H','TOTAL'],[65,45,22,26,28],report.operacoes.map(r=>[r.descricao,r.estacao,fmtStructureNumber(r.horas),fmtBRL(r.valorHora),fmtBRL(r.total)]),[2,3,4]);
+  cartamacPdfSave(pdf,`${safeReportFileName(`Estrutura Multinivel - ${report.order.code||report.order.op||'OP'} — ${report.order.name||'Equipamento'}`)}.pdf`);
 }
 function updateCostMonth(orderId,key,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
@@ -4745,7 +4970,7 @@ function renderAdminsPanel(){
     <div class="user-item ${selectedAdminId===a.id?'active':''}" onclick="selectAdmin('${a.id}')">
       <div class="user-av" style="background:#555;">${getInit(a.name)}</div>
       <div class="user-info"><div class="uname">${a.name}</div><div class="uemail">${a.email}</div></div>
-       <div class="user-badge-wrap"><span class="${roleBadgeClass(a.role)}">${roleLabel(a.role,true)}</span></div>
+       <div class="user-badge-wrap"><span class="${(a.role==='master'||MASTER_EMAILS.includes(a.email))?'role-badge-master':'sector-badge'}">${(a.role==='master'||MASTER_EMAILS.includes(a.email))?'MESTRE':escapeHTML(sectorLabel(a))}</span></div>
     </div>`).join('');
   document.getElementById('costsSettingsPanel').style.display=isMaster(loggedUser)?'':'none';
 }
@@ -4781,12 +5006,12 @@ function selectAdmin(id){
   document.getElementById('adminDetailPanel').innerHTML=`<div class="user-detail">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
       <div class="user-av" style="background:#555;width:50px;height:50px;font-size:18px;">${getInit(a.name)}</div>
-      <div><div style="font-size:18px;font-weight:700;">${a.name}</div><span class="${isMU?'role-badge-master':roleBadgeClass(a.role)}">${isMU?'ADMINISTRADOR MESTRE':roleLabel(a.role)}</span></div>
+      <div><div style="font-size:18px;font-weight:700;">${a.name}</div><span class="${isMU?'role-badge-master':'sector-badge'}">${isMU?'ADMINISTRADOR MESTRE':escapeHTML(sectorLabel(a))}</span></div>
     </div>
     ${!canManage?(isSelf?'<div class="readonly-notice"><span class="msi msi-sm">lock</span> Você pode alterar somente a sua própria senha.</div>':'<div class="readonly-notice"><span class="msi msi-sm">visibility</span> Somente o próprio administrador pode alterar sua senha.</div>'):''}
     <div class="form-group"><label>Nome</label><input type="text" id="ea-name" value="${a.name}" ${!canEditIdentity?'disabled':''}></div>
     <div class="form-group"><label>E-mail</label><input type="email" id="ea-email" value="${a.email}" ${!canEditIdentity?'disabled':''}></div>
-    ${canManage&&!isMU?`<div class="form-group"><label>Nível de acesso</label><select id="ea-role"><option value="viewer" ${a.role==='viewer'?'selected':''}>Visualizador</option><option value="seller" ${a.role==='seller'?'selected':''}>Vendedor</option><option value="engineering" ${a.role==='engineering'?'selected':''}>Engenharia</option><option value="master" ${a.role==='master'?'selected':''}>Mestre</option></select></div>`:''}
+    ${canManage&&!isMU?`<div class="form-group"><label>Setor</label><input type="text" id="ea-sector" value="${escapeHTML(sectorLabel(a))}" placeholder="Ex: Engenharia, Comercial ou Financeiro"></div>${accessEditorHTML('edit-admin',adminPermissions(a))}`:`<div class="form-group"><label>Setor</label><input type="text" value="${escapeHTML(sectorLabel(a))}" disabled></div>`}
     <div class="form-group"><label>Nova Senha</label><div class="password-wrap"><input type="password" id="ea-pass" placeholder="••••••••" ${!canEditPassword?'disabled':''}><button type="button" class="password-toggle" onclick="togglePassword('ea-pass',this)" title="Mostrar senha" ${!canEditPassword?'disabled':''}><span class="msi msi-sm">visibility</span></button></div></div>
     <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
       ${canEditPassword?`<button class="btn btn-gold btn-sm" onclick="saveAdminChanges('${id}')"><span class="msi msi-sm">save</span> Salvar</button>`:''}
@@ -4809,7 +5034,13 @@ function saveAdminChanges(id){
   const email=document.getElementById('ea-email').value.trim();
   if(!name||!email){showToast('Nome e e-mail obrigatórios','err');return;}
   a.name=name;a.email=email;
-  if(!MASTER_EMAILS.includes(a.email)&&document.getElementById('ea-role'))a.role=document.getElementById('ea-role').value;
+  if(!MASTER_EMAILS.includes(a.email)&&a.role!=='master'){
+    const sector=document.getElementById('ea-sector')?.value.trim();
+    if(!sector){showToast('Informe o setor do funcionário','err');return;}
+    const permissions=readAccessEditor('edit-admin');
+    if(!Object.values(permissions).some(Boolean)){showToast('Libere pelo menos uma aba para este funcionário','err');return;}
+    a.sector=sector;a.permissions=Object.keys(permissions).filter(key=>permissions[key]);a.role='custom';
+  }
   if(pass.length>=6)a.pass=pass;
   else if(pass.length>0){showToast('Senha mínimo 6 caracteres','err');return;}
   persist();document.getElementById('adminNameBadge').textContent=loggedUser.ref.name;renderAdminsPanel();showToast('Administrador atualizado!');
@@ -4824,19 +5055,21 @@ function deleteAdmin(id){
   document.getElementById('adminDetailPanel').innerHTML='<div class="user-detail"><div class="empty-state"><div class="ei"><span class="msi msi-xl">admin_panel_settings</span></div><h3>Selecione um administrador</h3></div></div>';
   renderAdminsPanel();showToast('Administrador excluído');
 }
-function openAddAdminModal(){if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}document.getElementById('addAdminModal').classList.add('open');}
+function openAddAdminModal(){if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}document.getElementById('newAdminPermissions').innerHTML=accessEditorHTML('new-admin',{});document.getElementById('addAdminModal').classList.add('open');}
 function saveNewAdmin(){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
   const name=document.getElementById('naName').value.trim();
   const email=document.getElementById('naEmail').value.trim();
   const pass=document.getElementById('naPass').value;
-  const role=document.getElementById('naRole').value;
-  if(!name||!email||!pass){showToast('Preencha todos os campos','err');return;}
+  const sector=document.getElementById('naSector').value.trim();
+  const permissions=readAccessEditor('new-admin');
+  if(!name||!email||!pass||!sector){showToast('Preencha todos os campos','err');return;}
+  if(!Object.values(permissions).some(Boolean)){showToast('Libere pelo menos uma aba para este funcionário','err');return;}
   if(pass.length<6){showToast('Senha mínimo 6 caracteres','err');return;}
   if(DB.admins.find(a=>a.email===email)||DB.clients.find(c=>c.email===email)){showToast('E-mail já cadastrado','err');return;}
-  DB.admins.push({id:'admin_'+Date.now(),name,email,pass,role});
+  DB.admins.push({id:'admin_'+Date.now(),name,email,pass,role:'custom',sector,permissions:Object.keys(permissions).filter(key=>permissions[key])});
   persist();closeModal('addAdminModal');renderAdminsPanel();showToast(`Admin "${name}" criado!`);
-  ['naName','naEmail','naPass'].forEach(i=>document.getElementById(i).value='');
+  ['naName','naEmail','naPass','naSector'].forEach(i=>document.getElementById(i).value='');
 }
 
 // ─────────── CLIENT SCREEN ───────────
@@ -4853,7 +5086,6 @@ function renderClientScreen(){
     document.getElementById('clientUpdateBadge').style.display='none';
   }
   renderClientOrders();
-  renderClientGantt();
 }
 function switchClientTab(id,btn){
   document.querySelectorAll('.client-page').forEach(p=>p.classList.remove('active'));
@@ -4872,21 +5104,45 @@ function renderClientStats(active,archived){
   ].join('');
   el.innerHTML=cards;
 }
+function clientDepartmentProgress(department){
+  const direct=Number(department?.pct);
+  if(Number.isFinite(direct))return Math.max(0,Math.min(100,Math.round(direct)));
+  const tasks=(department?.tasks||[]).filter(task=>!isOrderHeaderName(task.name));
+  if(!tasks.length)return 0;
+  return Math.max(0,Math.min(100,Math.round(tasks.reduce((sum,task)=>sum+(Number(task.pct)||0),0)/tasks.length)));
+}
+function clientCurrentDepartment(order,departments){
+  if(order?._archived||Number(order?.pct)>=100||departments.length&&departments.every(item=>item.pct>=100))return null;
+  const active=departments.find(item=>(item.department.tasks||[]).some(task=>{const pct=Number(task.pct)||0;return pct>0&&pct<100;}));
+  return active||departments.find(item=>item.pct>0&&item.pct<100)||departments.find(item=>item.pct<100)||null;
+}
+function buildClientProgressCard(order){
+  const departments=(order.depts||[]).map((department,index)=>({department,index,pct:clientDepartmentProgress(department)}));
+  const current=clientCurrentDepartment(order,departments),overall=Math.max(0,Math.min(100,Math.round(Number(order.pct)||0)));
+  const fk=fileKey(order.id),files=FILE_STORE[fk]||[];
+  const docs=files.length?`<div class="docs-grid">${files.map((file,index)=>`<div class="doc-card" onclick="downloadOrderFile('${fk}',${index})"><div class="dc-icon">${fileIcon(file.name)}</div><div class="dc-name" title="${escapeHTML(file.name)}">${escapeHTML(file.name)}</div><div class="dc-size">${fmtSize(file.size)}</div><div class="dc-dl"><span class="msi msi-sm">download</span> Baixar</div></div>`).join('')}</div>`:'<div class="no-docs">Nenhum documento anexado para este equipamento.</div>';
+  const completed=!current&&(order._archived||overall>=100);
+  const colors=['#26b36a','#8f3fb0','#1b9ed8','#d39b19','#c06f42','#4c75c5','#cf4d63','#6b9c3f','#8a6ec4','#2aafa5'];
+  const count=Math.max(1,departments.length),gap=Math.min(2.4,10/count),segment=(100-gap*count)/count;
+  const arcs=departments.map((item,index)=>{const start=index*(segment+gap),filled=segment*item.pct/100,color=colors[index%colors.length];return `<circle class="stage-track" cx="100" cy="100" r="78" pathLength="100" stroke-dasharray="${segment.toFixed(3)} ${(100-segment).toFixed(3)}" stroke-dashoffset="${(-start).toFixed(3)}"></circle><circle class="stage-progress" cx="100" cy="100" r="78" pathLength="100" stroke="${color}" stroke-dasharray="${filled.toFixed(3)} ${(100-filled).toFixed(3)}" stroke-dashoffset="${(-start).toFixed(3)}"></circle>`;}).join('');
+  const legend=departments.map((item,index)=>{const isCurrent=current===item,color=colors[index%colors.length],state=item.pct>=100?'Concluído':isCurrent?'Estágio atual':item.pct>0?'Em andamento':'Aguardando';return `<div class="client-stage-legend-item ${isCurrent?'current':''}"><i class="client-stage-color" style="background:${color}"></i><div class="client-stage-copy"><b title="${escapeHTML(item.department.name)}">${escapeHTML(item.department.name||`Setor ${index+1}`)}</b><small class="${item.pct>=100?'done':isCurrent?'current':''}">${state}</small></div><span class="client-stage-pct">${item.pct}%</span></div>`;}).join('');
+  const currentLabel=completed?'Concluído':escapeHTML(current?.department?.name||'Aguardando início');
+  const overview=departments.length?`<div class="client-progress-overview"><div class="client-main-donut"><svg viewBox="0 0 200 200" role="img" aria-label="Progresso geral ${overall}% por setor">${arcs}</svg><div class="client-main-donut-center"><b>${overall}%</b><span>Progresso geral</span><strong>${completed?'Pedido concluído':`Atual: ${currentLabel}`}</strong></div></div><div class="client-stage-legend">${legend}</div></div>`:'<div class="no-docs" style="margin:20px;">Os setores deste pedido ainda não foram carregados.</div>';
+  return `<article class="client-progress-card ${completed?'archived':''}"><div class="client-progress-head"><span class="client-progress-code">${escapeHTML(order.code||'—')}</span><div class="client-progress-title"><h3>${escapeHTML(order.name||'Equipamento')}</h3>${order.op&&order.op!==order.code?`<p>OP: ${escapeHTML(order.op)}</p>`:''}</div></div>${overview}<div class="client-progress-docs"><div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docs}</div></div></article>`;
+}
 function renderClientOrders(){
   const c=loggedUser.ref;
   const active=(c.orders||[]).map(i=>ORDERS[i]).filter(Boolean);
-  const archived=(c.archivedOrders||[]).map(oid=>{const a=DB.archivedOrdersData[oid];return a?{...a,_archived:true}:null;}).filter(Boolean);
-  const all=[...active,...archived];
-  renderClientStats(active,archived);
-  document.getElementById('clientOrdersList').innerHTML=all.length
-    ?all.map(o=>buildOrderCard(o,true)).join('')
-    :'<div class="empty-state"><div class="ei"><span class="msi msi-xl">assignment</span></div><h3>Nenhum pedido vinculado</h3><p>Entre em contato com a Cartamac</p></div>';
+  const archived=(c.archivedOrders||[]).map(oid=>{const item=DB.archivedOrdersData[oid];return item?{...item,_archived:true}:null;}).filter(Boolean);
+  const all=[...active,...archived];renderClientStats(active,archived);
+  document.getElementById('clientOrdersList').innerHTML=all.length?`<div class="client-progress-list">${all.map(buildClientProgressCard).join('')}</div>`:'<div class="empty-state"><div class="ei"><span class="msi msi-xl">assignment</span></div><h3>Nenhum pedido vinculado</h3><p>Entre em contato com a Cartamac</p></div>';
 }
 function renderClientGantt(){
   const c=loggedUser.ref;
   const orders=(c.orders||[]).map(i=>ORDERS[i]).filter(Boolean);
+  const target=document.getElementById('clientGanttContainer');if(!target)return;
   if(!orders.length){
-    document.getElementById('clientGanttContainer').innerHTML='<div class="empty-state"><div class="ei"><span class="msi msi-xl">bar_chart</span></div><h3>Nenhum pedido ativo vinculado</h3></div>';
+    target.innerHTML='<div class="empty-state"><div class="ei"><span class="msi msi-xl">bar_chart</span></div><h3>Nenhum pedido ativo vinculado</h3></div>';
     return;
   }
   buildGantt(orders,'clientGanttContainer');
@@ -4905,7 +5161,7 @@ let SIM_LAST_RESULT=null,simulatorSaveTimer=null;
 function simDateISO(date){return date.toISOString().slice(0,10);}
 function simAddDays(date,days){const d=new Date(date);d.setDate(d.getDate()+Math.max(1,Number(days)||1)-1);return d;}
 function simFmtDate(date){return date.toLocaleDateString('pt-BR');}
-function canUseSimulator(){return isMaster(loggedUser)||loggedUser?.type==='seller';}
+function canUseSimulator(){return hasAccess('simulador');}
 function renderSimulator(){
   if(!canUseSimulator())return;
   const draft=DB.simulatorDraft||{equipment:'',durations:{}};
@@ -4959,21 +5215,25 @@ function runSimulation(){
 function exportSimulationPDF(){
   if(!SIM_LAST_RESULT){showToast('Calcule a simulação antes de exportar.','err');return;}
   if(!window.jspdf?.jsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
-  const {jsPDF}=window.jspdf,report=SIM_LAST_RESULT,doc=new jsPDF({unit:'mm',format:'a4'});
-  let y=18;
-  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text('CARTAMAC - Simulação de Cronograma',14,y);y+=9;
-  doc.setFont('helvetica','normal');doc.setFontSize(10);
-  const details=[`Equipamento: ${report.equipment}`,`Gerado em: ${new Date(report.generatedAt).toLocaleString('pt-BR')}`,`Entrega estimada: ${simFmtDate(new Date(report.delivery))}`,`Prazo total até entrega: ${report.totalDays} dia(s)`,`Etapas ajustadas pela disponibilidade: ${report.shifts}`];
-  details.forEach(text=>{doc.text(text,14,y);y+=6;});y+=3;
-  const header=()=>{doc.setFont('helvetica','bold');doc.setFontSize(8);doc.text('ÁREA',14,y);doc.text('ETAPA',45,y);doc.text('INÍCIO',108,y);doc.text('FINAL',139,y);doc.text('DISPONIBILIDADE',166,y);y+=4;doc.line(14,y,196,y);y+=5;doc.setFont('helvetica','normal');};
-  header();
-  report.scheduled.forEach(item=>{
-    const stageLines=doc.splitTextToSize(String(item.name),58),rowHeight=Math.max(5,stageLines.length*4);
-    if(y+rowHeight>280){doc.addPage();y=18;header();}
-    doc.setFontSize(8);doc.text(String(item.dept),14,y);doc.text(stageLines,45,y);doc.text(simFmtDate(new Date(item.start)),108,y);doc.text(simFmtDate(new Date(item.end)),139,y);doc.text(item.shifted?'Ajustada':'Disponível',166,y);y+=rowHeight;
+  const {jsPDF}=window.jspdf,report=SIM_LAST_RESULT,doc=cartamacPdfInit(new jsPDF({unit:'mm',format:'a4'}));
+  const left=14,tableW=182,pageBottom=282,widths=[28,61,29,29,35],headers=['ÁREA','ETAPA','INÍCIO','FINAL','DISPONIBILIDADE'];let y=16;
+  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(...CARTAMAC_PDF_THEME.text);doc.text('Simulação de Cronograma',left,y);y+=6;
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...CARTAMAC_PDF_THEME.muted);doc.text(`Gerado em ${new Date(report.generatedAt).toLocaleString('pt-BR')}`,left,y);y+=7;
+  const cards=[['EQUIPAMENTO',report.equipment],['ENTREGA ESTIMADA',simFmtDate(new Date(report.delivery))],['PRAZO TOTAL',`${report.totalDays} dia(s)`],['ETAPAS AJUSTADAS',String(report.shifts)]];
+  const gap=2,cardW=(tableW-gap*3)/4;
+  cards.forEach((card,index)=>{const x=left+index*(cardW+gap);doc.setFillColor(246,246,246);doc.setDrawColor(...CARTAMAC_PDF_THEME.grid);doc.roundedRect(x,y,cardW,15,1.2,1.2,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.4);doc.setTextColor(...CARTAMAC_PDF_THEME.muted);doc.text(card[0],x+2.5,y+5);doc.setFont('helvetica','bold');doc.setFontSize(index===0?7:8);doc.setTextColor(...CARTAMAC_PDF_THEME.text);doc.text(doc.splitTextToSize(String(card[1]),cardW-5).slice(0,2),x+2.5,y+10);});y+=21;
+  const drawHeader=()=>{doc.setFillColor(...CARTAMAC_PDF_THEME.tableHeader);doc.rect(left,y,tableW,8,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(6.5);let x=left;headers.forEach((label,index)=>{doc.text(label,x+2,y+5.2,{maxWidth:widths[index]-4});x+=widths[index];});y+=8;};
+  drawHeader();
+  report.scheduled.forEach((item,index)=>{
+    const values=[item.dept,item.name,simFmtDate(new Date(item.start)),simFmtDate(new Date(item.end)),item.shifted?'Ajustada':'Disponível'];
+    const lines=values.map((value,column)=>doc.splitTextToSize(String(value??'—'),widths[column]-4)),rowHeight=Math.max(7,...lines.map(set=>set.length*3.5+3));
+    if(y+rowHeight>pageBottom){doc.addPage();y=11;drawHeader();}
+    if(index%2===0){doc.setFillColor(...CARTAMAC_PDF_THEME.rowAlternate);doc.rect(left,y,tableW,rowHeight,'F');}
+    doc.setDrawColor(...CARTAMAC_PDF_THEME.grid);doc.line(left,y+rowHeight,left+tableW,y+rowHeight);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...CARTAMAC_PDF_THEME.text);
+    let x=left;lines.forEach((set,column)=>{doc.setFont('helvetica',column===4?'bold':'normal');if(column===4&&item.shifted)doc.setTextColor(190,105,20);else doc.setTextColor(...CARTAMAC_PDF_THEME.text);doc.text(set,x+2,y+4.8,{maxWidth:widths[column]-4});x+=widths[column];});y+=rowHeight;
   });
   const safeName=(report.equipment||'simulacao').replace(/[\\/:*?"<>|]/g,'-').slice(0,45);
-  doc.save(`relatorio-simulacao-${safeName}.pdf`);
+  cartamacPdfSave(doc,`relatorio-simulacao-${safeName}.pdf`);
 }
 
 // ─────────── PEÇAS DE REPOSIÇÃO ───────────
@@ -4991,6 +5251,7 @@ function parseBRNumber(value){
 }
 function priceInputSum(selector){return Array.from(document.querySelectorAll(selector)).reduce((total,input)=>total+parseBRNumber(input.value),0);}
 function switchPartsView(view){
+  if(!hasAccess(`pecas.${view}`)){showAccessDenied();return;}
   const catalog=document.getElementById('partsCatalog'),calculator=document.getElementById('partsPriceCalculator');
   if(!catalog||!calculator)return;
   const price=view==='price';
@@ -5032,13 +5293,13 @@ function getPartsPriceReportData(){
 function exportPartsPriceReport(){
   const report=getPartsPriceReportData(),js=window.jspdf?.jsPDF;
   if(!js){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
-  const pdf=new js({unit:'mm',format:'a4'});let y=16;
+  const pdf=cartamacPdfInit(new js({unit:'mm',format:'a4'}));let y=16;
   const line=(text,size=9,bold=false)=>{if(y>280){pdf.addPage();y=16;}pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(size);const lines=pdf.splitTextToSize(String(text),185);pdf.text(lines,12,y);y+=lines.length*(size*.5+1.5)+2;};
   const pct=value=>`${Number(value||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
   // Relatório em tabelas: impressão mais limpa para envio comercial.
-  const premium=new js({unit:'mm',format:'a4'}),gold=[197,161,50],dark=[35,35,35],light=[246,246,246];let py=15;
+  const premium=cartamacPdfInit(new js({unit:'mm',format:'a4'})),gold=[197,161,50],dark=[35,35,35],light=[246,246,246];let py=15;
   const nextPage=()=>{premium.addPage();py=15;};
-  const header=text=>{if(py>266)nextPage();premium.setFillColor(...dark);premium.rect(12,py,186,8,'F');premium.setTextColor(...gold);premium.setFont('helvetica','bold');premium.setFontSize(10);premium.text(text,16,py+5.3);py+=10;};
+  const header=text=>{if(py>266)nextPage();premium.setFillColor(...dark);premium.rect(12,py,186,8,'F');premium.setFillColor(...gold);premium.rect(12,py,2,8,'F');premium.setTextColor(255,255,255);premium.setFont('helvetica','bold');premium.setFontSize(9);premium.text(text,16,py+5.3);py+=10;};
   const table=(heading,items)=>{header(heading);items.forEach((item,index)=>{if(py>274)nextPage(),header(`${heading} (continuação)`);premium.setFillColor(...(index%2?[250,250,250]:light));premium.rect(12,py,186,7,'F');premium.setDrawColor(220,220,220);premium.rect(12,py,186,7,'S');premium.setTextColor(35,35,35);premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(String(item[0]),16,py+4.7);premium.setFont('helvetica','bold');premium.text(String(item[1]),190,py+4.7,{align:'right'});py+=7;});py+=3;};
   premium.setFillColor(...dark);premium.rect(0,0,210,36,'F');premium.setTextColor(...gold);premium.setFont('helvetica','bold');premium.setFontSize(17);premium.text('CARTAMAC',12,16);premium.setFontSize(12);premium.setTextColor(255,255,255);premium.text('CUSTO / FORMAÇÃO DE PREÇO',12,24);premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(report.name,12,31);py=44;
   table('DADOS PRINCIPAIS',[['Custo do equipamento',fmtPartsCost(report.cost)],['Margem de desconto',pct(report.discount)],['Markup calculado',pct(report.markup)],['Tributos sem IPI',pct(report.taxSum)],['IPI',pct(report.ipi)]]);
@@ -5047,7 +5308,7 @@ function exportPartsPriceReport(){
   table('IMPOSTOS',report.taxes.map(x=>[x.nome,pct(x.valor)]).concat([['IPI',pct(report.ipi)]]));
   table('RESUMO PREÇO DE VENDA',[['Preço de venda',fmtPartsCost(report.sale)],['Preço de venda com IPI',fmtPartsCost(report.saleWithIpi)],['Preço com margem de desconto',fmtPartsCost(report.discounted)],['Preço com desconto e IPI',fmtPartsCost(report.discountedWithIpi)],['Preço com margem sem imposto',fmtPartsCost(report.withoutTax)]]);
   premium.setTextColor(100,100,100);premium.setFont('helvetica','normal');premium.setFontSize(7);premium.text(`Emitido em ${new Date().toLocaleString('pt-BR')}`,12,291);
-  premium.save(`${safeReportFileName(`Custo - ${report.name}`)}.pdf`);
+  cartamacPdfSave(premium,`${safeReportFileName(`Custo - ${report.name}`)}.pdf`);
   return;
   line('CARTAMAC — Custo / Formação de preço',15,true);line(report.name,12,true);line(`Emitido em ${new Date().toLocaleString('pt-BR')}`);y+=2;
   line(`Custo do equipamento: ${fmtPartsCost(report.cost)}`,10,true);line(`Margem de desconto: ${pct(report.discount)}`);line(`Markup calculado do equipamento: ${pct(report.markup)}`,10,true);line(`Tributos sem IPI: ${pct(report.taxSum)} | IPI: ${pct(report.ipi)}`);y+=2;
@@ -5055,7 +5316,7 @@ function exportPartsPriceReport(){
   line('ÍNDICES COMERCIAIS',11,true);report.commercial.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));
   line('IMPOSTOS',11,true);report.taxes.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));line(`IPI: ${pct(report.ipi)}`);y+=2;
   line('RESUMO PREÇO DE VENDA',11,true);line(`Preço de venda: ${fmtPartsCost(report.sale)} | Com IPI: ${fmtPartsCost(report.saleWithIpi)}`,10,true);line(`Preço com margem de desconto: ${fmtPartsCost(report.discounted)} | Com IPI: ${fmtPartsCost(report.discountedWithIpi)}`,10,true);line(`Preço com margem sem imposto: ${fmtPartsCost(report.withoutTax)}`,10,true);
-  pdf.save(`${safeReportFileName(`Custo - ${report.name}`)}.pdf`);
+  cartamacPdfSave(pdf,`${safeReportFileName(`Custo - ${report.name}`)}.pdf`);
 }
 function fmtPartsDate(value){
   if(!value)return '—';
@@ -5077,7 +5338,7 @@ function togglePartsSection(key){
   renderPartsPage();
 }
 function renderPartsPage(){
-  const isAllowed=isMaster(loggedUser)||loggedUser?.type==='seller';
+  const isAllowed=hasAnyAccess('pecas');
   if(!isAllowed)return;
   const importer=document.getElementById('partsImportBox');
   if(importer)importer.style.display=isMaster(loggedUser)?'':'none';
@@ -5395,16 +5656,18 @@ function macroDeadlineClass(r){const d=daysDiff(r.proposedAt);return d<0?'bad':d
 function macroStageMarkup(r,g,disabled){return `<div class="macro-block ${g.id}"><div class="macro-block-title">${g.name} — data e % manual</div><div class="macro-stage-grid">${g.stages.map(s=>{const p=r.phases[g.id][s];return `<div class="macro-stage"><div class="macro-stage-name">${s}</div><div class="macro-stage-inputs"><input type="date" value="${p.date||''}" ${disabled?'disabled':''} onchange="macroSavePhase('${r.key}','${g.id}','${s}','date',this.value)"><input type="number" min="0" max="100" step="1" value="${p.pct??''}" placeholder="%" ${disabled?'disabled':''} onchange="macroSavePhase('${r.key}','${g.id}','${s}','pct',this.value)"></div></div>`;}).join('')}</div></div>`;}
 function macroCard(o,done=false){const r=macroRecord(o),people=DB.engineeringPeople||[],status=done?`Concluída em ${fmtDate(r.effectiveAt)}`:macroDeadline(r);return `<article class="macro-order ${done?'done':''}" id="macro-${r.key}"><div class="macro-order-summary" onclick="toggleMacroCard('${r.key}')"><span class="macro-op">${macroEsc(r.code||r.op)}</span><div class="macro-order-title">${macroEsc(r.description)}<div class="macro-order-sub">OP: ${macroEsc(r.op||'não identificada')} · emissão ${fmtDate(r.issuedAt)} · proposta ${fmtDate(r.proposedAt)}</div></div><span class="macro-deadline ${done?'':macroDeadlineClass(r)}">${status}</span><span class="msi macro-chevron">expand_more</span></div><div class="macro-detail"><div class="macro-info-grid"><div class="macro-field"><label>Emissão</label><input type="date" disabled value="${r.issuedAt||''}"></div><div class="macro-field"><label>Entrega proposta</label><input type="date" disabled value="${r.proposedAt||''}"></div><div class="macro-field"><label>Entrega efetiva</label><input type="date" value="${r.effectiveAt||''}" ${done?'disabled':''} onchange="macroSaveField('${r.key}','effectiveAt',this.value);renderMacroEngineering()"></div><div class="macro-field"><label>Prazo</label><input disabled value="${macroDeadline(r)}"></div><div class="macro-field"><label>OP</label><input disabled value="${macroEsc(r.op||r.code)}"></div><div class="macro-field"><label>Q.F</label><input value="${macroEsc(r.qf)}" ${done?'disabled':''} onchange="macroSaveField('${r.key}','qf',this.value)"></div><div class="macro-field"><label>Q.E</label><input value="${macroEsc(r.qe)}" ${done?'disabled':''} onchange="macroSaveField('${r.key}','qe',this.value)"></div><div class="macro-field"><label>Cliente</label><input value="${macroEsc(r.client)}" ${done?'disabled':''} onchange="macroSaveField('${r.key}','client',this.value)"></div><div class="macro-field"><label>Descrição</label><input disabled value="${macroEsc(r.description)}"></div><div class="macro-field"><label>Responsável</label><select ${done?'disabled':''} onchange="macroSaveField('${r.key}','responsible',this.value)"><option value="">Selecionar…</option>${people.map(p=>`<option value="${macroEsc(p)}" ${p===r.responsible?'selected':''}>${macroEsc(p)}</option>`).join('')}</select></div><div class="macro-field observations"><label>Observações da OP</label><textarea ${done?'disabled':''} onchange="macroSaveField('${r.key}','observations',this.value)">${macroEsc(r.observations)}</textarea></div></div>${MACRO_GROUPS.map(g=>macroStageMarkup(r,g,done)).join('')}<div class="macro-actions">${done?(isMaster(loggedUser)?`<button class="btn btn-ghost btn-sm" onclick="reopenMacro('${r.key}')"><span class="msi msi-sm">restart_alt</span> Reabrir OP</button>`:'<span style="font-size:12px;color:var(--text3);">OP concluída — somente mestre pode reabrir.</span>'):`<button class="btn btn-ghost btn-sm" onclick="saveMacroRevision('${r.key}')"><span class="msi msi-sm">history</span> Salvar revisão</button><button class="btn btn-gold btn-sm" ${r.effectiveAt?'':'disabled title="Informe a entrega efetiva antes de finalizar"'} onclick="finalizeMacro('${r.key}')"><span class="msi msi-sm">task_alt</span> Finalizar OP</button>`}</div><div class="macro-revision-list"><strong>Revisões:</strong> ${r.revisions.length?r.revisions.map(x=>`Revisão ${String(x.number).padStart(2,'0')} · ${x.date} · ${macroEsc(x.by)}`).join(' &nbsp;|&nbsp; '):'Nenhuma revisão registrada.'}</div></div></article>`;}
 function renderMacroEngineering(){const el=document.getElementById('macroEngineeringContent');if(!el)return;['active','completed','people'].forEach(v=>document.getElementById('macroTab'+v[0].toUpperCase()+v.slice(1))?.classList.toggle('active',macroView===v));if(macroView==='people'){const p=DB.engineeringPeople||[];el.innerHTML=`<div class="macro-person-box"><div class="section-title"><span class="msi msi-sm">group</span> Responsáveis de engenharia</div><p style="font-size:13px;color:var(--text3);margin:0 0 14px;">Esta lista alimenta a cascata “Responsável” em cada OP. Não cria acesso de login.</p><div style="display:flex;gap:8px;margin-bottom:12px;"><input id="macroNewPerson" placeholder="Nome do responsável" style="flex:1"><button class="btn btn-gold btn-sm" onclick="addEngineeringPerson()">Adicionar</button></div>${p.length?p.map((x,i)=>`<div class="macro-person-row"><span>${macroEsc(x)}</span><button class="btn btn-danger btn-sm" onclick="removeEngineeringPerson(${i})"><span class="msi msi-sm">delete</span></button></div>`).join(''):'<div style="font-size:13px;color:var(--text3);padding:10px 0;">Nenhum responsável cadastrado.</div>'}</div>`;return;}const rows=ORDERS.filter(o=>macroRecord(o).finalized===(macroView==='completed'));el.innerHTML=rows.length?rows.map(o=>macroCard(o,macroView==='completed')).join(''):`<div class="empty-state"><div class="ei"><span class="msi msi-xl">${macroView==='completed'?'task_alt':'architecture'}</span></div><h3>${macroView==='completed'?'Nenhuma OP finalizada':'Nenhuma OP disponível'}</h3><p>Importe o cronograma do Project para carregar as OPs.</p></div>`;}
-function switchMacroView(v){macroView=v;renderMacroEngineering();}function toggleMacroCard(k){document.getElementById('macro-'+k)?.classList.toggle('open');}
+function switchMacroView(v){if(!hasAccess(`macro-engenharia.${v}`)){showAccessDenied();return;}macroView=v;renderMacroEngineering();}function toggleMacroCard(k){document.getElementById('macro-'+k)?.classList.toggle('open');}
 function addEngineeringPerson(){const i=document.getElementById('macroNewPerson'),n=i?.value.trim();if(!n)return;DB.engineeringPeople=DB.engineeringPeople||[];if(DB.engineeringPeople.some(p=>p.toLocaleLowerCase('pt-BR')===n.toLocaleLowerCase('pt-BR'))){showToast('Responsável já cadastrado','err');return;}DB.engineeringPeople.push(n);persist().then(renderMacroEngineering);}
 function removeEngineeringPerson(i){if(!confirm('Remover este responsável da lista?'))return;DB.engineeringPeople.splice(i,1);persist().then(renderMacroEngineering);}
 function saveMacroRevision(k){const r=macroEnsure(k);if(!r)return;r.revisions.push({number:r.revisions.length,date:new Date().toLocaleString('pt-BR'),by:loggedUser?.ref?.name||'Usuário',snapshot:JSON.parse(JSON.stringify({...r,revisions:[]}))});persist().then(()=>{renderMacroEngineering();showToast(`Revisão ${String(r.revisions.length-1).padStart(2,'0')} salva.`);});}
 function finalizeMacro(k){const r=macroEnsure(k);if(!r?.effectiveAt){showToast('Informe a entrega efetiva antes de finalizar','err');return;}if(!confirm(`Finalizar a OP ${r.code||r.op}? Ela ficará bloqueada para edição.`))return;r.finalized=true;r.finalizedAt=new Date().toLocaleString('pt-BR');r.finalizedBy=loggedUser?.ref?.name||'Usuário';persist().then(()=>{renderMacroEngineering();showToast('OP finalizada e arquivada no Macro Engenharia.');});}
 function reopenMacro(k){if(!isMaster(loggedUser)){showToast('Somente mestre pode reabrir uma OP','err');return;}const r=macroEnsure(k);if(!r)return;r.finalized=false;r.finalizedAt='';r.finalizedBy='';persist().then(()=>{macroView='active';renderMacroEngineering();showToast('OP reaberta para edição.');});}
-function exportEngineeringMacroPDF(){
+function exportEngineeringMacroPDF(scope='all'){
   const JsPDF=window.jspdf?.jsPDF;
   if(!JsPDF){showToast('Biblioteca de PDF indisponível','err');return;}
-  const records=ORDERS.map(macroRecord),pdf=new JsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const records=ORDERS.map(macroRecord).filter(record=>scope==='open'?!record.finalized:scope==='completed'?record.finalized:true);
+  if(!records.length){showToast(scope==='completed'?'Nenhuma OP finalizada para gerar o relatório.':'Nenhuma OP aberta para gerar o relatório.','err');return;}
+  const pdf=cartamacPdfInit(new JsPDF({orientation:'portrait',unit:'mm',format:'a4'}));
   const pageW=210,left=12,right=12,contentW=186,bottom=282;
   const textValue=value=>String(value??'').trim()||'N/A';
   const dateValue=value=>value&&/^\d{4}-\d{2}-\d{2}$/.test(String(value))?fmtDate(String(value)):'N/A';
@@ -5437,7 +5700,7 @@ function exportEngineeringMacroPDF(){
       pdf.setFillColor(250,250,250);pdf.setDrawColor(225,225,225);pdf.rect(left,y,contentW,7,'FD');pdf.setFont('helvetica','italic');pdf.setFontSize(8);pdf.setTextColor(105,105,105);pdf.text('N/A',left+3,y+4.8);y+=10;return;
     }
     const columns=[['ATIVIDADE',101],['DATA',45],['PROGRESSO',40]];
-    const drawColumns=()=>{ensureSpace(8);pdf.setFillColor(55,55,55);pdf.rect(left,y,contentW,7,'F');pdf.setFont('helvetica','bold');pdf.setFontSize(6.5);pdf.setTextColor(255,255,255);let x=left;columns.forEach(([title,width])=>{pdf.text(title,x+2.5,y+4.7);x+=width;});y+=7;};
+    const drawColumns=()=>{ensureSpace(8);pdf.setFillColor(...CARTAMAC_PDF_THEME.tableHeader);pdf.rect(left,y,contentW,7,'F');pdf.setFont('helvetica','bold');pdf.setFontSize(6.5);pdf.setTextColor(255,255,255);let x=left;columns.forEach(([title,width])=>{pdf.text(title,x+2.5,y+4.7);x+=width;});y+=7;};
     drawColumns();
     entries.forEach(({stage,phase},index)=>{
       if(y+7>bottom){newPage(true);pdf.setFillColor(225,214,176);pdf.setDrawColor(200,168,75);pdf.roundedRect(left,y,contentW,7,1,1,'FD');pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(45,40,25);pdf.text(`${group.name.toUpperCase()} - CONTINUAÇÃO`,left+3,y+4.8);y+=8;drawColumns();}
@@ -5474,7 +5737,8 @@ function exportEngineeringMacroPDF(){
   });
   const pages=pdf.getNumberOfPages();
   for(let page=1;page<=pages;page++){pdf.setPage(page);pdf.setDrawColor(215,215,215);pdf.line(left,288,pageW-right,288);pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);pdf.setTextColor(110,110,110);pdf.text('CARTAMAC - Macro Engenharia',left,293);pdf.text(`Página ${page} de ${pages}`,pageW-right,293,{align:'right'});}
-  pdf.save(`Macro_Engenharia_${new Date().toISOString().slice(0,10)}.pdf`);
+  const scopeName=scope==='open'?'OPs_Abertas':scope==='completed'?'OPs_Finalizadas':'Todas_as_OPs';
+  cartamacPdfSave(pdf,`Macro_Engenharia_${scopeName}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
 // Ajustes de interação e cópia local do Macro Engenharia.
@@ -5524,6 +5788,86 @@ macroKey=function(order){return String(order.code||order.id||order.op);};
 const macroRecordBeforeUniqueKey=macroRecord;
 macroRecord=function(order){const key=macroKey(order),legacyKey=String(order.op||'');const direct=DB.engineeringMacros?.[key];const legacy=legacyKey?DB.engineeringMacros?.[legacyKey]:null;if(!direct&&legacy&&String(legacy.code||'')===String(order.code||'')){DB.engineeringMacros[key]={...legacy,key};delete DB.engineeringMacros[legacyKey];saveMacroLocal();}return macroRecordBeforeUniqueKey(order);};
 
+function macroReportRecord(key){const order=ORDERS.find(item=>String(macroKey(item))===String(key));return order?macroRecord(order):null;}
+function macroReportProgress(record){
+  const phases=MACRO_GROUPS.flatMap(group=>group.stages.map(stage=>record.phases?.[group.id]?.[stage]||{}));
+  const informed=phases.map(phase=>Number(phase.pct)).filter((value,index)=>Number.isFinite(value)&&phases[index].pct!==''&&phases[index].pct!==null&&phases[index].pct!==undefined);
+  return informed.length?Math.round(informed.reduce((sum,value)=>sum+Math.max(0,Math.min(100,value)),0)/informed.length):0;
+}
+function macroReportStatus(record){
+  if(record.finalized)return {label:'FINALIZADA',color:[45,145,75]};
+  const days=record.proposedAt?daysDiff(record.proposedAt):null;
+  if(days!==null&&days<0)return {label:`ATRASADA · ${Math.abs(days)} DIA(S)`,color:[205,50,62]};
+  if(days!==null&&days<30)return {label:`ATENÇÃO · ${days} DIA(S)`,color:[215,145,20]};
+  return {label:days===null?'SEM PRAZO':`EM ANDAMENTO · ${days} DIA(S)`,color:[47,126,170]};
+}
+function exportEngineeringMacroOrderPDF(key,event){
+  event?.stopPropagation();
+  const record=macroReportRecord(key),JsPDF=window.jspdf?.jsPDF;
+  if(!record){showToast('OP não encontrada.','err');return;}
+  if(!JsPDF){showToast('Biblioteca de PDF indisponível.','err');return;}
+  const pdf=cartamacPdfInit(new JsPDF({orientation:'portrait',unit:'mm',format:'a4'}));
+  const left=12,right=12,pageW=210,contentW=186,bottom=280,status=macroReportStatus(record),progress=macroReportProgress(record);
+  const text=value=>String(value??'').trim()||'Não informado';
+  const date=value=>value&&/^\d{4}-\d{2}-\d{2}$/.test(String(value))?fmtDate(String(value)):'Não informada';
+  let y=22,pageSection='';
+  const continuationHeader=()=>{pdf.setFillColor(245,245,245);pdf.setDrawColor(215,215,215);pdf.roundedRect(left,y,contentW,10,1,1,'FD');pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(55,55,55);pdf.text(`${text(record.code||record.op)} · ${text(record.description)} · CONTINUAÇÃO`,left+3,y+6.2,{maxWidth:contentW-6});y+=14;};
+  const newPage=()=>{pdf.addPage();y=22;continuationHeader();if(pageSection)drawGroupHeader(pageSection,true);};
+  const ensure=height=>{if(y+height>bottom)newPage();};
+  const sectionTitle=title=>{ensure(11);pdf.setFillColor(239,239,239);pdf.setDrawColor(210,210,210);pdf.roundedRect(left,y,contentW,8,1,1,'FD');pdf.setFillColor(200,168,75);pdf.rect(left,y,2,8,'F');pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(48,48,48);pdf.text(String(title).toUpperCase(),left+5,y+5.4);y+=11;};
+  const infoRow=(leftLabel,leftValue,rightLabel,rightValue,highlight=false)=>{ensure(10);pdf.setFillColor(highlight?252:248,highlight?248:248,highlight?234:248);pdf.setDrawColor(222,222,222);pdf.roundedRect(left,y,contentW,8,1,1,'FD');pdf.setFontSize(6.5);pdf.setFont('helvetica','bold');pdf.setTextColor(105,105,105);pdf.text(leftLabel.toUpperCase(),left+3,y+5.2);pdf.text(rightLabel.toUpperCase(),left+96,y+5.2);pdf.setFontSize(8);pdf.setTextColor(35,35,35);pdf.text(text(leftValue),left+31,y+5.2,{maxWidth:61});pdf.text(text(rightValue),left+128,y+5.2,{maxWidth:55});y+=9;};
+  const drawGroupHeader=(title,continuation=false)=>{ensure(9);pdf.setFillColor(232,224,194);pdf.setDrawColor(200,168,75);pdf.roundedRect(left,y,contentW,7,1,1,'FD');pdf.setFont('helvetica','bold');pdf.setFontSize(7.5);pdf.setTextColor(65,55,25);pdf.text(`${String(title).toUpperCase()}${continuation?' · CONTINUAÇÃO':''}`,left+3,y+4.8);y+=8;pdf.setFillColor(42,42,42);pdf.rect(left,y,contentW,7,'F');pdf.setTextColor(255,255,255);pdf.setFontSize(6.2);pdf.text('ETAPA',left+3,y+4.7);pdf.text('DATA',left+108,y+4.7);pdf.text('ANDAMENTO',left+145,y+4.7);y+=7;};
+  const titleLines=pdf.splitTextToSize(`${text(record.code||record.op)} · ${text(record.description)}`,contentW-8).slice(0,2),titleH=Math.max(16,titleLines.length*5.5+6);
+  pdf.setFillColor(200,168,75);pdf.setDrawColor(200,168,75);pdf.roundedRect(left,y,contentW,titleH,2,2,'FD');pdf.setFont('helvetica','bold');pdf.setFontSize(14);pdf.setTextColor(25,25,25);pdf.text(titleLines,left+4,y+8,{maxWidth:contentW-8});y+=titleH+5;
+  const cardGap=2,cardW=(contentW-cardGap*3)/4,cards=[['SITUAÇÃO',status.label,status.color],['RESPONSÁVEL',text(record.responsible),[45,45,45]],['ENTREGA PROPOSTA',date(record.proposedAt),[45,45,45]],['ANDAMENTO MÉDIO',`${progress}%`,progress>=100?[45,145,75]:[185,135,20]]];
+  cards.forEach(([label,value,color],index)=>{const x=left+index*(cardW+cardGap);pdf.setFillColor(247,247,247);pdf.setDrawColor(215,215,215);pdf.roundedRect(x,y,cardW,16,1.2,1.2,'FD');pdf.setFont('helvetica','normal');pdf.setFontSize(5.7);pdf.setTextColor(105,105,105);pdf.text(label,x+2.5,y+4.8);pdf.setFont('helvetica','bold');pdf.setFontSize(7.7);pdf.setTextColor(...color);pdf.text(pdf.splitTextToSize(String(value),cardW-5).slice(0,2),x+2.5,y+10,{maxWidth:cardW-5});});y+=21;
+  sectionTitle('Informações da OP');
+  infoRow('OP',record.op,'Código',record.code);
+  infoRow('Emissão',date(record.issuedAt),'Entrega proposta',date(record.proposedAt),true);
+  infoRow('Entrega efetiva',date(record.effectiveAt),'Prazo',record.finalized?'Concluída':macroDeadline(record),true);
+  infoRow('Cliente',record.client,'Responsável',record.responsible);
+  infoRow('Q.F.',record.qf,'Q.E.',record.qe);
+  sectionTitle('Observações');
+  const observationLines=pdf.splitTextToSize(text(record.observations),contentW-7),observationH=Math.max(13,observationLines.length*4+5);ensure(observationH);pdf.setFillColor(250,250,250);pdf.setDrawColor(220,220,220);pdf.roundedRect(left,y,contentW,observationH,1,1,'FD');pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);pdf.setTextColor(45,45,45);pdf.text(observationLines,left+3.5,y+5.5,{maxWidth:contentW-7});y+=observationH+4;
+  sectionTitle('Etapas da engenharia');
+  MACRO_GROUPS.forEach(group=>{
+    pageSection=group.name;drawGroupHeader(group.name);
+    group.stages.forEach((stage,index)=>{
+      if(y+8>bottom)newPage();
+      const phase=record.phases?.[group.id]?.[stage]||{},pct=phase.pct===''||phase.pct===null||phase.pct===undefined?null:Math.max(0,Math.min(100,Number(phase.pct)||0));
+      if(index%2===0){pdf.setFillColor(249,249,249);pdf.rect(left,y,contentW,8,'F');}
+      pdf.setDrawColor(226,226,226);pdf.line(left,y+8,left+contentW,y+8);pdf.setFont('helvetica','normal');pdf.setFontSize(7);pdf.setTextColor(40,40,40);pdf.text(text(stage),left+3,y+5.3,{maxWidth:100});pdf.setFont('helvetica','bold');pdf.text(date(phase.date),left+108,y+5.3);
+      const barX=left+145,barY=y+2.3,barW=30;pdf.setFillColor(225,225,225);pdf.roundedRect(barX,barY,barW,3,1,1,'F');if(pct!==null&&pct>0){const color=pct>=100?[45,145,75]:pct>=60?[200,168,75]:[47,126,170];pdf.setFillColor(...color);pdf.roundedRect(barX,barY,barW*pct/100,3,1,1,'F');}pdf.setFontSize(6.5);pdf.setTextColor(55,55,55);pdf.text(pct===null?'—':`${pct}%`,left+181,y+5.2,{align:'right'});y+=8;
+    });y+=4;pageSection='';
+  });
+  sectionTitle('Histórico e controle');
+  infoRow('Situação',record.finalized?'Finalizada':'Aberta','Revisões salvas',String(record.revisions?.length||0),true);
+  if(record.finalized)infoRow('Finalizada em',record.finalizedAt,'Finalizada por',record.finalizedBy);
+  if(record.revisions?.length){record.revisions.forEach(revision=>{ensure(8);pdf.setDrawColor(225,225,225);pdf.line(left,y+7,left+contentW,y+7);pdf.setFont('helvetica','bold');pdf.setFontSize(7);pdf.setTextColor(55,55,55);pdf.text(`Revisão ${String(revision.number).padStart(2,'0')}`,left+3,y+4.8);pdf.setFont('helvetica','normal');pdf.setTextColor(95,95,95);pdf.text(`${text(revision.date)} · ${text(revision.by)}`,left+35,y+4.8);y+=7;});}
+  cartamacPdfSave(pdf,`${safeReportFileName(`Macro Engenharia - ${record.code||record.op} - ${record.description}`)}.pdf`);
+  showToast('Relatório PDF da OP gerado com sucesso.');
+}
+function exportEngineeringMacroOrderExcel(key,event){
+  event?.stopPropagation();const record=macroReportRecord(key);
+  if(!record){showToast('OP não encontrada.','err');return;}if(typeof XLSX==='undefined'){showToast('Biblioteca de Excel indisponível.','err');return;}
+  const progress=macroReportProgress(record),status=macroReportStatus(record).label;
+  const summary=[['CARTAMAC · MACRO ENGENHARIA'],[],['Campo','Informação'],['Código',record.code||''],['OP',record.op||''],['Descrição',record.description||''],['Cliente',record.client||''],['Responsável',record.responsible||''],['Emissão',record.issuedAt?fmtDate(record.issuedAt):''],['Entrega proposta',record.proposedAt?fmtDate(record.proposedAt):''],['Entrega efetiva',record.effectiveAt?fmtDate(record.effectiveAt):''],['Situação',status],['Andamento médio',progress/100],['Q.F.',record.qf||''],['Q.E.',record.qe||''],['Observações',record.observations||''],['Revisões',record.revisions?.length||0]];
+  const stages=[['Grupo','Etapa','Data','Andamento'],...MACRO_GROUPS.flatMap(group=>group.stages.map(stage=>{const phase=record.phases?.[group.id]?.[stage]||{};return [group.name,stage,phase.date?fmtDate(phase.date):'',phase.pct===''||phase.pct===null||phase.pct===undefined?'':Number(phase.pct)/100];}))];
+  const revisions=[['Revisão','Data','Responsável'],...(record.revisions||[]).map(revision=>[String(revision.number).padStart(2,'0'),revision.date||'',revision.by||''])];
+  const wb=XLSX.utils.book_new(),wsSummary=XLSX.utils.aoa_to_sheet(summary),wsStages=XLSX.utils.aoa_to_sheet(stages),wsRevisions=XLSX.utils.aoa_to_sheet(revisions);
+  wsSummary['!cols']=[{wch:24},{wch:75}];wsStages['!cols']=[{wch:28},{wch:38},{wch:16},{wch:16}];wsRevisions['!cols']=[{wch:12},{wch:24},{wch:30}];
+  const summaryPct=wsSummary['B13'];if(summaryPct)summaryPct.z='0.00%';for(let row=1;row<stages.length;row++){const cell=wsStages[XLSX.utils.encode_cell({r:row,c:3})];if(cell&&typeof cell.v==='number')cell.z='0.00%';}
+  XLSX.utils.book_append_sheet(wb,wsSummary,'Resumo da OP');XLSX.utils.book_append_sheet(wb,wsStages,'Etapas');XLSX.utils.book_append_sheet(wb,wsRevisions,'Revisões');
+  wb.Props={Title:`Macro Engenharia - ${record.code||record.op}`,Subject:'Relatório individual da OP',Author:'CARTAMAC',CreatedDate:new Date()};
+  XLSX.writeFile(wb,`${safeReportFileName(`Macro Engenharia - ${record.code||record.op} - ${record.description}`)}.xlsx`,{compression:true});showToast('Relatório Excel da OP gerado com sucesso.');
+}
+function decorateMacroOrderReportButtons(){
+  if(!['active','completed'].includes(macroView))return;
+  ORDERS.forEach(order=>{const record=macroRecord(order),summary=document.getElementById(`macro-${record.key}`)?.querySelector('.macro-order-summary');if(!summary||summary.querySelector('.macro-order-reports'))return;const reports=document.createElement('div');reports.className='macro-order-reports';const pdf=document.createElement('button'),excel=document.createElement('button');pdf.type=excel.type='button';pdf.className=excel.className='macro-report-btn';pdf.innerHTML='<span class="msi msi-sm">picture_as_pdf</span> PDF';excel.innerHTML='<span class="msi msi-sm">table_view</span> Excel';pdf.title='Gerar relatório PDF desta OP';excel.title='Gerar relatório Excel desta OP';pdf.onclick=event=>exportEngineeringMacroOrderPDF(record.key,event);excel.onclick=event=>exportEngineeringMacroOrderExcel(record.key,event);reports.append(pdf,excel);const deadline=summary.querySelector('.macro-deadline');summary.insertBefore(reports,deadline||summary.lastElementChild);});
+}
+const renderMacroEngineeringWithOrderReports=renderMacroEngineering;
+renderMacroEngineering=function(){renderMacroEngineeringWithOrderReports();decorateMacroOrderReportButtons();};
+
 // ─────────────── VENDAS / PEDIDOS DE VENDA ───────────────
 let salesExpandedInitialized=false;
 function salesValue(row,aliases){
@@ -5558,10 +5902,22 @@ function salesDate(value){
   const parsed=new Date(text);
   return Number.isNaN(parsed.getTime())?null:parsed;
 }
+function salesDateList(value){
+  const source=Array.isArray(value)?value:[value],seen=new Set(),dates=[];
+  source.flat(Infinity).forEach(raw=>{
+    const date=salesDate(raw);if(!date)return;
+    const key=date.toISOString().slice(0,10);if(seen.has(key))return;
+    seen.add(key);dates.push(date);
+  });
+  return dates.sort((a,b)=>a-b);
+}
 function salesOrderRecord(row){
   const emissao=salesDate(salesValue(row,['emissaoDataDetalhe','emissaoData','dataEmissao','emissao']));
   const entrega=salesDate(salesValue(row,['entregaDataDetalhe','entregaData','dataEntrega','previsaoDeEntregaData','previsaoEntregaData','dataPrevistaEntrega','entrega']));
   const cliente=salesValue(row,['clienteDetalhe','clienteNome','clienteRazaoSocial','nomeCliente'])??row?.cliente??row?.pessoa??row?.comprador??row?.pagador;
+  const entregas=salesDateList(salesValue(row,['entregasItensDetalhe','datasEntregaItens','entregasItens']));
+  if(entrega&&!entregas.some(date=>date.getTime()===entrega.getTime()))entregas.push(entrega);
+  entregas.sort((a,b)=>a-b);
   return {
     raw:row,
     id:salesValue(row,['id','pedidoDeVendaId']),
@@ -5575,6 +5931,7 @@ function salesOrderRecord(row){
     valorFaturado:salesNumber(salesValue(row,['valorFaturadoDetalhe','valorFaturado','totalFaturado','faturadoValor'])),
     valorAFaturar:salesNumber(salesValue(row,['valorAFaturarDetalhe','valorAFaturar','totalAFaturar','saldoAFaturar'])),
     entrega,
+    entregas,
     regiao:salesText(salesValue(row,['regiaoDetalhe','regiao','regiaoNome','macroRegiao'])),
     municipio:salesText(salesValue(row,['municipioDetalhe','municipio','municipioNome','cidade','cidadeNome'])),
     uf:salesText(salesValue(row,['ufDetalhe','uf','estadoSigla','siglaEstado'])),
@@ -5583,7 +5940,7 @@ function salesOrderRecord(row){
 function salesOrderIsCancelled(row){
   if(!row)return false;
   if(row.cancelado===true||row.cancelada===true||row.isCancelado===true||row.isCancelled===true)return true;
-  const state=salesText(salesValue(row,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido','estadoDescricao','statusDescricao']));
+  const state=salesText(row?.estadoPrincipalDetalhe??salesValue(row,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido','estadoDescricao','statusDescricao']));
   const normalized=financeNormalize(state);
   return normalized==='cancelled'||(normalized.includes('cancelad')&&!normalized.startsWith('naocancelad')&&!normalized.startsWith('nocancelad'));
 }
@@ -5778,7 +6135,7 @@ function exportSalesYearReport(year,format){
   if(!rows.length){showToast('Não há pedidos neste ano para exportar.','err');return;}
   if(format==='excel'){exportSalesYearExcel(key,rows);return;}
   const JsPDF=window.jspdf?.jsPDF;if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
-  const summary=salesYearSummary(rows),doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),left=10,pageBottom=201;
+  const summary=salesYearSummary(rows),doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),left=10,pageBottom=201;
   const headers=['Emissão','Nº','Referência','Cliente','Valor total','Valor faturado','Valor a faturar','Entrega'],widths=[19,14,52,65,32,32,32,22];
   const drawTableHeader=y=>{doc.setFillColor(40,40,40);doc.rect(left,y,268,8,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(6);let x=left;headers.forEach((header,index)=>{doc.text(header,x+1.4,y+5.2,{maxWidth:widths[index]-2.8});x+=widths[index];});return y+8;};
   doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text(`CARTAMAC - Vendas ${key}`,left,14);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · pedidos cancelados não incluídos`,left,20);
@@ -5787,7 +6144,7 @@ function exportSalesYearReport(year,format){
   let y=drawTableHeader(47);
   rows.forEach((row,index)=>{const values=[salesDateText(row.emissao),row.numero,row.referencia,row.cliente,fmtBRL(row.valorTotal),fmtBRL(row.valorFaturado),fmtBRL(row.valorAFaturar),salesDateText(row.entrega)].map(String);const lines=values.map((value,column)=>doc.splitTextToSize(value,widths[column]-2.8));const height=Math.max(6,...lines.map(set=>set.length*3+2));if(y+height>pageBottom){doc.addPage();y=drawTableHeader(10);}if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,268,height,'F');}doc.setDrawColor(220,220,220);doc.line(left,y+height,left+268,y+height);doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(30,30,30);let x=left;lines.forEach((set,column)=>{doc.text(set,x+1.4,y+3.8,{maxWidth:widths[column]-2.8});x+=widths[column];});y+=height;});
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Vendas ${key} · Página ${page} de ${pages}`,287,207,{align:'right'});}
-  doc.save(`Vendas_${key}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(doc,`Vendas_${key}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 function exportSalesYearExcel(year,rows){
   if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
@@ -5859,7 +6216,7 @@ function renderSalesPage(container=document.getElementById('financeiroContent'))
     <div class="sales-head">
       <div><h2><span class="msi">point_of_sale</span> Vendas</h2><p>Pedidos de venda consultados diretamente no MaxiProd e organizados pelo ano de emissão.</p></div>
     </div>
-    ${years.length?`${salesCommercialSummaryMarkup(byYear)}${salesStateGeographyMarkup(records)}<div class="sales-years">${years.map(year=>salesYearMarkup(year,byYear.get(year))).join('')}</div>`:`<div class="sales-empty"><span class="msi msi-xl">receipt_long</span><h3>Nenhum pedido de venda carregado</h3><p>Clique em “Atualizar MaxiProd” para fazer a primeira consulta.</p></div>`}
+      ${years.length?`${salesCommercialSummaryMarkup(byYear)}${salesStateGeographyMarkup(records)}<div class="sales-years">${years.map(year=>salesYearMarkup(year,byYear.get(year))).join('')}</div>`:`<div class="sales-empty"><span class="msi msi-xl">receipt_long</span><h3>Nenhum pedido de venda carregado</h3><p>${maxiprodRefreshHint('Clique em “Atualizar MaxiProd” para fazer a primeira consulta.')}</p></div>`}
   </div>`;
 }
 function toggleSalesYear(year){
@@ -5874,7 +6231,7 @@ function toggleSalesCommercialSummary(){
 async function refreshSalesMaxiprod(options={}){
   const integrated=options?.integrated===true;
   if(salesRefreshInProgress)return false;
-  if(!(isMaster(loggedUser)||loggedUser?.type==='seller')){showToast('Acesso restrito à área comercial','err');return;}
+  if(!isMaster(loggedUser)){showToast('Somente administradores mestres podem atualizar o MaxiProd.','err');return false;}
   salesRefreshInProgress=true;
   if(!integrated)renderSalesPage();
   const items=[];
@@ -5919,12 +6276,17 @@ async function refreshSalesMaxiprod(options={}){
 
 // ─────────────── PEDIDOS DE COMPRA EM ABERTO ───────────────
 function purchaseOrderIsOpenFrontend(row){
-  const state=financeNormalize(salesValue(row,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido']));
+  const state=financeNormalize(row?.estadoPrincipalDetalhe??salesValue(row,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido']));
   if(state.includes('cancel')||state.includes('excluid'))return false;
+  if(state.includes('faturado')&&!state.includes('entregafutura'))return false;
   if(state.includes('recebido')&&!state.includes('entregafutura'))return false;
   return true;
 }
 function purchaseOrderRecord(row){
+  const previsaoEntrega=salesDate(salesValue(row,['previsaoEntregaDataDetalhe','previsaoDeEntregaData','previsaoEntregaData','dataPrevistaEntrega','entregaData','dataEntrega','entrega']));
+  const entregas=salesDateList(salesValue(row,['entregasItensDetalhe','datasEntregaItens','entregasItens']));
+  if(previsaoEntrega&&!entregas.some(date=>date.getTime()===previsaoEntrega.getTime()))entregas.push(previsaoEntrega);
+  entregas.sort((a,b)=>a-b);
   return {
     raw:row,
     id:salesValue(row,['id','pedidoDeCompraId']),
@@ -5933,7 +6295,8 @@ function purchaseOrderRecord(row){
     fornecedor:salesText(salesValue(row,['fornecedorDetalhe','fornecedorNome','fornecedorRazaoSocial','nomeFornecedor'])??row?.fornecedor??row?.pessoa),
     observacao:salesText(salesValue(row,['observacaoDetalhe','observacoes','observacao','observacoesInternas','comentario','referencia'])),
     valorTotal:salesNumber(salesValue(row,['valorTotalDetalhe','valorTotal','total','valor'])),
-    previsaoEntrega:salesDate(salesValue(row,['previsaoEntregaDataDetalhe','previsaoDeEntregaData','previsaoEntregaData','dataPrevistaEntrega','entregaData','dataEntrega','entrega'])),
+    previsaoEntrega,
+    entregas,
     anexos:Math.max(0,Math.round(salesNumber(salesValue(row,['anexosQuantidadeDetalhe','anexosQuantidade','quantidadeAnexos','arquivosQuantidade','quantidadeArquivos'])))),
   };
 }
@@ -5983,7 +6346,7 @@ function exportPurchaseOrdersPDF(){
   if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
   const rows=filteredPurchaseOrderRecords();
   if(!rows.length){showToast('Nenhum pedido de compra corresponde ao filtro atual.','err');return;}
-  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}),left=7,pageW=297,pageBottom=202;
+  const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),left=7,pageW=297,pageBottom=202;
   const headers=['Emissão','Nº','Fornecedor','Observação','Valor total','Previsão entrega','Anexos'],widths=[20,15,61,105,31,30,16];
   const total=rows.reduce((sum,row)=>sum+row.valorTotal,0),overdueCount=rows.filter(purchaseOrderIsOverdue).length;
   const drawHeader=(firstPage=false)=>{
@@ -6007,7 +6370,7 @@ function exportPurchaseOrdersPDF(){
     lines.forEach((set,column)=>{doc.setFont('helvetica',isOverdue&&column===5?'bold':'normal');doc.setTextColor(isOverdue&&column===5?205:28,isOverdue&&column===5?45:28,isOverdue&&column===5?58:28);doc.text(set,x+1.2,y+3.8,{maxWidth:widths[column]-2.4});x+=widths[column];});y+=rowHeight;
   });
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Pedidos de compra · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
-  doc.save(`Pedidos_de_Compra_${purchaseOrdersOnlyOverdue?'Atrasados':'Em_Aberto'}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(doc,`Pedidos_de_Compra_${purchaseOrdersOnlyOverdue?'Atrasados':'Em_Aberto'}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 function renderPurchaseOrdersPage(container=document.getElementById('pedidosCompraContent')){
   if(!container)return;
@@ -6070,6 +6433,373 @@ async function refreshPurchaseOrdersMaxiprod(options={}){
     if(!integrated){hideLoading();renderPurchaseOrdersPage();}
   }
   return success;
+}
+
+// ─────────────── CONTABILIDADE · CONDIÇÕES DOS PEDIDOS ───────────────
+// A tela é somente leitura. Ela cruza os pedidos já carregados com os títulos
+// do Financeiro/Fiscal e nunca grava ou altera informações no MaxiProd.
+function accountingOrderIsActive(record,side){
+  const raw=record?.raw||{};
+  if(raw.cancelado===true||raw.cancelada===true||raw.isCancelado===true||raw.isCancelled===true)return false;
+  const state=financeNormalize(raw?.estadoPrincipalDetalhe??salesValue(raw,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido','estadoDescricao','statusDescricao']));
+  if(state.includes('cancel')||state.includes('excluid'))return false;
+  const futureDelivery=state.includes('entregafutura');
+  if(side==='receber'&&state.includes('recebido')&&!futureDelivery)return false;
+  if(side==='pagar'&&state.includes('faturado')&&!futureDelivery)return false;
+  if((state.includes('recebido')||state.includes('faturado'))&&!futureDelivery)return false;
+  return true;
+}
+function accountingOrderCatalog(side){
+  const records=(side==='receber'?salesRecords():purchaseOrderRecords()).filter(record=>accountingOrderIsActive(record,side));
+  const byId=new Map(),byNumber=new Map();
+  records.forEach(record=>{
+    const entry={
+      id:record.id,
+      numero:String(record.numero||'').trim(),
+      party:side==='receber'?record.cliente:record.fornecedor,
+      total:Number(record.valorTotal)||0,
+      deliveryDates:Array.isArray(record.entregas)&&record.entregas.length?record.entregas:(side==='receber'?(record.entrega?[record.entrega]:[]):(record.previsaoEntrega?[record.previsaoEntrega]:[])),
+      raw:record.raw||{}
+    };
+    if(entry.id!==null&&entry.id!==undefined&&entry.id!=='')byId.set(String(entry.id),entry);
+    if(entry.numero&&entry.numero!=='—')byNumber.set(financeNormalize(entry.numero),entry);
+  });
+  return {byId,byNumber};
+}
+function accountingRelation(raw,side){
+  const names=side==='receber'?['pedidoDeVenda','pedidoVenda','venda','pedido']:['pedidoDeCompra','pedidoCompra','compra','pedido'];
+  for(const name of names)if(raw?.[name]&&typeof raw[name]==='object')return raw[name];
+  return null;
+}
+function accountingOrderLink(item,side,catalog){
+  const raw=item?.raw||{};
+  const numberAliases=side==='receber'
+    ?['pedidoDeVendaNumero','numeroPedidoDeVenda','pedidoVendaNumero','numeroPedidoVenda','pedidoNumero','numeroPedido']
+    :['pedidoDeCompraNumero','numeroPedidoDeCompra','pedidoCompraNumero','numeroPedidoCompra','pedidoNumero','numeroPedido'];
+  const idAliases=side==='receber'?['pedidoDeVendaId','pedidoVendaId','pedidoId']:['pedidoDeCompraId','pedidoCompraId','pedidoId'];
+  const relation=accountingRelation(raw,side);
+  const directNumber=receberChave(raw,numberAliases);
+  const relationNumber=relation&&receberChave(relation,['numero','numeroPedido','pedidoNumero']);
+  const directId=receberChave(raw,idAliases);
+  const relationId=relation&&receberChave(relation,['id']);
+  const id=directId??relationId;
+  let numero=directNumber??relationNumber;
+  let order=id!==null&&id!==undefined?catalog.byId.get(String(id)):null;
+  if(!order&&numero!==null&&numero!==undefined)order=catalog.byNumber.get(financeNormalize(numero));
+  if(order&&!numero)numero=order.numero;
+  if(!numero){
+    const source=[item?.descricao,item?.referenteA,receberChave(raw,['descricao','historico','referenteA','referencia'])].filter(Boolean).join(' ');
+    const kind=side==='receber'?'venda':'compra';
+    const match=source.match(new RegExp(`pedido\\s*(?:de\\s*)?${kind}\\s*(?:n[º°o.]*)?\\s*([A-Za-z0-9./-]+)`,'i'));
+    if(match){numero=match[1];order=catalog.byNumber.get(financeNormalize(numero))||order;}
+  }
+  return {order,numero:String(numero||order?.numero||'').trim()};
+}
+function accountingConditionKind(raw){
+  const type=financeNormalize(receberChave(raw,['tipo','tipoDescricao','origem','natureza'])||'');
+  if(type.includes('adiant'))return {key:'advance',label:'Adiantamento'};
+  if(type.includes('pedidodevenda')||type.includes('pedidodecompra'))return {key:'delivery',label:'Entrega / parcela'};
+  return {key:'document',label:'Título / documento'};
+}
+function accountingPaymentAmount(item,side,value){
+  const raw=item?.raw||{};
+  const aliases=side==='receber'
+    ?['valorRecebidoLiquido','valorRecebido','valorBaixado','valorLiquidado','valorPago']
+    :['valorPagoLiquido','valorPago','valorBaixado','valorLiquidado','valorRecebido'];
+  const direct=receberChave(raw,aliases);
+  if(direct!==null)return Math.min(Math.abs(receberNumero(direct)),Math.abs(value));
+  const state=financeNormalize(receberChave(raw,['estado','status','situacao'])||'');
+  const settled=side==='receber'?state.includes('recebid'):state.includes('pago')||state.includes('liquid')||state.includes('quitad');
+  return settled?Math.abs(value):0;
+}
+function accountingRows(side){
+  const catalog=accountingOrderCatalog(side);
+  const historicalRaw=side==='receber'?ACCOUNTING_CACHE?.receivable?.items:ACCOUNTING_CACHE?.payable?.items;
+  let source;
+  if(Array.isArray(historicalRaw)&&historicalRaw.length){
+    if(side==='receber'){
+      const mapaPedidos=receberMapaPedidos();
+      source=historicalRaw.map(row=>receberRegistro(row,mapaPedidos))
+        .filter(item=>!item.vencimento||item.vencimento>=new Date(2020,0,1));
+    }else{
+      source=historicalRaw.map(pagarRegistro)
+        .filter(item=>item.vencimento&&item.valorTitulo>0.004);
+    }
+  }else source=side==='receber'?receberRegistros():pagarRegistros();
+  return source.map((item,index)=>{
+    const raw=item.raw||{},kind=accountingConditionKind(raw),link=accountingOrderLink(item,side,catalog);
+    // Somente parcelas vinculadas a pedidos ainda ativos aparecem aqui.
+    if(!link.order)return null;
+    const value=Math.abs(Number(side==='receber'?item.valorParcela:item.valorTitulo)||0);
+    if(value<=0.004)return null;
+    const settled=accountingPaymentAmount(item,side,value);
+    const balance=Math.max(value-settled,0);
+    const rawPercent=receberNumero(receberChave(raw,['percentual','percentualDoPedido','percentualPagamento','porcentagem']));
+    const orderTotal=Number(link.order?.total)||0;
+    const percent=rawPercent>0?rawPercent:(orderTotal>0?(value/orderTotal)*100:null);
+    const party=link.order?.party||(side==='receber'?item.cliente:item.fornecedor)||'—';
+    const due=item.vencimento||receberData(raw,['vencimentoData','vencimento','vencimentoOriginalData','vencimentoOriginal']);
+    const today=new Date();today.setHours(0,0,0,0);
+    const overdue=balance>0.004&&due&&due<today;
+    const status=balance<=0.004?{key:'done',label:side==='receber'?'Recebido':'Pago'}:settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
+    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status};
+  }).filter(Boolean).sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
+}
+function accountingFilteredRows(rows){
+  const term=financeNormalize(accountingSearch);
+  return rows.filter(row=>{
+    if(accountingOnlyAdvances&&row.kind.key!=='advance')return false;
+    if(!term)return true;
+    return financeNormalize([row.numero,row.party,row.kind.label,receberDataFormat(row.due),fmtBRL(row.value),row.status.label].join(' ')).includes(term);
+  });
+}
+function accountingPercentText(value){
+  return value===null||value===undefined||!Number.isFinite(Number(value))?'—':`${Number(value).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+}
+function accountingRowsMarkup(rows,side){
+  if(!rows.length)return `<tr><td colspan="10"><div class="accounting-empty">Nenhuma condição de pagamento corresponde aos filtros atuais.</div></td></tr>`;
+  return rows.map(row=>`<tr>
+    <td class="order-number">${escapeHTML(row.numero)}</td>
+    <td>${escapeHTML(row.party)}</td>
+    <td><span class="accounting-kind ${row.kind.key}">${escapeHTML(row.kind.label)}</span></td>
+    <td>${receberDataFormat(row.due)}</td>
+    <td class="percent">${accountingPercentText(row.percent)}</td>
+    <td class="money">${fmtBRL(row.value)}</td>
+    <td class="money">${fmtBRL(row.settled)}</td>
+    <td class="money">${fmtBRL(row.balance)}</td>
+    <td><span class="accounting-status ${row.status.key}">${escapeHTML(row.status.label)}</span></td>
+    <td>${row.order?fmtBRL(row.order.total):'<span class="muted">Vínculo não localizado</span>'}</td>
+  </tr>`).join('');
+}
+function accountingGroupRows(rows){
+  const groups=new Map();
+  rows.forEach(row=>{
+    const identified=row.numero&&row.numero!=='Não identificado';
+    const key=identified?`pedido:${financeNormalize(row.numero)}`:`sem-vinculo:${financeNormalize(row.party)}`;
+    if(!groups.has(key))groups.set(key,{key,numero:row.numero,party:row.party,order:row.order,rows:[]});
+    const group=groups.get(key);
+    group.rows.push(row);
+    if(!group.order&&row.order)group.order=row.order;
+  });
+  return [...groups.values()].map(group=>{
+    group.total=Number(group.order?.total)||group.rows.reduce((sum,row)=>sum+row.value,0);
+    group.advances=group.rows.filter(row=>row.kind.key==='advance').reduce((sum,row)=>sum+row.value,0);
+    group.settled=group.rows.reduce((sum,row)=>sum+row.settled,0);
+    group.balance=group.rows.reduce((sum,row)=>sum+row.balance,0);
+    group.paidPercent=group.total>0?Math.min(100,(group.settled/group.total)*100):0;
+    group.deliveryDates=salesDateList(group.order?.deliveryDates||[]);
+    return group;
+  }).sort((a,b)=>{
+    if(a.numero==='Não identificado'&&b.numero!=='Não identificado')return 1;
+    if(b.numero==='Não identificado'&&a.numero!=='Não identificado')return -1;
+    return String(b.numero).localeCompare(String(a.numero),'pt-BR',{numeric:true});
+  });
+}
+function accountingDeliveryInfo(group){
+  const dates=Array.isArray(group?.deliveryDates)?group.deliveryDates:[];
+  if(!dates.length)return {short:'Entrega não informada',full:'O MaxiProd não informou a entrega no cabeçalho nem nos itens.',missing:true};
+  const labels=dates.map(receberDataFormat);
+  if(labels.length===1)return {short:`Entrega: ${labels[0]}`,full:`Entrega: ${labels[0]}`,missing:false};
+  if(labels.length===2)return {short:`Entregas: ${labels.join(' · ')}`,full:`Entregas dos itens: ${labels.join(', ')}`,missing:false};
+  return {short:`Entregas: ${labels[0]} → ${labels[labels.length-1]} (${labels.length})`,full:`Entregas dos itens: ${labels.join(', ')}`,missing:false};
+}
+function accountingConditionRowsMarkup(rows,side){
+  return rows.map(row=>`<tr>
+    <td><span class="accounting-kind ${row.kind.key}">${escapeHTML(row.kind.label)}</span></td>
+    <td>${receberDataFormat(row.due)}</td>
+    <td class="percent">${accountingPercentText(row.percent)}</td>
+    <td class="money">${fmtBRL(row.value)}</td>
+    <td class="money">${fmtBRL(row.settled)}</td>
+    <td class="money">${fmtBRL(row.balance)}</td>
+    <td><span class="accounting-status ${row.status.key}">${escapeHTML(row.status.label)}</span></td>
+  </tr>`).join('');
+}
+function accountingOrderBlocksMarkup(groups,side){
+  if(!groups.length)return '<div class="accounting-empty accounting-order-card">Nenhum pedido corresponde aos filtros atuais.</div>';
+  const settledLabel=side==='receber'?'Recebido':'Pago';
+  return groups.map(group=>{const delivery=accountingDeliveryInfo(group);return `<details class="accounting-order-card" open>
+    <summary class="accounting-order-summary">
+      <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} condição(ões) de pagamento</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span></div></div>
+      <div class="accounting-order-metric optional"><span>Valor total do pedido</span><b>${fmtBRL(group.total)}</b></div>
+      <div class="accounting-order-metric advance optional"><span>Adiantamentos</span><b>${fmtBRL(group.advances)}</b></div>
+      <div class="accounting-order-metric settled"><span>${settledLabel}</span><b>${fmtBRL(group.settled)}</b></div>
+      <div class="accounting-order-metric open"><span>Saldo em aberto</span><b>${fmtBRL(group.balance)}</b></div>
+      <div class="accounting-order-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="event.preventDefault();event.stopPropagation();exportAccountingReport('pdf','${side}','${encodeURIComponent(group.key)}')" title="Gerar PDF completo deste pedido"><span class="msi msi-sm">picture_as_pdf</span><span class="btn-label">PDF</span></button><button class="btn btn-ghost btn-sm" type="button" onclick="event.preventDefault();event.stopPropagation();exportAccountingReport('excel','${side}','${encodeURIComponent(group.key)}')" title="Gerar Excel completo deste pedido"><span class="msi msi-sm">table_view</span><span class="btn-label">Excel</span></button></div>
+      <span class="accounting-order-chevron msi">expand_more</span>
+    </summary>
+    <div class="accounting-order-body">
+      ${group.order?'':`<div class="accounting-order-warning"><span class="msi msi-sm">warning</span> O MaxiProd não devolveu um vínculo de pedido para este lançamento.</div>`}
+      <div class="accounting-table-wrap"><table class="accounting-table"><thead><tr><th>Tipo</th><th>Vencimento</th><th style="text-align:right">Percentual</th><th style="text-align:right">Valor</th><th style="text-align:right">${side==='receber'?'Valor recebido':'Valor pago'}</th><th style="text-align:right">Saldo</th><th>Situação</th></tr></thead><tbody>${accountingConditionRowsMarkup(group.rows,side)}</tbody></table></div>
+    </div>
+  </details>`;}).join('');
+}
+function accountingReportGroups(side,keyToken=''){
+  const normalizedSide=side==='pagar'?'pagar':'receber';
+  const allRows=accountingRows(normalizedSide);
+  if(keyToken){
+    let key='';try{key=decodeURIComponent(keyToken);}catch(_){key=String(keyToken||'');}
+    return accountingGroupRows(allRows).filter(group=>group.key===key);
+  }
+  return accountingGroupRows(accountingFilteredRows(allRows));
+}
+function accountingReportMoney(value){return fmtBRL(Number(value)||0).replace(/\u00a0/g,' ');}
+function accountingReportFilename(value){
+  return String(value||'relatorio').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9_-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,90)||'relatorio';
+}
+function accountingReportContext(format,side,keyToken=''){
+  const normalizedSide=side==='pagar'?'pagar':'receber';
+  const groups=accountingReportGroups(normalizedSide,keyToken);
+  if(!groups.length){showToast('Nenhum pedido disponível para gerar o relatório.','err');return null;}
+  const individual=Boolean(keyToken),partyLabel=normalizedSide==='receber'?'Cliente':'Fornecedor';
+  const movementLabel=normalizedSide==='receber'?'Recebido':'Pago';
+  const title=individual?`Pedido ${groups[0].numero} · ${groups[0].party}`:`Contabilidade · ${normalizedSide==='receber'?'Pedidos de venda a receber':'Pedidos de compra a pagar'}`;
+  const filename=accountingReportFilename(individual?`Contabilidade_${normalizedSide}_Pedido_${groups[0].numero}`:`Contabilidade_${normalizedSide}_Geral_${new Date().toISOString().slice(0,10)}`);
+  return {format,side:normalizedSide,groups,individual,partyLabel,movementLabel,title,filename};
+}
+function exportAccountingReport(format,side=accountingView,keyToken=''){
+  const context=accountingReportContext(format,side,keyToken);if(!context)return;
+  if(format==='excel')return exportAccountingExcel(context);
+  return exportAccountingPDF(context);
+}
+function exportAccountingPDF(context){
+  const JsPDF=window.jspdf?.jsPDF;
+  if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}));
+  const pageW=297,pageH=210,left=10,right=10,bottom=201,contentW=pageW-left-right;
+  const clean=value=>String(value??'—').replace(/\u00a0/g,' ');
+  const totals=context.groups.reduce((sum,group)=>({
+    total:sum.total+group.total,advances:sum.advances+group.advances,
+    settled:sum.settled+group.settled,balance:sum.balance+group.balance,rows:sum.rows+group.rows.length
+  }),{total:0,advances:0,settled:0,balance:0,rows:0});
+  let y=0;
+  const drawBrandHeader=(continuation=false)=>{
+    doc.setFillColor(24,24,24);doc.rect(0,7,pageW,22,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(255,255,255);doc.text('CARTAMAC',left,16);
+    doc.setFontSize(9);doc.setTextColor(222,190,82);doc.text('CONTABILIDADE · RELATÓRIO DE CONDIÇÕES DE PAGAMENTO',left,22);
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(195,195,195);doc.text(continuation?'Continuação':`Gerado em ${new Date().toLocaleString('pt-BR')}`,pageW-right,17,{align:'right'});
+    y=35;
+  };
+  const addPage=()=>{doc.addPage();drawBrandHeader(true);};
+  const ensure=height=>{if(y+height>bottom)addPage();};
+  drawBrandHeader(false);
+  doc.setFont('helvetica','bold');doc.setFontSize(context.individual?13:12);doc.setTextColor(28,28,28);
+  const titleLines=doc.splitTextToSize(clean(context.title),contentW);doc.text(titleLines,left,y);y+=titleLines.length*5+2;
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);
+  const filterText=context.individual?'Relatório completo do pedido.':`Relatório geral conforme os filtros visíveis no aplicativo · ${context.groups.length} pedido(s) · ${totals.rows} parcela(s).`;
+  doc.text(filterText,left,y);y+=5;
+  const cards=[['VALOR DOS PEDIDOS',totals.total,[38,38,38]],['ADIANTAMENTOS',totals.advances,[172,128,18]],[context.movementLabel.toUpperCase(),totals.settled,[39,145,72]],['SALDO EM ABERTO',totals.balance,[208,120,18]]];
+  const cardGap=3,cardW=(contentW-(cardGap*3))/4;
+  cards.forEach((card,index)=>{const x=left+index*(cardW+cardGap);doc.setFillColor(246,246,246);doc.setDrawColor(214,214,214);doc.roundedRect(x,y,cardW,15,1.4,1.4,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(105,105,105);doc.text(card[0],x+3,y+5);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...card[2]);doc.text(accountingReportMoney(card[1]),x+3,y+11);});
+  y+=21;
+  const cols=[
+    {label:'TIPO',x:left,w:43,align:'left'},
+    {label:'VENCIMENTO',x:left+43,w:28,align:'left'},
+    {label:'PERCENTUAL',x:left+71,w:27,align:'right'},
+    {label:'VALOR',x:left+98,w:46,align:'right'},
+    {label:`VALOR ${context.movementLabel.toUpperCase()}`,x:left+144,w:46,align:'right'},
+    {label:'SALDO',x:left+190,w:46,align:'right'},
+    {label:'SITUAÇÃO',x:left+236,w:41,align:'left'},
+  ];
+  const drawGroupHeader=(group,continued=false)=>{
+    ensure(33);
+    const delivery=accountingDeliveryInfo(group);
+    const deliveryMissing=!(group.deliveryDates||[]).length;
+    doc.setFillColor(240,240,238);doc.setDrawColor(205,205,205);doc.roundedRect(left,y,contentW,24,1.5,1.5,'FD');
+    doc.setFillColor(200,168,75);doc.rect(left,y,2,24,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text(`PEDIDO ${clean(group.numero)}${continued?' · continuação':''} · ${group.rows.length} condição(ões)`,left+5,y+5);
+    doc.setFontSize(8);doc.text(doc.splitTextToSize(clean(group.party),95)[0]||'—',left+5,y+10);
+    const deliveryText=clean(delivery.short).toUpperCase();doc.setFont('helvetica','bold');doc.setFontSize(6.4);const deliveryBadgeW=Math.min(88,Math.max(36,doc.getTextWidth(deliveryText)+8));
+    doc.setFillColor(...(deliveryMissing?[252,247,239]:[249,247,239]));doc.setDrawColor(...(deliveryMissing?[224,184,132]:[218,207,170]));doc.roundedRect(left+5,y+14,deliveryBadgeW,5.5,.8,.8,'FD');
+    doc.setTextColor(...(deliveryMissing?[159,91,42]:[105,82,25]));doc.text(deliveryText,left+8,y+17.7,{maxWidth:deliveryBadgeW-6});
+    const metrics=[['TOTAL',accountingReportMoney(group.total)],['ADIANTAMENTOS',accountingReportMoney(group.advances)],[context.movementLabel.toUpperCase(),`${accountingReportMoney(group.settled)} · ${accountingPercentText(group.paidPercent)}`],['SALDO',accountingReportMoney(group.balance)]];
+    const metricStart=left+111,metricW=(contentW-111)/4;
+    metrics.forEach((metric,index)=>{const x=metricStart+(index*metricW);doc.setFont('helvetica','normal');doc.setFontSize(5.2);doc.setTextColor(105,105,105);doc.text(metric[0],x,y+8);doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(index===2?39:index===3?190:55,index===2?145:index===3?105:55,index===2?72:index===3?20:55);doc.text(doc.splitTextToSize(metric[1],metricW-3)[0]||'—',x,y+15);});
+    y+=26;
+  };
+  const drawTableHeader=()=>{
+    doc.setFillColor(42,42,42);doc.rect(left,y,contentW,8,'F');doc.setFont('helvetica','bold');doc.setFontSize(5.8);doc.setTextColor(255,255,255);
+    cols.forEach(col=>doc.text(col.label,col.align==='right'?col.x+col.w-2:col.x+2,y+5,{align:col.align}));y+=8;
+  };
+  const drawOrderBorder=(start,end)=>{if(end<=start)return;doc.setDrawColor(178,178,178);doc.setLineWidth(.45);doc.roundedRect(left-1.2,start-1.2,contentW+2.4,end-start+2.4,2,2,'S');};
+  context.groups.forEach((group,groupIndex)=>{
+    if(groupIndex)y+=8;
+    ensure(34);
+    let blockStart=y;
+    drawGroupHeader(group,false);drawTableHeader();
+    group.rows.forEach((row,rowIndex)=>{
+      if(y+8>bottom){drawOrderBorder(blockStart,y);addPage();blockStart=y;drawGroupHeader(group,true);drawTableHeader();}
+      if(row.status.key==='done'){doc.setFillColor(234,247,238);doc.rect(left,y,contentW,8,'F');}
+      else if(row.status.key==='overdue'){doc.setFillColor(255,235,237);doc.rect(left,y,contentW,8,'F');}
+      else if(row.status.key==='partial'){doc.setFillColor(255,249,229);doc.rect(left,y,contentW,8,'F');}
+      else if(rowIndex%2===0){doc.setFillColor(249,249,249);doc.rect(left,y,contentW,8,'F');}
+      doc.setDrawColor(229,229,229);doc.line(left,y+8,left+contentW,y+8);
+      const values=[row.kind.label,receberDataFormat(row.due),accountingPercentText(row.percent),accountingReportMoney(row.value),accountingReportMoney(row.settled),accountingReportMoney(row.balance),row.status.label];
+      cols.forEach((col,index)=>{doc.setFont('helvetica',index>=3&&index<=6?'bold':'normal');doc.setFontSize(6.3);const colored=index===6||index===4;const isAlert=colored&&row.status.key==='overdue',isDone=colored&&row.status.key==='done';doc.setTextColor(isAlert?200:isDone?31:38,isAlert?48:isDone?137:38,isAlert?56:isDone?67:38);doc.text(doc.splitTextToSize(clean(values[index]),col.w-4)[0]||'—',col.align==='right'?col.x+col.w-2:col.x+2,y+5,{align:col.align});});
+      y+=8;
+    });
+    drawOrderBorder(blockStart,y);y+=6;
+  });
+  const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setDrawColor(220,220,220);doc.line(left,204,pageW-right,204);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(105,105,105);doc.text('Documento gerado pelo aplicativo CARTAMAC · Fonte: MaxiProd · Somente leitura',left,208);doc.text(`Página ${page} de ${pages}`,pageW-right,208,{align:'right'});}
+  cartamacPdfSave(doc,`${context.filename}.pdf`);showToast('Relatório PDF gerado com sucesso.');
+}
+function exportAccountingExcel(context){
+  if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const summary=[
+    ['CARTAMAC · CONTABILIDADE'],[context.title],[`Gerado em ${new Date().toLocaleString('pt-BR')}`],[],
+    ['Pedido',context.partyLabel,'Entrega(s)','Condições','Valor total','Adiantamentos',context.movementLabel,`% ${context.movementLabel}`,'Saldo em aberto'],
+    ...context.groups.map(group=>[group.numero,group.party,(group.deliveryDates||[]).map(receberDataFormat).join(' | ')||'Não informada',group.rows.length,group.total,group.advances,group.settled,group.paidPercent/100,group.balance])
+  ];
+  const details=[
+    ['CARTAMAC · DETALHAMENTO DAS CONDIÇÕES'],[context.title],[],
+    ['Pedido',context.partyLabel,'Tipo','Vencimento','Percentual','Valor',`Valor ${context.movementLabel.toLowerCase()}`,'Saldo','Situação','Entrega(s)'],
+    ...context.groups.flatMap(group=>group.rows.map(row=>[group.numero,group.party,row.kind.label,receberDataFormat(row.due),Number.isFinite(Number(row.percent))?Number(row.percent)/100:null,row.value,row.settled,row.balance,row.status.label,(group.deliveryDates||[]).map(receberDataFormat).join(' | ')||'Não informada']))
+  ];
+  const wsSummary=XLSX.utils.aoa_to_sheet(summary),wsDetails=XLSX.utils.aoa_to_sheet(details);
+  wsSummary['!cols']=[{wch:13},{wch:38},{wch:29},{wch:12},{wch:18},{wch:18},{wch:18},{wch:15},{wch:18}];
+  wsDetails['!cols']=[{wch:13},{wch:38},{wch:20},{wch:14},{wch:14},{wch:18},{wch:19},{wch:18},{wch:14},{wch:29}];
+  wsSummary['!autofilter']={ref:`A5:I${summary.length}`};wsSummary['!freeze']={xSplit:0,ySplit:5,topLeftCell:'A6',activePane:'bottomLeft',state:'frozen'};
+  wsDetails['!autofilter']={ref:`A4:J${details.length}`};wsDetails['!freeze']={xSplit:0,ySplit:4,topLeftCell:'A5',activePane:'bottomLeft',state:'frozen'};
+  const currency='"R$" #,##0.00',percent='0.00%';
+  for(let row=5;row<summary.length;row++){[4,5,6,8].forEach(column=>{const cell=wsSummary[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=currency;});const pct=wsSummary[XLSX.utils.encode_cell({r:row,c:7})];if(pct)pct.z=percent;}
+  for(let row=4;row<details.length;row++){[5,6,7].forEach(column=>{const cell=wsDetails[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=currency;});const pct=wsDetails[XLSX.utils.encode_cell({r:row,c:4})];if(pct)pct.z=percent;}
+  const workbook=XLSX.utils.book_new();workbook.Props={Title:context.title,Subject:'Condições de pagamento dos pedidos ativos',Author:'CARTAMAC',CreatedDate:new Date()};
+  XLSX.utils.book_append_sheet(workbook,wsSummary,'Resumo');XLSX.utils.book_append_sheet(workbook,wsDetails,'Parcelas');
+  XLSX.writeFile(workbook,`${context.filename}.xlsx`,{compression:true});showToast('Relatório Excel gerado com sucesso.');
+}
+function setAccountingBlocks(open){document.querySelectorAll('#contabilidadeContent .accounting-order-card').forEach(card=>{if(card.tagName==='DETAILS')card.open=Boolean(open);});}
+function switchAccountingView(view){
+  const next=view==='pagar'?'pagar':'receber';if(!hasAccess(`contabilidade.${next}`)){showAccessDenied();return;}accountingView=next;
+  accountingSearch='';accountingOnlyAdvances=false;renderAccountingPage();
+}
+function applyAccountingSearch(value){
+  accountingSearch=String(value||'');renderAccountingPage();
+  requestAnimationFrame(()=>{const input=document.getElementById('accountingSearch');if(input){input.focus();try{input.setSelectionRange(input.value.length,input.value.length);}catch(_){}}});
+}
+function toggleAccountingAdvances(){accountingOnlyAdvances=!accountingOnlyAdvances;renderAccountingPage();}
+function renderAccountingPage(container=document.getElementById('contabilidadeContent')){
+  if(!container)return;
+  const side=accountingView==='pagar'?'pagar':'receber';
+  const rows=accountingRows(side),filtered=accountingFilteredRows(rows),groups=accountingGroupRows(filtered);
+  const advances=rows.filter(row=>row.kind.key==='advance').reduce((sum,row)=>sum+row.value,0);
+  const settled=rows.reduce((sum,row)=>sum+row.settled,0),balance=rows.reduce((sum,row)=>sum+row.balance,0);
+  const orderCount=new Set(rows.filter(row=>row.numero!=='Não identificado').map(row=>financeNormalize(row.numero))).size;
+  const unidentified=rows.filter(row=>!row.order).length;
+  const updated=FINANCE_CACHE?.updatedAt||SALES_CACHE?.updatedAt||PURCHASE_ORDERS_CACHE?.updatedAt;
+  const updatedText=updated?new Date(updated).toLocaleString('pt-BR'):'Ainda não atualizado';
+  const settledLabel=side==='receber'?'Valor recebido':'Valor pago';
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">request_quote</span> Contabilidade</h2><p>Condições de pagamento dos pedidos, separando adiantamentos e parcelas vinculadas à entrega.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${escapeHTML(updatedText)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${financeRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> ${financeRefreshInProgress?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+    <div class="accounting-shell">
+      <div class="accounting-tabs">${hasAccess('contabilidade.receber')?`<button class="accounting-tab ${side==='receber'?'active':''}" onclick="switchAccountingView('receber')"><span class="msi msi-sm">south_west</span> A receber · Pedidos de venda</button>`:''}${hasAccess('contabilidade.pagar')?`<button class="accounting-tab ${side==='pagar'?'active':''}" onclick="switchAccountingView('pagar')"><span class="msi msi-sm">north_east</span> A pagar · Pedidos de compra</button>`:''}</div>
+      <div class="accounting-summary">
+        <div class="accounting-summary-card"><span>Pedidos identificados</span><b>${orderCount.toLocaleString('pt-BR')}</b></div>
+        <div class="accounting-summary-card advance"><span>Total em adiantamentos</span><b>${fmtBRL(advances)}</b></div>
+        <div class="accounting-summary-card settled"><span>${settledLabel}</span><b>${fmtBRL(settled)}</b></div>
+        <div class="accounting-summary-card open"><span>Saldo em aberto</span><b>${fmtBRL(balance)}</b></div>
+      </div>
+      <div class="accounting-note"><b>Leitura sem alterações:</b> o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. “Entrega / parcela” representa o valor não adiantado previsto na condição de pagamento.${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
+      <div class="accounting-toolbar"><input id="accountingSearch" class="search-input" value="${escapeHTML(accountingSearch)}" oninput="applyAccountingSearch(this.value)" placeholder="Filtrar pedido, cliente, fornecedor, vencimento ou situação..."><button class="accounting-filter ${accountingOnlyAdvances?'active':''}" type="button" onclick="toggleAccountingAdvances()">Somente adiantamentos</button><span class="muted" style="font-size:12px;white-space:nowrap;">${groups.length} bloco(s) · ${filtered.length} de ${rows.length} condição(ões)</span><div class="accounting-general-reports"><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('pdf','${side}')" title="Gerar relatório geral em PDF"><span class="msi msi-sm">picture_as_pdf</span> PDF geral</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('excel','${side}')" title="Gerar relatório geral em Excel"><span class="msi msi-sm">table_view</span> Excel geral</button></div><div class="accounting-block-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(true)">Expandir todos</button><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(false)">Recolher todos</button></div></div>
+      <div class="accounting-orders">${accountingOrderBlocksMarkup(groups,side)}</div>
+    </div>`;
 }
 
 // ─────────────── ATIVOS IMOBILIZADOS · GRUPO 8 ───────────────
@@ -6493,7 +7223,7 @@ function exportStockReport(kind,format){
 function exportStockReportPDF(report){
   const JsPDF=window.jspdf?.jsPDF;
   if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
-  const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'}));
   const widths=report.widths||[24,25,128,25,35,35],left=12,pageBottom=198;
   const drawTableHeader=y=>{
     doc.setFillColor(40,40,40);doc.rect(left,y,272,8,'F');
@@ -6536,7 +7266,7 @@ function exportStockReportPDF(report){
     doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(110,110,110);
     doc.text(`${report.title} - Página ${page} de ${pages}`,284,205,{align:'right'});
   }
-  doc.save(`${report.filename}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(doc,`${report.filename}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 function exportStockReportExcel(report){
   if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
@@ -6629,6 +7359,7 @@ function refreshUIFromDB(){
   if(document.getElementById('page-custos')?.classList.contains('active')&&costsUnlocked)renderCostsPage();
   if(document.getElementById('page-financeiro')?.classList.contains('active')&&typeof renderFinanceiroFiscal==='function')renderFinanceiroFiscal();
   if(document.getElementById('page-compras')?.classList.contains('active')&&typeof renderPurchaseOrdersPage==='function')renderPurchaseOrdersPage();
+  if(document.getElementById('page-contabilidade')?.classList.contains('active')&&typeof renderAccountingPage==='function')renderAccountingPage();
 }
 
 let _initialLoadDone=false;
@@ -6712,6 +7443,7 @@ Object.assign(window,{
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,toggleSalesGeography,setSalesGeographyYear,selectSalesGeographyUf,exportSalesYearReport,
   renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,togglePurchaseOrdersOverdue,exportPurchaseOrdersPDF,
+  renderAccountingPage,switchAccountingView,applyAccountingSearch,toggleAccountingAdvances,setAccountingBlocks,exportAccountingReport,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
   renderRawMaterialPage,refreshRawMaterialMaxiprod,filterRawMaterial,filterRawMaterialGroup,showMoreRawMaterial,toggleRawMaterialGroup,
