@@ -284,7 +284,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .client-date-pair span{display:flex;flex-direction:column;gap:2px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:6px 9px;min-width:96px;color:var(--text2);font-size:12px;line-height:1.2;}
 .client-date-pair b{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
 .client-progress-list{display:grid;gap:18px;}.client-progress-card{background:var(--bg2);border:1px solid var(--border2);border-left:4px solid var(--gold);border-radius:var(--radius2);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.13)}.client-progress-card.archived{border-left-color:var(--green)}
-.client-progress-head{display:flex;align-items:center;gap:13px;padding:17px 19px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(200,168,75,.055),transparent 55%)}.client-progress-code{font:800 13px 'JetBrains Mono',monospace;color:var(--gold);background:rgba(200,168,75,.10);border:1px solid rgba(200,168,75,.18);border-radius:6px;padding:7px 9px;white-space:nowrap}.client-progress-title{flex:1;min-width:0}.client-progress-title h3{font-size:17px;margin:0;color:var(--text)}.client-progress-title p{font-size:12px;color:var(--text3);margin:4px 0 0}.client-progress-total{display:flex;align-items:baseline;gap:6px;white-space:nowrap}.client-progress-total b{font:800 22px 'JetBrains Mono',monospace;color:var(--gold)}.client-progress-total span{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.client-progress-head{display:flex;align-items:center;gap:13px;padding:17px 19px;background:linear-gradient(90deg,rgba(200,168,75,.055),transparent 55%);cursor:pointer;user-select:none}.client-progress-head:hover{background:linear-gradient(90deg,rgba(200,168,75,.09),rgba(255,255,255,.018) 58%,transparent)}.client-progress-head:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}.client-progress-code{font:800 13px 'JetBrains Mono',monospace;color:var(--gold);background:rgba(200,168,75,.10);border:1px solid rgba(200,168,75,.18);border-radius:6px;padding:7px 9px;white-space:nowrap}.client-progress-title{flex:1;min-width:0}.client-progress-title h3{font-size:17px;margin:0;color:var(--text)}.client-progress-title p{font-size:12px;color:var(--text3);margin:4px 0 0}.client-progress-total{display:flex;align-items:baseline;gap:6px;white-space:nowrap}.client-progress-total b{font:800 22px 'JetBrains Mono',monospace;color:var(--gold)}.client-progress-total span{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}.client-progress-chevron{font-size:20px;color:var(--text3);transition:transform .18s ease}.client-progress-card.open .client-progress-chevron{transform:rotate(180deg)}.client-progress-body{display:none;border-top:1px solid var(--border)}.client-progress-card.open .client-progress-body{display:block}
 .client-current-stage{margin:16px 18px 0;padding:14px 16px;border:1px solid rgba(200,168,75,.24);border-radius:9px;background:rgba(200,168,75,.075);display:flex;align-items:center;gap:12px}.client-current-stage .msi{color:var(--gold)}.client-current-stage span{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;font-weight:750}.client-current-stage strong{display:block;color:var(--text);font-size:16px;margin-top:2px}.client-current-stage.done{border-color:rgba(73,190,100,.28);background:rgba(73,190,100,.07)}.client-current-stage.done .msi{color:var(--green)}
 .client-sector-rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;padding:17px 18px}.client-sector-card{position:relative;border:1px solid var(--border);border-radius:9px;background:var(--bg3);padding:14px 10px 12px;text-align:center;min-width:0}.client-sector-card.current{border-color:var(--gold);background:rgba(200,168,75,.055)}.client-sector-card.current:before{content:'SETOR ATUAL';position:absolute;top:7px;right:7px;font-size:8px;font-weight:850;letter-spacing:.45px;color:var(--gold)}.client-sector-donut{width:92px;height:92px;margin:5px auto 8px;position:relative}.client-sector-donut svg{display:block;width:100%;height:100%;overflow:visible}.client-sector-donut .track{fill:none;stroke:#303030;stroke-width:11}.client-sector-donut .progress{fill:none;stroke-width:11;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dasharray .35s ease}.client-sector-value{position:absolute;inset:0;display:grid;place-items:center;font:800 17px 'JetBrains Mono',monospace;color:var(--text)}.client-sector-name{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.35px;white-space:normal;overflow-wrap:anywhere}.client-progress-docs{padding:0 18px 18px}.client-progress-docs .docs-section{margin:0}
 .client-progress-overview{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(340px,1.2fr);align-items:center;gap:26px;padding:24px 28px 26px}.client-main-donut{width:min(310px,100%);aspect-ratio:1;margin:auto;position:relative}.client-main-donut svg{width:100%;height:100%;display:block;overflow:visible}.client-main-donut .stage-track,.client-main-donut .stage-progress{fill:none;stroke-width:16;transform:rotate(-90deg);transform-origin:50% 50%}.client-main-donut .stage-track{stroke:#303030}.client-main-donut .stage-progress{stroke-linecap:butt;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}.client-main-donut-center{position:absolute;inset:26%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--bg2);border:1px solid var(--border)}.client-main-donut-center b{font:850 clamp(30px,5vw,48px) 'JetBrains Mono',monospace;color:var(--text);line-height:1}.client-main-donut-center span{font-size:10px;color:var(--text3);font-weight:800;letter-spacing:.65px;text-transform:uppercase;margin-top:8px}.client-main-donut-center strong{font-size:12px;color:var(--gold);margin-top:5px;max-width:115px;line-height:1.25}.client-stage-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.client-stage-legend-item{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:9px;align-items:center;border:1px solid var(--border);border-radius:8px;background:var(--bg3);padding:11px 12px;min-width:0}.client-stage-legend-item.current{border-color:var(--gold);background:rgba(200,168,75,.065)}.client-stage-color{width:11px;height:11px;border-radius:3px}.client-stage-copy{min-width:0}.client-stage-copy b{display:block;font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}.client-stage-copy small{display:block;color:var(--text3);font-size:10px;margin-top:3px}.client-stage-copy small.current{color:var(--gold);font-weight:800}.client-stage-copy small.done{color:var(--green);font-weight:800}.client-stage-pct{font:800 13px 'JetBrains Mono',monospace;color:var(--text);white-space:nowrap}
@@ -2623,14 +2623,15 @@ function cartamacPdfInit(doc){
 }
 function cartamacPdfFinalize(doc,options={}){
   const pages=doc.getNumberOfPages(),footerText=options.footerText||'Documento gerado pelo aplicativo CARTAMAC · Fonte: MaxiProd · Somente leitura';
+  const sector=String(options.sector||'RELATÓRIO').trim().toUpperCase();
   for(let page=1;page<=pages;page++){
     doc.setPage(page);
     const pageW=doc.internal.pageSize.getWidth(),pageH=doc.internal.pageSize.getHeight();
-    // Cabeçalho do papel timbrado: linhas no extremo superior e assinatura com respiro.
-    // Somente a área central recebe fundo branco; títulos existentes nas laterais não são cobertos.
-    doc.setDrawColor(25,25,25);doc.setLineWidth(.25);doc.line(0,.7,pageW,.7);doc.setLineWidth(.14);doc.line(0,1.7,pageW,1.7);
-    doc.setFillColor(255,255,255);doc.rect(pageW/2-17,0,34,6.4,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(5.5);doc.setTextColor(25,25,25);doc.text('CARTAMAC',pageW/2,5,{align:'center'});
+    // Cabeçalho único: faixa preta, sem linhas duplas, com identificação centralizada.
+    doc.setFillColor(24,24,24);doc.rect(0,0,pageW,10.8,'F');
+    doc.setDrawColor(...CARTAMAC_PDF_THEME.gold);doc.setLineWidth(.35);doc.line(0,10.8,pageW,10.8);
+    doc.setFont('helvetica','bold');doc.setFontSize(8.4);doc.setTextColor(255,255,255);
+    doc.text(`CARTAMAC - ${sector}`,pageW/2,6.8,{align:'center',maxWidth:pageW-20});
     // Rodapé do modelo: reserva branca, traço preto, detalhe dourado e paginação.
     doc.setFillColor(255,255,255);doc.rect(0,pageH-10.5,pageW,10.5,'F');
     doc.setDrawColor(25,25,25);doc.setLineWidth(.75);doc.line(0,pageH-9.4,pageW,pageH-9.4);
@@ -3461,13 +3462,13 @@ function exportFinanceCalendarPDF(kind,mode='curto'){
   const byDay={};records.forEach(row=>{const day=row.vencimento.getDate();(byDay[day]||=[]).push(row);});
   const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),pageW=297,left=10,right=10,contentW=277;
   doc.setTextColor(28,28,28);doc.setFont('helvetica','bold');doc.setFontSize(16);
-  doc.text(`CARTAMAC - ${isReceive?'Contas a receber':'Contas a pagar'}`,left,13);
-  doc.setFontSize(11);doc.text(`Calendário de vencimentos - ${receberMesNome(month)} de ${year}`,left,20);
+  doc.text(`${isReceive?'Contas a receber':'Contas a pagar'}`,left,17);
+  doc.setFontSize(11);doc.text(`Calendário de vencimentos - ${receberMesNome(month)} de ${year}`,left,23);
   doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(170,170,170);
-  doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} - ${records.length} lançamento(s)`,left,25);
+  doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} - ${records.length} lançamento(s)`,left,28);
   const cards=[['TOTAL DO MÊS',fmtBRL(total)],['FALTA '+(isReceive?'RECEBER':'PAGAR'),fmtBRL(open)],['ATRASADO',fmtBRL(overdue)]];
-  cards.forEach((card,index)=>{const x=left+(index*(contentW/3)),w=(contentW/3)-3;doc.setFillColor(248,248,248);doc.setDrawColor(205,205,205);doc.roundedRect(x,29,w,12,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(95,95,95);doc.text(card[0],x+3,33.5);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(index===2&&overdue>0?205:38,index===2&&overdue>0?45:145,index===2&&overdue>0?58:72);doc.text(card[1],x+3,38.3);});
-  const weekdays=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'],gridTop=48,colW=contentW/7;
+  cards.forEach((card,index)=>{const x=left+(index*(contentW/3)),w=(contentW/3)-3;doc.setFillColor(248,248,248);doc.setDrawColor(205,205,205);doc.roundedRect(x,32,w,12,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(95,95,95);doc.text(card[0],x+3,36.5);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(index===2&&overdue>0?205:38,index===2&&overdue>0?45:145,index===2&&overdue>0?58:72);doc.text(card[1],x+3,41.3);});
+  const weekdays=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'],gridTop=50,colW=contentW/7;
   weekdays.forEach((label,index)=>{const x=left+(index*colW);doc.setFillColor(232,232,232);doc.setDrawColor(190,190,190);doc.rect(x,gridTop-5,colW,5,'FD');doc.setFont('helvetica','bold');doc.setFontSize(6);doc.setTextColor(55,55,55);doc.text(label,x+(colW/2),gridTop-1.6,{align:'center'});});
   const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),weeks=Math.ceil((first+days)/7),cellH=145/weeks;
   for(let day=1;day<=days;day++){
@@ -3484,7 +3485,7 @@ function exportFinanceCalendarPDF(kind,mode='curto'){
     if(items.length>maxItems){doc.setFont('helvetica','bold');doc.setFontSize(5);doc.setTextColor(200,168,75);doc.text(`+ ${items.length-maxItems} item(ns)`,x+2,y+cellH-2);}
   }
   doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(120,120,120);doc.text('Valores organizados pela data de vencimento.',left,205);doc.text('CARTAMAC',pageW-right,205,{align:'right'});
-  cartamacPdfSave(doc,`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${year}-${String(month+1).padStart(2,'0')}.pdf`);
+  cartamacPdfSave(doc,`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${year}-${String(month+1).padStart(2,'0')}.pdf`,{sector:'FINANCEIRO / FISCAL'});
 }
 function exportFinancePeriodPDF(kind){
   const isReceive=kind==='receber';
@@ -3525,9 +3526,9 @@ function exportFinanceCalendarExpandedPDF(kind,year,month,records,options={}){
     :[receberDataFormat(row.vencimento),receberDataFormat(row.emissao),row.descricao,row.fornecedor,row.referenteA,row.parcela.numero,row.parcela.total,fmtBRL(row.valorTitulo),fmtBRL(row.pago),fmtBRL(row.aberto)];
   const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),left=7,pageW=297,pageBottom=202;
   const drawHeader=(firstPage=false)=>{
-    let y=firstPage?10:8;
+    let y=15;
     if(firstPage){
-      doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(25,25,25);doc.text(`CARTAMAC - ${isReceive?'Contas a receber':'Contas a pagar'}`,left,y);y+=6;
+      doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(25,25,25);doc.text(`${isReceive?'Contas a receber':'Contas a pagar'}`,left,y);y+=6;
       doc.setFontSize(10);doc.text(`${options.reportTitle||'Relatório expandido'} - ${options.periodLabel||`${receberMesNome(month)} de ${year}`}`,left,y);y+=5;
       doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · ${sorted.length} lançamento(s)`,left,y);y+=6;
       const cards=[['TOTAL',total],['RECEBIDO / PAGO',received],['EM ABERTO',open],['ATRASADO',overdue]];
@@ -3556,7 +3557,7 @@ function exportFinanceCalendarExpandedPDF(kind,year,month,records,options={}){
     });y+=rowHeight;
   });
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`${options.footerLabel||'Relatório expandido'} · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
-  cartamacPdfSave(doc,options.filename||`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_Expandido_${year}-${String(month+1).padStart(2,'0')}.pdf`);
+  cartamacPdfSave(doc,options.filename||`Calendario_${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_Expandido_${year}-${String(month+1).padStart(2,'0')}.pdf`,{sector:'FINANCEIRO / FISCAL'});
 }
 function renderContasAPagar(target){
   const rows=pagarRegistros();
@@ -3743,9 +3744,9 @@ function exportCashFlowPDF(){
   const selected=cashFlowMonthTotals(cashFlowSelectedMonth),data=getCashFlowData();
   const annual=Array.from({length:12},(_,month)=>cashFlowMonthTotals(monthKey(selected.year,month)));
   const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),left=12;
-  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text('CARTAMAC - Fluxo de Caixa Mensal',left,14);
-  doc.setFontSize(10);doc.text(`Visão consolidada de ${selected.year}`,left,21);
-  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · mês selecionado: ${receberMesNome(selected.month)}`,left,26);
+  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text('Fluxo de Caixa Mensal',left,17);
+  doc.setFontSize(10);doc.text(`Visão consolidada de ${selected.year}`,left,23);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · mês selecionado: ${receberMesNome(selected.month)}`,left,28);
   const cards=[['TOTAL NOS BANCOS',selected.totalBancos],['ENTRADAS',selected.entradas],['SAÍDAS',selected.saidas],['PREVISTO',selected.previsto],['SALDO PROJETADO',selected.saldoProjetado]];
   cards.forEach((card,index)=>{const x=left+index*55;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,31,51,14,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.8);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,35);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(card[1]<0?195:35,card[1]<0?45:125,card[1]<0?55:70);doc.text(fmtBRL(card[1]),x+2.5,41);});
   doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(35,35,35);doc.text(`Saldos bancários de ${receberMesNome(selected.month)}`,left,53);
@@ -3757,13 +3758,13 @@ function exportCashFlowPDF(){
   const monthMovement=[{label:'Entradas',value:selected.entradas,color:'#42c75b'},{label:'Saídas',value:selected.saidas,color:'#ef4d55'},{label:'Previsto',value:selected.previsto,color:'#d4a017'}];
   const monthBars=[...monthMovement,{label:'Saldo final',value:selected.saldoProjetado,color:selected.saldoProjetado<0?'#ef4d55':'#4e8cff'}];
   const annualMovement=[{label:'Entradas no ano',value:annual.reduce((sum,row)=>sum+row.entradas,0),color:'#42c75b'},{label:'Saídas no ano',value:annual.reduce((sum,row)=>sum+row.saidas,0),color:'#ef4d55'},{label:'Previsto no ano',value:annual.reduce((sum,row)=>sum+row.previsto,0),color:'#d4a017'}];
-  doc.addPage();doc.setTextColor(28,28,28);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(`CARTAMAC - Gráficos do Fluxo de Caixa ${selected.year}`,left,13);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Mês selecionado: ${receberMesNome(selected.month)} · Percentuais calculados sobre entradas, saídas e previsto.`,left,19);
+  doc.addPage();doc.setTextColor(28,28,28);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(`Gráficos do Fluxo de Caixa ${selected.year}`,left,17);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Mês selecionado: ${receberMesNome(selected.month)} · Percentuais calculados sobre entradas, saídas e previsto.`,left,23);
   doc.addImage(cashFlowPdfBarImage(`Movimentação de ${receberMesNome(selected.month)}`,monthBars),'PNG',8,25,137,70);
   doc.addImage(cashFlowPdfPieImage(`Composição de ${receberMesNome(selected.month)}`,monthMovement),'PNG',152,25,137,70);
   doc.addImage(cashFlowPdfAnnualBarImage(`Comparativo mensal de ${selected.year}`,annual),'PNG',8,106,137,70);
   doc.addImage(cashFlowPdfPieImage(`Composição anual de ${selected.year}`,annualMovement),'PNG',152,106,137,70);
   doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(105,105,105);doc.text('Entradas: Contas a receber · Saídas: Contas a pagar · Previsto: Gantt de Custos.',left,202);
-  cartamacPdfSave(doc,`Fluxo_de_Caixa_${selected.year}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(doc,`Fluxo_de_Caixa_${selected.year}_${new Date().toISOString().slice(0,10)}.pdf`,{sector:'FINANCEIRO / FISCAL'});
 }
 function renderCashFlowPage(container=document.getElementById('financeiroContent')){
   if(!container)return;
@@ -4585,14 +4586,14 @@ function exportCostStructurePDF(orderId){
   const cards=[['ESTRUTURA',report.totals.estruturaTotal],['INSUMOS',report.totals.insumosTotal],['OPERAÇÕES',report.totals.operacoesTotal],['TOTAL DA OP',report.totals.total]],gap=2,cardW=(tableW-gap*3)/4;
   cards.forEach((card,index)=>{const x=left+index*(cardW+gap);pdf.setFillColor(246,246,246);pdf.setDrawColor(...CARTAMAC_PDF_THEME.grid);pdf.roundedRect(x,y,cardW,14,1.2,1.2,'FD');pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);pdf.setTextColor(...CARTAMAC_PDF_THEME.muted);pdf.text(card[0],x+2.5,y+4.5);pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(index===3?170:40,index===3?120:40,index===3?22:40);pdf.text(fmtBRL(card[1]),x+2.5,y+10.5);});y+=20;
   const drawTable=(heading,headers,widths,rows,alignRight=[])=>{
-    const drawSection=continuation=>{if(y+17>pageBottom){pdf.addPage();y=11;}pdf.setFillColor(239,239,239);pdf.setDrawColor(...CARTAMAC_PDF_THEME.grid);pdf.rect(left,y,tableW,8,'FD');pdf.setFillColor(...CARTAMAC_PDF_THEME.gold);pdf.rect(left,y,2,8,'F');pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(...CARTAMAC_PDF_THEME.text);pdf.text(`${heading}${continuation?' · CONTINUAÇÃO':''}`,left+4,y+5.3);y+=8;pdf.setFillColor(...CARTAMAC_PDF_THEME.tableHeader);pdf.rect(left,y,tableW,8,'F');pdf.setTextColor(255,255,255);pdf.setFontSize(5.8);let x=left;headers.forEach((header,index)=>{pdf.text(header,alignRight.includes(index)?x+widths[index]-2:x+2,y+5.2,{align:alignRight.includes(index)?'right':'left',maxWidth:widths[index]-4});x+=widths[index];});y+=8;};
+    const drawSection=continuation=>{if(y+17>pageBottom){pdf.addPage();y=15;}pdf.setFillColor(239,239,239);pdf.setDrawColor(...CARTAMAC_PDF_THEME.grid);pdf.rect(left,y,tableW,8,'FD');pdf.setFillColor(...CARTAMAC_PDF_THEME.gold);pdf.rect(left,y,2,8,'F');pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(...CARTAMAC_PDF_THEME.text);pdf.text(`${heading}${continuation?' · CONTINUAÇÃO':''}`,left+4,y+5.3);y+=8;pdf.setFillColor(...CARTAMAC_PDF_THEME.tableHeader);pdf.rect(left,y,tableW,8,'F');pdf.setTextColor(255,255,255);pdf.setFontSize(5.8);let x=left;headers.forEach((header,index)=>{pdf.text(header,alignRight.includes(index)?x+widths[index]-2:x+2,y+5.2,{align:alignRight.includes(index)?'right':'left',maxWidth:widths[index]-4});x+=widths[index];});y+=8;};
     drawSection(false);
-    (rows.length?rows:[['—','Nenhum registro disponível']]).forEach((values,rowIndex)=>{const lineSets=values.map((value,index)=>pdf.splitTextToSize(String(value??'—'),(widths[index]||widths.at(-1))-4)),rowHeight=Math.max(7,...lineSets.map(set=>set.length*3.3+3));if(y+rowHeight>pageBottom){pdf.addPage();y=11;drawSection(true);}if(rowIndex%2===0){pdf.setFillColor(...CARTAMAC_PDF_THEME.rowAlternate);pdf.rect(left,y,tableW,rowHeight,'F');}pdf.setDrawColor(...CARTAMAC_PDF_THEME.grid);pdf.line(left,y+rowHeight,left+tableW,y+rowHeight);pdf.setFont('helvetica','normal');pdf.setFontSize(6.4);pdf.setTextColor(...CARTAMAC_PDF_THEME.text);let x=left;lineSets.forEach((set,index)=>{const right=alignRight.includes(index);pdf.setFont('helvetica',right?'bold':'normal');pdf.text(set,right?x+widths[index]-2:x+2,y+4.5,{align:right?'right':'left',maxWidth:widths[index]-4});x+=widths[index];});y+=rowHeight;});y+=5;
+    (rows.length?rows:[['—','Nenhum registro disponível']]).forEach((values,rowIndex)=>{const lineSets=values.map((value,index)=>pdf.splitTextToSize(String(value??'—'),(widths[index]||widths.at(-1))-4)),rowHeight=Math.max(7,...lineSets.map(set=>set.length*3.3+3));if(y+rowHeight>pageBottom){pdf.addPage();y=15;drawSection(true);}if(rowIndex%2===0){pdf.setFillColor(...CARTAMAC_PDF_THEME.rowAlternate);pdf.rect(left,y,tableW,rowHeight,'F');}pdf.setDrawColor(...CARTAMAC_PDF_THEME.grid);pdf.line(left,y+rowHeight,left+tableW,y+rowHeight);pdf.setFont('helvetica','normal');pdf.setFontSize(6.4);pdf.setTextColor(...CARTAMAC_PDF_THEME.text);let x=left;lineSets.forEach((set,index)=>{const right=alignRight.includes(index);pdf.setFont('helvetica',right?'bold':'normal');pdf.text(set,right?x+widths[index]-2:x+2,y+4.5,{align:right?'right':'left',maxWidth:widths[index]-4});x+=widths[index];});y+=rowHeight;});y+=5;
   };
   drawTable('ESTRUTURA MULTINÍVEL',['NÍVEL','CÓDIGO','ITEM / DESCRIÇÃO','UNID.','QTD.','TOTAL'],[13,29,72,15,21,36],report.rows.map(r=>[r.nivel,r.codigo,`${'  '.repeat(Math.max(0,r.nivel-1))}${r.descricao}`,r.unidade,fmtStructureNumber(r.quantidade),fmtBRL(r.total)]),[4,5]);
   drawTable('INSUMOS',['CÓDIGO','DESCRIÇÃO','QTD. BAIXADA','VALOR UNIT.','TOTAL'],[29,77,25,27,28],report.insumos.map(r=>[r.codigo||'—',r.descricao||'—',fmtStructureNumber(r.quantidadeBaixada),fmtBRL(r.valorUnitario),fmtBRL(r.valorTotal)]),[2,3,4]);
   drawTable('OPERAÇÕES',['DESCRIÇÃO','ESTAÇÃO','HORAS','R$/H','TOTAL'],[65,45,22,26,28],report.operacoes.map(r=>[r.descricao,r.estacao,fmtStructureNumber(r.horas),fmtBRL(r.valorHora),fmtBRL(r.total)]),[2,3,4]);
-  cartamacPdfSave(pdf,`${safeReportFileName(`Estrutura Multinivel - ${report.order.code||report.order.op||'OP'} — ${report.order.name||'Equipamento'}`)}.pdf`);
+  cartamacPdfSave(pdf,`${safeReportFileName(`Estrutura Multinivel - ${report.order.code||report.order.op||'OP'} — ${report.order.name||'Equipamento'}`)}.pdf`,{sector:'CUSTOS'});
 }
 function updateCostMonth(orderId,key,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
@@ -5128,7 +5129,7 @@ function buildClientProgressCard(order){
   const legend=departments.map((item,index)=>{const isCurrent=current===item,color=colors[index%colors.length],state=item.pct>=100?'Concluído':isCurrent?'Estágio atual':item.pct>0?'Em andamento':'Aguardando';return `<div class="client-stage-legend-item ${isCurrent?'current':''}"><i class="client-stage-color" style="background:${color}"></i><div class="client-stage-copy"><b title="${escapeHTML(item.department.name)}">${escapeHTML(item.department.name||`Setor ${index+1}`)}</b><small class="${item.pct>=100?'done':isCurrent?'current':''}">${state}</small></div><span class="client-stage-pct">${item.pct}%</span></div>`;}).join('');
   const currentLabel=completed?'Concluído':escapeHTML(current?.department?.name||'Aguardando início');
   const overview=departments.length?`<div class="client-progress-overview"><div class="client-main-donut"><svg viewBox="0 0 200 200" role="img" aria-label="Progresso geral ${overall}% por setor">${arcs}</svg><div class="client-main-donut-center"><b>${overall}%</b><span>Progresso geral</span><strong>${completed?'Pedido concluído':`Atual: ${currentLabel}`}</strong></div></div><div class="client-stage-legend">${legend}</div></div>`:'<div class="no-docs" style="margin:20px;">Os setores deste pedido ainda não foram carregados.</div>';
-  return `<article class="client-progress-card ${completed?'archived':''}"><div class="client-progress-head"><span class="client-progress-code">${escapeHTML(order.code||'—')}</span><div class="client-progress-title"><h3>${escapeHTML(order.name||'Equipamento')}</h3>${order.op&&order.op!==order.code?`<p>OP: ${escapeHTML(order.op)}</p>`:''}</div></div>${overview}<div class="client-progress-docs"><div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docs}</div></div></article>`;
+  return `<article class="client-progress-card ${completed?'archived':''}"><div class="client-progress-head" role="button" tabindex="0" aria-expanded="false" onclick="const card=this.parentElement;card.classList.toggle('open');this.setAttribute('aria-expanded',card.classList.contains('open')?'true':'false')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"><span class="client-progress-code">${escapeHTML(order.code||'—')}</span><div class="client-progress-title"><h3>${escapeHTML(order.name||'Equipamento')}</h3>${order.op&&order.op!==order.code?`<p>OP: ${escapeHTML(order.op)}</p>`:''}</div><div class="client-progress-total"><span>Progresso geral</span><b>${overall}%</b></div><span class="msi client-progress-chevron">expand_more</span></div><div class="client-progress-body">${overview}<div class="client-progress-docs"><div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docs}</div></div></div></article>`;
 }
 function renderClientOrders(){
   const c=loggedUser.ref;
@@ -5227,13 +5228,13 @@ function exportSimulationPDF(){
   report.scheduled.forEach((item,index)=>{
     const values=[item.dept,item.name,simFmtDate(new Date(item.start)),simFmtDate(new Date(item.end)),item.shifted?'Ajustada':'Disponível'];
     const lines=values.map((value,column)=>doc.splitTextToSize(String(value??'—'),widths[column]-4)),rowHeight=Math.max(7,...lines.map(set=>set.length*3.5+3));
-    if(y+rowHeight>pageBottom){doc.addPage();y=11;drawHeader();}
+    if(y+rowHeight>pageBottom){doc.addPage();y=15;drawHeader();}
     if(index%2===0){doc.setFillColor(...CARTAMAC_PDF_THEME.rowAlternate);doc.rect(left,y,tableW,rowHeight,'F');}
     doc.setDrawColor(...CARTAMAC_PDF_THEME.grid);doc.line(left,y+rowHeight,left+tableW,y+rowHeight);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...CARTAMAC_PDF_THEME.text);
     let x=left;lines.forEach((set,column)=>{doc.setFont('helvetica',column===4?'bold':'normal');if(column===4&&item.shifted)doc.setTextColor(190,105,20);else doc.setTextColor(...CARTAMAC_PDF_THEME.text);doc.text(set,x+2,y+4.8,{maxWidth:widths[column]-4});x+=widths[column];});y+=rowHeight;
   });
   const safeName=(report.equipment||'simulacao').replace(/[\\/:*?"<>|]/g,'-').slice(0,45);
-  cartamacPdfSave(doc,`relatorio-simulacao-${safeName}.pdf`);
+  cartamacPdfSave(doc,`relatorio-simulacao-${safeName}.pdf`,{sector:'SIMULAÇÃO DE CRONOGRAMA'});
 }
 
 // ─────────── PEÇAS DE REPOSIÇÃO ───────────
@@ -5308,7 +5309,7 @@ function exportPartsPriceReport(){
   table('IMPOSTOS',report.taxes.map(x=>[x.nome,pct(x.valor)]).concat([['IPI',pct(report.ipi)]]));
   table('RESUMO PREÇO DE VENDA',[['Preço de venda',fmtPartsCost(report.sale)],['Preço de venda com IPI',fmtPartsCost(report.saleWithIpi)],['Preço com margem de desconto',fmtPartsCost(report.discounted)],['Preço com desconto e IPI',fmtPartsCost(report.discountedWithIpi)],['Preço com margem sem imposto',fmtPartsCost(report.withoutTax)]]);
   premium.setTextColor(100,100,100);premium.setFont('helvetica','normal');premium.setFontSize(7);premium.text(`Emitido em ${new Date().toLocaleString('pt-BR')}`,12,291);
-  cartamacPdfSave(premium,`${safeReportFileName(`Custo - ${report.name}`)}.pdf`);
+  cartamacPdfSave(premium,`${safeReportFileName(`Custo - ${report.name}`)}.pdf`,{sector:'CUSTOS'});
   return;
   line('CARTAMAC — Custo / Formação de preço',15,true);line(report.name,12,true);line(`Emitido em ${new Date().toLocaleString('pt-BR')}`);y+=2;
   line(`Custo do equipamento: ${fmtPartsCost(report.cost)}`,10,true);line(`Margem de desconto: ${pct(report.discount)}`);line(`Markup calculado do equipamento: ${pct(report.markup)}`,10,true);line(`Tributos sem IPI: ${pct(report.taxSum)} | IPI: ${pct(report.ipi)}`);y+=2;
@@ -5316,7 +5317,7 @@ function exportPartsPriceReport(){
   line('ÍNDICES COMERCIAIS',11,true);report.commercial.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));
   line('IMPOSTOS',11,true);report.taxes.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));line(`IPI: ${pct(report.ipi)}`);y+=2;
   line('RESUMO PREÇO DE VENDA',11,true);line(`Preço de venda: ${fmtPartsCost(report.sale)} | Com IPI: ${fmtPartsCost(report.saleWithIpi)}`,10,true);line(`Preço com margem de desconto: ${fmtPartsCost(report.discounted)} | Com IPI: ${fmtPartsCost(report.discountedWithIpi)}`,10,true);line(`Preço com margem sem imposto: ${fmtPartsCost(report.withoutTax)}`,10,true);
-  cartamacPdfSave(pdf,`${safeReportFileName(`Custo - ${report.name}`)}.pdf`);
+  cartamacPdfSave(pdf,`${safeReportFileName(`Custo - ${report.name}`)}.pdf`,{sector:'CUSTOS'});
 }
 function fmtPartsDate(value){
   if(!value)return '—';
@@ -5673,10 +5674,7 @@ function exportEngineeringMacroPDF(scope='all'){
   const dateValue=value=>value&&/^\d{4}-\d{2}-\d{2}$/.test(String(value))?fmtDate(String(value)):'N/A';
   let y=0,currentRecord=null;
   const drawPageHeader=(continuation=false)=>{
-    pdf.setTextColor(35,35,35);pdf.setFont('helvetica','bold');pdf.setFontSize(9);pdf.text('CARTAMAC - MACRO ENGENHARIA',left,9);
-    pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);pdf.setTextColor(105,105,105);pdf.text(`Emitido em ${new Date().toLocaleString('pt-BR')}`,pageW-right,9,{align:'right'});
-    pdf.setDrawColor(210,210,210);pdf.line(left,12,pageW-right,12);
-    if(continuation&&currentRecord){pdf.setFont('helvetica','bold');pdf.setFontSize(7);pdf.setTextColor(75,75,75);pdf.text(`Continuação: ${textValue(currentRecord.code||currentRecord.op)} - ${textValue(currentRecord.description)}`,left,17,{maxWidth:contentW});y=22;}else y=18;
+    if(continuation&&currentRecord){pdf.setFont('helvetica','bold');pdf.setFontSize(7);pdf.setTextColor(75,75,75);pdf.text(`Continuação: ${textValue(currentRecord.code||currentRecord.op)} - ${textValue(currentRecord.description)}`,left,16,{maxWidth:contentW});y=21;}else y=16;
   };
   const newPage=(continuation=false)=>{pdf.addPage();drawPageHeader(continuation);};
   const ensureSpace=(height,continuation=true)=>{if(y+height>bottom)newPage(continuation);};
@@ -5738,7 +5736,7 @@ function exportEngineeringMacroPDF(scope='all'){
   const pages=pdf.getNumberOfPages();
   for(let page=1;page<=pages;page++){pdf.setPage(page);pdf.setDrawColor(215,215,215);pdf.line(left,288,pageW-right,288);pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);pdf.setTextColor(110,110,110);pdf.text('CARTAMAC - Macro Engenharia',left,293);pdf.text(`Página ${page} de ${pages}`,pageW-right,293,{align:'right'});}
   const scopeName=scope==='open'?'OPs_Abertas':scope==='completed'?'OPs_Finalizadas':'Todas_as_OPs';
-  cartamacPdfSave(pdf,`Macro_Engenharia_${scopeName}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(pdf,`Macro_Engenharia_${scopeName}_${new Date().toISOString().slice(0,10)}.pdf`,{sector:'MACRO ENGENHARIA'});
 }
 
 // Ajustes de interação e cópia local do Macro Engenharia.
@@ -5844,7 +5842,7 @@ function exportEngineeringMacroOrderPDF(key,event){
   infoRow('Situação',record.finalized?'Finalizada':'Aberta','Revisões salvas',String(record.revisions?.length||0),true);
   if(record.finalized)infoRow('Finalizada em',record.finalizedAt,'Finalizada por',record.finalizedBy);
   if(record.revisions?.length){record.revisions.forEach(revision=>{ensure(8);pdf.setDrawColor(225,225,225);pdf.line(left,y+7,left+contentW,y+7);pdf.setFont('helvetica','bold');pdf.setFontSize(7);pdf.setTextColor(55,55,55);pdf.text(`Revisão ${String(revision.number).padStart(2,'0')}`,left+3,y+4.8);pdf.setFont('helvetica','normal');pdf.setTextColor(95,95,95);pdf.text(`${text(revision.date)} · ${text(revision.by)}`,left+35,y+4.8);y+=7;});}
-  cartamacPdfSave(pdf,`${safeReportFileName(`Macro Engenharia - ${record.code||record.op} - ${record.description}`)}.pdf`);
+  cartamacPdfSave(pdf,`${safeReportFileName(`Macro Engenharia - ${record.code||record.op} - ${record.description}`)}.pdf`,{sector:'MACRO ENGENHARIA'});
   showToast('Relatório PDF da OP gerado com sucesso.');
 }
 function exportEngineeringMacroOrderExcel(key,event){
@@ -6138,13 +6136,13 @@ function exportSalesYearReport(year,format){
   const summary=salesYearSummary(rows),doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),left=10,pageBottom=201;
   const headers=['Emissão','Nº','Referência','Cliente','Valor total','Valor faturado','Valor a faturar','Entrega'],widths=[19,14,52,65,32,32,32,22];
   const drawTableHeader=y=>{doc.setFillColor(40,40,40);doc.rect(left,y,268,8,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(6);let x=left;headers.forEach((header,index)=>{doc.text(header,x+1.4,y+5.2,{maxWidth:widths[index]-2.8});x+=widths[index];});return y+8;};
-  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text(`CARTAMAC - Vendas ${key}`,left,14);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · pedidos cancelados não incluídos`,left,20);
+  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(25,25,25);doc.text(`Relatório de vendas ${key}`,left,17);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(95,95,95);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · pedidos cancelados não incluídos`,left,23);
   const cards=[['VALOR TOTAL DAS VENDAS',fmtBRL(summary.total)],['NÚMERO DE PEDIDOS',String(summary.count)],['TICKET MÉDIO',fmtBRL(summary.averageTicket)],['MÊS COM MAIOR VALOR',`${fmtBRL(summary.highestValue)} · ${salesMonthName(summary.highestMonth)}`],['MAIOR PEDIDO',`${fmtBRL(summary.highestOrder?.valorTotal||0)} · ${summary.highestOrder?.cliente||'—'}`]];
   cards.forEach((card,index)=>{const x=left+index*55.2;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,25,52,16,1.5,1.5,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.5);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,30);doc.setFont('helvetica','bold');doc.setFontSize(index>2?6.5:8.5);doc.setTextColor(35,130,70);doc.text(doc.splitTextToSize(card[1],47).slice(0,2),x+2.5,36);});
   let y=drawTableHeader(47);
-  rows.forEach((row,index)=>{const values=[salesDateText(row.emissao),row.numero,row.referencia,row.cliente,fmtBRL(row.valorTotal),fmtBRL(row.valorFaturado),fmtBRL(row.valorAFaturar),salesDateText(row.entrega)].map(String);const lines=values.map((value,column)=>doc.splitTextToSize(value,widths[column]-2.8));const height=Math.max(6,...lines.map(set=>set.length*3+2));if(y+height>pageBottom){doc.addPage();y=drawTableHeader(10);}if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,268,height,'F');}doc.setDrawColor(220,220,220);doc.line(left,y+height,left+268,y+height);doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(30,30,30);let x=left;lines.forEach((set,column)=>{doc.text(set,x+1.4,y+3.8,{maxWidth:widths[column]-2.8});x+=widths[column];});y+=height;});
+  rows.forEach((row,index)=>{const values=[salesDateText(row.emissao),row.numero,row.referencia,row.cliente,fmtBRL(row.valorTotal),fmtBRL(row.valorFaturado),fmtBRL(row.valorAFaturar),salesDateText(row.entrega)].map(String);const lines=values.map((value,column)=>doc.splitTextToSize(value,widths[column]-2.8));const height=Math.max(6,...lines.map(set=>set.length*3+2));if(y+height>pageBottom){doc.addPage();y=drawTableHeader(15);}if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,268,height,'F');}doc.setDrawColor(220,220,220);doc.line(left,y+height,left+268,y+height);doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(30,30,30);let x=left;lines.forEach((set,column)=>{doc.text(set,x+1.4,y+3.8,{maxWidth:widths[column]-2.8});x+=widths[column];});y+=height;});
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Vendas ${key} · Página ${page} de ${pages}`,287,207,{align:'right'});}
-  cartamacPdfSave(doc,`Vendas_${key}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(doc,`Vendas_${key}_${new Date().toISOString().slice(0,10)}.pdf`,{sector:'FINANCEIRO / FISCAL - VENDAS'});
 }
 function exportSalesYearExcel(year,rows){
   if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
@@ -6350,9 +6348,9 @@ function exportPurchaseOrdersPDF(){
   const headers=['Emissão','Nº','Fornecedor','Observação','Valor total','Previsão entrega','Anexos'],widths=[20,15,61,105,31,30,16];
   const total=rows.reduce((sum,row)=>sum+row.valorTotal,0),overdueCount=rows.filter(purchaseOrderIsOverdue).length;
   const drawHeader=(firstPage=false)=>{
-    let y=firstPage?10:8;
+    let y=15;
     if(firstPage){
-      doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(25,25,25);doc.text('CARTAMAC - Pedidos de compra',left,y);y+=6;
+      doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(25,25,25);doc.text('Pedidos de compra',left,y);y+=6;
       doc.setFontSize(10);doc.text(purchaseOrdersOnlyOverdue?'Relatório de entregas atrasadas':'Relatório de pedidos em aberto',left,y);y+=5;
       doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · ${rows.length} pedido(s)`,left,y);y+=6;
       const cards=[['VALOR TOTAL',fmtBRL(total)],['PEDIDOS EXIBIDOS',String(rows.length)],['ENTREGAS ATRASADAS',String(overdueCount)]];
@@ -6370,7 +6368,7 @@ function exportPurchaseOrdersPDF(){
     lines.forEach((set,column)=>{doc.setFont('helvetica',isOverdue&&column===5?'bold':'normal');doc.setTextColor(isOverdue&&column===5?205:28,isOverdue&&column===5?45:28,isOverdue&&column===5?58:28);doc.text(set,x+1.2,y+3.8,{maxWidth:widths[column]-2.4});x+=widths[column];});y+=rowHeight;
   });
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Pedidos de compra · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
-  cartamacPdfSave(doc,`Pedidos_de_Compra_${purchaseOrdersOnlyOverdue?'Atrasados':'Em_Aberto'}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(doc,`Pedidos_de_Compra_${purchaseOrdersOnlyOverdue?'Atrasados':'Em_Aberto'}_${new Date().toISOString().slice(0,10)}.pdf`,{sector:'PEDIDOS DE COMPRA'});
 }
 function renderPurchaseOrdersPage(container=document.getElementById('pedidosCompraContent')){
   if(!container)return;
@@ -6673,11 +6671,7 @@ function exportAccountingPDF(context){
   }),{total:0,advances:0,settled:0,balance:0,rows:0});
   let y=0;
   const drawBrandHeader=(continuation=false)=>{
-    doc.setFillColor(24,24,24);doc.rect(0,7,pageW,22,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(255,255,255);doc.text('CARTAMAC',left,16);
-    doc.setFontSize(9);doc.setTextColor(222,190,82);doc.text('CONTABILIDADE · RELATÓRIO DE CONDIÇÕES DE PAGAMENTO',left,22);
-    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(195,195,195);doc.text(continuation?'Continuação':`Gerado em ${new Date().toLocaleString('pt-BR')}`,pageW-right,17,{align:'right'});
-    y=35;
+    y=16;
   };
   const addPage=()=>{doc.addPage();drawBrandHeader(true);};
   const ensure=height=>{if(y+height>bottom)addPage();};
@@ -6740,7 +6734,7 @@ function exportAccountingPDF(context){
     drawOrderBorder(blockStart,y);y+=6;
   });
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setDrawColor(220,220,220);doc.line(left,204,pageW-right,204);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(105,105,105);doc.text('Documento gerado pelo aplicativo CARTAMAC · Fonte: MaxiProd · Somente leitura',left,208);doc.text(`Página ${page} de ${pages}`,pageW-right,208,{align:'right'});}
-  cartamacPdfSave(doc,`${context.filename}.pdf`);showToast('Relatório PDF gerado com sucesso.');
+  cartamacPdfSave(doc,`${context.filename}.pdf`,{sector:'CONTABILIDADE'});showToast('Relatório PDF gerado com sucesso.');
 }
 function exportAccountingExcel(context){
   if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
@@ -7232,8 +7226,8 @@ function exportStockReportPDF(report){
     doc.setTextColor(25,25,25);return y+8;
   };
   const drawOpening=()=>{
-    doc.setTextColor(25,25,25);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text(`CARTAMAC - ${report.title}`,left,14);
-    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(90,90,90);doc.text(`Exportado em ${stockReportDate()}`,left,20);
+    doc.setTextColor(25,25,25);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text(report.title,left,17);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(90,90,90);doc.text(`Exportado em ${stockReportDate()}`,left,23);
     const cards=[
       ['VALOR TOTAL',fmtBRL(report.total)],
       ['QUANTIDADE DE ITENS',String(report.rows.length)],
@@ -7250,7 +7244,7 @@ function exportStockReportPDF(report){
   report.rows.forEach((row,rowIndex)=>{
     const values=report.values(row),descriptionLines=doc.splitTextToSize(String(values[2]||'—'),widths[2]-4);
     const rowHeight=Math.max(7,descriptionLines.length*3.5+3);
-    if(y+rowHeight>pageBottom){doc.addPage();y=drawTableHeader(12);}
+    if(y+rowHeight>pageBottom){doc.addPage();y=drawTableHeader(15);}
     if(rowIndex%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,272,rowHeight,'F');}
     doc.setDrawColor(220,220,220);doc.line(left,y+rowHeight,left+272,y+rowHeight);
     doc.setFont('helvetica','normal');doc.setFontSize(6.8);doc.setTextColor(30,30,30);
@@ -7266,7 +7260,7 @@ function exportStockReportPDF(report){
     doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(110,110,110);
     doc.text(`${report.title} - Página ${page} de ${pages}`,284,205,{align:'right'});
   }
-  cartamacPdfSave(doc,`${report.filename}_${new Date().toISOString().slice(0,10)}.pdf`);
+  cartamacPdfSave(doc,`${report.filename}_${new Date().toISOString().slice(0,10)}.pdf`,{sector:'ESTOQUE'});
 }
 function exportStockReportExcel(report){
   if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
