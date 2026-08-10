@@ -8,5 +8,5 @@
   "background_color":"#0a0a0a",
   "theme_color":"#c8a84b",
   "description":"Sistema interno CARTAMAC",
-  "icons":[{"src":"./cartamac-push-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+  "icons":[{"src":"./cartamac-logo.png","sizes":"361x407","type":"image/png","purpose":"any maskable"}]
 }
