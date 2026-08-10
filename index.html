@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./cartamac-push-icon.svg">
 <title>Cartamac — Sistema de Cronogramas</title>
 <meta name="theme-color" content="#c8a84b">
 <style>
@@ -180,7 +183,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .finance-table-wrap{border:1px solid var(--border);border-radius:10px;overflow:auto;background:var(--panel);}
 .finance-table{width:100%;min-width:900px;border-collapse:collapse;font-size:12px;}.finance-table th{background:var(--panel2);color:var(--text3);font-size:10px;letter-spacing:.4px;text-transform:uppercase;text-align:left;padding:12px;border-bottom:1px solid var(--border);white-space:nowrap;}.finance-table td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text2);}.finance-table tr:last-child td{border-bottom:0;}.finance-table .money{font-family:'JetBrains Mono',monospace;font-weight:700;color:#fff;white-space:nowrap;}.finance-table .muted{color:var(--text3);}.finance-empty{padding:28px;color:var(--text3);text-align:center;}
 .finance-card-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}.finance-card{border:1px solid var(--border);border-radius:9px;background:var(--panel);padding:15px;}.finance-card b{display:block;font:700 19px 'JetBrains Mono',monospace;color:var(--gold);}.finance-card span{display:block;color:var(--text3);font-size:11px;margin-top:6px;text-transform:uppercase;letter-spacing:.4px;}
-.finance-card-grid.receber-resumo-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+.finance-card-grid.receber-resumo-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
 .cashflow-shell{border:1px solid var(--border);border-radius:12px;background:var(--panel);padding:20px;}
 .cashflow-period{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
 .cashflow-period h3{margin:0;font-size:18px}.cashflow-period p{margin:5px 0 0;color:var(--text3);font-size:12px}
@@ -224,6 +227,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .pagar-detalhe-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
 .pagar-atrasados-btn{min-width:190px;justify-content:center;}
 .pagar-atrasados-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
+.btn-hoje.active{background:rgba(200,168,75,.16);border-color:var(--gold);color:var(--gold);}
 .receber-calendar-item span{font-size:11px;font-weight:700;color:#fff;}
 .receber-calendar-item strong{font-size:12px;color:#fff;}
 .receber-calendar-item small{font-size:11px;color:#fff;}
@@ -241,6 +245,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .finance-column-filter{position:relative;display:inline-block;}.finance-column-filter summary{cursor:pointer;list-style:none;white-space:nowrap;}.finance-column-filter summary::-webkit-details-marker{display:none;}.finance-column-filter summary span{color:var(--gold);margin-left:3px;}.finance-filter-menu{position:absolute;left:0;top:20px;z-index:80;width:240px;max-height:330px;overflow:auto;padding:8px;background:#202020;border:1px solid #575757;border-radius:7px;box-shadow:0 12px 28px #000b;color:#eee;text-transform:none;letter-spacing:0;font-size:12px;}.finance-filter-menu label{display:block;padding:5px 3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.finance-filter-menu label:first-child{padding-bottom:8px;margin-bottom:5px;border-bottom:1px solid #454545;font-weight:700;}.finance-filter-menu input{vertical-align:middle;margin:0 6px 0 0;accent-color:#c8a84b;}.finance-filter-menu small{display:block;padding:7px 3px;color:var(--text3);}
 @media(max-width:1100px){.cashflow-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr));}.cashflow-bank-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:760px){.finance-head{display:block;}.finance-actions{justify-content:flex-start;margin-top:12px;}.finance-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.finance-card-grid.receber-resumo-grid{grid-template-columns:1fr;}.finance-card{padding:12px;}.finance-card b{font-size:16px;}.finance-tabs{gap:6px;}.finance-tab{padding:9px 10px;font-size:11px;}.finance-toolbar{display:block;}.finance-toolbar input{width:100%;}.finance-table{min-width:760px;}.receber-filtros{grid-template-columns:1fr;}.cashflow-shell{padding:13px}.cashflow-bank-grid,.cashflow-summary-grid{grid-template-columns:1fr}.cashflow-month-input{width:100%;}}
+@media(max-width:760px){.sales-summary.purchase-summary{grid-template-columns:1fr;}}
 @media(max-width:760px){.pagar-detalhe-top{align-items:stretch;flex-direction:column;}.pagar-detalhe-actions{width:100%;display:grid;grid-template-columns:1fr;}.pagar-atrasados-btn,.pagar-detalhe-actions .btn{width:100%;}}
 @media(max-width:640px){.parts-head h2{font-size:19px}.parts-stats{grid-template-columns:1fr}.parts-toolbar .search-wrap{width:100%;}}
 @media(max-width:640px){
@@ -954,6 +959,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .sales-year-body{display:none;padding:0 20px 20px;}
 .sales-year.open .sales-year-body{display:block;}
 .sales-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+.sales-summary.purchase-summary{grid-template-columns:repeat(3,minmax(0,1fr));width:100%;}
 .sales-summary-card{min-height:105px;border:1px solid var(--border);border-radius:9px;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;}
 .sales-summary-value{font-size:22px;font-weight:850;color:#fff;}
 .sales-summary-card.money .sales-summary-value{color:var(--green);}
@@ -1193,6 +1199,11 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .notification-drawer-actions button{border:0;background:transparent;color:var(--text3);font-size:11px;cursor:pointer;padding:6px;border-radius:5px;}
 .notification-drawer-actions button:hover{background:var(--bg4);color:#fff;}
 .notification-list{overflow:auto;padding:7px;}
+.notification-push-footer{border-top:1px solid var(--border);padding:11px 13px;background:#0d0d0d;}
+.push-device-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.push-device-copy{min-width:0}.push-device-copy strong{display:block;font-size:12px;color:#fff}.push-device-copy span{display:block;font-size:10px;color:var(--text3);margin-top:2px;line-height:1.35}
+.push-device-status{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:4px 8px;font-size:9px;font-weight:800;background:#222;color:var(--text3);white-space:nowrap}.push-device-status.ok{background:rgba(67,199,101,.12);color:var(--green)}.push-device-status.err{background:rgba(245,76,76,.12);color:var(--red)}
+.push-mobile-box{margin-top:16px;border:1px solid var(--border);border-radius:10px;background:linear-gradient(110deg,rgba(205,173,72,.08),#151515 42%);padding:16px}.push-mobile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:13px}.push-mobile-head h4{margin:0 0 4px;font-size:14px}.push-mobile-head p{margin:0;color:var(--text3);font-size:11px;line-height:1.5}.push-mobile-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.push-key-grid{display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:8px;align-items:end;margin:12px 0}.push-steps{margin:12px 0 0;padding-left:18px;color:var(--text3);font-size:11px;line-height:1.65}.push-steps strong{color:var(--gold)}
 .notification-empty{padding:46px 20px;text-align:center;color:var(--text3);}
 .notification-empty .msi{display:block;font-size:34px;color:#555;margin-bottom:10px;}
 .notification-item{width:100%;display:grid;grid-template-columns:39px 1fr auto;gap:10px;align-items:start;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--text);text-align:left;padding:11px;cursor:pointer;transition:.14s ease;margin-bottom:3px;}
@@ -1228,7 +1239,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 @media(max-width:820px){.notification-settings-grid{grid-template-columns:1fr}.notification-drawer{right:8px;top:62px}.notification-settings-row{grid-template-columns:1fr}.notification-coverage-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
 
-/* REV143 — menu compacto em telas intermediárias */
+/* REV145 — menu compacto em telas intermediárias */
 @media(min-width:1201px) and (max-width:1800px){
   .dev-header{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 12px;gap:4px;}
   .dev-wordmark{font-size:20px;margin-right:4px;}
@@ -1243,7 +1254,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 }
 
 
-/* REV143 — permissões retráteis e cabeçalho compacto */
+/* REV145 — permissões retráteis e cabeçalho compacto */
 details.access-editor{padding:0;overflow:hidden;}
 .access-editor-summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;background:rgba(200,168,75,.055);cursor:pointer;list-style:none;user-select:none;}
 .access-editor-summary::-webkit-details-marker{display:none;}
@@ -1272,6 +1283,14 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
   .dev-tab .msi{display:none;}
   .dev-wordmark{font-size:17px;}
 }
+
+
+/* REV145 — teste controlado do Outlook */
+.outlook-test-box{margin-top:16px;border:1px solid rgba(67,199,101,.35);border-radius:10px;background:linear-gradient(135deg,rgba(67,199,101,.055),rgba(200,168,75,.035));padding:16px;}
+.outlook-test-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px;}.outlook-test-head h4{margin:0 0 5px}.outlook-test-head p{margin:0;color:var(--text3);font-size:12px}.outlook-test-head strong{color:var(--text)}
+.outlook-test-chip{font-size:10px;font-weight:800;letter-spacing:.6px;color:var(--green);border:1px solid rgba(67,199,101,.42);background:rgba(67,199,101,.09);padding:5px 8px;border-radius:5px;white-space:nowrap;}
+.outlook-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.outlook-config-grid .form-group{margin:0}.outlook-enable{margin-top:14px}.outlook-test-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}.outlook-status{font-size:12px;color:var(--text3);margin-left:4px}.outlook-status.ok{color:var(--green)}.outlook-status.err{color:var(--red)}
+@media(max-width:820px){.outlook-config-grid{grid-template-columns:1fr}.outlook-test-head{flex-direction:column}}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1353,7 +1372,6 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab active" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
-      <button class="cronograma-subtab" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
       <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
     <div class="filters">
@@ -1383,7 +1401,6 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="cronograma-subtab active" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
-      <button class="cronograma-subtab" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
       <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
     <div class="parts-head"><div><h2><span class="msi">query_stats</span> Atrasos por setor</h2><p>Separa o atraso gerado no próprio setor do atraso recebido das tarefas predecessoras.</p></div></div>
@@ -1391,23 +1408,6 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <div class="stats-row" id="cronDelayKpis"></div>
     <div class="sim-intro"><span class="msi msi-sm msi-gold">info</span> Atraso próprio é o tempo acrescentado na tarefa do setor. Atraso herdado é o deslocamento que já chegou pela predecessora.</div>
     <div class="cron-delay-layout"><div class="panel"><div class="panel-head">Ranking dos setores</div><div class="finance-table-wrap" id="cronDelayRanking"></div></div><div class="panel"><div class="panel-head">Detalhamento das tarefas</div><div class="finance-table-wrap" id="cronDelayDetails"></div></div></div>
-  </div>
-
-  <!-- GANTT -->
-  <div class="page" id="page-gantt">
-    <div class="cronograma-subtabs">
-      <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
-      <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
-      <button class="cronograma-subtab active" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
-      <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
-    </div>
-    <div class="filters" style="margin-bottom:16px;">
-      <select class="filter-select" id="ganttFilter" onchange="renderGantt()">
-        <option value="">Todos os pedidos</option>
-      </select>
-      <span style="font-size:13px;color:var(--text3);">← Rolagem horizontal para navegar →</span>
-    </div>
-    <div id="ganttContainer"></div>
   </div>
 
   <!-- CUSTOS -->
@@ -1544,7 +1544,6 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
-      <button class="cronograma-subtab" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
       <button class="cronograma-subtab cron-subtab-import active" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
     <div class="import-box">
@@ -1636,6 +1635,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <div class="notification-drawer-actions"><button type="button" onclick="markAllNotificationsRead()">Marcar todas como lidas</button><button type="button" onclick="toggleNotificationCenter()" title="Fechar"><span class="msi msi-sm">close</span></button></div>
   </div>
   <div class="notification-list" id="notificationList"></div>
+  <div class="notification-push-footer" id="notificationPushFooter"></div>
 </aside>
 
 <div class="toast" id="toast"></div>
@@ -1645,6 +1645,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
+import { getMessaging, getToken, deleteToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAlSFh4QVAZd2eIIhmJXBrT8yhIiH92pkM",
@@ -1673,6 +1674,7 @@ const DB_REF   = doc(db, "cartamac", "db");
 const FILE_REF = doc(db, "cartamac", "files");
 const SHARED_MAXIPROD_CACHE_REF = doc(db, "cartamac", "maxiprod-shared-cache");
 const NOTIFICATIONS_REF = doc(db, "cartamac", "notifications");
+const PUSH_DEVICES_REF = doc(db, "cartamac", "push-devices");
 const SHARED_MAXIPROD_CACHE_ID = 'maxiprod-shared-cache';
 
 const MASTER_EMAILS = [];
@@ -1722,6 +1724,7 @@ let receberModo='anos'; // anos | meses | geral | calendario | mes
 let receberMesSelecionado=(new Date()).getMonth();
 let receberFiltros={descricao:'',cliente:''};
 let receberSomenteAtrasados=false;
+let receberSomenteHoje=false;
 let receberFiltroRenderTimer=null;
 let receivableYearRefreshInProgress=false;
 let receberTabelaLimite=200;
@@ -1731,6 +1734,7 @@ let pagarModo='anos'; // anos | meses | geral | calendario | mes
 let pagarMesSelecionado=(new Date()).getMonth();
 let pagarFiltros={descricao:'',fornecedor:''};
 let pagarSomenteAtrasados=false;
+let pagarSomenteHoje=false;
 let pagarFiltroRenderTimer=null;
 let payableYearRefreshInProgress=false;
 let pagarTabelaLimite=200;
@@ -1762,6 +1766,7 @@ if(PURCHASE_ORDERS_CACHE?.version!==1||!Array.isArray(PURCHASE_ORDERS_CACHE?.ite
 let purchaseOrdersRefreshInProgress=false;
 let purchaseOrderSearch='';
 let purchaseOrdersOnlyOverdue=false;
+let purchaseOrdersOnlyToday=false;
 const ACCOUNTING_CACHE_KEY='cartamac_contabilidade_historica_cache_v1';
 let ACCOUNTING_CACHE=(()=>{
   try{return JSON.parse(localStorage.getItem(ACCOUNTING_CACHE_KEY)||'{"version":1,"updatedAt":null,"receivable":{"items":[]},"payable":{"items":[]}}');}
@@ -2120,7 +2125,7 @@ async function deleteCostStructureDocument(orderId){
 const isMaster = u => u && (u.type==='master' || MASTER_EMAILS.includes(u.ref?.email));
 const isEngineering = u => u && ['engineering','engenharia'].includes(String(u.type||'').toLowerCase());
 const ADMIN_ACCESS_GROUPS=[
-  {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.atrasos','Atrasos por setor'],['cronograma.gantt','Gantt'],['cronograma.importar','Importar e históricos']]},
+  {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.atrasos','Atrasos por setor'],['cronograma.importar','Importar e históricos']]},
   {id:'cadastros',label:'Cadastros',icon:'group',items:[['clientes','Clientes'],['admins','Administradores']]},
   {id:'pecas',label:'Peças de Reposição',icon:'settings',items:[['pecas.catalog','Tabela de peças'],['pecas.price','Formação de preço']]},
   {id:'planejamento',label:'Planejamento',icon:'event_available',items:[['simulador','Simular Cronograma']]},
@@ -2134,7 +2139,7 @@ const ADMIN_ACCESS_KEYS=ADMIN_ACCESS_GROUPS.flatMap(group=>group.items.map(item=
 function legacyAdminPermissions(admin){
   const role=String(admin?.role||'viewer').toLowerCase();
   if(role==='master'||MASTER_EMAILS.includes(admin?.email))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,true]));
-  const keys=['cronograma.cronograma','cronograma.atrasos','cronograma.gantt'];
+  const keys=['cronograma.cronograma','cronograma.atrasos'];
   if(role==='seller')keys.push('pecas.catalog','pecas.price','simulador','financeiro.vendas');
   else keys.push('clientes','admins');
   if(['engineering','engenharia'].includes(role))keys.push('macro-engenharia.active','macro-engenharia.completed','macro-engenharia.people');
@@ -2161,7 +2166,7 @@ function accessEditorHTML(prefix,permissions,disabled=false){
 function setAccessEditor(prefix,value){if(!isMaster(loggedUser)){showToast('Somente administradores mestres podem alterar acessos.','err');return;}document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>input.checked=value);}
 function readAccessEditor(prefix){const result={};ADMIN_ACCESS_KEYS.forEach(key=>result[key]=false);document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>result[input.dataset.accessKey]=input.checked);return result;}
 function devTabAllowed(id){
-  if(['cronograma','atrasos','gantt','importar'].includes(id))return hasAccess(`cronograma.${id}`);
+  if(['cronograma','atrasos','importar'].includes(id))return hasAccess(`cronograma.${id}`);
   if(['pecas','macro-engenharia','custos','financeiro','contabilidade'].includes(id))return hasAnyAccess(id);
   return hasAccess(id);
 }
@@ -2173,7 +2178,7 @@ function applyNavigationPermissions(){
   [['partsCatalogTab','pecas.catalog'],['partsPriceTab','pecas.price'],['macroTabActive','macro-engenharia.active'],['macroTabCompleted','macro-engenharia.completed'],['macroTabPeople','macro-engenharia.people']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAccess(key)?'':'none';});
 }
 function firstAllowedDestination(){
-  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['gantt','cronograma.gantt'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['simulador','simulador'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade']];
+  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['simulador','simulador'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade']];
   return order.find(([id])=>devTabAllowed(id))?.[0]||null;
 }
 const TODAY    = new Date();
@@ -3136,9 +3141,16 @@ function receberRegistros(){
 }
 function receberMesNome(month){return ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][month];}
 function receberMesSigla(month){return ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'][month];}
+function dataEhHoje(date){
+  if(!(date instanceof Date)||Number.isNaN(date.getTime()))return false;
+  const hoje=new Date();
+  return date.getFullYear()===hoje.getFullYear()&&date.getMonth()===hoje.getMonth()&&date.getDate()===hoje.getDate();
+}
+function rotuloHoje(){return new Date().toLocaleDateString('pt-BR');}
 function receberListaFiltrada(rows){
   return rows.filter(item=>{
     if(receberSomenteAtrasados&&!receberEstaAtrasado(item))return false;
+    if(receberSomenteHoje&&!dataEhHoje(item.vencimento))return false;
     return Object.entries(receberFiltros).every(([key,value])=>{
       if(!value)return true;
       const needle=String(value).toLocaleLowerCase('pt-BR');
@@ -3162,7 +3174,8 @@ function alterarFiltroReceber(key,value){
     requestAnimationFrame(()=>restaurarFocoFiltroFinanceiro(`receber-filtro-${key}`));
   },180);
 }
-function alternarFiltroAtrasadosReceber(){receberSomenteAtrasados=!receberSomenteAtrasados;receberTabelaLimite=200;renderFinanceiroFiscal();}
+function alternarFiltroAtrasadosReceber(){receberSomenteAtrasados=!receberSomenteAtrasados;if(receberSomenteAtrasados)receberSomenteHoje=false;receberTabelaLimite=200;renderFinanceiroFiscal();}
+function alternarFiltroHojeReceber(){receberSomenteHoje=!receberSomenteHoje;if(receberSomenteHoje)receberSomenteAtrasados=false;receberTabelaLimite=200;renderFinanceiroFiscal();}
 function mostrarMaisContasReceber(){receberTabelaLimite+=200;renderFinanceiroFiscal();}
 async function atualizarContasReceberAno(year){
   year=Number(year);
@@ -3243,13 +3256,14 @@ function receberResumoAtual(rows){
     unidade:receberModo==='anos'?'histórico':mensal?'mês':'ano',
     total:periodoRows.reduce((sum,row)=>sum+(row.valorParcela||0),0),
     recebido:periodoRows.reduce((sum,row)=>sum+(row.recebido||0),0),
-    atrasado:periodoRows.reduce((sum,row)=>sum+(row.aberto>0&&row.vencimento&&row.vencimento<hoje?row.aberto:0),0)
+    atrasado:periodoRows.reduce((sum,row)=>sum+(row.aberto>0&&row.vencimento&&row.vencimento<hoje?row.aberto:0),0),
+    aVencer:periodoRows.reduce((sum,row)=>sum+(row.aberto>0&&row.vencimento&&row.vencimento>hoje?row.aberto:0),0)
   };
 }
 function receberCabecalhoFinanceiro(data,rows=null){
   const resumo=receberResumoAtual(rows||receberRegistros());
   return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Contas a receber do ano atual são atualizadas automaticamente. Anos anteriores são carregados somente quando solicitados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
-  <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.recebido)}</b><span>Total recebido no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div></div>
+  <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.recebido)}</b><span>Total recebido no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.aVencer)}</b><span>Falta receber · a vencer</span></div></div>
   ${financeTabsHtml()}`;
 }
 function restaurarFocoFiltroFinanceiro(id){const input=document.getElementById(id);if(!input)return;input.focus();const end=input.value.length;try{input.setSelectionRange(end,end);}catch(_){}}
@@ -3283,7 +3297,7 @@ function renderContasAReceber(target){
   if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>O ano atual é atualizado pelo botão principal. Entre em um ano anterior para carregá-lo somente quando precisar.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
   else {const year=receberAnoSelecionado||currentYear;const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button>${receberAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a receber.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
     else if(receberModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
-    else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('receber')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
+    else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-ghost btn-hoje ${receberSomenteHoje?'active':''}" onclick="alternarFiltroHojeReceber()"><span class="msi msi-sm">today</span> ${receberSomenteHoje?'Exibindo hoje':`Hoje · ${rotuloHoje()}`}</button><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('receber')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
   target.innerHTML=`${receberCabecalhoFinanceiro(data,rows)}${content}`;
 }
 function pagarFornecedor(row){
@@ -3444,6 +3458,7 @@ function pagarEstaAtrasado(row){
 function pagarListaFiltrada(rows){
   return rows.filter(item=>{
     if(pagarSomenteAtrasados&&!pagarEstaAtrasado(item))return false;
+    if(pagarSomenteHoje&&!dataEhHoje(item.vencimento))return false;
     return Object.entries(pagarFiltros).every(([key,value])=>{
       if(!value)return true;
       const needle=String(value).toLocaleLowerCase('pt-BR');
@@ -3467,7 +3482,8 @@ function alterarFiltroPagar(key,value){
     requestAnimationFrame(()=>restaurarFocoFiltroFinanceiro(`pagar-filtro-${key}`));
   },180);
 }
-function alternarFiltroAtrasadosPagar(){pagarSomenteAtrasados=!pagarSomenteAtrasados;pagarTabelaLimite=200;renderFinanceiroFiscal();}
+function alternarFiltroAtrasadosPagar(){pagarSomenteAtrasados=!pagarSomenteAtrasados;if(pagarSomenteAtrasados)pagarSomenteHoje=false;pagarTabelaLimite=200;renderFinanceiroFiscal();}
+function alternarFiltroHojePagar(){pagarSomenteHoje=!pagarSomenteHoje;if(pagarSomenteHoje)pagarSomenteAtrasados=false;pagarTabelaLimite=200;renderFinanceiroFiscal();}
 function mostrarMaisContasPagar(){pagarTabelaLimite+=200;renderFinanceiroFiscal();}
 async function atualizarContasPagarAno(year){
   year=Number(year);
@@ -3551,17 +3567,19 @@ function pagarResumoAtual(rows){
   let periodoRows=pagarModo==='anos'?rows:rows.filter(row=>row.vencimento?.getFullYear()===year);
   if(mensal)periodoRows=periodoRows.filter(row=>row.vencimento?.getMonth()===pagarMesSelecionado);
   if(pagarModo==='geral'||pagarModo==='mes')periodoRows=pagarListaFiltrada(periodoRows);
+  const hoje=new Date();hoje.setHours(0,0,0,0);
   return {
     unidade:pagarModo==='anos'?'histórico':mensal?'mês':'ano',
     total:periodoRows.reduce((sum,row)=>sum+(row.valorTitulo||0),0),
     pago:periodoRows.reduce((sum,row)=>sum+(row.pagoQuitado||0),0),
-    atrasado:periodoRows.reduce((sum,row)=>sum+(pagarEstaAtrasado(row)?row.aberto:0),0)
+    atrasado:periodoRows.reduce((sum,row)=>sum+(pagarEstaAtrasado(row)?row.aberto:0),0),
+    aVencer:periodoRows.reduce((sum,row)=>sum+(row.aberto>0&&row.vencimento&&row.vencimento>hoje?row.aberto:0),0)
   };
 }
 function pagarCabecalhoFinanceiro(rows=null){
   const resumo=pagarResumoAtual(rows||pagarRegistros());
   return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Contas a pagar do ano atual são atualizadas automaticamente. Anos anteriores são carregados somente quando solicitados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
-  <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.pago)}</b><span>Total pago no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div></div>
+  <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.pago)}</b><span>Total pago no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.aVencer)}</b><span>Falta pagar · a vencer</span></div></div>
   ${financeTabsHtml()}`;
 }
 function pagarFiltrosHtml(){
@@ -3634,13 +3652,14 @@ function exportFinancePeriodPDF(kind){
   if(!records.length){showToast('Nenhum lançamento neste período e filtro.','err');return;}
   const monthMode=mode==='mes';
   const onlyOverdue=isReceive?receberSomenteAtrasados:pagarSomenteAtrasados;
+  const onlyToday=isReceive?receberSomenteHoje:pagarSomenteHoje;
   const periodLabel=monthMode?`${receberMesNome(month)} de ${year}`:`Ano de ${year}`;
   const periodFile=monthMode?`${year}-${String(month+1).padStart(2,'0')}`:String(year);
   exportFinanceCalendarExpandedPDF(kind,year,month,records,{
-    reportTitle:onlyOverdue?'Relatório de itens atrasados':'Relatório do período',
+    reportTitle:onlyToday?`Vencimentos de hoje · ${rotuloHoje()}`:onlyOverdue?'Relatório de itens atrasados':'Relatório do período',
     periodLabel,
-    footerLabel:onlyOverdue?'Itens atrasados':'Relatório do período',
-    filename:`${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${onlyOverdue?'Atrasados':'Periodo'}_${periodFile}.pdf`
+    footerLabel:onlyToday?'Vencimentos de hoje':onlyOverdue?'Itens atrasados':'Relatório do período',
+    filename:`${isReceive?'Contas_a_Receber':'Contas_a_Pagar'}_${onlyToday?'Hoje':onlyOverdue?'Atrasados':'Periodo'}_${periodFile}.pdf`
   });
 }
 function exportFinanceOverduePDF(kind){return exportFinancePeriodPDF(kind);}
@@ -3710,7 +3729,7 @@ function renderContasAPagar(target){
       const list=pagarModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===pagarMesSelecionado):yearRows;
       const title=pagarModo==='mes'?`${receberMesNome(pagarMesSelecionado)} de ${year}`:`Visão geral — ${year}`;
       const listFiltrada=pagarListaFiltrada(list);
-      content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-danger pagar-atrasados-btn ${pagarSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosPagar()">${pagarSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('pagar')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${pagarTabela(list)}</section>`;
+      content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarPagarParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-ghost btn-hoje ${pagarSomenteHoje?'active':''}" onclick="alternarFiltroHojePagar()"><span class="msi msi-sm">today</span> ${pagarSomenteHoje?'Exibindo hoje':`Hoje · ${rotuloHoje()}`}</button><button class="btn btn-danger pagar-atrasados-btn ${pagarSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosPagar()">${pagarSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('pagar')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${pagarTabela(list)}</section>`;
     }
   }
   target.innerHTML=`${pagarCabecalhoFinanceiro(rows)}${content}`;
@@ -3801,10 +3820,10 @@ function openCashFlowFinanceDetail(type,key=cashFlowSelectedMonth){
   const year=Number(match[1]),month=Number(match[2])-1;
   if(type==='receber'){
     financeiroView='receber';receberAnoSelecionado=year;receberMesSelecionado=month;receberModo='mes';
-    receberFiltros={descricao:'',cliente:''};receberSomenteAtrasados=false;receberTabelaLimite=200;
+    receberFiltros={descricao:'',cliente:''};receberSomenteAtrasados=false;receberSomenteHoje=false;receberTabelaLimite=200;
   }else if(type==='pagar'){
     financeiroView='pagar';pagarAnoSelecionado=year;pagarMesSelecionado=month;pagarModo='mes';
-    pagarFiltros={descricao:'',fornecedor:''};pagarSomenteAtrasados=false;pagarTabelaLimite=200;
+    pagarFiltros={descricao:'',fornecedor:''};pagarSomenteAtrasados=false;pagarSomenteHoje=false;pagarTabelaLimite=200;
   }else return;
   renderFinanceiroFiscal();
 }
@@ -5215,7 +5234,7 @@ function saveNewAdmin(){
 // ─────────── CLIENT SCREEN ───────────
 
 // ─────────── NOTIFICAÇÕES DO CRONOGRAMA (REV141) ───────────
-const NOTIFICATION_DEFAULT_SETTINGS={enabled:true,daysBefore:2,notifyStart:true,notifyDueSoon:true,notifyOverdue:true,notifyReleased:true,notifyDateChanged:true,dailySummaryHour:'08:00',emailEnabled:false};
+const NOTIFICATION_DEFAULT_SETTINGS={enabled:true,daysBefore:2,notifyStart:true,notifyDueSoon:true,notifyOverdue:true,notifyReleased:true,notifyDateChanged:true,dailySummaryHour:'08:00',emailEnabled:false,outlookTenantId:'',outlookClientId:'',pushVapidKey:''};
 let NOTIFICATION_STORE=[],notificationEngineTimer=null,notificationEngineBusy=false,notificationEngineDebounce=null,notificationLastRunAt=null;
 function notificationNorm(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/\s+/g,' ');}
 function notificationAliases(admin){const name=notificationNorm(admin?.name);return name?[name]:[];}
@@ -5224,7 +5243,7 @@ function notificationHash(value){let hash=2166136261;for(let i=0;i<value.length;
 function notificationDateLabel(iso){return iso?fmtDate(iso):'sem data';}
 function notificationTypeIcon(type){return{overdue:'warning',due:'schedule',start:'play_circle',released:'task_alt',changed:'update',test:'notifications_active'}[type]||'notifications';}
 function notificationSettings(){return Object.assign({},NOTIFICATION_DEFAULT_SETTINGS,DB.notificationSettings||{});}
-function addNotificationOnce(existing,recipient,type,order,task,title,message,eventKey){const raw=[recipient.id,type,order?.id??'',task?.sourceId||task?.name||'',eventKey].join('|'),id=notificationHash(raw);if(existing.has(id))return false;NOTIFICATION_STORE.push({id,userId:recipient.id,type,title,message,orderId:order?.id??null,taskId:task?.sourceId||null,createdAt:new Date().toISOString(),readAt:null,emailStatus:'not-configured'});existing.add(id);return true;}
+function addNotificationOnce(existing,recipient,type,order,task,title,message,eventKey){const raw=[recipient.id,type,order?.id??'',task?.sourceId||task?.name||'',eventKey].join('|'),id=notificationHash(raw);if(existing.has(id))return false;NOTIFICATION_STORE.push({id,userId:recipient.id,type,title,message,orderId:order?.id??null,taskId:task?.sourceId||null,createdAt:new Date().toISOString(),readAt:null,emailStatus:notificationSettings().emailEnabled?'pending-test':'disabled'});existing.add(id);return true;}
 async function persistNotificationStore(){try{NOTIFICATION_STORE=[...NOTIFICATION_STORE].sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,700);await setDoc(NOTIFICATIONS_REF,{items:NOTIFICATION_STORE,updatedAt:new Date().toISOString()});return true;}catch(error){console.warn('Notification save:',error);showToast('Erro ao salvar notificações','err');return false;}}
 function notificationTaskKey(order,task){return String(order.id)+'|'+String(task.sourceId||task.name||'');}
 function notificationToday(){return cronTodayISO();}
@@ -5240,11 +5259,11 @@ function runNotificationEngine(force=false){
     ORDERS.forEach(order=>{
       const schedule=cronPrepareOrderSchedule(order),byId=new Map(schedule.entries.map(({task})=>[String(task.sourceId||''),task]));
       schedule.entries.forEach(({task,dept})=>{
-        if(Number(task.pct)>=100)return;
+        if(task.actualFinish)return;
         const recipients=notificationRecipients(task.operator);if(!recipients.length)return;
         const plannedStart=task._calcStart||task.actualStart||task.baselineStart||task.start||'',plannedFinish=task._calcFinish||task.actualFinish||task.baselineFinish||task.finish||'';
         const baselineFinish=task.baselineFinish||task.finish||plannedFinish,daysToStart=plannedStart?cronWorkdayDiff(today,plannedStart):null,daysToFinish=plannedFinish?cronWorkdayDiff(today,plannedFinish):null,overdueDays=baselineFinish&&baselineFinish<today?Math.max(1,cronWorkdayDiff(baselineFinish,today)):0;
-        const predecessors=(task.preds||[]).map(id=>byId.get(String(id))).filter(Boolean),released=predecessors.length>0&&predecessors.every(pred=>Number(pred.pct)>=100)&&!task.actualStart;
+        const predecessors=(task.preds||[]).map(id=>byId.get(String(id))).filter(Boolean),released=predecessors.length>0&&predecessors.every(pred=>!!pred.actualFinish||Number(pred.pct)>=100)&&!task.actualStart;
         const stateKey=notificationTaskKey(order,task),previous=DB.notificationTaskState[stateKey];
         recipients.forEach(recipient=>{
           if(settings.notifyStart&&daysToStart===0)addNotificationOnce(existing,recipient,'start',order,task,`Início hoje · ${task.name}`,`${order.code} · ${dept.name}. A operação está prevista para começar hoje.`,today+'|start');
@@ -5259,22 +5278,121 @@ function runNotificationEngine(force=false){
     notificationLastRunAt=new Date().toISOString();
     if(changed)persist();
     if(notificationsChanged||NOTIFICATION_STORE.length!==initialNotificationCount)persistNotificationStore();
-    renderNotificationBell();if(isMaster(loggedUser))renderNotificationSettings();return Promise.resolve(changed);
+    renderNotificationBell();if(isMaster(loggedUser)){renderNotificationSettings();setTimeout(()=>outlookDispatchPendingTestEmails(),0);}return Promise.resolve(changed);
   }finally{notificationEngineBusy=false;}
 }
 function scheduleNotificationEngine(){clearTimeout(notificationEngineDebounce);notificationEngineDebounce=setTimeout(()=>runNotificationEngine(),700);}
-function notificationSessionStart(){renderNotificationBell();scheduleNotificationEngine();clearInterval(notificationEngineTimer);notificationEngineTimer=setInterval(()=>runNotificationEngine(),15*60*1000);}
+function notificationSessionStart(){renderNotificationBell();renderPushDeviceStatus();initPushForeground();scheduleNotificationEngine();clearInterval(notificationEngineTimer);notificationEngineTimer=setInterval(()=>runNotificationEngine(),15*60*1000);}
 function notificationsForLoggedUser(){if(!loggedUser?.ref||loggedUser.type==='client')return[];return NOTIFICATION_STORE.filter(item=>item.userId===loggedUser.ref.id).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));}
 function notificationRelativeTime(value){const ms=Date.now()-new Date(value).getTime(),minutes=Math.max(0,Math.floor(ms/60000));if(minutes<1)return'agora';if(minutes<60)return`há ${minutes} min`;const hours=Math.floor(minutes/60);if(hours<24)return`há ${hours} h`;const days=Math.floor(hours/24);return`há ${days} dia(s)`;}
-function renderNotificationBell(){const bell=document.getElementById('notificationBell'),count=document.getElementById('notificationCount'),list=document.getElementById('notificationList');if(!bell||!count||!list)return;const visible=!!loggedUser&&loggedUser.type!=='client';bell.style.display=visible?'inline-flex':'none';if(!visible){count.textContent='';list.innerHTML='';return;}const rows=notificationsForLoggedUser(),unread=rows.filter(item=>!item.readAt).length;count.textContent=unread?String(Math.min(99,unread))+(unread>99?'+':''):'';list.innerHTML=rows.length?rows.slice(0,200).map(item=>`<button class="notification-item ${item.readAt?'':'unread'}" type="button" onclick="openNotification('${escapeHTML(item.id)}')"><span class="notification-icon ${escapeHTML(item.type)}"><span class="msi msi-sm">${notificationTypeIcon(item.type)}</span></span><span class="notification-copy"><strong>${escapeHTML(item.title)}</strong><span>${escapeHTML(item.message)}</span><small>${notificationRelativeTime(item.createdAt)}</small></span>${item.readAt?'':'<i class="notification-unread-dot"></i>'}</button>`).join(''):'<div class="notification-empty"><span class="msi">notifications_none</span>Nenhuma notificação para você.</div>';}
+function renderNotificationBell(){const bell=document.getElementById('notificationBell'),count=document.getElementById('notificationCount'),list=document.getElementById('notificationList');if(!bell||!count||!list)return;const visible=!!loggedUser&&loggedUser.type!=='client';bell.style.display=visible?'inline-flex':'none';if(!visible){count.textContent='';list.innerHTML='';renderPushDeviceStatus();return;}const rows=notificationsForLoggedUser(),unread=rows.filter(item=>!item.readAt).length;count.textContent=unread?String(Math.min(99,unread))+(unread>99?'+':''):'';list.innerHTML=rows.length?rows.slice(0,200).map(item=>`<button class="notification-item ${item.readAt?'':'unread'}" type="button" onclick="openNotification('${escapeHTML(item.id)}')"><span class="notification-icon ${escapeHTML(item.type)}"><span class="msi msi-sm">${notificationTypeIcon(item.type)}</span></span><span class="notification-copy"><strong>${escapeHTML(item.title)}</strong><span>${escapeHTML(item.message)}</span><small>${notificationRelativeTime(item.createdAt)}</small></span>${item.readAt?'':'<i class="notification-unread-dot"></i>'}</button>`).join(''):'<div class="notification-empty"><span class="msi">notifications_none</span>Nenhuma notificação para você.</div>';renderPushDeviceStatus();}
 function toggleNotificationCenter(event){event?.stopPropagation();const drawer=document.getElementById('notificationDrawer'),bell=document.getElementById('notificationBell');if(!drawer)return;drawer.classList.toggle('open');bell?.classList.toggle('active',drawer.classList.contains('open'));if(drawer.classList.contains('open'))renderNotificationBell();}
 function closeNotificationCenter(){document.getElementById('notificationDrawer')?.classList.remove('open');document.getElementById('notificationBell')?.classList.remove('active');}
 function markAllNotificationsRead(){const now=new Date().toISOString();let changed=false;notificationsForLoggedUser().forEach(item=>{if(!item.readAt){item.readAt=now;changed=true;}});if(changed)persistNotificationStore();renderNotificationBell();}
 function openNotification(id){const item=NOTIFICATION_STORE.find(row=>row.id===id);if(!item)return;if(!item.readAt){item.readAt=new Date().toISOString();persistNotificationStore();}renderNotificationBell();closeNotificationCenter();if(item.orderId===null||item.orderId===undefined)return;if(!hasAccess('cronograma.cronograma')){showAccessDenied();return;}switchCronogramaSubtab('cronograma');const order=ORDERS.find(row=>String(row.id)===String(item.orderId));if(!order)return;const search=document.getElementById('searchInput');if(search)search.value=order.code||order.op||'';const week=document.getElementById('filterWeek'),status=document.getElementById('filterStatus'),sector=document.getElementById('filterSector'),only=document.getElementById('onlyDelayed');if(week)week.value='';if(status)status.value='';if(sector)sector.value='';if(only)only.checked=false;filterOrders();requestAnimationFrame(()=>{const card=document.getElementById('card-'+order.id);if(!card)return;card.classList.add('open');requestAnimationFrame(()=>{renderCronDependencyArrows(card);const target=item.taskId?card.querySelector(`[data-cron-task="${CSS.escape(String(item.taskId))}"]`):card;target?.classList.add('notification-target');target?.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>target?.classList.remove('notification-target'),2800);});});}
+
+// ────────── TESTE OUTLOOK / MICROSOFT GRAPH (somente mestre, destinatário fixo) ──────────
+const PUSH_DEVICE_ID_KEY='cartamac_push_device_id_v1';
+const PUSH_ENABLED_KEY='cartamac_push_enabled_v1';
+const PUSH_USER_KEY='cartamac_push_user_v1';
+let pushMessaging=null,pushForegroundUnsubscribe=null,pushBusy=false;
+function pushDeviceId(){let id=localStorage.getItem(PUSH_DEVICE_ID_KEY);if(!id){id='phone_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem(PUSH_DEVICE_ID_KEY,id);}return id;}
+function pushIsEnabledHere(){return localStorage.getItem(PUSH_ENABLED_KEY)==='1'&&String(localStorage.getItem(PUSH_USER_KEY)||'')===String(loggedUser?.ref?.id||'')&&'Notification'in window&&Notification.permission==='granted';}
+function pushPermissionLabel(){if(!('Notification'in window))return{label:'INDISPONÍVEL',type:'err',detail:'Este navegador não oferece notificações.'};if(Notification.permission==='denied')return{label:'BLOQUEADO',type:'err',detail:'Libere as notificações nas configurações do navegador.'};if(pushIsEnabledHere())return{label:'ATIVO',type:'ok',detail:'Este celular está vinculado ao seu usuário.'};return{label:'DESATIVADO',type:'',detail:'Ative para receber avisos mesmo com o app fechado.'};}
+function renderPushDeviceStatus(){const footer=document.getElementById('notificationPushFooter');if(!footer)return;if(!loggedUser||loggedUser.type==='client'){footer.style.display='none';return;}footer.style.display='block';const status=pushPermissionLabel();footer.innerHTML=`<div class="push-device-row"><div class="push-device-copy"><strong>Notificações neste celular</strong><span>${escapeHTML(status.detail)}</span></div><button class="push-device-status ${status.type}" type="button" onclick="${pushIsEnabledHere()?'disableMobilePush()':'enableMobilePush()'}"><span class="msi msi-sm">${pushIsEnabledHere()?'notifications_active':'notifications'}</span>${status.label}</button></div>`;}
+async function pushMessagingInstance(){if(!(await isSupported()))throw new Error('Este navegador não oferece suporte ao Firebase Push.');if(!pushMessaging)pushMessaging=getMessaging(app);return pushMessaging;}
+async function readPushDevices(){const snap=await getDoc(PUSH_DEVICES_REF);return snap.exists()&&Array.isArray(snap.data()?.devices)?snap.data().devices:[];}
+async function writePushDevices(devices){await setDoc(PUSH_DEVICES_REF,{devices:devices.slice(-500),updatedAt:new Date().toISOString()});}
+async function initPushForeground(){if(pushForegroundUnsubscribe||!pushIsEnabledHere())return;try{const messaging=await pushMessagingInstance();pushForegroundUnsubscribe=onMessage(messaging,payload=>{const data=payload?.data||{},title=data.title||'CARTAMAC';if(Notification.permission==='granted')new Notification(title,{body:data.body||'',icon:'./cartamac-push-icon.svg',tag:data.notificationId||'cartamac'});});}catch(error){console.warn('Push foreground:',error);}}
+async function enableMobilePush(){if(pushBusy)return;if(!loggedUser?.ref||loggedUser.type==='client'){showToast('Entre como funcionário para ativar.','err');return;}const vapid=String(notificationSettings().pushVapidKey||'').trim();if(!vapid){showToast('Um mestre precisa configurar a chave Web Push primeiro.','err');return;}if(location.protocol!=='https:'&&location.hostname!=='localhost'){showToast('As notificações exigem o endereço HTTPS publicado.','err');return;}pushBusy=true;try{const permission=await Notification.requestPermission();if(permission!=='granted')throw new Error('A permissão de notificações não foi concedida.');if(!('serviceWorker'in navigator))throw new Error('Este navegador não aceita o serviço de notificações.');const registration=await navigator.serviceWorker.register('./sw.js',{scope:'./'});await navigator.serviceWorker.ready;const messaging=await pushMessagingInstance(),token=await getToken(messaging,{vapidKey:vapid,serviceWorkerRegistration:registration});if(!token)throw new Error('O Firebase não forneceu o identificador deste celular.');const id=pushDeviceId(),now=new Date().toISOString(),current=await readPushDevices(),devices=current.filter(row=>row?.id!==id&&row?.token!==token);devices.push({id,token,userId:loggedUser.ref.id,userName:loggedUser.ref.name||'',enabled:true,createdAt:current.find(row=>row?.id===id)?.createdAt||now,updatedAt:now,platform:String(navigator.userAgent||'').slice(0,220)});await writePushDevices(devices);localStorage.setItem(PUSH_ENABLED_KEY,'1');localStorage.setItem(PUSH_USER_KEY,String(loggedUser.ref.id));await initPushForeground();renderPushDeviceStatus();renderNotificationSettings();showToast('Notificações ativadas neste celular.');}catch(error){console.error('Enable push:',error);showToast(error?.message||'Não foi possível ativar as notificações.','err');renderPushDeviceStatus();}finally{pushBusy=false;}}
+async function disableMobilePush(){if(pushBusy)return;pushBusy=true;try{const id=pushDeviceId(),devices=(await readPushDevices()).filter(row=>row?.id!==id);await writePushDevices(devices);try{if(pushMessaging)await deleteToken(pushMessaging);}catch(_){}localStorage.removeItem(PUSH_ENABLED_KEY);localStorage.removeItem(PUSH_USER_KEY);if(pushForegroundUnsubscribe){pushForegroundUnsubscribe();pushForegroundUnsubscribe=null;}renderPushDeviceStatus();renderNotificationSettings();showToast('Notificações desativadas neste celular.');}catch(error){showToast('Não foi possível desativar este celular.','err');}finally{pushBusy=false;}}
+
+const OUTLOOK_TEST_RECIPIENT='murilo@cartamac.com.br';
+const OUTLOOK_MSAL_URL='https://cdn.jsdelivr.net/npm/@azure/msal-browser@5.17.3/+esm';
+let outlookMsal=null,outlookAccount=null,outlookClientKey='',outlookSendBusy=false,outlookLastStatus='Não conectado';
+function outlookRedirectUri(){return location.protocol==='file:'?'':location.origin+location.pathname;}
+function outlookConfig(){const settings=notificationSettings();return{tenantId:String(settings.outlookTenantId||'').trim(),clientId:String(settings.outlookClientId||'').trim()};}
+function outlookConfigured(){const cfg=outlookConfig();return /^[0-9a-f-]{30,}$/i.test(cfg.tenantId)&&/^[0-9a-f-]{30,}$/i.test(cfg.clientId);}
+function outlookSetStatus(message,type=''){outlookLastStatus=message;const el=document.getElementById('outlookConnectionStatus');if(el){el.textContent=message;el.className='outlook-status '+type;}}
+async function outlookEnsureClient(){
+  if(!isMaster(loggedUser))throw new Error('Somente mestres podem conectar o Outlook.');
+  const cfg=outlookConfig(),key=cfg.tenantId+'|'+cfg.clientId;
+  if(!outlookConfigured())throw new Error('Preencha o Tenant ID e o Client ID da Microsoft.');
+  if(location.protocol==='file:')throw new Error('A conexão Microsoft deve ser testada no endereço publicado do app, não abrindo o HTML diretamente.');
+  if(outlookMsal&&outlookClientKey===key)return outlookMsal;
+  const module=await import(OUTLOOK_MSAL_URL);
+  outlookMsal=new module.PublicClientApplication({auth:{clientId:cfg.clientId,authority:`https://login.microsoftonline.com/${cfg.tenantId}`,redirectUri:outlookRedirectUri(),postLogoutRedirectUri:outlookRedirectUri()},cache:{cacheLocation:'sessionStorage',storeAuthStateInCookie:false}});
+  await outlookMsal.initialize();outlookClientKey=key;
+  const accounts=outlookMsal.getAllAccounts();outlookAccount=accounts.find(account=>notificationNorm(account.username)===notificationNorm(OUTLOOK_TEST_RECIPIENT))||null;
+  if(outlookAccount)outlookSetStatus(`Conectado: ${outlookAccount.username}`,'ok');
+  return outlookMsal;
+}
+async function connectOutlookTest(){
+  try{
+    const client=await outlookEnsureClient();
+    const result=await client.loginPopup({scopes:['User.Read','Mail.Send'],loginHint:OUTLOOK_TEST_RECIPIENT,prompt:'select_account'});
+    outlookAccount=result.account;
+    if(notificationNorm(outlookAccount?.username)!==notificationNorm(OUTLOOK_TEST_RECIPIENT))throw new Error(`Entre com ${OUTLOOK_TEST_RECIPIENT}.`);
+    outlookSetStatus(`Conectado: ${outlookAccount.username}`,'ok');renderNotificationSettings();showToast('Outlook conectado para o teste.');return true;
+  }catch(error){console.error('Outlook connect:',error);outlookSetStatus(error?.message||'Não foi possível conectar.','err');showToast(error?.message||'Não foi possível conectar o Outlook.','err');return false;}
+}
+async function outlookAccessToken(interactive=false){
+  const client=await outlookEnsureClient();
+  if(!outlookAccount&&interactive){const connected=await connectOutlookTest();if(!connected)return'';}
+  if(!outlookAccount)return'';
+  try{return(await client.acquireTokenSilent({account:outlookAccount,scopes:['Mail.Send']})).accessToken;}
+  catch(error){if(!interactive)return'';return(await client.acquireTokenPopup({account:outlookAccount,scopes:['Mail.Send']})).accessToken;}
+}
+function outlookEmailBody(item){return `<div style="font-family:Arial,sans-serif;color:#222;line-height:1.5"><h2 style="margin:0 0 14px;color:#222">CARTAMAC · Notificação de cronograma</h2><p><strong>${escapeHTML(item.title)}</strong></p><p>${escapeHTML(item.message)}</p><p style="font-size:12px;color:#666">Modo de teste: todos os avisos foram direcionados somente para ${OUTLOOK_TEST_RECIPIENT}.</p></div>`;}
+async function outlookSend(subject,body,interactive=false){
+  const token=await outlookAccessToken(interactive);if(!token)throw new Error('Conecte o Outlook antes de enviar.');
+  const response=await fetch('https://graph.microsoft.com/v1.0/me/sendMail',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({message:{subject,body:{contentType:'HTML',content:body},toRecipients:[{emailAddress:{address:OUTLOOK_TEST_RECIPIENT}}]},saveToSentItems:true})});
+  if(!response.ok){let detail='';try{detail=(await response.json())?.error?.message||'';}catch(_){}throw new Error(detail||`Microsoft Graph respondeu ${response.status}.`);}return true;
+}
+async function sendOutlookTestEmail(){
+  if(!isMaster(loggedUser)){showToast('Somente mestres podem enviar o teste.','err');return;}
+  try{outlookSetStatus('Enviando teste...');await outlookSend('CARTAMAC · Teste de notificações','<div style="font-family:Arial,sans-serif"><h2>CARTAMAC</h2><p>O envio de teste pelo Outlook está funcionando.</p><p>Nesta fase, todos os avisos serão enviados somente para murilo@cartamac.com.br.</p></div>',true);outlookSetStatus(`Teste enviado para ${OUTLOOK_TEST_RECIPIENT}`,'ok');showToast('E-mail de teste enviado pelo Outlook.');}
+  catch(error){console.error('Outlook test:',error);outlookSetStatus(error?.message||'Falha no envio.','err');showToast(error?.message||'Falha ao enviar o teste.','err');}
+}
+function outlookNotificationStillOpen(item){if(item.orderId===null||item.orderId===undefined||!item.taskId)return false;const order=ORDERS.find(row=>String(row.id)===String(item.orderId));if(!order)return false;const task=cronOrderTasks(order).map(entry=>entry.task).find(row=>String(row.sourceId||'')===String(item.taskId));return !!task&&!task.actualFinish&&Number(task.pct)<100;}
+async function outlookDispatchPendingTestEmails(){
+  const settings=notificationSettings();if(outlookSendBusy||!settings.emailEnabled||!isMaster(loggedUser)||!outlookAccount)return;
+  outlookSendBusy=true;let changed=false;
+  try{
+    for(const item of NOTIFICATION_STORE.filter(row=>row.emailStatus==='pending-test').slice(0,20)){
+      if(!outlookNotificationStillOpen(item)){item.emailStatus='cancelled-completed';changed=true;continue;}
+      try{await outlookSend(`CARTAMAC · ${item.title}`,outlookEmailBody(item),false);item.emailStatus='sent-test';item.emailSentAt=new Date().toISOString();changed=true;}
+      catch(error){item.emailStatus='pending-test';item.emailError=String(error?.message||error);break;}
+    }
+    if(changed)await persistNotificationStore();
+  }finally{outlookSendBusy=false;}
+}
+
 function projectOperatorCoverage(){const operators=[...new Set(ORDERS.flatMap(order=>cronOrderTasks(order).map(({task})=>String(task.operator||'').trim()).filter(Boolean)))].sort((a,b)=>a.localeCompare(b,'pt-BR')),mapped=operators.filter(value=>notificationRecipients(value).length),unmapped=operators.filter(value=>!notificationRecipients(value).length);return{operators,mapped,unmapped};}
-function renderNotificationSettings(){const panel=document.getElementById('notificationSettingsPanel'),content=document.getElementById('notificationSettingsContent');if(!panel||!content)return;const master=isMaster(loggedUser);panel.style.display=master?'block':'none';if(!master)return;const s=notificationSettings(),coverage=projectOperatorCoverage();content.innerHTML=`<div class="notification-settings-grid"><section class="notification-rule-box"><h4>Regras automáticas</h4><label class="notification-check"><input id="ns-enabled" type="checkbox" ${s.enabled?'checked':''}> Ativar central de notificações</label><label class="notification-check"><input id="ns-start" type="checkbox" ${s.notifyStart?'checked':''}> Avisar quando a operação começa hoje</label><label class="notification-check"><input id="ns-due" type="checkbox" ${s.notifyDueSoon?'checked':''}> Avisar próximo do vencimento</label><label class="notification-check"><input id="ns-overdue" type="checkbox" ${s.notifyOverdue?'checked':''}> Avisar diariamente enquanto estiver atrasada</label><label class="notification-check"><input id="ns-released" type="checkbox" ${s.notifyReleased?'checked':''}> Avisar quando as predecessoras liberarem a operação</label><label class="notification-check"><input id="ns-changed" type="checkbox" ${s.notifyDateChanged?'checked':''}> Avisar quando o término calculado mudar</label><div class="notification-settings-row"><div class="form-group"><label>Dias antes do vencimento</label><input id="ns-days" type="number" min="0" max="30" value="${Number(s.daysBefore)||0}"></div><div class="form-group"><label>Horário do resumo</label><input id="ns-hour" type="time" value="${escapeHTML(s.dailySummaryHour||'08:00')}"></div></div><p class="notification-settings-note"><strong>E-mail preparado, ainda não ativo:</strong> para enviar mensagens com o app fechado será necessário configurar um provedor seguro na Cloud Function. Nenhuma senha de e-mail ficará dentro do HTML.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn-gold btn-sm" onclick="saveNotificationSettings()"><span class="msi msi-sm">save</span> Salvar regras</button><button class="btn btn-ghost btn-sm" onclick="sendTestNotification()"><span class="msi msi-sm">notifications_active</span> Enviar teste para mim</button><button class="btn btn-ghost btn-sm" onclick="runNotificationEngine(true)"><span class="msi msi-sm">sync</span> Verificar agora</button></div></section><section class="notification-coverage-box"><h4>Vínculo entre Project e funcionários</h4><div class="notification-coverage-kpis"><div><b>${coverage.operators.length}</b><span>Operadores</span></div><div><b style="color:var(--green)">${coverage.mapped.length}</b><span>Vinculados</span></div><div><b style="color:${coverage.unmapped.length?'var(--warn)':'var(--green)'}">${coverage.unmapped.length}</b><span>Sem vínculo</span></div></div><p class="notification-settings-note">O vínculo usa exclusivamente o <strong>nome principal do funcionário</strong>. Ele deve corresponder ao operador do Project; maiúsculas e acentos são ignorados.</p>${coverage.unmapped.length?`<p class="notification-settings-note">${coverage.unmapped.length} operador(es) sem usuário no app não receberão notificações internas.</p>`:'<p class="notification-settings-note" style="color:var(--green)">Todos os operadores com acesso estão associados.</p>'}<p class="notification-settings-note">Última verificação: ${notificationLastRunAt?new Date(notificationLastRunAt).toLocaleString('pt-BR'):'ainda não executada'}.</p></section></div>`;}
-function saveNotificationSettings(){if(!isMaster(loggedUser)){showToast('Somente mestres podem alterar as notificações.','err');return;}DB.notificationSettings=Object.assign({},notificationSettings(),{enabled:document.getElementById('ns-enabled').checked,notifyStart:document.getElementById('ns-start').checked,notifyDueSoon:document.getElementById('ns-due').checked,notifyOverdue:document.getElementById('ns-overdue').checked,notifyReleased:document.getElementById('ns-released').checked,notifyDateChanged:document.getElementById('ns-changed').checked,daysBefore:Math.max(0,Math.min(30,Number(document.getElementById('ns-days').value)||0)),dailySummaryHour:document.getElementById('ns-hour').value||'08:00'});persist();renderNotificationSettings();runNotificationEngine(true);showToast('Regras de notificação salvas.');}
+function renderNotificationSettingsLegacy(){
+  const panel=document.getElementById('notificationSettingsPanel'),content=document.getElementById('notificationSettingsContent');if(!panel||!content)return;
+  const master=isMaster(loggedUser);panel.style.display=master?'block':'none';if(!master)return;
+  const s=notificationSettings(),coverage=projectOperatorCoverage();
+  content.innerHTML=`<div class="notification-settings-grid"><section class="notification-rule-box"><h4>Regras automáticas</h4><label class="notification-check"><input id="ns-enabled" type="checkbox" ${s.enabled?'checked':''}> Ativar central de notificações</label><label class="notification-check"><input id="ns-start" type="checkbox" ${s.notifyStart?'checked':''}> Avisar quando a operação começa hoje</label><label class="notification-check"><input id="ns-due" type="checkbox" ${s.notifyDueSoon?'checked':''}> Avisar próximo do vencimento</label><label class="notification-check"><input id="ns-overdue" type="checkbox" ${s.notifyOverdue?'checked':''}> Avisar diariamente enquanto estiver atrasada</label><label class="notification-check"><input id="ns-released" type="checkbox" ${s.notifyReleased?'checked':''}> Avisar quando as predecessoras liberarem a operação</label><label class="notification-check"><input id="ns-changed" type="checkbox" ${s.notifyDateChanged?'checked':''}> Avisar quando o término calculado mudar</label><div class="notification-settings-row"><div class="form-group"><label>Dias antes do vencimento</label><input id="ns-days" type="number" min="0" max="30" value="${Number(s.daysBefore)||0}"></div><div class="form-group"><label>Horário do resumo</label><input id="ns-hour" type="time" value="${escapeHTML(s.dailySummaryHour||'08:00')}"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn-gold btn-sm" onclick="saveNotificationSettings()"><span class="msi msi-sm">save</span> Salvar regras</button><button class="btn btn-ghost btn-sm" onclick="sendTestNotification()"><span class="msi msi-sm">notifications_active</span> Testar aviso interno</button><button class="btn btn-ghost btn-sm" onclick="runNotificationEngine(true)"><span class="msi msi-sm">sync</span> Verificar agora</button></div></section><section class="notification-coverage-box"><h4>Vínculo entre Project e funcionários</h4><div class="notification-coverage-kpis"><div><b>${coverage.operators.length}</b><span>Operadores</span></div><div><b style="color:var(--green)">${coverage.mapped.length}</b><span>Vinculados</span></div><div><b style="color:${coverage.unmapped.length?'var(--warn)':'var(--green)'}">${coverage.unmapped.length}</b><span>Sem vínculo</span></div></div><p class="notification-settings-note">O vínculo usa exclusivamente o <strong>nome principal do funcionário</strong>. Ele deve corresponder ao operador do Project; maiúsculas e acentos são ignorados.</p>${coverage.unmapped.length?`<p class="notification-settings-note">${coverage.unmapped.length} operador(es) sem usuário no app não receberão notificações internas.</p>`:'<p class="notification-settings-note" style="color:var(--green)">Todos os operadores com acesso estão associados.</p>'}<p class="notification-settings-note">Última verificação: ${notificationLastRunAt?new Date(notificationLastRunAt).toLocaleString('pt-BR'):'ainda não executada'}.</p></section></div><section class="outlook-test-box"><div class="outlook-test-head"><div><h4>Teste de e-mail pelo Outlook</h4><p>Durante o teste, qualquer aviso será enviado exclusivamente para <strong>${OUTLOOK_TEST_RECIPIENT}</strong>.</p></div><span class="outlook-test-chip">SOMENTE TESTE</span></div><div class="outlook-config-grid"><div class="form-group"><label>Directory (Tenant) ID</label><input id="ns-outlook-tenant" type="text" value="${escapeHTML(s.outlookTenantId||'')}" placeholder="00000000-0000-0000-0000-000000000000"></div><div class="form-group"><label>Application (Client) ID</label><input id="ns-outlook-client" type="text" value="${escapeHTML(s.outlookClientId||'')}" placeholder="00000000-0000-0000-0000-000000000000"></div></div><label class="notification-check outlook-enable"><input id="ns-email-enabled" type="checkbox" ${s.emailEnabled?'checked':''}> Encaminhar novos avisos abertos para o e-mail de teste enquanto um mestre estiver com o app aberto</label><div class="outlook-test-actions"><button class="btn btn-ghost btn-sm" onclick="connectOutlookTest()"><span class="msi msi-sm">login</span> Conectar Outlook</button><button class="btn btn-gold btn-sm" onclick="sendOutlookTestEmail()"><span class="msi msi-sm">forward_to_inbox</span> Enviar e-mail de teste</button><span id="outlookConnectionStatus" class="outlook-status">${escapeHTML(outlookLastStatus)}</span></div><p class="notification-settings-note">Nenhuma senha é gravada no HTML. A autenticação acontece na tela oficial da Microsoft e a autorização fica somente nesta sessão do navegador. Tarefas com Término real preenchido nunca são enviadas.</p></section>`;
+}
+function saveNotificationSettingsLegacy(){
+  if(!isMaster(loggedUser)){showToast('Somente mestres podem alterar as notificações.','err');return;}
+  const old=notificationSettings(),tenantId=document.getElementById('ns-outlook-tenant')?.value.trim()||'',clientId=document.getElementById('ns-outlook-client')?.value.trim()||'';
+  DB.notificationSettings=Object.assign({},old,{enabled:document.getElementById('ns-enabled').checked,notifyStart:document.getElementById('ns-start').checked,notifyDueSoon:document.getElementById('ns-due').checked,notifyOverdue:document.getElementById('ns-overdue').checked,notifyReleased:document.getElementById('ns-released').checked,notifyDateChanged:document.getElementById('ns-changed').checked,daysBefore:Math.max(0,Math.min(30,Number(document.getElementById('ns-days').value)||0)),dailySummaryHour:document.getElementById('ns-hour').value||'08:00',emailEnabled:document.getElementById('ns-email-enabled')?.checked===true,outlookTenantId:tenantId,outlookClientId:clientId});
+  if(old.outlookTenantId!==tenantId||old.outlookClientId!==clientId){outlookMsal=null;outlookAccount=null;outlookClientKey='';outlookLastStatus='Não conectado';}
+  persist();renderNotificationSettings();runNotificationEngine(true);showToast('Regras de notificação salvas.');
+}
 function sendTestNotification(){if(!loggedUser?.ref||loggedUser.type==='client')return;const id='test_'+Date.now();NOTIFICATION_STORE.push({id,userId:loggedUser.ref.id,type:'test',title:'Notificação de teste',message:'A central de notificações está funcionando neste usuário.',orderId:null,taskId:null,createdAt:new Date().toISOString(),readAt:null,emailStatus:'not-configured'});persistNotificationStore();renderNotificationBell();showToast('Notificação de teste criada.');}
+function renderNotificationSettings(){
+  const panel=document.getElementById('notificationSettingsPanel'),content=document.getElementById('notificationSettingsContent');if(!panel||!content)return;
+  const master=isMaster(loggedUser);panel.style.display=master?'block':'none';if(!master)return;
+  const s=notificationSettings(),coverage=projectOperatorCoverage(),pushStatus=pushPermissionLabel();
+  content.innerHTML=`<div class="notification-settings-grid"><section class="notification-rule-box"><h4>Regras automáticas</h4><label class="notification-check"><input id="ns-enabled" type="checkbox" ${s.enabled?'checked':''}> Ativar central de notificações</label><label class="notification-check"><input id="ns-start" type="checkbox" ${s.notifyStart?'checked':''}> Avisar quando a operação começa hoje</label><label class="notification-check"><input id="ns-due" type="checkbox" ${s.notifyDueSoon?'checked':''}> Avisar próximo do vencimento</label><label class="notification-check"><input id="ns-overdue" type="checkbox" ${s.notifyOverdue?'checked':''}> Avisar diariamente enquanto estiver atrasada</label><label class="notification-check"><input id="ns-released" type="checkbox" ${s.notifyReleased?'checked':''}> Avisar quando as predecessoras liberarem a operação</label><label class="notification-check"><input id="ns-changed" type="checkbox" ${s.notifyDateChanged?'checked':''}> Avisar quando o término calculado mudar</label><div class="notification-settings-row"><div class="form-group"><label>Dias antes do vencimento</label><input id="ns-days" type="number" min="0" max="30" value="${Number(s.daysBefore)||0}"></div><div class="form-group"><label>Horário do resumo</label><input id="ns-hour" type="time" value="${escapeHTML(s.dailySummaryHour||'08:00')}"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn-gold btn-sm" onclick="saveNotificationSettings()"><span class="msi msi-sm">save</span> Salvar regras</button><button class="btn btn-ghost btn-sm" onclick="sendTestNotification()"><span class="msi msi-sm">notifications_active</span> Enviar teste</button><button class="btn btn-ghost btn-sm" onclick="runNotificationEngine(true)"><span class="msi msi-sm">sync</span> Verificar agora</button></div></section><section class="notification-coverage-box"><h4>Vínculo entre Project e funcionários</h4><div class="notification-coverage-kpis"><div><b>${coverage.operators.length}</b><span>Operadores</span></div><div><b style="color:var(--green)">${coverage.mapped.length}</b><span>Vinculados</span></div><div><b style="color:${coverage.unmapped.length?'var(--warn)':'var(--green)'}">${coverage.unmapped.length}</b><span>Sem vínculo</span></div></div><p class="notification-settings-note">O vínculo usa exclusivamente o <strong>nome principal do funcionário</strong>. Tarefas com <strong>Término real</strong> preenchido nunca são notificadas.</p><p class="notification-settings-note">Última verificação: ${notificationLastRunAt?new Date(notificationLastRunAt).toLocaleString('pt-BR'):'ainda não executada'}.</p></section></div><section class="push-mobile-box"><div class="push-mobile-head"><div><h4>Notificações no celular</h4><p>Push individual pelo Firebase. Cada funcionário ativa no próprio aparelho depois de entrar no app.</p></div><span class="push-device-status ${pushStatus.type}">${pushStatus.label}</span></div><div class="push-key-grid"><div class="form-group" style="margin:0"><label>Chave pública Web Push (VAPID)</label><input id="ns-push-vapid" type="text" value="${escapeHTML(s.pushVapidKey||'')}" placeholder="Cole a chave pública gerada no Firebase"></div><button class="btn btn-ghost btn-sm" onclick="saveNotificationSettings()"><span class="msi msi-sm">save</span> Salvar chave</button></div><div class="push-mobile-actions"><button class="btn btn-gold btn-sm" onclick="enableMobilePush()"><span class="msi msi-sm">phone_iphone</span> Ativar neste celular</button>${pushIsEnabledHere()?'<button class="btn btn-ghost btn-sm" onclick="disableMobilePush()">Desativar neste celular</button>':''}<button class="btn btn-ghost btn-sm" onclick="sendTestNotification()"><span class="msi msi-sm">notifications_active</span> Testar push</button></div><ol class="push-steps"><li>No Firebase, abra <strong>Configurações do projeto → Cloud Messaging → Certificados Web Push</strong>.</li><li>Gere um par de chaves e cole aqui somente a <strong>chave pública</strong>.</li><li>No celular, abra o app publicado, entre com seu usuário e toque em <strong>Ativar neste celular</strong>.</li></ol></section>`;
+}
+function saveNotificationSettings(){
+  if(!isMaster(loggedUser)){showToast('Somente mestres podem alterar as notificações.','err');return;}
+  const old=notificationSettings();DB.notificationSettings=Object.assign({},old,{enabled:document.getElementById('ns-enabled')?.checked!==false,notifyStart:document.getElementById('ns-start')?.checked!==false,notifyDueSoon:document.getElementById('ns-due')?.checked!==false,notifyOverdue:document.getElementById('ns-overdue')?.checked!==false,notifyReleased:document.getElementById('ns-released')?.checked!==false,notifyDateChanged:document.getElementById('ns-changed')?.checked!==false,daysBefore:Math.max(0,Math.min(30,Number(document.getElementById('ns-days')?.value)||0)),dailySummaryHour:document.getElementById('ns-hour')?.value||'08:00',emailEnabled:false,pushVapidKey:document.getElementById('ns-push-vapid')?.value.trim()||old.pushVapidKey||''});persist();renderNotificationSettings();runNotificationEngine(true);showToast('Regras de notificação salvas.');
+}
 document.addEventListener('click',event=>{const drawer=document.getElementById('notificationDrawer');if(drawer?.classList.contains('open')&&!drawer.contains(event.target)&&!document.getElementById('notificationBell')?.contains(event.target))closeNotificationCenter();});
 
 function renderClientScreen(){
@@ -5665,7 +5783,6 @@ function processXMLFile(file){
       persist().then(()=>{
         renderDevAll();
         renderImportHistory();
-        if(document.getElementById('page-gantt').classList.contains('active'))renderGantt();
         const archMsg=archivedCount>0?` | ${archivedCount} arquivado(s)`:'';
         statusEl.innerHTML=`<span class="msi msi-sm">check_circle</span> <strong>${file.name}</strong> importado — <strong>${ORDERS.length}</strong> pedidos, <strong>${n}</strong> tarefas${archMsg}`;
         showToast('Cronograma atualizado com sucesso!');
@@ -6490,10 +6607,12 @@ function purchaseOrderIsOverdue(row){
   const today=new Date();today.setHours(0,0,0,0);
   return !!row?.previsaoEntrega&&row.previsaoEntrega<today;
 }
+function purchaseOrderIsToday(row){return dataEhHoje(row?.previsaoEntrega);}
 function filteredPurchaseOrderRecords(){
   const term=financeNormalize(purchaseOrderSearch);
   let rows=purchaseOrderRecords();
   if(purchaseOrdersOnlyOverdue)rows=rows.filter(purchaseOrderIsOverdue);
+  if(purchaseOrdersOnlyToday)rows=rows.filter(purchaseOrderIsToday);
   if(!term)return rows;
   return rows.filter(row=>financeNormalize([salesDateText(row.emissao),row.numero,row.fornecedor,row.observacao,fmtBRL(row.valorTotal),salesDateText(row.previsaoEntrega),row.anexos].join(' ')).includes(term));
 }
@@ -6515,9 +6634,12 @@ function applyPurchaseOrderSearch(value){
   purchaseOrderSearch=String(value||'');
   const rows=filteredPurchaseOrderRecords();
   const tbody=document.getElementById('purchaseOrdersBody');if(tbody)tbody.innerHTML=purchaseOrderRowsMarkup(rows);
-  const count=document.getElementById('purchaseOrdersVisibleCount');if(count)count.textContent=`${rows.length} de ${purchaseOrdersOnlyOverdue?purchaseOrderRecords().filter(purchaseOrderIsOverdue).length:purchaseOrderRecords().length} pedido(s)`;
+  const base=purchaseOrderRecords();
+  const totalFiltrado=purchaseOrdersOnlyToday?base.filter(purchaseOrderIsToday).length:purchaseOrdersOnlyOverdue?base.filter(purchaseOrderIsOverdue).length:base.length;
+  const count=document.getElementById('purchaseOrdersVisibleCount');if(count)count.textContent=`${rows.length} de ${totalFiltrado} pedido(s)`;
 }
-function togglePurchaseOrdersOverdue(){purchaseOrdersOnlyOverdue=!purchaseOrdersOnlyOverdue;renderPurchaseOrdersPage();}
+function togglePurchaseOrdersOverdue(){purchaseOrdersOnlyOverdue=!purchaseOrdersOnlyOverdue;if(purchaseOrdersOnlyOverdue)purchaseOrdersOnlyToday=false;renderPurchaseOrdersPage();}
+function togglePurchaseOrdersToday(){purchaseOrdersOnlyToday=!purchaseOrdersOnlyToday;if(purchaseOrdersOnlyToday)purchaseOrdersOnlyOverdue=false;renderPurchaseOrdersPage();}
 function exportPurchaseOrdersPDF(){
   const JsPDF=window.jspdf?.jsPDF;
   if(!JsPDF){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
@@ -6530,7 +6652,7 @@ function exportPurchaseOrdersPDF(){
     let y=15;
     if(firstPage){
       doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(25,25,25);doc.text('Pedidos de compra',left,y);y+=6;
-      doc.setFontSize(10);doc.text(purchaseOrdersOnlyOverdue?'Relatório de entregas atrasadas':'Relatório de pedidos em aberto',left,y);y+=5;
+      doc.setFontSize(10);doc.text(purchaseOrdersOnlyToday?`Entregas previstas para hoje · ${rotuloHoje()}`:purchaseOrdersOnlyOverdue?'Relatório de entregas atrasadas':'Relatório de pedidos em aberto',left,y);y+=5;
       doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(105,105,105);doc.text(`Exportado em ${new Date().toLocaleString('pt-BR')} · ${rows.length} pedido(s)`,left,y);y+=6;
       const cards=[['VALOR TOTAL',fmtBRL(total)],['PEDIDOS EXIBIDOS',String(rows.length)],['ENTREGAS ATRASADAS',String(overdueCount)]];
       cards.forEach((card,index)=>{const x=left+index*94,w=90;doc.setFillColor(246,246,246);doc.setDrawColor(205,205,205);doc.roundedRect(x,y,w,12,1.2,1.2,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(95,95,95);doc.text(card[0],x+2.5,y+4);doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(index===2&&overdueCount?205:35,index===2&&overdueCount?45:130,index===2&&overdueCount?58:70);doc.text(card[1],x+2.5,y+9);});y+=17;
@@ -6547,7 +6669,7 @@ function exportPurchaseOrdersPDF(){
     lines.forEach((set,column)=>{doc.setFont('helvetica',isOverdue&&column===5?'bold':'normal');doc.setTextColor(isOverdue&&column===5?205:28,isOverdue&&column===5?45:28,isOverdue&&column===5?58:28);doc.text(set,x+1.2,y+3.8,{maxWidth:widths[column]-2.4});x+=widths[column];});y+=rowHeight;
   });
   const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(110,110,110);doc.text(`Pedidos de compra · Página ${page} de ${pages}`,pageW-7,207,{align:'right'});}
-  cartamacPdfSave(doc,`Pedidos_de_Compra_${purchaseOrdersOnlyOverdue?'Atrasados':'Em_Aberto'}_${new Date().toISOString().slice(0,10)}.pdf`,{sector:'PEDIDOS DE COMPRA'});
+  cartamacPdfSave(doc,`Pedidos_de_Compra_${purchaseOrdersOnlyToday?'Hoje':purchaseOrdersOnlyOverdue?'Atrasados':'Em_Aberto'}_${new Date().toISOString().slice(0,10)}.pdf`,{sector:'PEDIDOS DE COMPRA'});
 }
 function renderPurchaseOrdersPage(container=document.getElementById('pedidosCompraContent')){
   if(!container)return;
@@ -6558,13 +6680,13 @@ function renderPurchaseOrdersPage(container=document.getElementById('pedidosComp
   container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">shopping_cart</span> Pedidos de compra</h2><p>Pedidos ainda não recebidos, consultados diretamente no MaxiProd.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshPurchaseOrdersMaxiprod()" ${purchaseOrdersRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> ${purchaseOrdersRefreshInProgress?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
     <div class="sales-page">
       <div class="sales-head"><div><p>Recebidos, cancelados e excluídos não são armazenados no app.</p></div></div>
-      <div class="sales-summary">
+      <div class="sales-summary purchase-summary">
         <div class="sales-summary-card money"><div class="sales-summary-value">${fmtBRL(total)}</div><div class="sales-summary-label">Valor total em aberto</div></div>
         <div class="sales-summary-card"><div class="sales-summary-value">${records.length}</div><div class="sales-summary-label">Pedidos em aberto</div></div>
         <div class="sales-summary-card ${overdue?'money':''}"><div class="sales-summary-value" ${overdue?'style="color:var(--red)"':''}>${overdue}</div><div class="sales-summary-label">Entregas previstas atrasadas</div></div>
       </div>
-      <div class="pagar-detalhe-actions" style="margin:16px 0 10px;"><button class="btn btn-danger pagar-atrasados-btn ${purchaseOrdersOnlyOverdue?'active':''}" type="button" onclick="togglePurchaseOrdersOverdue()">${purchaseOrdersOnlyOverdue?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" type="button" onclick="exportPurchaseOrdersPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF ${purchaseOrdersOnlyOverdue?'dos atrasados':''}</button></div>
-      <div class="finance-toolbar" style="margin:0 0 12px;"><input class="search-input" value="${escapeHTML(purchaseOrderSearch)}" oninput="applyPurchaseOrderSearch(this.value)" placeholder="Filtrar número, fornecedor ou observação..."><span id="purchaseOrdersVisibleCount" class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${purchaseOrdersOnlyOverdue?overdue:records.length} pedido(s)</span></div>
+      <div class="pagar-detalhe-actions" style="margin:16px 0 10px;"><button class="btn btn-ghost btn-hoje ${purchaseOrdersOnlyToday?'active':''}" type="button" onclick="togglePurchaseOrdersToday()"><span class="msi msi-sm">today</span> ${purchaseOrdersOnlyToday?'Exibindo hoje':`Hoje · ${rotuloHoje()}`}</button><button class="btn btn-danger pagar-atrasados-btn ${purchaseOrdersOnlyOverdue?'active':''}" type="button" onclick="togglePurchaseOrdersOverdue()">${purchaseOrdersOnlyOverdue?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" type="button" onclick="exportPurchaseOrdersPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF ${purchaseOrdersOnlyToday?'de hoje':purchaseOrdersOnlyOverdue?'dos atrasados':''}</button></div>
+      <div class="finance-toolbar" style="margin:0 0 12px;"><input class="search-input" value="${escapeHTML(purchaseOrderSearch)}" oninput="applyPurchaseOrderSearch(this.value)" placeholder="Filtrar número, fornecedor ou observação..."><span id="purchaseOrdersVisibleCount" class="muted" style="font-size:12px;white-space:nowrap;">${filtered.length} de ${purchaseOrdersOnlyToday?records.filter(purchaseOrderIsToday).length:purchaseOrdersOnlyOverdue?overdue:records.length} pedido(s)</span></div>
       <div class="sales-table-wrap"><table class="sales-table">
         <thead><tr><th>Emissão</th><th>Nº</th><th>Fornecedor</th><th>Observação</th><th>Valor total</th><th>Previsão de entrega</th><th>Arquivos anexados</th></tr></thead>
         <tbody id="purchaseOrdersBody">${purchaseOrderRowsMarkup(filtered)}</tbody>
@@ -7618,7 +7740,7 @@ Object.assign(window,{
   renderGantt,openAddUserModal,saveNewUser,selectUser,saveUserChanges,
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
-  openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,runNotificationEngine,
+  openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,runNotificationEngine,enableMobilePush,disableMobilePush,
   importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
@@ -7626,14 +7748,14 @@ Object.assign(window,{
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,toggleSalesGeography,setSalesGeographyYear,selectSalesGeographyUf,exportSalesYearReport,
-  renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,togglePurchaseOrdersOverdue,exportPurchaseOrdersPDF,
+  renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,togglePurchaseOrdersOverdue,togglePurchaseOrdersToday,exportPurchaseOrdersPDF,
   renderAccountingPage,switchAccountingView,applyAccountingSearch,toggleAccountingAdvances,setAccountingBlocks,exportAccountingReport,
   renderFixedAssetsPage,refreshFixedAssetsMaxiprod,filterFixedAssets,
   renderUsageStockPage,refreshUsageStockMaxiprod,filterUsageStock,
   renderRawMaterialPage,refreshRawMaterialMaxiprod,filterRawMaterial,filterRawMaterialGroup,showMoreRawMaterial,toggleRawMaterialGroup,
   exportStockReport,
-abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,alternarFiltroAtrasadosReceber,mostrarMaisContasReceber,atualizarContasReceberAno,limparContasReceberAno,
-  abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,alternarFiltroAtrasadosPagar,mostrarMaisContasPagar,atualizarContasPagarAno,limparContasPagarAno,
+abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrirReceberMes,abrirReceberCalendario,alterarReceberCalendario,alterarFiltroReceber,alternarFiltroAtrasadosReceber,alternarFiltroHojeReceber,mostrarMaisContasReceber,atualizarContasReceberAno,limparContasReceberAno,
+  abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,alternarFiltroAtrasadosPagar,alternarFiltroHojePagar,mostrarMaisContasPagar,atualizarContasPagarAno,limparContasPagarAno,
   exportFinanceCalendarPDF,exportFinancePeriodPDF,exportFinanceOverduePDF,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
