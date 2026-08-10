@@ -308,12 +308,14 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 #page-cronograma .stat-kicker{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;line-height:1.2;}
 #page-cronograma .stat-main{font-size:14px;font-weight:700;color:var(--text);line-height:1.35;margin-top:5px;max-width:100%;overflow-wrap:anywhere;}
 #page-cronograma .stat-sub{font-size:12px;color:var(--text3);line-height:1.35;margin-top:4px;max-width:100%;overflow-wrap:anywhere;}
+.cron-sector-performance{border:1px solid var(--border2);border-radius:var(--radius2);background:var(--bg2);margin:0 0 18px;overflow:hidden}.cron-sector-performance-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 17px;border-bottom:1px solid var(--border);background:rgba(200,168,75,.045)}.cron-sector-performance-head h3{margin:0;font-size:15px;color:var(--text)}.cron-sector-performance-head p{margin:4px 0 0;color:var(--text3);font-size:11px}.cron-sector-performance-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px;padding:11px}.cron-sector-performance-card{appearance:none;text-align:left;border:1px solid var(--border);border-radius:8px;background:var(--bg3);padding:11px 12px;color:var(--text);cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;align-items:center}.cron-sector-performance-card:hover,.cron-sector-performance-card.active{border-color:var(--gold);background:rgba(200,168,75,.075)}.cron-sector-performance-name{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cron-sector-performance-value{font:800 12px 'JetBrains Mono',monospace;white-space:nowrap}.cron-sector-performance-value.delayed{color:var(--red)}.cron-sector-performance-value.early{color:var(--green)}.cron-sector-performance-value.ontime{color:var(--text2)}.cron-sector-performance-meta{grid-column:1/-1;color:var(--text3);font-size:10px}.cron-sector-empty{padding:18px;color:var(--text3);font-size:12px;text-align:center}.dept-schedule{margin-left:auto;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;text-transform:none;letter-spacing:0;font-size:11px;font-weight:500}.dept-schedule-dates{color:var(--text3);white-space:nowrap}.dept-variance{border:1px solid var(--border2);border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;white-space:nowrap}.dept-variance.delayed{color:var(--red);border-color:rgba(255,74,85,.35);background:rgba(255,74,85,.08)}.dept-variance.early{color:var(--green);border-color:rgba(73,190,100,.35);background:rgba(73,190,100,.08)}.dept-variance.ontime{color:var(--green);border-color:rgba(73,190,100,.25);background:rgba(73,190,100,.05)}.dept-variance.pending{color:var(--text3)}
 @media(max-width:640px){
   #page-cronograma .stats-row{grid-template-columns:repeat(2,minmax(0,1fr));}
   #page-cronograma .stat-card:not(.stat-alert){min-height:82px;}
   #page-cronograma .stat-card.stat-alert{padding:14px 16px;}
   #page-cronograma .stat-main{font-size:13px;}
   #page-cronograma .stat-sub{font-size:11px;}
+  .cron-sector-performance-head{align-items:flex-start;flex-direction:column}.cron-sector-performance-list{grid-template-columns:1fr}.dept-header{align-items:flex-start;flex-wrap:wrap}.dept-schedule{width:100%;justify-content:flex-start;margin-left:0}.dept-pct{margin-left:auto}
 }
 @media(max-width:380px){
   #page-cronograma .stats-row{grid-template-columns:1fr;}
@@ -1157,6 +1159,120 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 @media(max-width:620px){.accounting-summary{grid-template-columns:1fr}.accounting-toolbar .search-input{min-width:100%;}}
 @media(max-width:700px){.accounting-order-summary{grid-template-columns:minmax(0,1fr) auto 24px}.accounting-order-metric{display:none}.accounting-order-title{align-items:flex-start;flex-direction:column;gap:3px}.accounting-order-title span{white-space:normal}.accounting-order-actions .btn{min-width:40px;padding:8px}.accounting-order-actions .btn-label{display:none}.accounting-block-actions{width:100%;margin-left:0}.accounting-block-actions .btn{flex:1;}}
 @media(max-width:760px){.accounting-general-reports{width:100%;padding-left:0;border-left:0}.accounting-general-reports .accounting-report-btn{flex:1}}
+
+/* REV140 — estrutura detalhada do Project dentro de cada OP */
+:root{--purple:#a782e5}
+.cron-order-metric{display:grid;gap:2px;min-width:76px;padding-left:9px;border-left:1px solid var(--border)}
+.cron-order-metric small{font-size:8px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.cron-order-metric b{font:700 10px 'JetBrains Mono',monospace;color:var(--text2);white-space:nowrap}.cron-order-metric.calculated b{color:#68b5f5}
+.cron-schedule-shell{overflow-x:auto;background:#0c0d0d}.cron-schedule-grid{position:relative;min-width:max-content;--timeline:440px}
+.cron-detail-row{display:grid;grid-template-columns:235px 100px 125px 66px 96px 96px 96px 96px 106px var(--timeline);min-height:42px;border-bottom:1px solid var(--border);align-items:stretch}
+.cron-detail-cell{padding:8px 10px;border-right:1px solid var(--border);display:flex;align-items:center;min-width:0;font-size:10px;color:var(--text2)}.cron-detail-cell:last-child{border-right:0}
+.cron-detail-head{position:sticky;top:0;z-index:5;background:#202323;text-transform:uppercase;font-size:9px;font-weight:800;color:#c9cccc;letter-spacing:.035em}.cron-detail-head .cron-detail-cell{color:#c9cccc}
+.cron-planned-col{background:rgba(200,168,75,.035)}.cron-real-col{background:rgba(85,167,239,.045)}
+.cron-sector-row{min-height:35px;border-top:6px solid var(--bg1)}.cron-sector-title{grid-column:1/10;border-left:4px solid var(--sector-color);background:color-mix(in srgb,var(--sector-color) 12%,#111 88%);color:var(--sector-color);font-weight:800;text-transform:uppercase;letter-spacing:.06em;gap:8px}.cron-sector-title small{color:var(--text3);font-weight:500;text-transform:none;letter-spacing:0}.cron-sector-timeline{grid-column:10;background:transparent}.cron-sector-dot{width:7px;height:7px;border-radius:50%;background:var(--sector-color)}
+.cron-task-row{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--sector-color) 70%,transparent)}.cron-task-name{display:block;min-width:0}.cron-task-name b,.cron-task-name small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cron-task-name b{font-size:10px;color:#f0f1ef}.cron-task-name small{font-size:8px;color:var(--gold);margin-top:3px}.cron-duration{font:700 10px 'JetBrains Mono',monospace}.cron-date{font:700 9px 'JetBrains Mono',monospace;white-space:nowrap}.cron-date.empty{color:var(--text3);font-weight:500}
+.cron-task-state{font-size:8px;font-weight:800;border-radius:999px;padding:4px 7px;white-space:nowrap}.cron-task-state.done{color:var(--green);background:rgba(73,190,100,.1)}.cron-task-state.late{color:var(--red);background:rgba(255,74,85,.1)}.cron-task-state.active{color:var(--warn);background:rgba(212,146,42,.12)}.cron-task-state.pending{color:var(--text3);background:rgba(255,255,255,.06)}
+.cron-timeline-head,.cron-timeline-cell{position:relative;overflow:hidden;background-image:linear-gradient(to right,transparent calc(100% - 1px),rgba(255,255,255,.055) 0);background-size:22px 100%;padding:0}.cron-timeline-head{display:flex}.cron-day{width:22px;min-width:22px;display:grid;place-items:center;font:600 7px 'JetBrains Mono',monospace;color:#8b8f8f;position:relative}.cron-day.weekend{background:rgba(255,255,255,.025);color:#525555}.cron-day.today::after{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--red)}
+.cron-gantt-bar{position:absolute;height:18px;top:11px;border-radius:4px;background:#66ace8;border:1px solid rgba(255,255,255,.18);overflow:hidden;color:#071019;font:800 8px 'JetBrains Mono',monospace;display:flex;align-items:center;padding:0 4px;z-index:3}.cron-gantt-bar.late{box-shadow:0 0 0 1px var(--red)}.cron-gantt-bar .fill{position:absolute;inset:0 auto 0 0;background:rgba(255,255,255,.32)}.cron-gantt-bar span{position:relative;z-index:1}.cron-gantt-milestone{position:absolute;top:13px;width:13px;height:13px;transform:rotate(45deg);background:var(--gold);z-index:3}.cron-dependency-overlay{position:absolute;inset:0 auto auto 0;pointer-events:none;z-index:2;overflow:visible}
+.cron-delay-layout{display:grid;gap:14px}.cron-delay-help{font-size:11px;color:var(--text3);margin-left:auto}.cron-delay-stack{width:145px;height:7px;display:flex;overflow:hidden;border-radius:99px;background:var(--bg4)}.cron-delay-stack .own{background:var(--red)}.cron-delay-stack .inherited{background:var(--purple)}.cron-delay-number{font:700 11px 'JetBrains Mono',monospace}.cron-delay-number.own{color:var(--red)}.cron-delay-number.inherited{color:var(--purple)}.cron-delay-origin{font-size:9px;font-weight:800;padding:4px 7px;border-radius:99px;white-space:nowrap}.cron-delay-origin.own{color:var(--red);background:rgba(255,74,85,.1)}.cron-delay-origin.inherited{color:var(--purple);background:rgba(167,130,229,.12)}
+@media(max-width:1200px){.cron-order-metric{display:none}.cron-detail-row{grid-template-columns:210px 92px 112px 62px 90px 90px 90px 90px 100px var(--timeline)}}
+
+
+/* REV141 — central de notificações do cronograma */
+.notification-bell{position:relative;width:38px;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--text2);cursor:pointer;transition:.15s ease;}
+.notification-bell:hover,.notification-bell.active{border-color:var(--gold);color:var(--gold);background:rgba(205,173,72,.1);}
+.notification-count{position:absolute;right:-5px;top:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--red);border:2px solid var(--bg2);color:#fff;font:800 10px/15px Inter,sans-serif;text-align:center;}
+.notification-count:empty{display:none;}
+.notification-drawer{position:fixed;z-index:9500;right:16px;top:68px;width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 84px);display:none;flex-direction:column;background:#111;border:1px solid var(--border2);border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.62);overflow:hidden;}
+.notification-drawer.open{display:flex;animation:notifIn .16s ease-out;}
+@keyframes notifIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.notification-drawer-head{padding:17px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(100deg,rgba(205,173,72,.11),transparent);}
+.notification-drawer-head h3{margin:0;font-size:16px;display:flex;align-items:center;gap:8px;}
+.notification-drawer-actions{display:flex;align-items:center;gap:5px;}
+.notification-drawer-actions button{border:0;background:transparent;color:var(--text3);font-size:11px;cursor:pointer;padding:6px;border-radius:5px;}
+.notification-drawer-actions button:hover{background:var(--bg4);color:#fff;}
+.notification-list{overflow:auto;padding:7px;}
+.notification-empty{padding:46px 20px;text-align:center;color:var(--text3);}
+.notification-empty .msi{display:block;font-size:34px;color:#555;margin-bottom:10px;}
+.notification-item{width:100%;display:grid;grid-template-columns:39px 1fr auto;gap:10px;align-items:start;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--text);text-align:left;padding:11px;cursor:pointer;transition:.14s ease;margin-bottom:3px;}
+.notification-item:hover{background:#1a1a1a;border-color:#333;}
+.notification-item.unread{background:rgba(205,173,72,.075);border-color:rgba(205,173,72,.2);}
+.notification-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#252525;color:var(--text2);}
+.notification-icon.overdue{background:rgba(245,76,76,.12);color:var(--red)}
+.notification-icon.due{background:rgba(240,163,47,.13);color:var(--warn)}
+.notification-icon.start,.notification-icon.released{background:rgba(67,199,101,.12);color:var(--green)}
+.notification-icon.changed{background:rgba(167,130,229,.13);color:var(--purple)}
+.notification-icon.test{background:rgba(205,173,72,.13);color:var(--gold)}
+.notification-copy strong{display:block;font-size:13px;line-height:1.35;margin-bottom:3px;color:#fff;}
+.notification-copy span{display:block;font-size:12px;line-height:1.45;color:var(--text3);}
+.notification-copy small{display:block;margin-top:6px;font-size:10px;color:#777;}
+.notification-unread-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:7px;}
+.notification-settings-panel{margin-top:16px;display:none;}
+.notification-settings-grid{display:grid;grid-template-columns:minmax(220px,330px) 1fr;gap:18px;align-items:start;}
+.notification-rule-box,.notification-coverage-box{border:1px solid var(--border);border-radius:10px;background:var(--bg3);padding:16px;}
+.notification-rule-box h4,.notification-coverage-box h4{margin:0 0 12px;font-size:14px;}
+.notification-check{display:flex;align-items:flex-start;gap:9px;padding:7px 0;font-size:13px;color:var(--text2);}
+.notification-check input{margin-top:2px;accent-color:var(--gold);}
+.notification-settings-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.notification-settings-note{font-size:12px;line-height:1.55;color:var(--text3);margin:12px 0 0;}
+.notification-settings-note strong{color:var(--gold);}
+.notification-coverage-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.notification-coverage-kpis div{background:#181818;border:1px solid var(--border);border-radius:8px;padding:10px;}
+.notification-coverage-kpis b{display:block;color:#fff;font-size:18px}.notification-coverage-kpis span{font-size:10px;color:var(--text3);text-transform:uppercase;}
+.notification-unmapped{display:flex;flex-wrap:wrap;gap:6px;max-height:110px;overflow:auto;}
+.notification-unmapped span{border:1px solid #493e20;background:#211e14;color:#d8c77e;border-radius:14px;padding:4px 8px;font-size:11px;}
+.operator-link-help{font-size:11px;color:var(--text3);line-height:1.45;margin-top:5px;}
+.notification-target{animation:notifTarget 2.5s ease-out;}
+@keyframes notifTarget{0%,35%{box-shadow:inset 4px 0 var(--gold);background:rgba(205,173,72,.16)}100%{box-shadow:none;background:transparent}}
+@media(max-width:820px){.notification-settings-grid{grid-template-columns:1fr}.notification-drawer{right:8px;top:62px}.notification-settings-row{grid-template-columns:1fr}.notification-coverage-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+
+/* REV143 — menu compacto em telas intermediárias */
+@media(min-width:1201px) and (max-width:1800px){
+  .dev-header{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 12px;gap:4px;}
+  .dev-wordmark{font-size:20px;margin-right:4px;}
+  .brand-icon-header{width:32px;height:32px;}
+  .dev-nav{order:2;width:100%;flex:none;gap:0;justify-content:center;overflow:visible;padding-bottom:2px;flex-wrap:wrap;}
+  .dev-tab{padding:8px 6px;font-size:11.5px;gap:4px;white-space:nowrap;}
+  .dev-tab .msi{font-size:14px;}
+  .dev-nav-separator{margin-left:3px;margin-right:3px;}
+  .admin-user-badge,.rev-badge,.btn-sair-label{display:none!important;}
+  .header-actions{order:1;margin-left:auto;gap:3px;}
+  .header-actions>.btn{width:38px;height:38px;padding:0;justify-content:center;}
+}
+
+
+/* REV143 — permissões retráteis e cabeçalho compacto */
+details.access-editor{padding:0;overflow:hidden;}
+.access-editor-summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;background:rgba(200,168,75,.055);cursor:pointer;list-style:none;user-select:none;}
+.access-editor-summary::-webkit-details-marker{display:none;}
+.access-editor-summary>div{display:flex;flex-direction:column;gap:3px;}
+.access-editor-summary strong{font-size:14px;color:var(--text);}
+.access-editor-summary span:not(.access-chevron){font-size:12px;color:var(--text3);}
+.access-chevron{color:var(--gold);transition:transform .18s ease;}
+details.access-editor[open] .access-chevron{transform:rotate(180deg);}
+.access-editor-body{border-top:1px solid var(--border);padding:12px 14px 14px;}
+.access-editor-controls{display:flex;justify-content:flex-end;margin-bottom:10px;}
+
+@media(min-width:1201px) and (max-width:1900px){
+  .dev-header{height:52px;min-height:52px;flex-wrap:nowrap;padding:0 7px;gap:2px;}
+  .brand-icon-header{width:28px;height:28px;flex:none;}
+  .dev-wordmark{font-size:18px;margin-right:2px;flex:none;}
+  .dev-nav{order:0;width:auto;min-width:0;flex:1;flex-wrap:nowrap;justify-content:flex-start;overflow:visible;padding:0;gap:0;}
+  .dev-tab{padding:7px 4px;font-size:10.5px;gap:3px;white-space:nowrap;}
+  .dev-tab .msi{font-size:12px;}
+  .dev-nav-separator{margin:0 2px;width:1px;}
+  .header-actions{order:0;margin-left:0;gap:2px;flex:none;}
+  .admin-user-badge,.rev-badge,.btn-sair-label{display:none!important;}
+  .header-actions>.btn,.notification-bell{width:32px;height:32px;min-width:32px;padding:0;justify-content:center;}
+}
+@media(min-width:1201px) and (max-width:1600px){
+  .dev-tab{padding-left:3px;padding-right:3px;font-size:10px;}
+  .dev-tab .msi{display:none;}
+  .dev-wordmark{font-size:17px;}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -1225,6 +1341,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
       <button class="dev-tab" id="tabContabilidade" onclick="switchDevTab('contabilidade',this)"><span class="msi msi-sm">request_quote</span> Contabilidade</button>
     </nav>
     <div class="header-actions">
+      <button class="notification-bell" id="notificationBell" type="button" onclick="toggleNotificationCenter(event)" title="Notificações"><span class="msi">notifications</span><span class="notification-count" id="notificationCount"></span></button>
       <div class="admin-user-badge"><span class="msi msi-sm">person</span> <strong id="adminNameBadge">Admin</strong></div>
       <span class="rev-badge" id="revBadge">REV.01</span>
       <button class="btn btn-sm btn-ghost" onclick="backToLogin()"><span class="msi msi-sm">logout</span> <span class="btn-sair-label">Sair</span></button>
@@ -1235,6 +1352,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
   <div class="page active" id="page-cronograma">
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab active" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
       <button class="cronograma-subtab" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
       <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
@@ -1252,15 +1370,34 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
         <option value="on_track">No prazo</option>
         <option value="done">Concluídos</option>
       </select>
+      <select class="filter-select" id="filterSector" onchange="filterOrders()">
+        <option value="">Todos os setores</option>
+      </select>
     </div>
     <div class="stats-row" id="statsRow"></div>
     <div class="orders-list" id="ordersList"></div>
+  </div>
+
+  <!-- ATRASOS POR SETOR -->
+  <div class="page" id="page-atrasos">
+    <div class="cronograma-subtabs">
+      <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="cronograma-subtab active" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
+      <button class="cronograma-subtab" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
+      <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
+    </div>
+    <div class="parts-head"><div><h2><span class="msi">query_stats</span> Atrasos por setor</h2><p>Separa o atraso gerado no próprio setor do atraso recebido das tarefas predecessoras.</p></div></div>
+    <div class="filters"><select class="filter-select" id="cronDelaySectorFilter" onchange="setCronDelayFilter(this.value)"><option value="">Todos os setores</option></select><span class="cron-delay-help">Valores em dias úteis-tarefa</span></div>
+    <div class="stats-row" id="cronDelayKpis"></div>
+    <div class="sim-intro"><span class="msi msi-sm msi-gold">info</span> Atraso próprio é o tempo acrescentado na tarefa do setor. Atraso herdado é o deslocamento que já chegou pela predecessora.</div>
+    <div class="cron-delay-layout"><div class="panel"><div class="panel-head">Ranking dos setores</div><div class="finance-table-wrap" id="cronDelayRanking"></div></div><div class="panel"><div class="panel-head">Detalhamento das tarefas</div><div class="finance-table-wrap" id="cronDelayDetails"></div></div></div>
   </div>
 
   <!-- GANTT -->
   <div class="page" id="page-gantt">
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
       <button class="cronograma-subtab active" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
       <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
@@ -1396,17 +1533,9 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
         <div class="user-detail"><div class="empty-state"><div class="ei"><span class="msi msi-xl">admin_panel_settings</span></div><h3>Selecione um administrador</h3><p>Escolha para visualizar</p></div></div>
       </div>
     </div>
-    <div class="panel" id="costsSettingsPanel" style="margin-top:16px;display:none;">
-      <div class="panel-head"><span class="msi msi-sm">payments</span> Configurações da Aba Custos</div>
-      <div class="user-detail">
-        <div class="section-title">Alterar senha de acesso à aba Custos</div>
-        <p style="font-size:13px;color:var(--text3);margin-bottom:16px;">Somente administradores mestres podem alterar esta senha. Ela é exigida de qualquer admin (mesmo mestre) para abrir a aba Custos.</p>
-        <div class="cost-input-row" style="max-width:420px;">
-          <div class="form-group"><label>Nova senha</label><div class="password-wrap"><input type="password" id="newCostsPass" placeholder="Mínimo 4 dígitos"><button type="button" class="password-toggle" onclick="togglePassword('newCostsPass',this)" title="Mostrar senha"><span class="msi msi-sm">visibility</span></button></div></div>
-          <div class="form-group"><label>Confirmar senha</label><div class="password-wrap"><input type="password" id="confirmCostsPass" placeholder="Repita a senha"><button type="button" class="password-toggle" onclick="togglePassword('confirmCostsPass',this)" title="Mostrar senha"><span class="msi msi-sm">visibility</span></button></div></div>
-        </div>
-        <button class="btn btn-gold btn-sm" onclick="saveCostsPassword()"><span class="msi msi-sm">save</span> Salvar Nova Senha</button>
-      </div>
+    <div class="panel notification-settings-panel" id="notificationSettingsPanel">
+      <div class="panel-head"><span class="msi msi-sm">notifications_active</span> Notificações do Cronograma <span class="role-badge-master">MESTRE</span></div>
+      <div class="user-detail" id="notificationSettingsContent"></div>
     </div>
   </div>
 
@@ -1414,6 +1543,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
   <div class="page" id="page-importar">
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
       <button class="cronograma-subtab" data-cron-subtab="gantt" onclick="switchCronogramaSubtab('gantt')"><span class="msi msi-sm">bar_chart_4_bars</span> Gantt</button>
       <button class="cronograma-subtab cron-subtab-import active" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
@@ -1478,9 +1608,9 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
       O <strong>setor</strong> identifica o funcionário e aparece abaixo do nome. Os acessos são definidos separadamente, aba por aba.
     </div>
     <div class="form-group"><label>Nome completo *</label><input type="text" id="naName" placeholder="Ex: Fernanda Souza"></div>
-    <div class="form-group"><label>E-mail / Login *</label><input type="email" id="naEmail" placeholder="nome@cartamac.com"></div>
-    <div class="form-group"><label>Senha *</label><div class="password-wrap"><input type="password" id="naPass" placeholder="Mínimo 6 caracteres"><button type="button" class="password-toggle" onclick="togglePassword('naPass',this)" title="Mostrar senha"><span class="msi msi-sm">visibility</span></button></div></div>
+    <div class="form-group"><label>E-mail / Login *</label><input type="email" id="naEmail" placeholder="nome@cartamac.com.br"></div>
     <div class="form-group"><label>Setor *</label><input type="text" id="naSector" placeholder="Ex: Engenharia, Comercial ou Financeiro"></div>
+    <div class="form-group"><label>Senha *</label><div class="password-wrap"><input type="password" id="naPass" placeholder="Mínimo 6 caracteres"><button type="button" class="password-toggle" onclick="togglePassword('naPass',this)" title="Mostrar senha"><span class="msi msi-sm">visibility</span></button></div></div>
     <div id="newAdminPermissions"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('addAdminModal')">Cancelar</button>
@@ -1498,6 +1628,15 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('ownPasswordModal')">Cancelar</button><button class="btn btn-gold" onclick="saveOwnPassword()">Salvar nova senha</button></div>
   </div>
 </div>
+
+
+<aside class="notification-drawer" id="notificationDrawer" aria-label="Central de notificações">
+  <div class="notification-drawer-head">
+    <h3><span class="msi msi-sm">notifications</span> Notificações</h3>
+    <div class="notification-drawer-actions"><button type="button" onclick="markAllNotificationsRead()">Marcar todas como lidas</button><button type="button" onclick="toggleNotificationCenter()" title="Fechar"><span class="msi msi-sm">close</span></button></div>
+  </div>
+  <div class="notification-list" id="notificationList"></div>
+</aside>
 
 <div class="toast" id="toast"></div>
 
@@ -1533,6 +1672,7 @@ const atualizarCacheCompartilhadoMaxiprodRemoto = httpsCallable(functions, "atua
 const DB_REF   = doc(db, "cartamac", "db");
 const FILE_REF = doc(db, "cartamac", "files");
 const SHARED_MAXIPROD_CACHE_REF = doc(db, "cartamac", "maxiprod-shared-cache");
+const NOTIFICATIONS_REF = doc(db, "cartamac", "notifications");
 const SHARED_MAXIPROD_CACHE_ID = 'maxiprod-shared-cache';
 
 const MASTER_EMAILS = [];
@@ -1558,7 +1698,10 @@ const DEFAULT_DB = {
   engineeringPeople: [],
   engineeringMacros: {},
   cashFlowData: {bankNames:['Banco 1','Banco 2','Banco 3'],months:{}},
-  financeiroFiscalMeta: {updatedAt:null}
+  financeiroFiscalMeta: {updatedAt:null},
+  notifications: [],
+  notificationTaskState: {},
+  notificationSettings: {enabled:true,daysBefore:2,notifyStart:true,notifyDueSoon:true,notifyOverdue:true,notifyReleased:true,notifyDateChanged:true,dailySummaryHour:'08:00',emailEnabled:false}
 };
 
 let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
@@ -1891,7 +2034,7 @@ let loggedUser     = null;
 let selectedUserId = null;
 let selectedAdminId = null;
 let ORDERS = getDefaultOrders();
-let costsUnlocked = false;
+let costsUnlocked = true;
 let openCostCardId = null;
 let costsView = 'orders';
 let selectedStructureOrderId = null;
@@ -1977,7 +2120,7 @@ async function deleteCostStructureDocument(orderId){
 const isMaster = u => u && (u.type==='master' || MASTER_EMAILS.includes(u.ref?.email));
 const isEngineering = u => u && ['engineering','engenharia'].includes(String(u.type||'').toLowerCase());
 const ADMIN_ACCESS_GROUPS=[
-  {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.gantt','Gantt'],['cronograma.importar','Importar e históricos']]},
+  {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.atrasos','Atrasos por setor'],['cronograma.gantt','Gantt'],['cronograma.importar','Importar e históricos']]},
   {id:'cadastros',label:'Cadastros',icon:'group',items:[['clientes','Clientes'],['admins','Administradores']]},
   {id:'pecas',label:'Peças de Reposição',icon:'settings',items:[['pecas.catalog','Tabela de peças'],['pecas.price','Formação de preço']]},
   {id:'planejamento',label:'Planejamento',icon:'event_available',items:[['simulador','Simular Cronograma']]},
@@ -1991,7 +2134,7 @@ const ADMIN_ACCESS_KEYS=ADMIN_ACCESS_GROUPS.flatMap(group=>group.items.map(item=
 function legacyAdminPermissions(admin){
   const role=String(admin?.role||'viewer').toLowerCase();
   if(role==='master'||MASTER_EMAILS.includes(admin?.email))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,true]));
-  const keys=['cronograma.cronograma','cronograma.gantt'];
+  const keys=['cronograma.cronograma','cronograma.atrasos','cronograma.gantt'];
   if(role==='seller')keys.push('pecas.catalog','pecas.price','simulador','financeiro.vendas');
   else keys.push('clientes','admins');
   if(['engineering','engenharia'].includes(role))keys.push('macro-engenharia.active','macro-engenharia.completed','macro-engenharia.people');
@@ -2000,8 +2143,8 @@ function legacyAdminPermissions(admin){
 function adminPermissions(admin){
   if(!admin)return {};
   if(admin.role==='master'||MASTER_EMAILS.includes(admin.email))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,true]));
-  if(Array.isArray(admin.permissions))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,admin.permissions.includes(key)]));
-  if(admin.permissions&&typeof admin.permissions==='object')return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,admin.permissions[key]===true]));
+  if(Array.isArray(admin.permissions))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,admin.permissions.includes(key)||(key==='cronograma.atrasos'&&admin.permissions.includes('cronograma.cronograma'))]));
+  if(admin.permissions&&typeof admin.permissions==='object')return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,admin.permissions[key]===true||(key==='cronograma.atrasos'&&admin.permissions[key]===undefined&&admin.permissions['cronograma.cronograma']===true)]));
   return legacyAdminPermissions(admin);
 }
 function hasAccess(key,user=loggedUser){return isMaster(user)||adminPermissions(user?.ref)[key]===true;}
@@ -2013,12 +2156,12 @@ function sectorLabel(admin){
 }
 function accessEditorHTML(prefix,permissions,disabled=false){
   const checked=permissions||{};
-  return `<div class="access-editor"><div class="access-editor-head"><div><strong>Permissões de acesso</strong><br><span>Marque exatamente as abas e subabas que esta pessoa poderá abrir.</span></div>${disabled?'':`<div class="access-editor-actions"><button type="button" onclick="setAccessEditor('${prefix}',true)">Marcar todas</button><button type="button" onclick="setAccessEditor('${prefix}',false)">Limpar</button></div>`}</div><div class="access-groups">${ADMIN_ACCESS_GROUPS.map(group=>`<section class="access-group"><div class="access-group-title"><span class="msi msi-sm">${group.icon}</span>${group.label}</div><div class="access-options">${group.items.map(([key,label])=>`<label class="access-option"><input type="checkbox" data-access-prefix="${prefix}" data-access-key="${key}" ${checked[key]?'checked':''} ${disabled?'disabled':''}><span>${label}</span></label>`).join('')}</div></section>`).join('')}</div></div>`;
+  return `<details class="access-editor"><summary class="access-editor-summary"><div><strong>Permissões de acesso</strong><span>Marque exatamente as abas e subabas que esta pessoa poderá abrir.</span></div><span class="msi access-chevron">expand_more</span></summary><div class="access-editor-body"><div class="access-editor-controls">${disabled?'':`<div class="access-editor-actions"><button type="button" onclick="setAccessEditor('${prefix}',true)">Marcar todas</button><button type="button" onclick="setAccessEditor('${prefix}',false)">Limpar</button></div>`}</div><div class="access-groups">${ADMIN_ACCESS_GROUPS.map(group=>`<section class="access-group"><div class="access-group-title"><span class="msi msi-sm">${group.icon}</span>${group.label}</div><div class="access-options">${group.items.map(([key,label])=>`<label class="access-option"><input type="checkbox" data-access-prefix="${prefix}" data-access-key="${key}" ${checked[key]?'checked':''} ${disabled?'disabled':''}><span>${label}</span></label>`).join('')}</div></section>`).join('')}</div></div></details>`;
 }
 function setAccessEditor(prefix,value){if(!isMaster(loggedUser)){showToast('Somente administradores mestres podem alterar acessos.','err');return;}document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>input.checked=value);}
 function readAccessEditor(prefix){const result={};ADMIN_ACCESS_KEYS.forEach(key=>result[key]=false);document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>result[input.dataset.accessKey]=input.checked);return result;}
 function devTabAllowed(id){
-  if(['cronograma','gantt','importar'].includes(id))return hasAccess(`cronograma.${id}`);
+  if(['cronograma','atrasos','gantt','importar'].includes(id))return hasAccess(`cronograma.${id}`);
   if(['pecas','macro-engenharia','custos','financeiro','contabilidade'].includes(id))return hasAnyAccess(id);
   return hasAccess(id);
 }
@@ -2030,7 +2173,7 @@ function applyNavigationPermissions(){
   [['partsCatalogTab','pecas.catalog'],['partsPriceTab','pecas.price'],['macroTabActive','macro-engenharia.active'],['macroTabCompleted','macro-engenharia.completed'],['macroTabPeople','macro-engenharia.people']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAccess(key)?'':'none';});
 }
 function firstAllowedDestination(){
-  const order=[['cronograma','cronograma.cronograma'],['gantt','cronograma.gantt'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['simulador','simulador'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade']];
+  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['gantt','cronograma.gantt'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['simulador','simulador'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade']];
   return order.find(([id])=>devTabAllowed(id))?.[0]||null;
 }
 const TODAY    = new Date();
@@ -2053,23 +2196,25 @@ function weekRange(weeksAhead){
   return [start,end];
 }
 function taskStartsInRange(t,range){
-  if(!t||!t.start)return false;
-  const ds=new Date(t.start);
+  if(!t||!t.actualStart)return false;
+  const ds=new Date(t.actualStart);
   return ds>=range[0]&&ds<=range[1];
 }
 function orderHasTaskInWeek(o,range){
   return (o.depts||[]).some(d=>(d.tasks||[]).some(t=>taskStartsInRange(t,range)));
 }
+function referenceFinish(item){return item?.baselineFinish||item?.finish||'';}
+function fmtActualDate(value){return value?fmtDate(value):'ND';}
 function getStatus(o){
   if(o.pct>=100) return 'done';
-  const d=daysDiff(o.finish);
+  const d=daysDiff(referenceFinish(o));
   if(d<0)  return 'delayed';
   if(d<30) return 'at_risk';
   return 'on_track';
 }
 function taskStatus(t){
   if(t.pct>=100) return 'done';
-  const d=daysDiff(t.finish);
+  const d=daysDiff(referenceFinish(t));
   if(d<0&&t.pct<100) return 'delayed';
   if(t.pct>0) return 'active';
   return 'pending';
@@ -2113,7 +2258,8 @@ function backToLogin(){
   document.getElementById('loginUser').value='';
   document.getElementById('loginPass').value='';
   document.getElementById('loginError').style.display='none';
-  costsUnlocked=false;
+  costsUnlocked=true;
+  clearInterval(notificationEngineTimer);notificationEngineTimer=null;closeNotificationCenter();renderNotificationBell();
   showScreen('login');
 }
 function showLoading(msg='Carregando...'){
@@ -2238,19 +2384,19 @@ function doAdminLogin(){
   if(!admin){document.getElementById('adminLoginError').style.display='block';return;}
   closeAdminLogin();
   loggedUser={type:(MASTER_EMAILS.includes(admin.email)||admin.role==='master')?'master':'custom',ref:admin};
-  costsUnlocked=false;
+  costsUnlocked=true;
   document.getElementById('adminNameBadge').textContent=admin.name;
   const master=isMaster(loggedUser);
   document.body.classList.toggle('master-session',master);
   document.getElementById('btnNewAdmin').style.display=master?'':'none';
   document.getElementById('btnNewClient').style.display=master?'':'none';
-  document.getElementById('costsSettingsPanel').style.display=master?'':'none';
   showScreen('dev');
   applyNavigationPermissions();
   const first=firstAllowedDestination();
   if(first){if(['cronograma','gantt','importar'].includes(first))switchCronogramaSubtab(first);else switchDevTab(first,document.getElementById({clientes:'tabClientes',admins:'tabAdmins',pecas:'tabPecas',simulador:'tabSimulador','macro-engenharia':'tabMacroEngenharia',compras:'tabCompras',custos:'tabCustos',financeiro:'tabFinanceiro',contabilidade:'tabContabilidade'}[first]));}
   else showToast('Este usuário ainda não possui nenhuma aba liberada.','err');
   showToast(`Bem-vindo, ${admin.name}!`);
+  notificationSessionStart();
 }
 function doLogin(){
   const u=document.getElementById('loginUser').value.trim();
@@ -2273,6 +2419,7 @@ function switchDevTab(id,btn){
   document.getElementById('page-'+id).classList.add('active');
   if(btn)btn.classList.add('active');
   if(id==='cronograma')renderDevAll();
+  if(id==='atrasos')renderCronDelayPage();
   if(id==='gantt')     renderGantt();
   if(id==='custos'){if(!hasAccess(`custos.${costsView}`))costsView=['orders','closed','structure'].find(view=>hasAccess(`custos.${view}`))||'orders';renderCostsPage();}
   if(id==='financeiro'){if(!hasAccess(`financeiro.${financeiroView}`))financeiroView=Object.keys(FINANCE_VIEWS).find(view=>hasAccess(`financeiro.${view}`))||'fluxoCaixa';renderFinanceiroFiscal();}
@@ -2295,7 +2442,80 @@ function switchCronogramaSubtab(id){
   switchDevTab(id,headerTab);
   syncCronogramaSubtabs(id);
 }
-function renderDevAll(){renderStats();renderOrders();populateGanttFilter();}
+
+function cronParseDate(value){const match=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return match?new Date(`${match[1]}-${match[2]}-${match[3]}T12:00:00`):null;}
+function cronISO(date){if(!date||Number.isNaN(date.getTime()))return '';return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;}
+function cronTodayISO(){return cronISO(new Date());}
+function cronWorkdayDiff(from,to){let a=cronParseDate(from),b=cronParseDate(to);if(!a||!b)return 0;const direction=b>=a?1:-1;let count=0;while(cronISO(a)!==cronISO(b)){a.setDate(a.getDate()+direction);if(![0,6].includes(a.getDay()))count+=direction;}return count;}
+function cronShiftWorkdays(value,amount){let date=cronParseDate(value);if(!date)return '';let remaining=Math.abs(Math.round(amount||0)),direction=amount>=0?1:-1;while(remaining>0){date.setDate(date.getDate()+direction);if(![0,6].includes(date.getDay()))remaining--;}return cronISO(date);}
+function cronDurationText(task){const value=Number(task?.duration||0);return task?.milestone?'Marco':`${value.toLocaleString('pt-BR',{maximumFractionDigits:2})}d`;}
+function cronOrderTasks(order){return (order?.depts||[]).flatMap(dept=>(dept.tasks||[]).filter(task=>!isOrderHeaderName(task.name)).map(task=>({task,dept})));}
+function cronPrepareOrderSchedule(order){
+  const entries=cronOrderTasks(order),bySource=new Map(entries.map(entry=>[entry.task.sourceId,entry.task]));
+  entries.forEach(({task})=>{task._calcStart='';task._calcFinish='';task._delay=0;task._ownDelay=0;task._inheritedDelay=0;});
+  let pending=entries.map(entry=>entry.task),round=0;
+  while(pending.length&&round++<entries.length+3){const rest=[];pending.forEach(task=>{const predecessors=(task.preds||[]).map(id=>bySource.get(id)).filter(Boolean);if(predecessors.some(pred=>!pred._calcFinish)){rest.push(task);return;}const plannedStart=task.baselineStart||task.start,plannedFinish=task.baselineFinish||task.finish||plannedStart,predFinish=predecessors.map(pred=>pred._calcFinish).filter(Boolean).sort().at(-1)||'',realStart=task.actualStart||'',realFinish=task.actualFinish||'';let calculatedStart=realStart||plannedStart||predFinish;if(predFinish&&(!calculatedStart||predFinish>calculatedStart))calculatedStart=predFinish;const startShift=plannedStart&&calculatedStart?Math.max(0,cronWorkdayDiff(plannedStart,calculatedStart)):0;let calculatedFinish=realFinish||(plannedFinish?cronShiftWorkdays(plannedFinish,startShift):calculatedStart);if(Number(task.pct)<100&&calculatedFinish&&calculatedFinish<cronTodayISO())calculatedFinish=cronTodayISO();task._calcStart=calculatedStart;task._calcFinish=calculatedFinish;task._delay=plannedFinish&&calculatedFinish?Math.max(0,cronWorkdayDiff(plannedFinish,calculatedFinish)):0;const inherited=predecessors.length?Math.max(...predecessors.map(pred=>Number(pred._delay)||0)):0;task._inheritedDelay=Math.min(task._delay,Math.max(0,inherited));task._ownDelay=Math.max(0,task._delay-task._inheritedDelay);});if(rest.length===pending.length){rest.forEach(task=>{task._calcStart=task.actualStart||task.baselineStart||task.start;task._calcFinish=task.actualFinish||task.baselineFinish||task.finish;});break;}pending=rest;}
+  const began=entries.map(entry=>entry.task.actualStart).filter(Boolean).sort()[0]||order.actualStart||'',contract=order.baselineFinish||order.finish||'',calculated=entries.map(entry=>entry.task._calcFinish).filter(Boolean).sort().at(-1)||order.actualFinish||contract,delay=contract&&calculated?Math.max(0,cronWorkdayDiff(contract,calculated)):0;return{entries,began,contract,calculated,delay};
+}
+function cronTaskState(task){if(Number(task.pct)>=100)return task._delay>0?['late',`${task._delay}d atraso`]:['done','Concluído'];if(task._delay>0)return['late',`${task._delay}d atraso`];if(Number(task.pct)>0)return['active','Em andamento'];return['pending','No prazo'];}
+function cronCardMetric(label,value,extra=''){return `<span class="cron-order-metric ${extra}"><small>${label}</small><b>${fmtActualDate(value)}</b></span>`;}
+function buildClientOrderDetails(order,weekRangeVal){return order.depts.map(d=>{const validTasks=(d.tasks||[]).filter(t=>!isOrderHeaderName(t.name));const tasksHTML=validTasks.map(t=>{const ts=taskStatus(t),cls={done:'s-done',delayed:'s-delayed',active:'s-active',pending:'s-pending'}[ts],lbl={done:'Concluído',delayed:'Atrasado',active:'Em Andamento',pending:'Pendente'}[ts],inWeek=weekRangeVal&&taskStartsInRange(t,weekRangeVal);return `<div class="task-row${inWeek?' task-week-highlight':''}">${t.milestone?'<span class="milestone-icon">◆</span>':'<span style="width:16px;display:inline-block;flex-shrink:0;"></span>'}<span class="task-name" title="${escapeHTML(t.name)}">${escapeHTML(t.name)}</span><span class="task-dates" title="Início real → Término real">${fmtActualDate(t.actualStart)} → ${fmtActualDate(t.actualFinish)}</span><span class="task-pct" style="color:${pctColor(t.pct)}">${t.pct}%</span><span class="task-status ${cls}">${lbl}</span>${inWeek?'<span class="task-week-chip"><span class="msi msi-sm">calendar_month</span> Nesta semana</span>':''}</div>`;}).join('');const variance=cronDepartmentVariance(d),varianceState=variance?.state||'pending',realDates=d.actualStart||d.actualFinish?`${fmtActualDate(d.actualStart)} → ${fmtActualDate(d.actualFinish)}`:'Datas reais ainda não informadas';return `<div class="dept-header"><span>${escapeHTML(d.name)}</span><span class="dept-schedule"><span class="dept-schedule-dates" title="Início real → Término real">${realDates}</span><span class="dept-variance ${varianceState}">${cronVarianceText(variance)}</span></span><span class="dept-pct">${d.pct}%</span></div>${tasksHTML}`;}).join('');}
+function buildOfficialOrderDetails(order){
+  const schedule=cronPrepareOrderSchedule(order),entries=schedule.entries;if(!entries.length)return '<div class="empty-state"><p>Nenhuma operação detalhada foi encontrada neste pedido.</p></div>';const allDates=entries.flatMap(({task})=>[task.baselineStart||task.start,task.baselineFinish||task.finish,task._calcStart,task._calcFinish]).filter(Boolean).sort(),minimum=cronParseDate(allDates[0]),maximum=cronParseDate(allDates.at(-1));minimum.setDate(minimum.getDate()-3);maximum.setDate(maximum.getDate()+5);const days=Math.max(15,Math.round((maximum-minimum)/86400000)+1),timeline=days*22,px=value=>Math.round((cronParseDate(value)-minimum)/86400000)*22,today=cronTodayISO(),dayHeader=Array.from({length:days},(_,index)=>{const date=new Date(minimum);date.setDate(minimum.getDate()+index);return `<span class="cron-day ${[0,6].includes(date.getDay())?'weekend':''} ${cronISO(date)===today?'today':''}" title="${fmtDate(cronISO(date))}">${date.getDate()}</span>`;}).join(''),head=`<div class="cron-detail-row cron-detail-head" style="--timeline:${timeline}px"><div class="cron-detail-cell">Operação</div><div class="cron-detail-cell">Setor</div><div class="cron-detail-cell">Operador</div><div class="cron-detail-cell">Duração</div><div class="cron-detail-cell cron-planned-col">Início previsto</div><div class="cron-detail-cell cron-planned-col">Término previsto</div><div class="cron-detail-cell cron-real-col">Início real</div><div class="cron-detail-cell cron-real-col">Término real</div><div class="cron-detail-cell">Situação</div><div class="cron-detail-cell cron-timeline-head">${dayHeader}</div></div>`,palette=['#d2af45','#55a7ef','#43c765','#f0a32f','#a782e5','#ef6a6a','#4cc9c0','#c879e8'];let rows='',lastDept='';
+  entries.forEach(({task,dept},index)=>{const deptKey=cronSectorKey(dept.name),deptIndex=Math.max(0,order.depts.findIndex(item=>cronSectorKey(item.name)===deptKey)),color=palette[deptIndex%palette.length];if(deptKey!==lastDept){lastDept=deptKey;const count=entries.filter(entry=>cronSectorKey(entry.dept.name)===deptKey).length;rows+=`<div class="cron-detail-row cron-sector-row" style="--timeline:${timeline}px;--sector-color:${color}"><div class="cron-detail-cell cron-sector-title"><span class="cron-sector-dot"></span>${escapeHTML(dept.name)} <small>${count} operação(ões)</small></div><div class="cron-detail-cell cron-sector-timeline"></div></div>`;}const state=cronTaskState(task),predNames=(task.preds||[]).map(id=>entries.find(entry=>entry.task.sourceId===id)?.task.name).filter(Boolean).join(', '),barStart=task._calcStart||task.baselineStart||task.start,barFinish=task._calcFinish||task.baselineFinish||task.finish||barStart,left=px(barStart),width=Math.max(8,px(barFinish)-left+22),realStart=task.actualStart||'',realFinish=task.actualFinish||'';rows+=`<div class="cron-detail-row cron-task-row" data-cron-task="${escapeHTML(task.sourceId||String(index))}" data-cron-preds="${escapeHTML((task.preds||[]).join('|'))}" style="--timeline:${timeline}px;--sector-color:${color}"><div class="cron-detail-cell"><span class="cron-task-name"><b>${task.milestone?'◆ ':''}${escapeHTML(task.name)}</b>${predNames?`<small title="${escapeHTML(predNames)}">↳ após ${escapeHTML(predNames)}</small>`:''}</span></div><div class="cron-detail-cell">${escapeHTML(dept.name)}</div><div class="cron-detail-cell">${escapeHTML(task.operator||'Não atribuído')}</div><div class="cron-detail-cell cron-duration">${cronDurationText(task)}</div><div class="cron-detail-cell cron-date cron-planned-col">${fmtDate(task.baselineStart||task.start)}</div><div class="cron-detail-cell cron-date cron-planned-col">${fmtDate(task.baselineFinish||task.finish)}</div><div class="cron-detail-cell cron-date cron-real-col ${realStart?'':'empty'}">${fmtActualDate(realStart)}</div><div class="cron-detail-cell cron-date cron-real-col ${realFinish?'':'empty'}">${fmtActualDate(realFinish)}</div><div class="cron-detail-cell"><span class="cron-task-state ${state[0]}">${state[1]}</span></div><div class="cron-detail-cell cron-timeline-cell">${task.milestone?`<i class="cron-gantt-milestone" data-cron-bar style="left:${left+4}px"></i>`:`<div class="cron-gantt-bar ${task._delay>0?'late':''}" data-cron-bar style="left:${left}px;width:${width}px"><i class="fill" style="width:${Math.min(100,Number(task.pct)||0)}%"></i><span>${Number(task.pct)||0}%</span></div>`}</div></div>`;});return `<div class="cron-schedule-shell"><div class="cron-schedule-grid" data-order-schedule="${order.id}" style="--timeline:${timeline}px">${head}${rows}</div></div>`;
+}
+function renderCronDependencyArrows(root=document){root.querySelectorAll('.cron-schedule-grid').forEach((grid,gridIndex)=>{grid.querySelector('.cron-dependency-overlay')?.remove();if(!grid.closest('.order-card.open'))return;const rows=new Map([...grid.querySelectorAll('[data-cron-task]')].map(row=>[row.dataset.cronTask,row]));if(!rows.size)return;const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),rect=grid.getBoundingClientRect(),markerId=`cron-arrow-${gridIndex}-${grid.dataset.orderSchedule}`;svg.classList.add('cron-dependency-overlay');svg.setAttribute('width',grid.scrollWidth);svg.setAttribute('height',grid.scrollHeight);svg.setAttribute('viewBox',`0 0 ${grid.scrollWidth} ${grid.scrollHeight}`);const defs=document.createElementNS(ns,'defs'),marker=document.createElementNS(ns,'marker'),arrow=document.createElementNS(ns,'path');marker.setAttribute('id',markerId);marker.setAttribute('markerWidth','7');marker.setAttribute('markerHeight','7');marker.setAttribute('refX','6');marker.setAttribute('refY','3.5');marker.setAttribute('orient','auto');arrow.setAttribute('d','M0,0 L7,3.5 L0,7 Z');arrow.setAttribute('fill','context-stroke');marker.appendChild(arrow);defs.appendChild(marker);svg.appendChild(defs);let link=0;rows.forEach(targetRow=>{const target=targetRow.querySelector('[data-cron-bar]'),preds=(targetRow.dataset.cronPreds||'').split('|').filter(Boolean);if(!target)return;preds.forEach(predId=>{const sourceRow=rows.get(predId),source=sourceRow?.querySelector('[data-cron-bar]');if(!source)return;const a=source.getBoundingClientRect(),b=target.getBoundingClientRect(),x1=a.right-rect.left,y1=a.top-rect.top+a.height/2,x2=b.left-rect.left+Math.min(11,b.width/2),y2=b.top-rect.top,route=x2>x1+18?Math.min(x1+10+(link++%4)*4,x2-8):Math.max(x1,x2)+12+(link++%4)*4,path=document.createElementNS(ns,'path'),color=getComputedStyle(sourceRow).getPropertyValue('--sector-color').trim()||'#d2af45';path.setAttribute('d',`M ${x1} ${y1} H ${route} V ${y2-7} H ${x2} V ${y2-2}`);path.setAttribute('fill','none');path.setAttribute('stroke',color);path.setAttribute('stroke-width','1.5');path.setAttribute('marker-end',`url(#${markerId})`);path.setAttribute('opacity','.9');svg.appendChild(path);});});grid.appendChild(svg);});}
+function toggleOfficialOrderCard(header){header.parentElement.classList.toggle('open');requestAnimationFrame(()=>renderCronDependencyArrows(header.parentElement));}
+let cronDelaySectorFilter='';
+function setCronDelayFilter(value){cronDelaySectorFilter=value||'';renderCronDelayPage();}
+function renderCronDelayPage(){const kpis=document.getElementById('cronDelayKpis'),ranking=document.getElementById('cronDelayRanking'),details=document.getElementById('cronDelayDetails'),filter=document.getElementById('cronDelaySectorFilter');if(!kpis||!ranking||!details||!filter)return;ORDERS.forEach(cronPrepareOrderSchedule);const sectors=new Map();ORDERS.forEach(order=>cronOrderTasks(order).forEach(({task,dept})=>{if(!task._delay)return;const key=cronSectorKey(dept.name),row=sectors.get(key)||{key,name:dept.name,tasks:[],orders:new Set(),own:0,inherited:0};row.tasks.push({task,order,dept});row.orders.add(order.id);row.own+=Number(task._ownDelay)||0;row.inherited+=Number(task._inheritedDelay)||0;sectors.set(key,row);}));const rows=[...sectors.values()].sort((a,b)=>b.own-a.own||(b.own+b.inherited)-(a.own+a.inherited));filter.innerHTML='<option value="">Todos os setores</option>'+rows.map(row=>`<option value="${escapeHTML(row.key)}">${escapeHTML(row.name)}</option>`).join('');filter.value=rows.some(row=>row.key===cronDelaySectorFilter)?cronDelaySectorFilter:'';cronDelaySectorFilter=filter.value;const visible=cronDelaySectorFilter?rows.filter(row=>row.key===cronDelaySectorFilter):rows,taskRows=visible.flatMap(row=>row.tasks),own=taskRows.reduce((sum,row)=>sum+Number(row.task._ownDelay||0),0),inherited=taskRows.reduce((sum,row)=>sum+Number(row.task._inheritedDelay||0),0);kpis.innerHTML=`<div class="stat-card"><div class="stat-val" style="color:var(--red)">${visible.filter(row=>row.own>0).length}</div><div class="stat-lbl">Setores com atraso próprio</div></div><div class="stat-card"><div class="stat-val" style="color:var(--red)">${own}d</div><div class="stat-lbl">Atraso próprio</div></div><div class="stat-card"><div class="stat-val" style="color:var(--purple)">${inherited}d</div><div class="stat-lbl">Atraso herdado</div></div><div class="stat-card"><div class="stat-val">${taskRows.length}</div><div class="stat-lbl">Tarefas atrasadas</div></div>`;if(!visible.length){ranking.innerHTML='<div class="empty-state"><p>Nenhum atraso identificado.</p></div>';details.innerHTML='';return;}ranking.innerHTML=`<table class="finance-table"><thead><tr><th>Posição / setor</th><th>Pedidos</th><th>Tarefas</th><th>Atraso próprio</th><th>Atraso herdado</th><th>Composição</th><th>Origem predominante</th></tr></thead><tbody>${visible.map((row,index)=>{const total=row.own+row.inherited,ownPct=total?row.own/total*100:0,inheritPct=100-ownPct,isOwn=row.own>=row.inherited;return`<tr><td><b style="color:var(--gold)">${index+1}.</b> ${escapeHTML(row.name)}</td><td>${row.orders.size}</td><td>${row.tasks.length}</td><td><span class="cron-delay-number own">${row.own}d</span></td><td><span class="cron-delay-number inherited">${row.inherited}d</span></td><td><div class="cron-delay-stack"><i class="own" style="width:${ownPct}%"></i><i class="inherited" style="width:${inheritPct}%"></i></div></td><td><span class="cron-delay-origin ${isOwn?'own':'inherited'}">${isOwn?'Gerado no setor':'Herdado das predecessoras'}</span></td></tr>`;}).join('')}</tbody></table>`;const sorted=[...taskRows].sort((a,b)=>b.task._ownDelay-a.task._ownDelay||b.task._inheritedDelay-a.task._inheritedDelay);details.innerHTML=`<table class="finance-table"><thead><tr><th>OP</th><th>Operação</th><th>Setor</th><th>Operador</th><th>Próprio</th><th>Herdado</th><th>Total</th><th>Origem</th></tr></thead><tbody>${sorted.map(({task,order,dept})=>{const isOwn=task._ownDelay>=task._inheritedDelay;return`<tr><td><b>${escapeHTML(order.code)}</b></td><td>${escapeHTML(task.name)}</td><td>${escapeHTML(dept.name)}</td><td>${escapeHTML(task.operator||'Não atribuído')}</td><td><span class="cron-delay-number own">${task._ownDelay}d</span></td><td><span class="cron-delay-number inherited">${task._inheritedDelay}d</span></td><td><b>${task._delay}d</b></td><td><span class="cron-delay-origin ${isOwn?'own':'inherited'}">${isOwn?'Do próprio setor':'Das predecessoras'}</span></td></tr>`;}).join('')}</tbody></table>`;}
+
+function cronSectorKey(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
+function cronDateSerial(value){const match=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return match?Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3])):null;}
+function cronDepartmentVariance(dept){
+  // A linha de base é a referência interna oficial. Ela não é exibida na interface.
+  const planned=cronDateSerial(dept?.baselineFinish||dept?.finish),actual=cronDateSerial(dept?.actualFinish);
+  if(planned===null||actual===null)return null;
+  const signedDays=Math.round((actual-planned)/86400000);
+  return {signedDays,days:Math.abs(signedDays),state:signedDays>0?'delayed':signedDays<0?'early':'ontime'};
+}
+function cronSectorPerformanceRows(){
+  const map=new Map();
+  ORDERS.forEach(order=>(order.depts||[]).forEach(dept=>{
+    const key=cronSectorKey(dept.name);if(!key)return;
+    const row=map.get(key)||{key,name:dept.name,count:0,completed:0,delayed:0,early:0,ontime:0,delayDays:0,earlyDays:0,netDays:0};row.count++;
+    const variance=cronDepartmentVariance(dept);
+    if(variance){row.completed++;row.netDays+=variance.signedDays;if(variance.state==='delayed'){row.delayed++;row.delayDays+=variance.days;}else if(variance.state==='early'){row.early++;row.earlyDays+=variance.days;}else row.ontime++;}
+    map.set(key,row);
+  }));
+  return [...map.values()].sort((a,b)=>b.delayDays-a.delayDays||b.delayed-a.delayed||((b.completed?b.netDays/b.completed:0)-(a.completed?a.netDays/a.completed:0))||a.name.localeCompare(b.name,'pt-BR'));
+}
+function cronVarianceText(variance){
+  if(!variance)return 'Sem término real';
+  if(variance.state==='delayed')return `${variance.days} dia(s) de atraso`;
+  if(variance.state==='early')return `${variance.days} dia(s) adiantado`;
+  return 'Concluído no prazo';
+}
+function populateCronogramaSectorFilter(){
+  const select=document.getElementById('filterSector');if(!select)return;
+  const selected=select.value,rows=cronSectorPerformanceRows();
+  select.innerHTML='<option value="">Todos os setores</option>'+rows.map(row=>`<option value="${escapeHTML(row.key)}">${escapeHTML(row.name)}${row.delayDays?` · ${row.delayDays}d atraso total`:row.completed?' · sem atraso concluído':' · sem término real'}</option>`).join('');
+  if(rows.some(row=>row.key===selected))select.value=selected;
+}
+function setCronogramaSectorFilter(key){const select=document.getElementById('filterSector');if(!select)return;select.value=key||'';filterOrders();document.getElementById('ordersList')?.scrollIntoView({behavior:'smooth',block:'start'});}
+function renderSectorPerformance(){
+  const container=document.getElementById('sectorPerformance');if(!container)return;
+  const rows=cronSectorPerformanceRows(),selected=document.getElementById('filterSector')?.value||'',withActual=rows.filter(row=>row.completed>0);
+  if(!rows.length){container.innerHTML='';return;}
+  const cards=(withActual.length?withActual:rows).map(row=>{
+    const average=row.completed?Math.round(row.netDays/row.completed):0,valueClass=row.delayDays?'delayed':row.earlyDays?'early':'ontime';
+    const value=row.delayDays?`${row.delayDays}d atraso`:row.earlyDays?`${row.earlyDays}d adiantado`:'Sem atraso';
+    const averageText=!row.completed?'sem conclusão real':average>0?`média ${average}d de atraso`:average<0?`média ${Math.abs(average)}d adiantado`:'média no prazo';
+    return `<button class="cron-sector-performance-card ${selected===row.key?'active':''}" type="button" data-sector="${escapeHTML(row.key)}" onclick="setCronogramaSectorFilter(this.dataset.sector)"><span class="cron-sector-performance-name" title="${escapeHTML(row.name)}">${escapeHTML(row.name)}</span><span class="cron-sector-performance-value ${valueClass}">${value}</span><span class="cron-sector-performance-meta">${row.completed} concluído(s) · ${row.delayed} atrasado(s) · ${row.early} adiantado(s) · ${averageText}</span></button>`;
+  }).join('');
+  container.innerHTML=`<section class="cron-sector-performance"><div class="cron-sector-performance-head"><div><h3>Desempenho geral por setor</h3><p>Ranking pelo total de dias de atraso nas etapas com término real informado. Clique em um setor para filtrar as OPs.</p></div>${selected?'<button class="btn btn-ghost btn-sm" type="button" onclick="setCronogramaSectorFilter(\'\')">Limpar filtro</button>':''}</div><div class="cron-sector-performance-list">${cards||'<div class="cron-sector-empty">Importe o novo XML com término real para calcular o desempenho por setor.</div>'}</div></section>`;
+}
+function renderDevAll(){renderStats();populateCronogramaSectorFilter();renderOrders();populateGanttFilter();}
 
 // ─────────── CRONOGRAMA ───────────
 function statOrderTitle(o){return (o.code||'—')+' · '+(o.name||'Sem nome');}
@@ -2308,17 +2528,17 @@ function renderStats(){
   let tot=ORDERS.length,del=0,rsk=0,dn=0,ok=0;
   ORDERS.forEach(o=>{const s=getStatus(o);if(s==='delayed')del++;else if(s==='at_risk')rsk++;else if(s==='done')dn++;else ok++;});
 
-  const active=ORDERS.filter(o=>o&&o.pct<100&&o.finish);
-  const byFinish=(a,b)=>daysDiff(a.finish)-daysDiff(b.finish);
-  const delayedOrders=active.filter(o=>daysDiff(o.finish)<0).sort(byFinish);
-  const attention=delayedOrders[0]||active.filter(o=>daysDiff(o.finish)<30).sort(byFinish)[0];
-  const attentionDiff=attention?daysDiff(attention.finish):0;
+  const active=ORDERS.filter(o=>o&&o.pct<100&&referenceFinish(o));
+  const byFinish=(a,b)=>daysDiff(referenceFinish(a))-daysDiff(referenceFinish(b));
+  const delayedOrders=active.filter(o=>daysDiff(referenceFinish(o))<0).sort(byFinish);
+  const attention=delayedOrders[0]||active.filter(o=>daysDiff(referenceFinish(o))<30).sort(byFinish)[0];
+  const attentionDiff=attention?daysDiff(referenceFinish(attention)):0;
   const attentionMain=attention?statOrderTitle(attention):'Nenhum pedido crítico';
   const attentionSub=attention?statDaysText(attentionDiff):'Sem atrasos no momento';
   const attentionClass=attention&&attentionDiff>=0?'due':'attention';
 
-  const nextDue=active.filter(o=>daysDiff(o.finish)>=0).sort(byFinish)[0];
-  const nextDueDiff=nextDue?daysDiff(nextDue.finish):0;
+  const nextDue=active.filter(o=>daysDiff(referenceFinish(o))>=0).sort(byFinish)[0];
+  const nextDueDiff=nextDue?daysDiff(referenceFinish(nextDue)):0;
   const nextDueMain=nextDue?statOrderTitle(nextDue):'Nenhum vencimento';
   const nextDueSub=nextDue?statDaysText(nextDueDiff):'Sem pedidos ativos';
 
@@ -2342,93 +2562,7 @@ function renderStats(){
 
 // ── Constrói o card de pedido (admin e cliente compartilham estrutura) ──
 function buildOrderCard(order,isClient=false,weekRangeVal=null){
-  const s=getStatus(order);
-  const sc=s==='delayed'?'delayed':s==='at_risk'?'at-risk':'on-track';
-  const sbadge=s==='delayed'
-    ?'<span class="status-badge badge-delayed">ATRASADO</span>'
-    :s==='at_risk'
-    ?'<span class="status-badge badge-risk">EM RISCO</span>'
-    :s==='done'
-    ?'<span class="status-badge badge-done">CONCLUÍDO</span>'
-    :'<span class="status-badge badge-ok">NO PRAZO</span>';
-
-  const diff=daysDiff(order.finish);
-  const diffTxt=order.pct>=100
-    ?''
-    :diff<0
-    ?`<span style="color:var(--red);font-size:12px;font-weight:700;">${Math.abs(diff)}d atraso</span>`
-    :diff<30
-    ?`<span style="color:var(--warn);font-size:12px;">${diff}d restantes</span>`
-    :'';
-
-  const archived=order._archived
-    ?'<span style="font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 7px;"><span class="msi msi-sm">archive</span> Arquivado</span>'
-    :'';
-  const datesHTML=isClient
-    ?`<div class="client-date-pair"><span><b>Início</b>${fmtDate(order.start)}</span><span><b>Entrega</b>${fmtDate(order.finish)}</span></div>`
-    :`<span class="order-dates">${fmtDate(order.start)} → ${fmtDate(order.finish)}</span>`;
-
-  const deptsHTML=order.depts.map(d=>{
-    // Oculta cabeçalhos de outros pedidos que tenham sido gravados como tarefa
-    // por uma importação XML antiga ou com agrupamentos intermediários.
-    const validTasks=(d.tasks||[]).filter(t=>!isOrderHeaderName(t.name));
-    const tasksHTML=validTasks.map(t=>{
-      const ts=taskStatus(t);
-      const cls={done:'s-done',delayed:'s-delayed',active:'s-active',pending:'s-pending'}[ts];
-      const lbl={done:'Concluído',delayed:'Atrasado',active:'Em Andamento',pending:'Pendente'}[ts];
-      const inWeek=weekRangeVal&&taskStartsInRange(t,weekRangeVal);
-      return `<div class="task-row${inWeek?' task-week-highlight':''}">
-        ${t.milestone?'<span class="milestone-icon">◆</span>':'<span style="width:16px;display:inline-block;flex-shrink:0;"></span>'}
-        <span class="task-name" title="${t.name}">${t.name}</span>
-        <span class="task-dates">${fmtDate(t.start)} → ${fmtDate(t.finish)}</span>
-        <span class="task-pct" style="color:${pctColor(t.pct)}">${t.pct}%</span>
-        <span class="task-status ${cls}">${lbl}</span>
-        ${inWeek?'<span class="task-week-chip"><span class="msi msi-sm">calendar_month</span> Nesta semana</span>':''}
-      </div>`;
-    }).join('');
-    return `<div class="dept-header">${d.name}<span class="dept-pct">${d.pct}%</span></div>${tasksHTML}`;
-  }).join('');
-  const weekMatch=weekRangeVal&&orderHasTaskInWeek(order,weekRangeVal);
-
-  let filesHTML='';
-  if(isClient){
-    const fk=fileKey(order.id);
-    const files=FILE_STORE[fk]||[];
-    const docsGrid=files.length===0
-      ?'<div class="no-docs">Nenhum documento anexado para este equipamento.</div>'
-      :`<div class="docs-grid">${files.map((f,fi)=>`<div class="doc-card" onclick="downloadOrderFile('${fk}',${fi})"><div class="dc-icon">${fileIcon(f.name)}</div><div class="dc-name" title="${f.name}">${f.name}</div><div class="dc-size">${fmtSize(f.size)}</div><div class="dc-dl"><span class="msi msi-sm">download</span> Baixar</div></div>`).join('')}</div>`;
-    filesHTML=`<div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docsGrid}</div>`;
-  }
-
-  // Classes e elementos de cabeçalho variam entre admin e client
-  const cc  = isClient ? 'client-order-card' : 'order-card';
-  const ch  = isClient ? 'client-order-head'  : 'order-header';
-  const ct  = isClient ? 'client-order-tasks'  : 'order-tasks';
-
-  // Exibe code e op: se a OP for diferente do code, mostra ambos; senão só o code
-  const codeLabel = order.code || '—';
-  const opLabel   = (order.op && order.op !== order.code) ? order.op : '';
-
-  return `<div class="${cc} ${sc}${weekMatch?' open':''}" id="card-${order.id}">
-    <div class="${ch}" onclick="this.parentElement.classList.toggle('open')">
-      <span class="status-dot" style="background:${sColor(s)}"></span>
-      <span class="order-code" title="${codeLabel}">${codeLabel}</span>
-      <div class="order-info">
-        <div class="order-name" title="${order.name}">${order.name}</div>
-        ${opLabel ? `<div class="order-op">OP: ${opLabel}</div>` : ''}
-      </div>
-      <div class="order-meta">
-        ${archived}${diffTxt}${sbadge}
-        ${datesHTML}
-        <div class="pct-wrap">
-          <div class="pct-bar"><div class="pct-fill ${pctClass(order.pct)}" style="width:${order.pct}%"></div></div>
-          <span class="pct-text" style="color:${pctColor(order.pct)}">${order.pct}%</span>
-        </div>
-      </div>
-      <span class="chevron">▾</span>
-    </div>
-    <div class="${ct}">${deptsHTML}${filesHTML}</div>
-  </div>`;
+  const schedule=cronPrepareOrderSchedule(order),s=isClient?getStatus(order):(schedule.delay>0?'delayed':Number(order.pct)>=100?'done':'on_track'),sc=s==='delayed'?'delayed':s==='at_risk'?'at-risk':'on-track',sbadge=s==='delayed'?'<span class="status-badge badge-delayed">ATRASADO</span>':s==='at_risk'?'<span class="status-badge badge-risk">EM RISCO</span>':s==='done'?'<span class="status-badge badge-done">CONCLUÍDO</span>':'<span class="status-badge badge-ok">NO PRAZO</span>',diff=daysDiff(referenceFinish(order)),diffTxt=isClient?(order.pct>=100?'':diff<0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${Math.abs(diff)}d atraso</span>`:diff<30?`<span style="color:var(--warn);font-size:12px;">${diff}d restantes</span>`:''):(schedule.delay>0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${schedule.delay}d atraso</span>`:'<span style="color:var(--green);font-size:11px;font-weight:700;">NO PRAZO</span>'),archived=order._archived?'<span style="font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 7px;"><span class="msi msi-sm">archive</span> Arquivado</span>':'',datesHTML=isClient?`<div class="client-date-pair"><span><b>Início real</b>${fmtActualDate(order.actualStart)}</span><span><b>Término real</b>${fmtActualDate(order.actualFinish)}</span></div>`:`${cronCardMetric('Começou',schedule.began)}${cronCardMetric('Contrato',schedule.contract)}${cronCardMetric('Calculada',schedule.calculated,'calculated')}`,deptsHTML=isClient?buildClientOrderDetails(order,weekRangeVal):buildOfficialOrderDetails(order),weekMatch=weekRangeVal&&orderHasTaskInWeek(order,weekRangeVal);let filesHTML='';if(isClient){const fk=fileKey(order.id),files=FILE_STORE[fk]||[],docsGrid=files.length===0?'<div class="no-docs">Nenhum documento anexado para este equipamento.</div>':`<div class="docs-grid">${files.map((f,fi)=>`<div class="doc-card" onclick="downloadOrderFile('${fk}',${fi})"><div class="dc-icon">${fileIcon(f.name)}</div><div class="dc-name" title="${escapeHTML(f.name)}">${escapeHTML(f.name)}</div><div class="dc-size">${fmtSize(f.size)}</div><div class="dc-dl"><span class="msi msi-sm">download</span> Baixar</div></div>`).join('')}</div>`;filesHTML=`<div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docsGrid}</div>`;}const cc=isClient?'client-order-card':'order-card',ch=isClient?'client-order-head':'order-header',ct=isClient?'client-order-tasks':'order-tasks',codeLabel=order.code||'—',opLabel=order.op&&order.op!==order.code?order.op:'';return `<div class="${cc} ${sc}${weekMatch?' open':''}" id="card-${order.id}"><div class="${ch}" onclick="${isClient?'this.parentElement.classList.toggle(\'open\')':'toggleOfficialOrderCard(this)'}"><span class="status-dot" style="background:${sColor(s)}"></span><span class="order-code" title="${escapeHTML(codeLabel)}">${escapeHTML(codeLabel)}</span><div class="order-info"><div class="order-name" title="${escapeHTML(order.name)}">${escapeHTML(order.name)}</div>${opLabel?`<div class="order-op">OP: ${escapeHTML(opLabel)} · ${schedule.entries.length} operação(ões)</div>`:''}</div><div class="order-meta">${archived}${diffTxt}${isClient?sbadge:''}${datesHTML}<div class="pct-wrap"><div class="pct-bar"><div class="pct-fill ${pctClass(order.pct)}" style="width:${order.pct}%"></div></div><span class="pct-text" style="color:${pctColor(order.pct)}">${order.pct}%</span></div></div><span class="chevron">▾</span></div><div class="${ct}">${deptsHTML}${filesHTML}</div></div>`;
 }
 
 function renderOrders(filtered,weekRangeVal){
@@ -2441,6 +2575,7 @@ function filterOrders(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   const weekSel=document.getElementById('filterWeek').value;
   const status=document.getElementById('filterStatus').value;
+  const sector=document.getElementById('filterSector')?.value||'';
   const onlyD=document.getElementById('onlyDelayed')?.checked||false;
   const weekRangeVal=weekSel==='next1'?weekRange(1):weekSel==='next2'?weekRange(2):null;
   const filtered=ORDERS.filter(o=>{
@@ -2448,13 +2583,14 @@ function filterOrders(){
     if(q&&!o.name.toLowerCase().includes(q)&&!o.code.toLowerCase().includes(q)&&!o.op.toLowerCase().includes(q))return false;
     if(weekRangeVal&&!orderHasTaskInWeek(o,weekRangeVal))return false;
     if(status&&s!==status)return false;
+    if(sector&&!(o.depts||[]).some(dept=>cronSectorKey(dept.name)===sector))return false;
     if(onlyD&&s!=='delayed')return false;
     return true;
   });
   renderOrders(filtered,weekRangeVal);
 }
-function collapseAll(){document.querySelectorAll('.order-card').forEach(c=>c.classList.remove('open'));}
-function expandAll(){document.querySelectorAll('.order-card').forEach(c=>c.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.order-card').forEach(c=>c.classList.remove('open'));renderCronDependencyArrows();}
+function expandAll(){document.querySelectorAll('.order-card').forEach(c=>c.classList.add('open'));requestAnimationFrame(()=>renderCronDependencyArrows());}
 
 // ─────────── GANTT ───────────
 function populateGanttFilter(){
@@ -4023,7 +4159,6 @@ function renderCostsContent(){
   const toolbar=`
     <div class="filters">
       <div class="search-wrap"><span class="msi msi-sm">search</span><input type="text" class="search-input" placeholder="Buscar pedido, código, cliente..." id="costsSearchInput" oninput="filterCostCards()"></div>
-      <button class="btn btn-sm btn-ghost" onclick="relockCosts()"><span class="msi msi-sm">lock</span> Bloquear aba</button>
       ${!master?'<div class="readonly-notice" style="margin:0;"><span class="msi msi-sm">visibility</span> Modo visualização — somente mestres podem editar valores</div>':''}
     </div>`;
 
@@ -4973,7 +5108,7 @@ function renderAdminsPanel(){
       <div class="user-info"><div class="uname">${a.name}</div><div class="uemail">${a.email}</div></div>
        <div class="user-badge-wrap"><span class="${(a.role==='master'||MASTER_EMAILS.includes(a.email))?'role-badge-master':'sector-badge'}">${(a.role==='master'||MASTER_EMAILS.includes(a.email))?'MESTRE':escapeHTML(sectorLabel(a))}</span></div>
     </div>`).join('');
-  document.getElementById('costsSettingsPanel').style.display=isMaster(loggedUser)?'':'none';
+  renderNotificationSettings();
 }
 function roleLabel(role,short=false){return role==='master'?'MESTRE':role==='seller'?'VENDEDOR':role==='engineering'?(short?'ENGENHARIA':'ENGENHARIA'):'VISUALIZADOR';}
 function roleBadgeClass(role){return role==='master'?'role-badge-master':role==='engineering'?'role-badge-engineering':'role-badge-admin';}
@@ -4998,6 +5133,7 @@ function saveOwnPassword(){
 function selectAdmin(id){
   selectedAdminId=id;
   const a=DB.admins.find(x=>x.id===id);
+  if(!a)return;
   renderAdminsPanel();
   const isMU=MASTER_EMAILS.includes(a.email)||a.role==='master';
   const canManage=isMaster(loggedUser);
@@ -5012,8 +5148,10 @@ function selectAdmin(id){
     ${!canManage?(isSelf?'<div class="readonly-notice"><span class="msi msi-sm">lock</span> Você pode alterar somente a sua própria senha.</div>':'<div class="readonly-notice"><span class="msi msi-sm">visibility</span> Somente o próprio administrador pode alterar sua senha.</div>'):''}
     <div class="form-group"><label>Nome</label><input type="text" id="ea-name" value="${a.name}" ${!canEditIdentity?'disabled':''}></div>
     <div class="form-group"><label>E-mail</label><input type="email" id="ea-email" value="${a.email}" ${!canEditIdentity?'disabled':''}></div>
-    ${canManage&&!isMU?`<div class="form-group"><label>Setor</label><input type="text" id="ea-sector" value="${escapeHTML(sectorLabel(a))}" placeholder="Ex: Engenharia, Comercial ou Financeiro"></div>${accessEditorHTML('edit-admin',adminPermissions(a))}`:`<div class="form-group"><label>Setor</label><input type="text" value="${escapeHTML(sectorLabel(a))}" disabled></div>`}
+    ${canManage&&!isMU?`<div class="form-group"><label>Setor</label><input type="text" id="ea-sector" value="${escapeHTML(sectorLabel(a))}" placeholder="Ex: Engenharia, Comercial ou Financeiro"></div>`:`<div class="form-group"><label>Setor</label><input type="text" value="${escapeHTML(sectorLabel(a))}" disabled></div>`}
     <div class="form-group"><label>Nova Senha</label><div class="password-wrap"><input type="password" id="ea-pass" placeholder="••••••••" ${!canEditPassword?'disabled':''}><button type="button" class="password-toggle" onclick="togglePassword('ea-pass',this)" title="Mostrar senha" ${!canEditPassword?'disabled':''}><span class="msi msi-sm">visibility</span></button></div></div>
+    ${canManage?`<label class="notification-check"><input id="ea-notifications-enabled" type="checkbox" ${a.notificationsEnabled!==false?'checked':''}> Receber notificações das operações vinculadas ao nome principal</label>`:''}
+    ${canManage&&!isMU?accessEditorHTML('edit-admin',adminPermissions(a)):''}
     <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
       ${canEditPassword?`<button class="btn btn-gold btn-sm" onclick="saveAdminChanges('${id}')"><span class="msi msi-sm">save</span> Salvar</button>`:''}
       ${canManage&&!isMU?`<button class="btn btn-danger btn-sm" onclick="deleteAdmin('${id}')">Excluir Admin</button>`:''}
@@ -5042,6 +5180,7 @@ function saveAdminChanges(id){
     if(!Object.values(permissions).some(Boolean)){showToast('Libere pelo menos uma aba para este funcionário','err');return;}
     a.sector=sector;a.permissions=Object.keys(permissions).filter(key=>permissions[key]);a.role='custom';
   }
+  if(canManage){a.notificationsEnabled=document.getElementById('ea-notifications-enabled')?.checked!==false;}
   if(pass.length>=6)a.pass=pass;
   else if(pass.length>0){showToast('Senha mínimo 6 caracteres','err');return;}
   persist();document.getElementById('adminNameBadge').textContent=loggedUser.ref.name;renderAdminsPanel();showToast('Administrador atualizado!');
@@ -5068,12 +5207,76 @@ function saveNewAdmin(){
   if(!Object.values(permissions).some(Boolean)){showToast('Libere pelo menos uma aba para este funcionário','err');return;}
   if(pass.length<6){showToast('Senha mínimo 6 caracteres','err');return;}
   if(DB.admins.find(a=>a.email===email)||DB.clients.find(c=>c.email===email)){showToast('E-mail já cadastrado','err');return;}
-  DB.admins.push({id:'admin_'+Date.now(),name,email,pass,role:'custom',sector,permissions:Object.keys(permissions).filter(key=>permissions[key])});
+  DB.admins.push({id:'admin_'+Date.now(),name,email,pass,role:'custom',sector,notificationsEnabled:true,permissions:Object.keys(permissions).filter(key=>permissions[key])});
   persist();closeModal('addAdminModal');renderAdminsPanel();showToast(`Admin "${name}" criado!`);
   ['naName','naEmail','naPass','naSector'].forEach(i=>document.getElementById(i).value='');
 }
 
 // ─────────── CLIENT SCREEN ───────────
+
+// ─────────── NOTIFICAÇÕES DO CRONOGRAMA (REV141) ───────────
+const NOTIFICATION_DEFAULT_SETTINGS={enabled:true,daysBefore:2,notifyStart:true,notifyDueSoon:true,notifyOverdue:true,notifyReleased:true,notifyDateChanged:true,dailySummaryHour:'08:00',emailEnabled:false};
+let NOTIFICATION_STORE=[],notificationEngineTimer=null,notificationEngineBusy=false,notificationEngineDebounce=null,notificationLastRunAt=null;
+function notificationNorm(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/\s+/g,' ');}
+function notificationAliases(admin){const name=notificationNorm(admin?.name);return name?[name]:[];}
+function notificationRecipients(operator){const key=notificationNorm(operator);if(!key)return[];return (DB.admins||[]).filter(admin=>admin.notificationsEnabled!==false&&notificationAliases(admin).includes(key));}
+function notificationHash(value){let hash=2166136261;for(let i=0;i<value.length;i++){hash^=value.charCodeAt(i);hash=Math.imul(hash,16777619);}return 'ntf_'+(hash>>>0).toString(36);}
+function notificationDateLabel(iso){return iso?fmtDate(iso):'sem data';}
+function notificationTypeIcon(type){return{overdue:'warning',due:'schedule',start:'play_circle',released:'task_alt',changed:'update',test:'notifications_active'}[type]||'notifications';}
+function notificationSettings(){return Object.assign({},NOTIFICATION_DEFAULT_SETTINGS,DB.notificationSettings||{});}
+function addNotificationOnce(existing,recipient,type,order,task,title,message,eventKey){const raw=[recipient.id,type,order?.id??'',task?.sourceId||task?.name||'',eventKey].join('|'),id=notificationHash(raw);if(existing.has(id))return false;NOTIFICATION_STORE.push({id,userId:recipient.id,type,title,message,orderId:order?.id??null,taskId:task?.sourceId||null,createdAt:new Date().toISOString(),readAt:null,emailStatus:'not-configured'});existing.add(id);return true;}
+async function persistNotificationStore(){try{NOTIFICATION_STORE=[...NOTIFICATION_STORE].sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,700);await setDoc(NOTIFICATIONS_REF,{items:NOTIFICATION_STORE,updatedAt:new Date().toISOString()});return true;}catch(error){console.warn('Notification save:',error);showToast('Erro ao salvar notificações','err');return false;}}
+function notificationTaskKey(order,task){return String(order.id)+'|'+String(task.sourceId||task.name||'');}
+function notificationToday(){return cronTodayISO();}
+function runNotificationEngine(force=false){
+  if(notificationEngineBusy||!loggedUser||loggedUser.type==='client')return Promise.resolve(false);
+  const settings=notificationSettings();if(!settings.enabled&&!force)return Promise.resolve(false);
+  notificationEngineBusy=true;let changed=false,notificationsChanged=false;
+  try{
+    NOTIFICATION_STORE=Array.isArray(NOTIFICATION_STORE)?NOTIFICATION_STORE:[];DB.notificationTaskState=DB.notificationTaskState&&typeof DB.notificationTaskState==='object'?DB.notificationTaskState:{};
+    const initialNotificationCount=NOTIFICATION_STORE.length,existing=new Set(NOTIFICATION_STORE.map(item=>item.id)),today=notificationToday(),now=Date.now(),retention=90*86400000;
+    const retained=NOTIFICATION_STORE.filter(item=>!item.createdAt||now-new Date(item.createdAt).getTime()<retention);if(retained.length!==NOTIFICATION_STORE.length){NOTIFICATION_STORE=retained;notificationsChanged=true;}
+    if(NOTIFICATION_STORE.length>700){NOTIFICATION_STORE=NOTIFICATION_STORE.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,700);notificationsChanged=true;}
+    ORDERS.forEach(order=>{
+      const schedule=cronPrepareOrderSchedule(order),byId=new Map(schedule.entries.map(({task})=>[String(task.sourceId||''),task]));
+      schedule.entries.forEach(({task,dept})=>{
+        if(Number(task.pct)>=100)return;
+        const recipients=notificationRecipients(task.operator);if(!recipients.length)return;
+        const plannedStart=task._calcStart||task.actualStart||task.baselineStart||task.start||'',plannedFinish=task._calcFinish||task.actualFinish||task.baselineFinish||task.finish||'';
+        const baselineFinish=task.baselineFinish||task.finish||plannedFinish,daysToStart=plannedStart?cronWorkdayDiff(today,plannedStart):null,daysToFinish=plannedFinish?cronWorkdayDiff(today,plannedFinish):null,overdueDays=baselineFinish&&baselineFinish<today?Math.max(1,cronWorkdayDiff(baselineFinish,today)):0;
+        const predecessors=(task.preds||[]).map(id=>byId.get(String(id))).filter(Boolean),released=predecessors.length>0&&predecessors.every(pred=>Number(pred.pct)>=100)&&!task.actualStart;
+        const stateKey=notificationTaskKey(order,task),previous=DB.notificationTaskState[stateKey];
+        recipients.forEach(recipient=>{
+          if(settings.notifyStart&&daysToStart===0)addNotificationOnce(existing,recipient,'start',order,task,`Início hoje · ${task.name}`,`${order.code} · ${dept.name}. A operação está prevista para começar hoje.`,today+'|start');
+          if(settings.notifyDueSoon&&daysToFinish!==null&&daysToFinish>=0&&daysToFinish<=Number(settings.daysBefore||0))addNotificationOnce(existing,recipient,'due',order,task,daysToFinish===0?`Vence hoje · ${task.name}`:`Faltam ${daysToFinish} dia(s) · ${task.name}`,`${order.code} · término calculado em ${notificationDateLabel(plannedFinish)}.`,today+'|due');
+          if(settings.notifyOverdue&&overdueDays>0)addNotificationOnce(existing,recipient,'overdue',order,task,`${overdueDays} dia(s) de atraso · ${task.name}`,`${order.code} · ${dept.name}. A operação ainda não foi concluída.`,today+'|overdue');
+          if(settings.notifyReleased&&released)addNotificationOnce(existing,recipient,'released',order,task,`Operação liberada · ${task.name}`,`${order.code} · todas as predecessoras foram concluídas.`,stateKey+'|released');
+          if(settings.notifyDateChanged&&previous&&previous.calcFinish&&plannedFinish&&previous.calcFinish!==plannedFinish)addNotificationOnce(existing,recipient,'changed',order,task,`Data alterada · ${task.name}`,`${order.code} · término calculado mudou de ${notificationDateLabel(previous.calcFinish)} para ${notificationDateLabel(plannedFinish)}.`,previous.calcFinish+'>'+plannedFinish);
+        });
+        const next={calcStart:plannedStart,calcFinish:plannedFinish,pct:Number(task.pct)||0,updatedAt:new Date().toISOString()};if(!previous||previous.calcStart!==next.calcStart||previous.calcFinish!==next.calcFinish||previous.pct!==next.pct){DB.notificationTaskState[stateKey]=next;changed=true;}
+      });
+    });
+    notificationLastRunAt=new Date().toISOString();
+    if(changed)persist();
+    if(notificationsChanged||NOTIFICATION_STORE.length!==initialNotificationCount)persistNotificationStore();
+    renderNotificationBell();if(isMaster(loggedUser))renderNotificationSettings();return Promise.resolve(changed);
+  }finally{notificationEngineBusy=false;}
+}
+function scheduleNotificationEngine(){clearTimeout(notificationEngineDebounce);notificationEngineDebounce=setTimeout(()=>runNotificationEngine(),700);}
+function notificationSessionStart(){renderNotificationBell();scheduleNotificationEngine();clearInterval(notificationEngineTimer);notificationEngineTimer=setInterval(()=>runNotificationEngine(),15*60*1000);}
+function notificationsForLoggedUser(){if(!loggedUser?.ref||loggedUser.type==='client')return[];return NOTIFICATION_STORE.filter(item=>item.userId===loggedUser.ref.id).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));}
+function notificationRelativeTime(value){const ms=Date.now()-new Date(value).getTime(),minutes=Math.max(0,Math.floor(ms/60000));if(minutes<1)return'agora';if(minutes<60)return`há ${minutes} min`;const hours=Math.floor(minutes/60);if(hours<24)return`há ${hours} h`;const days=Math.floor(hours/24);return`há ${days} dia(s)`;}
+function renderNotificationBell(){const bell=document.getElementById('notificationBell'),count=document.getElementById('notificationCount'),list=document.getElementById('notificationList');if(!bell||!count||!list)return;const visible=!!loggedUser&&loggedUser.type!=='client';bell.style.display=visible?'inline-flex':'none';if(!visible){count.textContent='';list.innerHTML='';return;}const rows=notificationsForLoggedUser(),unread=rows.filter(item=>!item.readAt).length;count.textContent=unread?String(Math.min(99,unread))+(unread>99?'+':''):'';list.innerHTML=rows.length?rows.slice(0,200).map(item=>`<button class="notification-item ${item.readAt?'':'unread'}" type="button" onclick="openNotification('${escapeHTML(item.id)}')"><span class="notification-icon ${escapeHTML(item.type)}"><span class="msi msi-sm">${notificationTypeIcon(item.type)}</span></span><span class="notification-copy"><strong>${escapeHTML(item.title)}</strong><span>${escapeHTML(item.message)}</span><small>${notificationRelativeTime(item.createdAt)}</small></span>${item.readAt?'':'<i class="notification-unread-dot"></i>'}</button>`).join(''):'<div class="notification-empty"><span class="msi">notifications_none</span>Nenhuma notificação para você.</div>';}
+function toggleNotificationCenter(event){event?.stopPropagation();const drawer=document.getElementById('notificationDrawer'),bell=document.getElementById('notificationBell');if(!drawer)return;drawer.classList.toggle('open');bell?.classList.toggle('active',drawer.classList.contains('open'));if(drawer.classList.contains('open'))renderNotificationBell();}
+function closeNotificationCenter(){document.getElementById('notificationDrawer')?.classList.remove('open');document.getElementById('notificationBell')?.classList.remove('active');}
+function markAllNotificationsRead(){const now=new Date().toISOString();let changed=false;notificationsForLoggedUser().forEach(item=>{if(!item.readAt){item.readAt=now;changed=true;}});if(changed)persistNotificationStore();renderNotificationBell();}
+function openNotification(id){const item=NOTIFICATION_STORE.find(row=>row.id===id);if(!item)return;if(!item.readAt){item.readAt=new Date().toISOString();persistNotificationStore();}renderNotificationBell();closeNotificationCenter();if(item.orderId===null||item.orderId===undefined)return;if(!hasAccess('cronograma.cronograma')){showAccessDenied();return;}switchCronogramaSubtab('cronograma');const order=ORDERS.find(row=>String(row.id)===String(item.orderId));if(!order)return;const search=document.getElementById('searchInput');if(search)search.value=order.code||order.op||'';const week=document.getElementById('filterWeek'),status=document.getElementById('filterStatus'),sector=document.getElementById('filterSector'),only=document.getElementById('onlyDelayed');if(week)week.value='';if(status)status.value='';if(sector)sector.value='';if(only)only.checked=false;filterOrders();requestAnimationFrame(()=>{const card=document.getElementById('card-'+order.id);if(!card)return;card.classList.add('open');requestAnimationFrame(()=>{renderCronDependencyArrows(card);const target=item.taskId?card.querySelector(`[data-cron-task="${CSS.escape(String(item.taskId))}"]`):card;target?.classList.add('notification-target');target?.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>target?.classList.remove('notification-target'),2800);});});}
+function projectOperatorCoverage(){const operators=[...new Set(ORDERS.flatMap(order=>cronOrderTasks(order).map(({task})=>String(task.operator||'').trim()).filter(Boolean)))].sort((a,b)=>a.localeCompare(b,'pt-BR')),mapped=operators.filter(value=>notificationRecipients(value).length),unmapped=operators.filter(value=>!notificationRecipients(value).length);return{operators,mapped,unmapped};}
+function renderNotificationSettings(){const panel=document.getElementById('notificationSettingsPanel'),content=document.getElementById('notificationSettingsContent');if(!panel||!content)return;const master=isMaster(loggedUser);panel.style.display=master?'block':'none';if(!master)return;const s=notificationSettings(),coverage=projectOperatorCoverage();content.innerHTML=`<div class="notification-settings-grid"><section class="notification-rule-box"><h4>Regras automáticas</h4><label class="notification-check"><input id="ns-enabled" type="checkbox" ${s.enabled?'checked':''}> Ativar central de notificações</label><label class="notification-check"><input id="ns-start" type="checkbox" ${s.notifyStart?'checked':''}> Avisar quando a operação começa hoje</label><label class="notification-check"><input id="ns-due" type="checkbox" ${s.notifyDueSoon?'checked':''}> Avisar próximo do vencimento</label><label class="notification-check"><input id="ns-overdue" type="checkbox" ${s.notifyOverdue?'checked':''}> Avisar diariamente enquanto estiver atrasada</label><label class="notification-check"><input id="ns-released" type="checkbox" ${s.notifyReleased?'checked':''}> Avisar quando as predecessoras liberarem a operação</label><label class="notification-check"><input id="ns-changed" type="checkbox" ${s.notifyDateChanged?'checked':''}> Avisar quando o término calculado mudar</label><div class="notification-settings-row"><div class="form-group"><label>Dias antes do vencimento</label><input id="ns-days" type="number" min="0" max="30" value="${Number(s.daysBefore)||0}"></div><div class="form-group"><label>Horário do resumo</label><input id="ns-hour" type="time" value="${escapeHTML(s.dailySummaryHour||'08:00')}"></div></div><p class="notification-settings-note"><strong>E-mail preparado, ainda não ativo:</strong> para enviar mensagens com o app fechado será necessário configurar um provedor seguro na Cloud Function. Nenhuma senha de e-mail ficará dentro do HTML.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn-gold btn-sm" onclick="saveNotificationSettings()"><span class="msi msi-sm">save</span> Salvar regras</button><button class="btn btn-ghost btn-sm" onclick="sendTestNotification()"><span class="msi msi-sm">notifications_active</span> Enviar teste para mim</button><button class="btn btn-ghost btn-sm" onclick="runNotificationEngine(true)"><span class="msi msi-sm">sync</span> Verificar agora</button></div></section><section class="notification-coverage-box"><h4>Vínculo entre Project e funcionários</h4><div class="notification-coverage-kpis"><div><b>${coverage.operators.length}</b><span>Operadores</span></div><div><b style="color:var(--green)">${coverage.mapped.length}</b><span>Vinculados</span></div><div><b style="color:${coverage.unmapped.length?'var(--warn)':'var(--green)'}">${coverage.unmapped.length}</b><span>Sem vínculo</span></div></div><p class="notification-settings-note">O vínculo usa exclusivamente o <strong>nome principal do funcionário</strong>. Ele deve corresponder ao operador do Project; maiúsculas e acentos são ignorados.</p>${coverage.unmapped.length?`<p class="notification-settings-note">${coverage.unmapped.length} operador(es) sem usuário no app não receberão notificações internas.</p>`:'<p class="notification-settings-note" style="color:var(--green)">Todos os operadores com acesso estão associados.</p>'}<p class="notification-settings-note">Última verificação: ${notificationLastRunAt?new Date(notificationLastRunAt).toLocaleString('pt-BR'):'ainda não executada'}.</p></section></div>`;}
+function saveNotificationSettings(){if(!isMaster(loggedUser)){showToast('Somente mestres podem alterar as notificações.','err');return;}DB.notificationSettings=Object.assign({},notificationSettings(),{enabled:document.getElementById('ns-enabled').checked,notifyStart:document.getElementById('ns-start').checked,notifyDueSoon:document.getElementById('ns-due').checked,notifyOverdue:document.getElementById('ns-overdue').checked,notifyReleased:document.getElementById('ns-released').checked,notifyDateChanged:document.getElementById('ns-changed').checked,daysBefore:Math.max(0,Math.min(30,Number(document.getElementById('ns-days').value)||0)),dailySummaryHour:document.getElementById('ns-hour').value||'08:00'});persist();renderNotificationSettings();runNotificationEngine(true);showToast('Regras de notificação salvas.');}
+function sendTestNotification(){if(!loggedUser?.ref||loggedUser.type==='client')return;const id='test_'+Date.now();NOTIFICATION_STORE.push({id,userId:loggedUser.ref.id,type:'test',title:'Notificação de teste',message:'A central de notificações está funcionando neste usuário.',orderId:null,taskId:null,createdAt:new Date().toISOString(),readAt:null,emailStatus:'not-configured'});persistNotificationStore();renderNotificationBell();showToast('Notificação de teste criada.');}
+document.addEventListener('click',event=>{const drawer=document.getElementById('notificationDrawer');if(drawer?.classList.contains('open')&&!drawer.contains(event.target)&&!document.getElementById('notificationBell')?.contains(event.target))closeNotificationCenter();});
+
 function renderClientScreen(){
   const c=loggedUser.ref;
   document.getElementById('clientAv').textContent=getInit(c.name);
@@ -5494,58 +5697,34 @@ function processXMLFile(file){
 function isOrderHeaderName(name){
   return /^\s*\d{3,5}\.\d{1,3}\s*[-|/·]\s*[a-z]{2,6}\d{2,6}-\d{2,4}\s*[-|/·]\s+/i.test(String(name||''));
 }
+function projectXMLDate(task,tags){
+  for(const tag of tags){
+    const raw=(task.querySelector(tag)?.textContent||'').trim(),match=raw.match(/\d{4}-\d{2}-\d{2}/);
+    if(match)return match[0];
+  }
+  return '';
+}
+function projectXMLBaselineDate(task,field){
+  // Alguns XMLs exportam a linha de base como campo direto; outros usam
+  // <Baseline><Number>0</Number><Start/Finish>...</Start/Finish></Baseline>.
+  const direct=projectXMLDate(task,[`Baseline${field}`,`Baseline0${field}`]);
+  if(direct)return direct;
+  const baselines=Array.from(task.children||[]).filter(node=>String(node.localName||node.nodeName||'').split(':').pop()==='Baseline');
+  const baseline=baselines.find(node=>{
+    const number=Array.from(node.children||[]).find(child=>String(child.localName||child.nodeName||'').split(':').pop()==='Number');
+    return !number||String(number.textContent||'').trim()==='0';
+  })||baselines[0];
+  return baseline?projectXMLDate(baseline,[field]):'';
+}
 function parseProjectXML(xmlDoc){
-  const tasks=Array.from(xmlDoc.querySelectorAll('Task'));
-  const orders=[];
-  let currentOrder=null,currentDept=null,idCounter=0,currentOrderLevel=1;
-
-  tasks.forEach(task=>{
-    const uid=(task.querySelector('UID')?.textContent||'').trim();
-    if(!uid||uid==='0')return;
-    let rawName=(task.querySelector('Name')?.textContent||'').trim();
-    if(!rawName)return;
-
-    // Limpa sufixo de contexto do MS Project: "NOME ( WBS - OP - Pedido )"
-    rawName=cleanTaskName(rawName);
-
-    const wbs=(task.querySelector('WBS')?.textContent||uid).trim();
-    const ol=parseInt(task.querySelector('OutlineLevel')?.textContent||'1');
-    const rawStart=task.querySelector('Start')?.textContent||'';
-    const rawFinish=task.querySelector('Finish')?.textContent||'';
-    const start=rawStart?rawStart.slice(0,10):'';
-    const finish=rawFinish?rawFinish.slice(0,10):'';
-    const pctWork=parseInt(task.querySelector('PercentWorkComplete')?.textContent||'0');
-    const pctComp=parseInt(task.querySelector('PercentComplete')?.textContent||'0');
-    const pct=Math.max(pctWork,pctComp);
-    const isMilestone=task.querySelector('Milestone')?.textContent?.trim()==='1';
-    const isSummary=task.querySelector('Summary')?.textContent?.trim()==='1';
-
-    if(ol===1||isOrderHeaderName(rawName)){
-      // Nível 1 = Pedido principal
-      // Tenta extrair code + op + nome do campo Name
-      const parsed=parseOrderName(rawName, wbs);
-      currentOrder={
-        id:       idCounter++,
-        code:     parsed.code,
-        op:       parsed.op,
-        name:     parsed.name,
-        start,finish,pct,
-        depts:[]
-      };
-      orders.push(currentOrder);
-      currentOrderLevel=ol;
-      currentDept=null;
-    } else if(ol===currentOrderLevel+1&&currentOrder){
-      currentDept={name:rawName,pct,tasks:[]};
-      currentOrder.depts.push(currentDept);
-    } else if(ol>currentOrderLevel+1&&currentDept){
-      if(!isSummary||isMilestone){
-        currentDept.tasks.push({name:rawName,start,finish,pct,milestone:isMilestone});
-      }
-    }
-  });
-
-  return orders.filter(o=>o.name&&o.start&&o.finish&&o.depts.length>0);
+  const localName=node=>String(node?.localName||node?.nodeName||'').split(':').pop(),direct=(node,name)=>Array.from(node?.children||[]).find(child=>localName(child)===name)||null,directList=(node,name)=>Array.from(node?.children||[]).filter(child=>localName(child)===name),value=(node,name,fallback='')=>(direct(node,name)?.textContent||fallback).trim(),taskMeta=new WeakMap(),allProjects=Array.from(xmlDoc.getElementsByTagNameNS('*','Project')),projects=allProjects.length>1?allProjects.slice(1):allProjects;
+  projects.forEach((project,projectIndex)=>{const taskNodes=directList(direct(project,'Tasks'),'Task'),resources=new Map(directList(direct(project,'Resources'),'Resource').map(resource=>[value(resource,'UID'),value(resource,'Name')]).filter(entry=>entry[1])),assigned=new Map(),byUID=new Map(taskNodes.map(task=>[value(task,'UID'),task])),summaryLeaves=new Map();taskNodes.forEach((task,index)=>{if(value(task,'Summary','0')!=='1')return;const level=Number(value(task,'OutlineLevel','0')),leaves=[];for(let next=index+1;next<taskNodes.length;next++){const childLevel=Number(value(taskNodes[next],'OutlineLevel','0'));if(childLevel<=level)break;if(value(taskNodes[next],'Summary','0')!=='1')leaves.push(value(taskNodes[next],'UID'));}summaryLeaves.set(value(task,'UID'),leaves);});directList(direct(project,'Assignments'),'Assignment').forEach(assignment=>{const taskUID=value(assignment,'TaskUID'),resourceName=resources.get(value(assignment,'ResourceUID'));if(resourceName){if(!assigned.has(taskUID))assigned.set(taskUID,[]);assigned.get(taskUID).push(resourceName);}});taskNodes.forEach(task=>{const uid=value(task,'UID'),durationRaw=value(task,'Duration'),match=/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(durationRaw),hours=match?(Number(match[1]||0)+Number(match[2]||0)/60+Number(match[3]||0)/3600):0,preds=directList(task,'PredecessorLink').map(link=>value(link,'PredecessorUID')).filter(Boolean).flatMap(pred=>value(byUID.get(pred),'Summary','0')==='1'?(summaryLeaves.get(pred)||[]):[pred]).map(pred=>`p${projectIndex}-t${pred}`);taskMeta.set(task,{sourceId:`p${projectIndex}-t${uid}`,operator:(assigned.get(uid)||[]).join(', '),resourceNames:assigned.get(uid)||[],duration:Math.round(hours/8*100)/100,preds:[...new Set(preds)]});});});
+  const tasks=projects.flatMap(project=>directList(direct(project,'Tasks'),'Task')),orders=[];let currentOrder=null,currentDept=null,idCounter=allProjects.length>1?1:0,currentOrderLevel=1;
+  tasks.forEach(task=>{const uid=(task.querySelector('UID')?.textContent||'').trim();if(!uid||uid==='0')return;let rawName=(task.querySelector('Name')?.textContent||'').trim();if(!rawName)return;rawName=cleanTaskName(rawName);const wbs=(task.querySelector('WBS')?.textContent||uid).trim(),ol=parseInt(task.querySelector('OutlineLevel')?.textContent||'1'),start=projectXMLDate(task,['Start','ScheduledStart']),finish=projectXMLDate(task,['Finish','ScheduledFinish']),baselineStart=projectXMLBaselineDate(task,'Start')||start,baselineFinish=projectXMLBaselineDate(task,'Finish')||finish,actualStart=projectXMLDate(task,['ActualStart','StartActual']),actualFinish=projectXMLDate(task,['ActualFinish','FinishActual']),pct=Math.max(parseInt(task.querySelector('PercentWorkComplete')?.textContent||'0'),parseInt(task.querySelector('PercentComplete')?.textContent||'0')),isMilestone=task.querySelector('Milestone')?.textContent?.trim()==='1',isSummary=task.querySelector('Summary')?.textContent?.trim()==='1',meta=taskMeta.get(task)||{sourceId:`task-${uid}`,operator:'',resourceNames:[],duration:0,preds:[]};
+    if(ol===1||isOrderHeaderName(rawName)){const parsed=parseOrderName(rawName,wbs);currentOrder={id:idCounter++,code:parsed.code,op:parsed.op,name:parsed.name,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,depts:[]};orders.push(currentOrder);currentOrderLevel=ol;currentDept=null;}
+    else if(ol===currentOrderLevel+1&&currentOrder){if(isSummary){currentDept={name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,tasks:[]};currentOrder.depts.push(currentDept);}else{const sector=/MONTAGEM/i.test(rawName)?'MONTAGEM':'SEM SETOR';currentDept=currentOrder.depts.find(dept=>cronSectorKey(dept.name)===cronSectorKey(sector));if(!currentDept){currentDept={name:sector,start,finish,baselineStart,baselineFinish,actualStart:'',actualFinish:'',pct:0,tasks:[]};currentOrder.depts.push(currentDept);}currentDept.tasks.push({name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,milestone:isMilestone,...meta});}}
+    else if(ol>currentOrderLevel+1&&currentDept&&!isSummary||ol>currentOrderLevel+1&&currentDept&&isMilestone){currentDept.tasks.push({name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,milestone:isMilestone,...meta});}
+  });return orders.filter(order=>order.name&&order.start&&order.finish&&order.depts.length>0);
 }
 
 /**
@@ -6615,7 +6794,7 @@ function accountingConditionRowsMarkup(rows,side){
 function accountingOrderBlocksMarkup(groups,side){
   if(!groups.length)return '<div class="accounting-empty accounting-order-card">Nenhum pedido corresponde aos filtros atuais.</div>';
   const settledLabel=side==='receber'?'Recebido':'Pago';
-  return groups.map(group=>{const delivery=accountingDeliveryInfo(group);return `<details class="accounting-order-card" open>
+  return groups.map(group=>{const delivery=accountingDeliveryInfo(group);return `<details class="accounting-order-card">
     <summary class="accounting-order-summary">
       <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} condição(ões) de pagamento</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span></div></div>
       <div class="accounting-order-metric optional"><span>Valor total do pedido</span><b>${fmtBRL(group.total)}</b></div>
@@ -7322,6 +7501,10 @@ function normalizeDB(data){
   else DB.simulatorDraft=DB.simulatorDraft||{equipment:'',durations:{}};
   DB.engineeringPeople=Array.isArray(DB.engineeringPeople)?DB.engineeringPeople:[];
   DB.engineeringMacros=DB.engineeringMacros&&typeof DB.engineeringMacros==='object'?DB.engineeringMacros:{};
+  DB.notifications=Array.isArray(DB.notifications)?DB.notifications:[];
+  DB.notificationTaskState=DB.notificationTaskState&&typeof DB.notificationTaskState==='object'?DB.notificationTaskState:{};
+  DB.notificationSettings=Object.assign({},NOTIFICATION_DEFAULT_SETTINGS,DB.notificationSettings||{});
+  (DB.admins||[]).forEach(admin=>{admin.projectOperators=Array.isArray(admin.projectOperators)?admin.projectOperators:[];if(admin.notificationsEnabled===undefined)admin.notificationsEnabled=true;});
   DB.clients=(DB.clients||[]);
   DB.clients.forEach(c=>{if(!c.archivedOrders)c.archivedOrders=[];});
   if(!DB.costsPassword)DB.costsPassword='000000';
@@ -7348,8 +7531,10 @@ function refreshUIFromDB(){
   if(typeof renderImportHistory==='function')renderImportHistory();
   if(document.getElementById('page-pecas')?.classList.contains('active')&&typeof renderPartsPage==='function')renderPartsPage();
   if(document.getElementById('page-gantt')?.classList.contains('active')&&typeof renderGantt==='function')renderGantt();
+  if(document.getElementById('page-atrasos')?.classList.contains('active')&&typeof renderCronDelayPage==='function')renderCronDelayPage();
   if(document.getElementById('page-clientes')?.classList.contains('active')&&selectedUserId!=null&&typeof selectUser==='function')selectUser(selectedUserId);
   if(document.getElementById('page-admins')?.classList.contains('active')&&typeof renderAdminsPanel==='function')renderAdminsPanel();
+  if(loggedUser&&loggedUser.type!=='client'){renderNotificationBell();scheduleNotificationEngine();}
   if(document.getElementById('page-custos')?.classList.contains('active')&&costsUnlocked)renderCostsPage();
   if(document.getElementById('page-financeiro')?.classList.contains('active')&&typeof renderFinanceiroFiscal==='function')renderFinanceiroFiscal();
   if(document.getElementById('page-compras')?.classList.contains('active')&&typeof renderPurchaseOrdersPage==='function')renderPurchaseOrdersPage();
@@ -7398,6 +7583,11 @@ function startRealtimeSync(){
   // O manifesto é pequeno e funciona como um aviso global. Quando a rotina
   // manual ou agendada publica uma nova versão, todos os computadores baixam
   // os mesmos blocos automaticamente, sem consultar o MaxiProd novamente.
+  onSnapshot(NOTIFICATIONS_REF,(snap)=>{
+    NOTIFICATION_STORE=snap.exists()&&Array.isArray(snap.data()?.items)?snap.data().items:[];
+    renderNotificationBell();
+  },err=>{console.error('Notification sync error:',err);});
+
   onSnapshot(SHARED_MAXIPROD_CACHE_REF,(snap)=>{
     if(!snap.exists())return;
     loadSharedMaxiprodCache(snap.data(),{silent:true}).then((changed)=>{
@@ -7424,11 +7614,11 @@ signInAnonymously(auth).catch((err)=>{
 // ─────────── EXPORTS GLOBAIS ───────────
 Object.assign(window,{
   doLogin,openAdminLogin,doAdminLogin,backToLogin,closeAdminLogin,
-  switchDevTab,switchCronogramaSubtab,switchClientTab,filterOrders,collapseAll,expandAll,toggleChip,togglePassword,
+  switchDevTab,switchCronogramaSubtab,switchClientTab,filterOrders,setCronogramaSectorFilter,setCronDelayFilter,toggleOfficialOrderCard,parseProjectXML,cronPrepareOrderSchedule,buildOrderCard,collapseAll,expandAll,toggleChip,togglePassword,
   renderGantt,openAddUserModal,saveNewUser,selectUser,saveUserChanges,
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
-  openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,
+  openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,runNotificationEngine,
   importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
@@ -7447,6 +7637,7 @@ abrirReceberAno,voltarReceberAnos,voltarReceberParaMeses,abrirReceberGeral,abrir
   exportFinanceCalendarPDF,exportFinancePeriodPDF,exportFinanceOverduePDF,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan
 });
+let _cronAutomaticDay=cronTodayISO();setInterval(()=>{const day=cronTodayISO();if(day!==_cronAutomaticDay){_cronAutomaticDay=day;if(document.getElementById('page-cronograma')?.classList.contains('active'))renderDevAll();if(document.getElementById('page-atrasos')?.classList.contains('active'))renderCronDelayPage();}},15*60*1000);
 </script>
 </body>
 </html>
