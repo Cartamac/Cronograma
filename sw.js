@@ -2,8 +2,8 @@
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-const CACHE_NAME='cartamac-v148';
-const APP_FILES=['./','./index.html','./manifest.json','./cartamac-push-icon.svg'];
+const CACHE_NAME='cartamac-v148-logo1';
+const APP_FILES=['./','./index.html','./manifest.json','./cartamac-logo.png'];
 
 firebase.initializeApp({
   apiKey:'AIzaSyAlSFh4QVAZd2eIIhmJXBrT8yhIiH92pkM',
@@ -37,7 +37,7 @@ messaging.onBackgroundMessage(payload=>{
   const data=payload.data||{};
   return self.registration.showNotification(data.title||'CARTAMAC',{
     body:data.body||'Há uma nova atualização no cronograma.',
-    icon:'./cartamac-push-icon.svg',badge:'./cartamac-push-icon.svg',
+    icon:'./cartamac-logo.png',badge:'./cartamac-logo.png',
     tag:data.notificationId||'cartamac-cronograma',renotify:true,
     data:{url:data.url||'./'}
   });
