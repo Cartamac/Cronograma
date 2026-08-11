@@ -1,8 +1,8 @@
-/* CARTAMAC rev153 - cache seguro + Firebase Cloud Messaging + e-mail Gmail */
+/* CARTAMAC rev154 - cache seguro + Firebase Cloud Messaging + e-mail Gmail */
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-const CACHE_NAME='cartamac-v153-email-gmail';
+const CACHE_NAME='cartamac-v154-email-gmail-comercial';
 const APP_FILES=['./','./index.html','./manifest.json','./cartamac-logo.png'];
 
 firebase.initializeApp({
