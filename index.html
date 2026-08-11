@@ -1673,6 +1673,7 @@ const consultarAtivosImobilizadosMaxiprodRemoto = httpsCallable(functions, "cons
 const consultarUsoConsumoMaxiprodRemoto = httpsCallable(functions, "consultarUsoConsumoMaxiprod", {timeout:310000});
 const consultarMateriaPrimaMaxiprodRemoto = httpsCallable(functions, "consultarMateriaPrimaMaxiprod", {timeout:310000});
 const atualizarCacheCompartilhadoMaxiprodRemoto = httpsCallable(functions, "atualizarCacheCompartilhadoMaxiprod", {timeout:1810000});
+const testarEmailNotificacoesRemoto = httpsCallable(functions, "testarEmailNotificacoes", {timeout:70000});
 const DB_REF   = doc(db, "cartamac", "db");
 const FILE_REF = doc(db, "cartamac", "files");
 const SHARED_MAXIPROD_CACHE_REF = doc(db, "cartamac", "maxiprod-shared-cache");
@@ -5400,6 +5401,29 @@ function saveNotificationSettings(){
   if(!isMaster(loggedUser)){showToast('Somente mestres podem alterar as notificações.','err');return;}
   const old=notificationSettings();DB.notificationSettings=Object.assign({},old,{enabled:document.getElementById('ns-enabled')?.checked!==false,notifyStart:document.getElementById('ns-start')?.checked!==false,notifyDueSoon:document.getElementById('ns-due')?.checked!==false,notifyOverdue:document.getElementById('ns-overdue')?.checked!==false,notifyReleased:document.getElementById('ns-released')?.checked!==false,notifyDateChanged:document.getElementById('ns-changed')?.checked!==false,daysBefore:Math.max(0,Math.min(30,Number(document.getElementById('ns-days')?.value)||0)),dailySummaryHour:document.getElementById('ns-hour')?.value||'08:00',emailEnabled:false,pushVapidKey:document.getElementById('ns-push-vapid')?.value.trim()||old.pushVapidKey||''});persist();renderNotificationSettings();runNotificationEngine(true);showToast('Regras de notificação salvas.');
 }
+let gmailEmailTestBusy=false;
+async function sendGmailTestEmail(){
+  if(!isMaster(loggedUser)){showToast('Somente mestres podem testar o e-mail.','err');return;}
+  if(gmailEmailTestBusy)return;
+  gmailEmailTestBusy=true;const button=document.getElementById('gmailTestButton'),status=document.getElementById('gmailTestStatus');
+  if(button)button.disabled=true;if(status){status.textContent='Enviando pelo Gmail...';status.className='outlook-status';}
+  try{const response=await testarEmailNotificacoesRemoto({});const recipient=response?.data?.recipient||'murilo@cartamac.com.br';if(status){status.textContent=`Enviado para ${recipient}`;status.className='outlook-status ok';}showToast(`E-mail de teste enviado para ${recipient}.`);}
+  catch(error){console.error('Gmail test:',error);const message=error?.message||'Falha ao enviar pelo Gmail.';if(status){status.textContent=message;status.className='outlook-status err';}showToast(message,'err');}
+  finally{gmailEmailTestBusy=false;if(button)button.disabled=false;}
+}
+const renderNotificationSettingsWithoutGmail=renderNotificationSettings;
+renderNotificationSettings=function(){
+  renderNotificationSettingsWithoutGmail();
+  const content=document.getElementById('notificationSettingsContent');if(!content||!isMaster(loggedUser))return;
+  const enabled=notificationSettings().emailEnabled===true;
+  content.insertAdjacentHTML('beforeend',`<section class="outlook-test-box"><div class="outlook-test-head"><div><h4>Notificações por e-mail</h4><p>Envio automático seguro pelo Gmail de <strong>lucas@cartamac.com.br</strong>. O primeiro teste será enviado somente para <strong>murilo@cartamac.com.br</strong>.</p></div><span class="outlook-test-chip">GMAIL · FIREBASE</span></div><label class="notification-check outlook-enable"><input id="ns-email-enabled" type="checkbox" ${enabled?'checked':''}> Enviar por e-mail os novos avisos das tarefas em aberto</label><div class="outlook-test-actions"><button id="gmailTestButton" class="btn btn-gold btn-sm" onclick="sendGmailTestEmail()"><span class="msi msi-sm">forward_to_inbox</span> Enviar e-mail de teste</button><button class="btn btn-ghost btn-sm" onclick="saveNotificationSettings()"><span class="msi msi-sm">save</span> Salvar configuração</button><span id="gmailTestStatus" class="outlook-status">Pronto para testar</span></div><p class="notification-settings-note">A senha de app fica somente no cofre de segredos do Firebase. Tarefas com <strong>Término real</strong> preenchido não são enviadas.</p></section>`);
+};
+saveNotificationSettings=function(){
+  if(!isMaster(loggedUser)){showToast('Somente mestres podem alterar as notificações.','err');return;}
+  const old=notificationSettings();
+  DB.notificationSettings=Object.assign({},old,{enabled:document.getElementById('ns-enabled')?.checked!==false,notifyStart:document.getElementById('ns-start')?.checked!==false,notifyDueSoon:document.getElementById('ns-due')?.checked!==false,notifyOverdue:document.getElementById('ns-overdue')?.checked!==false,notifyReleased:document.getElementById('ns-released')?.checked!==false,notifyDateChanged:document.getElementById('ns-changed')?.checked!==false,daysBefore:Math.max(0,Math.min(30,Number(document.getElementById('ns-days')?.value)||0)),dailySummaryHour:document.getElementById('ns-hour')?.value||'08:00',emailEnabled:document.getElementById('ns-email-enabled')?.checked===true,pushVapidKey:document.getElementById('ns-push-vapid')?.value.trim()||old.pushVapidKey||''});
+  persist();renderNotificationSettings();runNotificationEngine(true);showToast('Regras de notificações salvas.');
+};
 document.addEventListener('click',event=>{const drawer=document.getElementById('notificationDrawer');if(drawer?.classList.contains('open')&&!drawer.contains(event.target)&&!document.getElementById('notificationBell')?.contains(event.target))closeNotificationCenter();});
 
 function renderClientScreen(){
@@ -7752,7 +7776,7 @@ Object.assign(window,{
   renderGantt,openAddUserModal,saveNewUser,selectUser,saveUserChanges,
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
-  openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,runNotificationEngine,enableMobilePush,disableMobilePush,
+  openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,sendGmailTestEmail,runNotificationEngine,enableMobilePush,disableMobilePush,
   importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,closeCostProject,reopenCostProject,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
