@@ -1697,7 +1697,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 import { getMessaging, getToken, deleteToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
@@ -1728,6 +1728,7 @@ const atualizarCacheCompartilhadoMaxiprodRemoto = httpsCallable(functions, "atua
 const testarEmailNotificacoesRemoto = httpsCallable(functions, "testarEmailNotificacoes", {timeout:70000});
 const DB_REF   = doc(db, "cartamac", "db");
 const FILE_REF = doc(db, "cartamac", "files");
+const SHARED_COSTS_REF = doc(db, "cartamac", "costs-shared");
 const SHARED_MAXIPROD_CACHE_REF = doc(db, "cartamac", "maxiprod-shared-cache");
 const NOTIFICATIONS_REF = doc(db, "cartamac", "notifications");
 const PUSH_DEVICES_REF = doc(db, "cartamac", "push-devices");
@@ -2102,6 +2103,9 @@ let costsView = 'orders';
 let selectedStructureOrderId = null;
 const MAXIPROD_STRUCTURES = {};
 const productionBlockOpen = {};
+let sharedCostsLoaded=false;
+let sharedCostsUpdatedAt='';
+let sharedCostsWriteInProgress=0;
 const COST_STRUCTURE_CHUNK_SIZE=600000;
 function costStructureBaseId(orderId){
   return `cost-structure-${String(orderId).replace(/[^A-Za-z0-9_-]/g,'_')}`;
@@ -2354,6 +2358,75 @@ async function persist(){
 async function persistFiles(){
   try{await setDoc(FILE_REF,{files:FILE_STORE});}
   catch(e){console.warn('Files save:',e);showToast('Erro ao salvar arquivos','err');}
+}
+
+// Custos possui um documento central próprio. A transação relê a versão mais
+// recente antes de gravar e altera apenas as OPs informadas, evitando que dois
+// computadores trabalhando em projetos diferentes sobrescrevam um ao outro.
+function cleanCostEntryForSharedStorage(entry){
+  const copy=JSON.parse(JSON.stringify(entry||{}));
+  if(copy.maxiprod&&Array.isArray(copy.maxiprod.estrutura))delete copy.maxiprod.estrutura;
+  return copy;
+}
+function costStructureRevision(entry){
+  const mp=entry?.maxiprod||{};
+  return [mp.estruturaDocId||'',mp.estruturaChunkCount||0,mp.estruturaCharacterCount||0,mp.calculadoEm||'',mp.production?.atualizadoEm||''].join('|');
+}
+function applySharedCosts(payload){
+  if(!payload||typeof payload!=='object')return;
+  const previous=DB.costsData||{};
+  const incoming=payload.costsData&&typeof payload.costsData==='object'?payload.costsData:{};
+  const allIds=new Set([...Object.keys(previous),...Object.keys(incoming)]);
+  allIds.forEach(id=>{
+    if(costStructureRevision(previous[id])!==costStructureRevision(incoming[id]))delete MAXIPROD_STRUCTURES[id];
+  });
+  DB.costsData=incoming;
+  DB.deletedCostOrderIds=Array.isArray(payload.deletedCostOrderIds)?payload.deletedCostOrderIds.map(String):[];
+  DB.costsAutoMonthKey=payload.costsAutoMonthKey||null;
+  sharedCostsLoaded=true;
+  sharedCostsUpdatedAt=String(payload.updatedAt||'');
+  if(document.getElementById('page-custos')?.classList.contains('active')&&costsUnlocked){
+    renderCostsPage();
+    if(selectedStructureOrderId!==null){
+      ensureCostStructureLoaded(selectedStructureOrderId).then(()=>renderCostsContent());
+    }
+  }
+}
+async function persistCosts(orderIds=null){
+  const ids=(orderIds===null?Object.keys(DB.costsData||{}):(Array.isArray(orderIds)?orderIds:[orderIds])).map(String);
+  const localEntries=Object.fromEntries(ids.filter(id=>DB.costsData?.[id]).map(id=>[id,cleanCostEntryForSharedStorage(DB.costsData[id])]));
+  const localDeleted=new Set((DB.deletedCostOrderIds||[]).map(String));
+  const now=new Date().toISOString();
+  const changedBy=loggedUser?.name||loggedUser?.ref?.name||'Sistema';
+  sharedCostsWriteInProgress++;
+  try{
+    await runTransaction(db,async transaction=>{
+      const snapshot=await transaction.get(SHARED_COSTS_REF);
+      const remote=snapshot.exists()?(snapshot.data()||{}):{};
+      const merged={...(remote.costsData&&typeof remote.costsData==='object'?remote.costsData:{})};
+      ids.forEach(id=>{
+        if(localEntries[id])merged[id]=localEntries[id];
+        else delete merged[id];
+      });
+      const deleted=new Set([...(Array.isArray(remote.deletedCostOrderIds)?remote.deletedCostOrderIds:[]).map(String),...localDeleted]);
+      Object.keys(merged).forEach(id=>{if(!localDeleted.has(id))deleted.delete(id);});
+      transaction.set(SHARED_COSTS_REF,{
+        version:1,
+        costsData:merged,
+        deletedCostOrderIds:[...deleted],
+        costsAutoMonthKey:DB.costsAutoMonthKey||remote.costsAutoMonthKey||null,
+        updatedAt:now,
+        updatedBy:changedBy
+      });
+    });
+    sharedCostsLoaded=true;
+    sharedCostsUpdatedAt=now;
+    return true;
+  }catch(error){
+    console.error('Custos compartilhados:',error);
+    showToast('Não foi possível salvar Custos para os demais usuários. Verifique a conexão.','err');
+    return false;
+  }finally{sharedCostsWriteInProgress=Math.max(0,sharedCostsWriteInProgress-1);}
 }
 
 // ─────────── DEFAULT ORDERS ───────────
@@ -4147,7 +4220,7 @@ async function runCostMonthRolloverAuto(){
       else failed++;
     }
     if(failed===0)DB.costsAutoMonthKey=currentKey;
-    await persist();
+    await persistCosts();
     renderCostsContent();
     if(updated||failed)showToast(failed?`Custos mensais: ${updated} OP(s) atualizada(s) e ${failed} pendência(s). A atualização será tentada novamente.`:`Custos atualizados para ${MONTH_NAMES[now.getMonth()]}/${now.getFullYear()}; meses anteriores foram preservados.` ,failed?'err':'ok');
   }catch(error){
@@ -4479,7 +4552,7 @@ async function closeCostProject(orderId){
   entry.closedBy=changedBy;
   entry.statusHistory=entry.statusHistory||[];
   entry.statusHistory.push({action:'Fechada',at:changedAt,by:changedBy});
-  await persist();
+  await persistCosts(orderId);
   openCostCardId=null;
   selectedStructureOrderId=orderId;
   costsView='closed';
@@ -4498,7 +4571,7 @@ async function reopenCostProject(orderId){
   entry.reopenedBy=changedBy;
   entry.statusHistory=entry.statusHistory||[];
   entry.statusHistory.push({action:'Reaberta',at:changedAt,by:changedBy});
-  await persist();
+  await persistCosts(orderId);
   selectedStructureOrderId=orderId;
   costsView='structure';
   renderCostsContent();
@@ -4516,7 +4589,7 @@ async function deleteClosedCostProject(orderId){
     delete MAXIPROD_STRUCTURES[orderId];
     delete DB.costsData[String(orderId)];
     DB.deletedCostOrderIds=[...new Set([...(DB.deletedCostOrderIds||[]).map(String),String(orderId)])];
-    await persist();
+    await persistCosts(orderId);
     selectedStructureOrderId=null;openCostCardId=null;costsView='closed';renderCostsContent();
     showToast('Projeto fechado excluído da área de Custos.');
   }catch(error){console.error('Excluir projeto fechado:',error);showToast('Não foi possível excluir o projeto fechado.','err');}
@@ -4526,7 +4599,7 @@ function updateCostField(orderId,field,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
   const e=getCostEntry(orderId);
   e[field]=field==='client'?val:(parseFloat(val)||0);
-  persist();
+  persistCosts(orderId);
   openCostCardId=orderId;
   renderCostsContent();
 }
@@ -4535,7 +4608,7 @@ function updateMaxiprodCode(orderId,value){
   const e=getCostEntry(orderId);
   e.maxiprod=e.maxiprod||{};
   e.maxiprod.itemCode=String(value||'').trim().toUpperCase();
-  persist();
+  persistCosts(orderId);
   openCostCardId=orderId;
 }
 async function consultMaxiprodCost(orderId,options={}){
@@ -4598,7 +4671,7 @@ async function consultMaxiprodCost(orderId,options={}){
     // Mostra imediatamente o retorno correto. Apenas o resumo fica em
     // cartamac/db; a árvore completa já foi salva separadamente.
     if(!silent){openCostCardId=orderId;renderCostsContent();}
-    const saved=await persist();
+    const saved=await persistCosts(orderId);
     // Se o listener tiver aplicado a fotografia anterior durante o await,
     // recoloca a estrutura recém-consultada antes da renderização definitiva.
     const currentEntry=getCostEntry(orderId);
@@ -4667,7 +4740,7 @@ async function updateOperationRate(orderId,operationId,value){
   const entry=getCostEntry(orderId);entry.maxiprod=entry.maxiprod||{};entry.maxiprod.production=entry.maxiprod.production||{};
   entry.maxiprod.production.operationRates=entry.maxiprod.production.operationRates||{};
   entry.maxiprod.production.operationRates[String(operationId)]=Math.max(0,parseFloat(value)||0);
-  await persist();openCostCardId=orderId;renderCostsContent();
+  await persistCosts(orderId);openCostCardId=orderId;renderCostsContent();
 }
 function productionCurrency(value){return fmtBRL(Number(value)||0);}
 function getOrderProductionTotals(order){
@@ -4723,7 +4796,7 @@ async function clearCostStructure(orderId){
   delete entry.maxiprod;
   delete MAXIPROD_STRUCTURES[orderId];
   await deleteCostStructureDocument(orderId);
-  await persist();
+  await persistCosts(orderId);
   renderCostsContent();
   showToast('Estrutura removida.');
 }
@@ -4829,7 +4902,7 @@ function updateCostMonth(orderId,key,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
   const e=getCostEntry(orderId);
   e.months[key]=parseFloat(val)||0;
-  persist();
+  persistCosts(orderId);
   openCostCardId=orderId;
   renderCostsContent();
 }
@@ -4893,7 +4966,7 @@ function applyInstallmentPlan(orderId){
   // limpa os campos de entrada após lançar
   e.installCountInput='';
 
-  persist();
+  persistCosts(orderId);
   openCostCardId=orderId;
   renderCostsContent();
   showToast('Parcelamento lançado no calendário');
@@ -4902,7 +4975,7 @@ function removeInstallmentPlan(orderId,planId){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
   const e=getCostEntry(orderId);
   e.installmentPlans=(e.installmentPlans||[]).filter(p=>p.id!==planId);
-  persist();
+  persistCosts(orderId);
   openCostCardId=orderId;
   renderCostsContent();
   showToast('Parcelamento removido');
@@ -7757,6 +7830,11 @@ showLoading('Conectando ao servidor...');
 // Normaliza a estrutura do DB (garante campos padrão) sempre que novos dados chegam,
 // seja no carregamento inicial ou vindos de outro administrador em tempo real.
 function normalizeDB(data){
+  const centralCosts=sharedCostsLoaded?{
+    costsData:DB.costsData||{},
+    deletedCostOrderIds:DB.deletedCostOrderIds||[],
+    costsAutoMonthKey:DB.costsAutoMonthKey||null
+  }:null;
   DB=data;
   DB.admins=DB.admins||DEFAULT_DB.admins;
   DB.archivedOrdersData=DB.archivedOrdersData||{};
@@ -7775,6 +7853,11 @@ function normalizeDB(data){
   DB.clients.forEach(c=>{if(!c.archivedOrders)c.archivedOrders=[];});
   if(!DB.costsPassword)DB.costsPassword='000000';
   if(!DB.costsData)DB.costsData={};
+  if(centralCosts){
+    DB.costsData=centralCosts.costsData;
+    DB.deletedCostOrderIds=centralCosts.deletedCostOrderIds;
+    DB.costsAutoMonthKey=centralCosts.costsAutoMonthKey;
+  }
   const removedMasterEmails=['murilo','lucas','jaison'].map(n=>n+'@cartamac.com');
   const beforeAdmins=DB.admins.length;
   DB.admins=DB.admins.filter(a=>!removedMasterEmails.includes((a.email||'').toLowerCase()));
@@ -7844,6 +7927,27 @@ function startRealtimeSync(){
     if(document.getElementById('page-clientes')?.classList.contains('active')&&selectedUserId!=null&&typeof selectUser==='function')selectUser(selectedUserId);
   },err=>{
     console.error('Files sync error:',err);
+  });
+
+  // Valores, estruturas vinculadas, projetos fechados e exclusões de Custos
+  // são propagados para todos os computadores por este listener dedicado.
+  onSnapshot(SHARED_COSTS_REF,async snap=>{
+    if(snap.exists()){
+      applySharedCosts(snap.data());
+      return;
+    }
+    // Primeira execução da revisão: migra automaticamente a fotografia antiga.
+    try{
+      const legacy=await getDoc(DB_REF);
+      const legacyData=legacy.exists()?(legacy.data()||{}):{};
+      DB.costsData=legacyData.costsData&&typeof legacyData.costsData==='object'?legacyData.costsData:{};
+      DB.deletedCostOrderIds=Array.isArray(legacyData.deletedCostOrderIds)?legacyData.deletedCostOrderIds:[];
+      DB.costsAutoMonthKey=legacyData.costsAutoMonthKey||null;
+      await persistCosts();
+    }catch(error){console.error('Migração de Custos:',error);}
+  },err=>{
+    console.error('Costs sync error:',err);
+    showToast('Custos está sem sincronização central. Verifique a conexão.','err');
   });
 
   // O manifesto é pequeno e funciona como um aviso global. Quando a rotina
