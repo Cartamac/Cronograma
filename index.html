@@ -1286,6 +1286,58 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
   .dev-wordmark{font-size:17px;}
 }
 
+/* REV159 — notebook: menu legível em duas faixas, sem reduzir a interface */
+@media(min-width:769px) and (max-width:1600px){
+  .dev-header{
+    height:auto;
+    min-height:94px;
+    flex-wrap:wrap;
+    align-content:center;
+    padding:8px 14px 7px;
+    gap:5px 8px;
+  }
+  .brand-icon-header{order:0;width:34px;height:34px;flex:none;}
+  .dev-wordmark{order:0;font-size:21px;margin-right:0;flex:none;}
+  .header-actions{order:1;margin-left:auto;gap:6px;flex:none;}
+  .header-actions>.btn,.notification-bell{
+    width:36px;
+    height:36px;
+    min-width:36px;
+    padding:0;
+    justify-content:center;
+  }
+  .dev-nav{
+    order:2;
+    width:100%;
+    flex:0 0 100%;
+    min-width:0;
+    flex-wrap:nowrap;
+    justify-content:center;
+    gap:2px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:1px 0 2px;
+    scroll-behavior:smooth;
+  }
+  .dev-tab{
+    padding:7px 9px;
+    min-height:36px;
+    font-size:12.5px;
+    gap:5px;
+    white-space:nowrap;
+    flex:none;
+  }
+  .dev-tab .msi{display:inline-flex;font-size:15px;}
+  .dev-nav-separator{display:block;height:26px;margin:5px 4px;}
+  .admin-user-badge,.rev-badge,.btn-sair-label{display:none!important;}
+}
+
+/* Em telas menores, a lista e a ficha do administrador passam a ocupar a largura toda. */
+@media(min-width:601px) and (max-width:1000px){
+  .admin-grid{grid-template-columns:1fr;}
+  .admin-grid>.panel:first-child{max-height:360px;overflow:auto;}
+}
+
 
 /* REV145 — teste controlado do Outlook */
 .outlook-test-box{margin-top:16px;border:1px solid rgba(67,199,101,.35);border-radius:10px;background:linear-gradient(135deg,rgba(67,199,101,.055),rgba(200,168,75,.035));padding:16px;}
