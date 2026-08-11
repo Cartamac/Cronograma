@@ -2572,7 +2572,7 @@ function renderStats(){
 
 // ── Constrói o card de pedido (admin e cliente compartilham estrutura) ──
 function buildOrderCard(order,isClient=false,weekRangeVal=null){
-  const schedule=cronPrepareOrderSchedule(order),s=isClient?getStatus(order):(schedule.delay>0?'delayed':Number(order.pct)>=100?'done':'on_track'),sc=s==='delayed'?'delayed':s==='at_risk'?'at-risk':'on-track',sbadge=s==='delayed'?'<span class="status-badge badge-delayed">ATRASADO</span>':s==='at_risk'?'<span class="status-badge badge-risk">EM RISCO</span>':s==='done'?'<span class="status-badge badge-done">CONCLUÍDO</span>':'<span class="status-badge badge-ok">NO PRAZO</span>',diff=daysDiff(referenceFinish(order)),diffTxt=isClient?(order.pct>=100?'':diff<0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${Math.abs(diff)}d atraso</span>`:diff<30?`<span style="color:var(--warn);font-size:12px;">${diff}d restantes</span>`:''):(schedule.delay>0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${schedule.delay}d atraso</span>`:'<span style="color:var(--green);font-size:11px;font-weight:700;">NO PRAZO</span>'),archived=order._archived?'<span style="font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 7px;"><span class="msi msi-sm">archive</span> Arquivado</span>':'',datesHTML=isClient?`<div class="client-date-pair"><span><b>Início real</b>${fmtActualDate(order.actualStart)}</span><span><b>Término real</b>${fmtActualDate(order.actualFinish)}</span></div>`:`${cronCardMetric('Começou',schedule.began)}${cronCardMetric('Contrato',schedule.contract)}${cronCardMetric('Calculada',schedule.calculated,'calculated')}`,deptsHTML=isClient?buildClientOrderDetails(order,weekRangeVal):buildOfficialOrderDetails(order),weekMatch=weekRangeVal&&orderHasTaskInWeek(order,weekRangeVal);let filesHTML='';if(isClient){const fk=fileKey(order.id),files=FILE_STORE[fk]||[],docsGrid=files.length===0?'<div class="no-docs">Nenhum documento anexado para este equipamento.</div>':`<div class="docs-grid">${files.map((f,fi)=>`<div class="doc-card" onclick="downloadOrderFile('${fk}',${fi})"><div class="dc-icon">${fileIcon(f.name)}</div><div class="dc-name" title="${escapeHTML(f.name)}">${escapeHTML(f.name)}</div><div class="dc-size">${fmtSize(f.size)}</div><div class="dc-dl"><span class="msi msi-sm">download</span> Baixar</div></div>`).join('')}</div>`;filesHTML=`<div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docsGrid}</div>`;}const cc=isClient?'client-order-card':'order-card',ch=isClient?'client-order-head':'order-header',ct=isClient?'client-order-tasks':'order-tasks',codeLabel=order.code||'—',opLabel=order.op&&order.op!==order.code?order.op:'';return `<div class="${cc} ${sc}${weekMatch?' open':''}" id="card-${order.id}"><div class="${ch}" onclick="${isClient?'this.parentElement.classList.toggle(\'open\')':'toggleOfficialOrderCard(this)'}"><span class="status-dot" style="background:${sColor(s)}"></span><span class="order-code" title="${escapeHTML(codeLabel)}">${escapeHTML(codeLabel)}</span><div class="order-info"><div class="order-name" title="${escapeHTML(order.name)}">${escapeHTML(order.name)}</div>${opLabel?`<div class="order-op">OP: ${escapeHTML(opLabel)} · ${schedule.entries.length} operação(ões)</div>`:''}</div><div class="order-meta">${archived}${diffTxt}${isClient?sbadge:''}${datesHTML}<div class="pct-wrap"><div class="pct-bar"><div class="pct-fill ${pctClass(order.pct)}" style="width:${order.pct}%"></div></div><span class="pct-text" style="color:${pctColor(order.pct)}">${order.pct}%</span></div></div><span class="chevron">▾</span></div><div class="${ct}">${deptsHTML}${filesHTML}</div></div>`;
+  const schedule=cronPrepareOrderSchedule(order),s=isClient?getStatus(order):(schedule.delay>0?'delayed':Number(order.pct)>=100?'done':'on_track'),sc=s==='delayed'?'delayed':s==='at_risk'?'at-risk':'on-track',sbadge=s==='delayed'?'<span class="status-badge badge-delayed">ATRASADO</span>':s==='at_risk'?'<span class="status-badge badge-risk">EM RISCO</span>':s==='done'?'<span class="status-badge badge-done">CONCLUÍDO</span>':'<span class="status-badge badge-ok">NO PRAZO</span>',diff=daysDiff(referenceFinish(order)),diffTxt=isClient?(order.pct>=100?'':diff<0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${Math.abs(diff)}d atraso</span>`:diff<30?`<span style="color:var(--warn);font-size:12px;">${diff}d restantes</span>`:''):(schedule.delay>0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${schedule.delay}d atraso</span>`:'<span style="color:var(--green);font-size:11px;font-weight:700;">NO PRAZO</span>'),archived=order._archived?'<span style="font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 7px;"><span class="msi msi-sm">archive</span> Arquivado</span>':'',datesHTML=isClient?`<div class="client-date-pair"><span><b>Início real</b>${fmtActualDate(order.actualStart)}</span><span><b>Término real</b>${fmtActualDate(order.actualFinish)}</span></div>`:`${cronCardMetric('Começou',schedule.began)}${cronCardMetric('Projetado',schedule.contract)}${cronCardMetric('Calculada',schedule.calculated,'calculated')}`,deptsHTML=isClient?buildClientOrderDetails(order,weekRangeVal):buildOfficialOrderDetails(order),weekMatch=weekRangeVal&&orderHasTaskInWeek(order,weekRangeVal);let filesHTML='';if(isClient){const fk=fileKey(order.id),files=FILE_STORE[fk]||[],docsGrid=files.length===0?'<div class="no-docs">Nenhum documento anexado para este equipamento.</div>':`<div class="docs-grid">${files.map((f,fi)=>`<div class="doc-card" onclick="downloadOrderFile('${fk}',${fi})"><div class="dc-icon">${fileIcon(f.name)}</div><div class="dc-name" title="${escapeHTML(f.name)}">${escapeHTML(f.name)}</div><div class="dc-size">${fmtSize(f.size)}</div><div class="dc-dl"><span class="msi msi-sm">download</span> Baixar</div></div>`).join('')}</div>`;filesHTML=`<div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docsGrid}</div>`;}const cc=isClient?'client-order-card':'order-card',ch=isClient?'client-order-head':'order-header',ct=isClient?'client-order-tasks':'order-tasks',codeLabel=order.code||'—',opLabel=order.op&&order.op!==order.code?order.op:'';return `<div class="${cc} ${sc}${weekMatch?' open':''}" id="card-${order.id}"><div class="${ch}" onclick="${isClient?'this.parentElement.classList.toggle(\'open\')':'toggleOfficialOrderCard(this)'}"><span class="status-dot" style="background:${sColor(s)}"></span><span class="order-code" title="${escapeHTML(codeLabel)}">${escapeHTML(codeLabel)}</span><div class="order-info"><div class="order-name" title="${escapeHTML(order.name)}">${escapeHTML(order.name)}</div>${opLabel?`<div class="order-op">OP: ${escapeHTML(opLabel)} · ${schedule.entries.length} operação(ões)</div>`:''}</div><div class="order-meta">${archived}${diffTxt}${isClient?sbadge:''}${datesHTML}<div class="pct-wrap"><div class="pct-bar"><div class="pct-fill ${pctClass(order.pct)}" style="width:${order.pct}%"></div></div><span class="pct-text" style="color:${pctColor(order.pct)}">${order.pct}%</span></div></div><span class="chevron">▾</span></div><div class="${ct}">${deptsHTML}${filesHTML}</div></div>`;
 }
 
 function renderOrders(filtered,weekRangeVal){
@@ -3986,6 +3986,7 @@ function getCostEntry(orderId){
   if(!DB.costsData[key].maxiprod)DB.costsData[key].maxiprod={itemCode:''};
   return DB.costsData[key];
 }
+function isCostOrderDeleted(orderId){return Array.isArray(DB.deletedCostOrderIds)&&DB.deletedCostOrderIds.map(String).includes(String(orderId));}
 function isClosedCostEntry(entry){return !!entry?.closedAt;}
 function hydrateMaxiprodStructures(){
   Object.entries(DB.costsData||{}).forEach(([id,entry])=>{
@@ -4082,7 +4083,7 @@ async function runCostMonthRolloverAuto(){
   costMonthRolloverInProgress=true;
   let failed=0,updated=0;
   try{
-    const candidates=ORDERS.filter(order=>{
+    const candidates=ORDERS.filter(order=>!isCostOrderDeleted(order.id)).filter(order=>{
       const entry=getCostEntry(order.id);
       return !isClosedCostEntry(entry)&&String(entry.maxiprod?.itemCode||'').trim();
     });
@@ -4160,7 +4161,7 @@ function renderCostsContent(){
 
   // estatísticas gerais
   let totalSale=0,totalBudget=0,totalSpent=0,totalMaxiprod=0,overCount=0;
-  ORDERS.forEach(o=>{
+  ORDERS.filter(o=>!isCostOrderDeleted(o.id)).forEach(o=>{
     const e=getCostEntry(o.id);
     totalSale+=Number(e.saleValue)||0;
     totalBudget+=Number(e.budgetCost)||0;
@@ -4189,7 +4190,7 @@ function renderCostsContent(){
   const costTabs=[['orders','payments','Custos dos pedidos'],['closed','inventory_2','Projetos fechados'],['structure','account_tree','Estrutura multinível']].filter(([view])=>hasAccess(`custos.${view}`));
   const subtabsHTML=`<div class="cost-subtabs">${costTabs.map(([view,icon,label])=>`<button class="cost-subtab ${costsView===view?'active':''}" onclick="switchCostsView('${view}')"><span class="msi msi-sm">${icon}</span> ${label}</button>`).join('')}</div>`;
 
-  const visibleOrders=ORDERS.filter(o=>costsView==='closed'?isClosedCostEntry(getCostEntry(o.id)):!isClosedCostEntry(getCostEntry(o.id)));
+  const visibleOrders=ORDERS.filter(o=>!isCostOrderDeleted(o.id)).filter(o=>costsView==='closed'?isClosedCostEntry(getCostEntry(o.id)):!isClosedCostEntry(getCostEntry(o.id)));
   const cardsHTML=visibleOrders.length
     ?visibleOrders.map(o=>buildCostCard(o,master,costsView==='closed')).join('')
     :'<div class="empty-state"><div class="ei"><span class="msi msi-xl">payments</span></div><h3>Nenhum pedido disponível</h3><p>Importe um arquivo XML na aba Importar para começar.</p></div>';
@@ -4451,6 +4452,24 @@ async function reopenCostProject(orderId){
   renderCostsContent();
   showToast('OP reaberta e devolvida à Estrutura Multinível.');
 }
+async function deleteClosedCostProject(orderId){
+  if(!isMaster(loggedUser)){showToast('Somente mestres podem excluir um projeto fechado.','err');return;}
+  const order=ORDERS.find(item=>String(item.id)===String(orderId));
+  const entry=DB.costsData?.[String(orderId)];
+  if(!entry?.closedAt){showToast('Somente projetos fechados podem ser excluídos.','err');return;}
+  if(!confirm(`Excluir definitivamente ${order?.code||'esta OP'} da área de Custos? Os valores, parcelamentos e a estrutura MaxiProd salvos serão removidos.`))return;
+  showLoading('Excluindo projeto fechado de Custos...');
+  try{
+    await deleteCostStructureDocument(orderId);
+    delete MAXIPROD_STRUCTURES[orderId];
+    delete DB.costsData[String(orderId)];
+    DB.deletedCostOrderIds=[...new Set([...(DB.deletedCostOrderIds||[]).map(String),String(orderId)])];
+    await persist();
+    selectedStructureOrderId=null;openCostCardId=null;costsView='closed';renderCostsContent();
+    showToast('Projeto fechado excluído da área de Custos.');
+  }catch(error){console.error('Excluir projeto fechado:',error);showToast('Não foi possível excluir o projeto fechado.','err');}
+  finally{hideLoading();}
+}
 function updateCostField(orderId,field,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
   const e=getCostEntry(orderId);
@@ -4684,9 +4703,9 @@ function buildCostStructuresView(master,readOnly=false){
     <div class="structure-order-totals">${totalsSummary}</div>
     <div class="cost-pct-box" style="margin-top:0;margin-bottom:16px;">
       <div class="cost-pct-row"><div class="form-group"><label>Código raiz MaxiProd</label><input type="text" id="maxiprodCode-${order.id}" value="${escapeHTML(mp.itemCode||'')}" placeholder="Ex.: DS2832" ${master&&!locked?'':'disabled'} onchange="updateMaxiprodCode(${order.id},this.value)"></div>${master&&!locked?`<button class="btn btn-gold btn-sm" id="maxiprodBtn-${order.id}" onclick="consultMaxiprodCost(${order.id})"><span class="msi msi-sm">sync</span> Carregar estrutura</button><button class="btn btn-ghost btn-sm" onclick="clearCostStructure(${order.id})"><span class="msi msi-sm">delete_sweep</span> Limpar estrutura</button>`:''}<button class="btn btn-ghost btn-sm" onclick="exportCostStructurePDF(${order.id})"><span class="msi msi-sm">picture_as_pdf</span> PDF</button><button class="btn btn-ghost btn-sm" onclick="exportCostStructureExcel(${order.id})"><span class="msi msi-sm">table_chart</span> Excel</button></div>
-    </div>${content}${productionBlocks}${locked&&master?`<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="reopenCostProject(${order.id})"><span class="msi msi-sm">restart_alt</span> Reabrir OP</button></div>`:master?`<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="closeCostProject(${order.id})"><span class="msi msi-sm">lock</span> Fechar OP</button></div>`:''}`;
+    </div>${content}${productionBlocks}${locked&&master?`<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn btn-ghost btn-sm" onclick="reopenCostProject(${order.id})"><span class="msi msi-sm">restart_alt</span> Reabrir OP</button><button class="btn btn-danger btn-sm" onclick="deleteClosedCostProject(${order.id})"><span class="msi msi-sm">delete_forever</span> Excluir definitivamente</button></div>`:master?`<div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" onclick="closeCostProject(${order.id})"><span class="msi msi-sm">lock</span> Fechar OP</button></div>`:''}`;
   }
-  const structureOrders=ORDERS.filter(order=>!isClosedCostEntry(getCostEntry(order.id)));
+  const structureOrders=ORDERS.filter(order=>!isCostOrderDeleted(order.id)&&!isClosedCostEntry(getCostEntry(order.id)));
   const list=structureOrders.length?structureOrders.map(order=>{
     const e=getCostEntry(order.id),mp=e.maxiprod||{itemCode:''};
     return `<div class="structure-order"><div class="structure-order-main" onclick="openCostStructure(${order.id})"><div class="structure-order-name">${escapeHTML(order.code||'—')} — ${escapeHTML(order.name||'')}</div><div class="structure-order-meta">${order.op?`OP: ${escapeHTML(order.op)} · `:''}${mp.calculadoEm?`Estrutura atualizada: ${new Date(mp.calculadoEm).toLocaleString('pt-BR')}`:'Estrutura ainda não carregada'}</div></div><div class="form-group"><label>Código raiz MaxiProd</label><input type="text" value="${escapeHTML(mp.itemCode||'')}" placeholder="Ex.: DS2832" ${master?'':'disabled'} onchange="updateMaxiprodCode(${order.id},this.value)"></div><button class="btn btn-ghost btn-sm" onclick="openCostStructure(${order.id})"><span class="msi msi-sm">account_tree</span> Ver estrutura</button></div>`;
@@ -5868,12 +5887,26 @@ function projectXMLBaselineDate(task,field){
 function parseProjectXML(xmlDoc){
   const localName=node=>String(node?.localName||node?.nodeName||'').split(':').pop(),direct=(node,name)=>Array.from(node?.children||[]).find(child=>localName(child)===name)||null,directList=(node,name)=>Array.from(node?.children||[]).filter(child=>localName(child)===name),value=(node,name,fallback='')=>(direct(node,name)?.textContent||fallback).trim(),taskMeta=new WeakMap(),allProjects=Array.from(xmlDoc.getElementsByTagNameNS('*','Project')),projects=allProjects.length>1?allProjects.slice(1):allProjects;
   projects.forEach((project,projectIndex)=>{const taskNodes=directList(direct(project,'Tasks'),'Task'),resources=new Map(directList(direct(project,'Resources'),'Resource').map(resource=>[value(resource,'UID'),value(resource,'Name')]).filter(entry=>entry[1])),assigned=new Map(),byUID=new Map(taskNodes.map(task=>[value(task,'UID'),task])),summaryLeaves=new Map();taskNodes.forEach((task,index)=>{if(value(task,'Summary','0')!=='1')return;const level=Number(value(task,'OutlineLevel','0')),leaves=[];for(let next=index+1;next<taskNodes.length;next++){const childLevel=Number(value(taskNodes[next],'OutlineLevel','0'));if(childLevel<=level)break;if(value(taskNodes[next],'Summary','0')!=='1')leaves.push(value(taskNodes[next],'UID'));}summaryLeaves.set(value(task,'UID'),leaves);});directList(direct(project,'Assignments'),'Assignment').forEach(assignment=>{const taskUID=value(assignment,'TaskUID'),resourceName=resources.get(value(assignment,'ResourceUID'));if(resourceName){if(!assigned.has(taskUID))assigned.set(taskUID,[]);assigned.get(taskUID).push(resourceName);}});taskNodes.forEach(task=>{const uid=value(task,'UID'),durationRaw=value(task,'Duration'),match=/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(durationRaw),hours=match?(Number(match[1]||0)+Number(match[2]||0)/60+Number(match[3]||0)/3600):0,preds=directList(task,'PredecessorLink').map(link=>value(link,'PredecessorUID')).filter(Boolean).flatMap(pred=>value(byUID.get(pred),'Summary','0')==='1'?(summaryLeaves.get(pred)||[]):[pred]).map(pred=>`p${projectIndex}-t${pred}`);taskMeta.set(task,{sourceId:`p${projectIndex}-t${uid}`,operator:(assigned.get(uid)||[]).join(', '),resourceNames:assigned.get(uid)||[],duration:Math.round(hours/8*100)/100,preds:[...new Set(preds)]});});});
-  const tasks=projects.flatMap(project=>directList(direct(project,'Tasks'),'Task')),orders=[];let currentOrder=null,currentDept=null,idCounter=allProjects.length>1?1:0,currentOrderLevel=1;
+  const tasks=projects.flatMap(project=>directList(direct(project,'Tasks'),'Task')),orders=[],fabricationStages16401=new Set(['ESTRUTURA CARBONO','CALHAS INOX','TAMBOR']);let currentOrder=null,currentDept=null,currentStage='',idCounter=allProjects.length>1?1:0,currentOrderLevel=1;
   tasks.forEach(task=>{const uid=(task.querySelector('UID')?.textContent||'').trim();if(!uid||uid==='0')return;let rawName=(task.querySelector('Name')?.textContent||'').trim();if(!rawName)return;rawName=cleanTaskName(rawName);const wbs=(task.querySelector('WBS')?.textContent||uid).trim(),ol=parseInt(task.querySelector('OutlineLevel')?.textContent||'1'),start=projectXMLDate(task,['Start','ScheduledStart']),finish=projectXMLDate(task,['Finish','ScheduledFinish']),baselineStart=projectXMLBaselineDate(task,'Start')||start,baselineFinish=projectXMLBaselineDate(task,'Finish')||finish,actualStart=projectXMLDate(task,['ActualStart','StartActual']),actualFinish=projectXMLDate(task,['ActualFinish','FinishActual']),pct=Math.max(parseInt(task.querySelector('PercentWorkComplete')?.textContent||'0'),parseInt(task.querySelector('PercentComplete')?.textContent||'0')),isMilestone=task.querySelector('Milestone')?.textContent?.trim()==='1',isSummary=task.querySelector('Summary')?.textContent?.trim()==='1',meta=taskMeta.get(task)||{sourceId:`task-${uid}`,operator:'',resourceNames:[],duration:0,preds:[]};
-    if(ol===1||isOrderHeaderName(rawName)){const parsed=parseOrderName(rawName,wbs);currentOrder={id:idCounter++,code:parsed.code,op:parsed.op,name:parsed.name,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,depts:[]};orders.push(currentOrder);currentOrderLevel=ol;currentDept=null;}
-    else if(ol===currentOrderLevel+1&&currentOrder){if(isSummary){currentDept={name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,tasks:[]};currentOrder.depts.push(currentDept);}else{const sector=/MONTAGEM/i.test(rawName)?'MONTAGEM':'SEM SETOR';currentDept=currentOrder.depts.find(dept=>cronSectorKey(dept.name)===cronSectorKey(sector));if(!currentDept){currentDept={name:sector,start,finish,baselineStart,baselineFinish,actualStart:'',actualFinish:'',pct:0,tasks:[]};currentOrder.depts.push(currentDept);}currentDept.tasks.push({name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,milestone:isMilestone,...meta});}}
-    else if(ol>currentOrderLevel+1&&currentDept&&!isSummary||ol>currentOrderLevel+1&&currentDept&&isMilestone){currentDept.tasks.push({name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,milestone:isMilestone,...meta});}
-  });return orders.filter(order=>order.name&&order.start&&order.finish&&order.depts.length>0);
+    if(ol===1||isOrderHeaderName(rawName)){const parsed=parseOrderName(rawName,wbs);currentOrder={id:idCounter++,code:parsed.code,op:parsed.op,name:parsed.name,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,depts:[]};orders.push(currentOrder);currentOrderLevel=ol;currentDept=null;currentStage='';}
+    else if(ol===currentOrderLevel+1&&currentOrder){if(isSummary){const isFabricationStage=financeNormalize(currentOrder.code).replace(/^0+/,'')==='16401'&&fabricationStages16401.has(String(rawName).trim().toUpperCase());if(isFabricationStage){currentDept=currentOrder.depts.find(dept=>cronSectorKey(dept.name)===cronSectorKey('FABRICAÇÃO'))||currentOrder.depts.find(dept=>cronSectorKey(dept.name)===cronSectorKey('FABRICACAO'));currentStage=rawName;if(!currentDept){currentDept={name:'FABRICAÇÃO',start,finish,baselineStart,baselineFinish,actualStart:'',actualFinish:'',pct:0,tasks:[]};currentOrder.depts.push(currentDept);}}else{currentStage='';currentDept={name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,tasks:[]};currentOrder.depts.push(currentDept);}}else{currentStage='';const sector=/MONTAGEM/i.test(rawName)?'MONTAGEM':'SEM SETOR';currentDept=currentOrder.depts.find(dept=>cronSectorKey(dept.name)===cronSectorKey(sector));if(!currentDept){currentDept={name:sector,start,finish,baselineStart,baselineFinish,actualStart:'',actualFinish:'',pct:0,tasks:[]};currentOrder.depts.push(currentDept);}currentDept.tasks.push({name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,milestone:isMilestone,stage:currentStage,...meta});}}
+    else if(ol>currentOrderLevel+1&&currentDept&&!isSummary||ol>currentOrderLevel+1&&currentDept&&isMilestone){currentDept.tasks.push({name:rawName,start,finish,baselineStart,baselineFinish,actualStart,actualFinish,pct,milestone:isMilestone,stage:currentStage,...meta});}
+  });return orders.filter(order=>order.name&&order.start&&order.finish&&order.depts.length>0).map(normalizeCronograma16401Stages);
+}
+function normalizeCronograma16401Stages(order){
+  if(financeNormalize(order?.code).replace(/^0+/,'')!=='16401'||!Array.isArray(order?.depts))return order;
+  const stageKeys=new Set(['estruturacarbono','calhasinox','tambor']);
+  const stageDepts=order.depts.filter(dept=>stageKeys.has(cronSectorKey(dept.name)));
+  if(!stageDepts.length)return order;
+  let fabrication=order.depts.find(dept=>cronSectorKey(dept.name)==='fabricacao');
+  if(!fabrication){fabrication={name:'FABRICAÇÃO',pct:0,tasks:[]};order.depts.push(fabrication);}
+  fabrication.tasks=Array.isArray(fabrication.tasks)?fabrication.tasks:[];
+  stageDepts.forEach(stage=>{
+    (stage.tasks||[]).forEach(task=>fabrication.tasks.push({...task,stage:stage.name}));
+  });
+  order.depts=order.depts.filter(dept=>!stageKeys.has(cronSectorKey(dept.name)));
+  return order;
 }
 
 /**
@@ -6824,6 +6857,10 @@ function accountingOrderLink(item,side,catalog){
     const match=source.match(new RegExp(`pedido\\s*(?:de\\s*)?${kind}\\s*(?:n[º°o.]*)?\\s*([A-Za-z0-9./-]+)`,'i'));
     if(match){numero=match[1];order=catalog.byNumber.get(financeNormalize(numero))||order;}
   }
+  // Pedidos já recebidos/faturados podem deixar de vir nas grades de pedidos,
+  // embora seus títulos continuem no histórico financeiro. Mantemos um vínculo
+  // mínimo a partir da própria relação do título durante os 45 dias de retenção.
+  if(!order&&numero){order={id:id??'',numero:String(numero),party:'',total:0,deliveryDates:[],raw:relation||{}};}
   return {order,numero:String(numero||order?.numero||'').trim()};
 }
 function accountingConditionKind(raw){
@@ -6842,6 +6879,25 @@ function accountingPaymentAmount(item,side,value){
   const state=financeNormalize(receberChave(raw,['estado','status','situacao'])||'');
   const settled=side==='receber'?state.includes('recebid'):state.includes('pago')||state.includes('liquid')||state.includes('quitad');
   return settled?Math.abs(value):0;
+}
+function accountingInvoiceNumber(raw){
+  const found=new Set();
+  const visit=(value,depth=0,inInvoice=false)=>{
+    if(!value||typeof value!=='object'||depth>4)return;
+    Object.entries(value).forEach(([key,field])=>{
+      const normalized=financeNormalize(key),invoiceKey=/notafiscal|numeronf|referenciadanotafiscal|documentofiscal/.test(normalized),invoiceContext=inInvoice||invoiceKey;
+      if(field&&typeof field==='object')visit(field,depth+1,invoiceContext);
+      else if(field!==null&&field!==undefined&&String(field).trim()&&(
+        invoiceKey||(invoiceContext&&/^(numero|referencia|documento|codigo|chave)$/.test(normalized))
+      ))found.add(String(field).trim());
+    });
+  };
+  visit(raw);
+  return [...found].filter(value=>value&&!/^0+$/.test(value)).join(' · ')||'—';
+}
+function accountingSettlementDate(raw,due){
+  const direct=receberData(raw,['dataRecebimento','recebimentoData','dataPagamento','pagamentoData','dataBaixa','baixaData','dataLiquidacao','liquidacaoData','quitacaoData','dataQuitacao']);
+  return direct||null;
 }
 function accountingRows(side){
   const catalog=accountingOrderCatalog(side);
@@ -6873,7 +6929,7 @@ function accountingRows(side){
     const today=new Date();today.setHours(0,0,0,0);
     const overdue=balance>0.004&&due&&due<today;
     const status=balance<=0.004?{key:'done',label:side==='receber'?'Recebido':'Pago'}:settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
-    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status};
+    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoice:accountingInvoiceNumber(raw),settledAt:balance<=0.004?accountingSettlementDate(raw,due):null};
   }).filter(Boolean).sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
 }
 function accountingFilteredRows(rows){
@@ -6919,8 +6975,10 @@ function accountingGroupRows(rows){
     group.balance=group.rows.reduce((sum,row)=>sum+row.balance,0);
     group.paidPercent=group.total>0?Math.min(100,(group.settled/group.total)*100):0;
     group.deliveryDates=salesDateList(group.order?.deliveryDates||[]);
+    group.settledAt=group.rows.reduce((latest,row)=>row.settledAt&&(!latest||row.settledAt>latest)?row.settledAt:latest,null);
+    group.retentionExpired=group.balance<=0.004&&group.paidPercent>=99.995&&group.settledAt&&((Date.now()-group.settledAt.getTime())/(86400000)>45);
     return group;
-  }).sort((a,b)=>{
+  }).filter(group=>!group.retentionExpired).sort((a,b)=>{
     if(a.numero==='Não identificado'&&b.numero!=='Não identificado')return 1;
     if(b.numero==='Não identificado'&&a.numero!=='Não identificado')return -1;
     return String(b.numero).localeCompare(String(a.numero),'pt-BR',{numeric:true});
@@ -6942,6 +7000,7 @@ function accountingConditionRowsMarkup(rows,side){
     <td class="money">${fmtBRL(row.value)}</td>
     <td class="money">${fmtBRL(row.settled)}</td>
     <td class="money">${fmtBRL(row.balance)}</td>
+    <td>${escapeHTML(row.invoice||'—')}</td>
     <td><span class="accounting-status ${row.status.key}">${escapeHTML(row.status.label)}</span></td>
   </tr>`).join('');
 }
@@ -6960,7 +7019,7 @@ function accountingOrderBlocksMarkup(groups,side){
     </summary>
     <div class="accounting-order-body">
       ${group.order?'':`<div class="accounting-order-warning"><span class="msi msi-sm">warning</span> O MaxiProd não devolveu um vínculo de pedido para este lançamento.</div>`}
-      <div class="accounting-table-wrap"><table class="accounting-table"><thead><tr><th>Tipo</th><th>Vencimento</th><th style="text-align:right">Percentual</th><th style="text-align:right">Valor</th><th style="text-align:right">${side==='receber'?'Valor recebido':'Valor pago'}</th><th style="text-align:right">Saldo</th><th>Situação</th></tr></thead><tbody>${accountingConditionRowsMarkup(group.rows,side)}</tbody></table></div>
+      <div class="accounting-table-wrap"><table class="accounting-table"><thead><tr><th>Tipo</th><th>Vencimento</th><th style="text-align:right">Percentual</th><th style="text-align:right">Valor</th><th style="text-align:right">${side==='receber'?'Valor recebido':'Valor pago'}</th><th style="text-align:right">Saldo</th><th>Nota fiscal</th><th>Situação</th></tr></thead><tbody>${accountingConditionRowsMarkup(group.rows,side)}</tbody></table></div>
     </div>
   </details>`;}).join('');
 }
@@ -7019,13 +7078,14 @@ function exportAccountingPDF(context){
   cards.forEach((card,index)=>{const x=left+index*(cardW+cardGap);doc.setFillColor(246,246,246);doc.setDrawColor(214,214,214);doc.roundedRect(x,y,cardW,15,1.4,1.4,'FD');doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(105,105,105);doc.text(card[0],x+3,y+5);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...card[2]);doc.text(accountingReportMoney(card[1]),x+3,y+11);});
   y+=21;
   const cols=[
-    {label:'TIPO',x:left,w:43,align:'left'},
-    {label:'VENCIMENTO',x:left+43,w:28,align:'left'},
-    {label:'PERCENTUAL',x:left+71,w:27,align:'right'},
-    {label:'VALOR',x:left+98,w:46,align:'right'},
-    {label:`VALOR ${context.movementLabel.toUpperCase()}`,x:left+144,w:46,align:'right'},
-    {label:'SALDO',x:left+190,w:46,align:'right'},
-    {label:'SITUAÇÃO',x:left+236,w:41,align:'left'},
+    {label:'TIPO',x:left,w:35,align:'left'},
+    {label:'VENCIMENTO',x:left+35,w:24,align:'left'},
+    {label:'PERCENTUAL',x:left+59,w:24,align:'right'},
+    {label:'NOTA FISCAL',x:left+83,w:28,align:'left'},
+    {label:'VALOR',x:left+111,w:42,align:'right'},
+    {label:`VALOR ${context.movementLabel.toUpperCase()}`,x:left+153,w:42,align:'right'},
+    {label:'SALDO',x:left+195,w:42,align:'right'},
+    {label:'SITUAÇÃO',x:left+237,w:40,align:'left'},
   ];
   const drawGroupHeader=(group,continued=false)=>{
     ensure(33);
@@ -7060,8 +7120,8 @@ function exportAccountingPDF(context){
       else if(row.status.key==='partial'){doc.setFillColor(255,249,229);doc.rect(left,y,contentW,8,'F');}
       else if(rowIndex%2===0){doc.setFillColor(249,249,249);doc.rect(left,y,contentW,8,'F');}
       doc.setDrawColor(229,229,229);doc.line(left,y+8,left+contentW,y+8);
-      const values=[row.kind.label,receberDataFormat(row.due),accountingPercentText(row.percent),accountingReportMoney(row.value),accountingReportMoney(row.settled),accountingReportMoney(row.balance),row.status.label];
-      cols.forEach((col,index)=>{doc.setFont('helvetica',index>=3&&index<=6?'bold':'normal');doc.setFontSize(6.3);const colored=index===6||index===4;const isAlert=colored&&row.status.key==='overdue',isDone=colored&&row.status.key==='done';doc.setTextColor(isAlert?200:isDone?31:38,isAlert?48:isDone?137:38,isAlert?56:isDone?67:38);doc.text(doc.splitTextToSize(clean(values[index]),col.w-4)[0]||'—',col.align==='right'?col.x+col.w-2:col.x+2,y+5,{align:col.align});});
+      const values=[row.kind.label,receberDataFormat(row.due),accountingPercentText(row.percent),row.invoice||'—',accountingReportMoney(row.value),accountingReportMoney(row.settled),accountingReportMoney(row.balance),row.status.label];
+      cols.forEach((col,index)=>{doc.setFont('helvetica',index>=4&&index<=7?'bold':'normal');doc.setFontSize(6.1);const colored=index===7||index===5;const isAlert=colored&&row.status.key==='overdue',isDone=colored&&row.status.key==='done';doc.setTextColor(isAlert?200:isDone?31:38,isAlert?48:isDone?137:38,isAlert?56:isDone?67:38);doc.text(doc.splitTextToSize(clean(values[index]),col.w-4)[0]||'—',col.align==='right'?col.x+col.w-2:col.x+2,y+5,{align:col.align});});
       y+=8;
     });
     drawOrderBorder(blockStart,y);y+=6;
@@ -7078,17 +7138,17 @@ function exportAccountingExcel(context){
   ];
   const details=[
     ['CARTAMAC · DETALHAMENTO DAS CONDIÇÕES'],[context.title],[],
-    ['Pedido',context.partyLabel,'Tipo','Vencimento','Percentual','Valor',`Valor ${context.movementLabel.toLowerCase()}`,'Saldo','Situação','Entrega(s)'],
-    ...context.groups.flatMap(group=>group.rows.map(row=>[group.numero,group.party,row.kind.label,receberDataFormat(row.due),Number.isFinite(Number(row.percent))?Number(row.percent)/100:null,row.value,row.settled,row.balance,row.status.label,(group.deliveryDates||[]).map(receberDataFormat).join(' | ')||'Não informada']))
+    ['Pedido',context.partyLabel,'Tipo','Vencimento','Percentual','Nota fiscal','Valor',`Valor ${context.movementLabel.toLowerCase()}`,'Saldo','Situação','Entrega(s)'],
+    ...context.groups.flatMap(group=>group.rows.map(row=>[group.numero,group.party,row.kind.label,receberDataFormat(row.due),Number.isFinite(Number(row.percent))?Number(row.percent)/100:null,row.invoice||'—',row.value,row.settled,row.balance,row.status.label,(group.deliveryDates||[]).map(receberDataFormat).join(' | ')||'Não informada']))
   ];
   const wsSummary=XLSX.utils.aoa_to_sheet(summary),wsDetails=XLSX.utils.aoa_to_sheet(details);
   wsSummary['!cols']=[{wch:13},{wch:38},{wch:29},{wch:12},{wch:18},{wch:18},{wch:18},{wch:15},{wch:18}];
-  wsDetails['!cols']=[{wch:13},{wch:38},{wch:20},{wch:14},{wch:14},{wch:18},{wch:19},{wch:18},{wch:14},{wch:29}];
+  wsDetails['!cols']=[{wch:13},{wch:38},{wch:20},{wch:14},{wch:14},{wch:18},{wch:18},{wch:19},{wch:18},{wch:14},{wch:29}];
   wsSummary['!autofilter']={ref:`A5:I${summary.length}`};wsSummary['!freeze']={xSplit:0,ySplit:5,topLeftCell:'A6',activePane:'bottomLeft',state:'frozen'};
-  wsDetails['!autofilter']={ref:`A4:J${details.length}`};wsDetails['!freeze']={xSplit:0,ySplit:4,topLeftCell:'A5',activePane:'bottomLeft',state:'frozen'};
+  wsDetails['!autofilter']={ref:`A4:K${details.length}`};wsDetails['!freeze']={xSplit:0,ySplit:4,topLeftCell:'A5',activePane:'bottomLeft',state:'frozen'};
   const currency='"R$" #,##0.00',percent='0.00%';
   for(let row=5;row<summary.length;row++){[4,5,6,8].forEach(column=>{const cell=wsSummary[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=currency;});const pct=wsSummary[XLSX.utils.encode_cell({r:row,c:7})];if(pct)pct.z=percent;}
-  for(let row=4;row<details.length;row++){[5,6,7].forEach(column=>{const cell=wsDetails[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=currency;});const pct=wsDetails[XLSX.utils.encode_cell({r:row,c:4})];if(pct)pct.z=percent;}
+  for(let row=4;row<details.length;row++){[6,7,8].forEach(column=>{const cell=wsDetails[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=currency;});const pct=wsDetails[XLSX.utils.encode_cell({r:row,c:4})];if(pct)pct.z=percent;}
   const workbook=XLSX.utils.book_new();workbook.Props={Title:context.title,Subject:'Condições de pagamento dos pedidos ativos',Author:'CARTAMAC',CreatedDate:new Date()};
   XLSX.utils.book_append_sheet(workbook,wsSummary,'Resumo');XLSX.utils.book_append_sheet(workbook,wsDetails,'Parcelas');
   XLSX.writeFile(workbook,`${context.filename}.xlsx`,{compression:true});showToast('Relatório Excel gerado com sucesso.');
@@ -7106,7 +7166,7 @@ function toggleAccountingAdvances(){accountingOnlyAdvances=!accountingOnlyAdvanc
 function renderAccountingPage(container=document.getElementById('contabilidadeContent')){
   if(!container)return;
   const side=accountingView==='pagar'?'pagar':'receber';
-  const rows=accountingRows(side),filtered=accountingFilteredRows(rows),groups=accountingGroupRows(filtered);
+  const rows=accountingGroupRows(accountingRows(side)).flatMap(group=>group.rows),filtered=accountingFilteredRows(rows),groups=accountingGroupRows(filtered);
   const advances=rows.filter(row=>row.kind.key==='advance').reduce((sum,row)=>sum+row.value,0);
   const settled=rows.reduce((sum,row)=>sum+row.settled,0),balance=rows.reduce((sum,row)=>sum+row.balance,0);
   const orderCount=new Set(rows.filter(row=>row.numero!=='Não identificado').map(row=>financeNormalize(row.numero))).size;
@@ -7123,7 +7183,7 @@ function renderAccountingPage(container=document.getElementById('contabilidadeCo
         <div class="accounting-summary-card settled"><span>${settledLabel}</span><b>${fmtBRL(settled)}</b></div>
         <div class="accounting-summary-card open"><span>Saldo em aberto</span><b>${fmtBRL(balance)}</b></div>
       </div>
-      <div class="accounting-note"><b>Leitura sem alterações:</b> o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. “Entrega / parcela” representa o valor não adiantado previsto na condição de pagamento.${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
+      <div class="accounting-note"><b>Leitura sem alterações:</b> o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. “Entrega / parcela” representa o valor não adiantado previsto na condição de pagamento. Pedidos 100% recebidos ou pagos são mantidos por 45 dias após a baixa e depois removidos do cache compartilhado.${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
       <div class="accounting-toolbar"><input id="accountingSearch" class="search-input" value="${escapeHTML(accountingSearch)}" oninput="applyAccountingSearch(this.value)" placeholder="Filtrar pedido, cliente, fornecedor, vencimento ou situação..."><button class="accounting-filter ${accountingOnlyAdvances?'active':''}" type="button" onclick="toggleAccountingAdvances()">Somente adiantamentos</button><span class="muted" style="font-size:12px;white-space:nowrap;">${groups.length} bloco(s) · ${filtered.length} de ${rows.length} condição(ões)</span><div class="accounting-general-reports"><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('pdf','${side}')" title="Gerar relatório geral em PDF"><span class="msi msi-sm">picture_as_pdf</span> PDF geral</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('excel','${side}')" title="Gerar relatório geral em Excel"><span class="msi msi-sm">table_view</span> Excel geral</button></div><div class="accounting-block-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(true)">Expandir todos</button><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(false)">Recolher todos</button></div></div>
       <div class="accounting-orders">${accountingOrderBlocksMarkup(groups,side)}</div>
     </div>`;
@@ -7674,7 +7734,7 @@ function normalizeDB(data){
       if(adm)adm.role='master';
     }
   });
-  ORDERS=DB.projectOrders?.length>0?DB.projectOrders:getDefaultOrders();
+  ORDERS=(DB.projectOrders?.length>0?DB.projectOrders:getDefaultOrders()).map(normalizeCronograma16401Stages);
   return DB.admins.length!==beforeAdmins;
 }
 
