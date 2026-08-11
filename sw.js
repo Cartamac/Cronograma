@@ -1,8 +1,8 @@
-/* CARTAMAC rev159 - refinamentos e responsividade para notebooks */
+/* CARTAMAC rev160 - custos compartilhados em tempo real */
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-const CACHE_NAME='cartamac-v159-notebook';
+const CACHE_NAME='cartamac-v160-custos-compartilhados';
 const APP_FILES=['./','./index.html','./manifest.json','./cartamac-logo.png'];
 
 firebase.initializeApp({
