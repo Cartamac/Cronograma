@@ -1,8 +1,8 @@
-/* CARTAMAC rev151 - cache seguro + Firebase Cloud Messaging */
+/* CARTAMAC rev152 - cache seguro + Firebase Cloud Messaging */
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-const CACHE_NAME='cartamac-v151-redefinir-token-push';
+const CACHE_NAME='cartamac-v152-push-instalacao-nova';
 const APP_FILES=['./','./index.html','./manifest.json','./cartamac-logo.png'];
 
 firebase.initializeApp({
