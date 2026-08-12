@@ -1139,10 +1139,12 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .accounting-order-title span{font-weight:800;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .accounting-order-main small{display:block;color:var(--text3);font-size:11px;margin-top:7px;}
 .accounting-order-highlights{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px;}
-.accounting-delivery-chip,.accounting-paid-chip{display:inline-flex;align-items:center;gap:5px;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;line-height:1;border:1px solid;white-space:nowrap;}
+.accounting-delivery-chip,.accounting-paid-chip,.accounting-removal-chip{display:inline-flex;align-items:center;gap:5px;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;line-height:1;border:1px solid;white-space:nowrap;}
 .accounting-delivery-chip{color:#e6c45e;border-color:rgba(200,168,75,.38);background:rgba(200,168,75,.07);}
 .accounting-delivery-chip.missing{color:var(--text3);border-color:var(--border2);background:rgba(255,255,255,.035);}
 .accounting-paid-chip{color:#5de47a;border-color:rgba(50,190,90,.5);background:rgba(50,190,90,.11);}
+.accounting-removal-chip{color:#a9ddff;border-color:rgba(112,196,255,.62);background:rgba(112,196,255,.14);box-shadow:0 0 0 1px rgba(112,196,255,.05) inset;}
+.accounting-removal-chip.missing{color:var(--text3);border-color:var(--border2);background:rgba(255,255,255,.035);}
 .accounting-order-metric{min-width:0;border-left:1px solid var(--border2);padding-left:13px;}
 .accounting-order-metric span{display:block;color:var(--text3);font-size:9px;text-transform:uppercase;letter-spacing:.55px;margin-bottom:5px;font-weight:750;}
 .accounting-order-metric b{display:block;font-family:'JetBrains Mono',monospace;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -7037,7 +7039,7 @@ function accountingOrderLink(item,side,catalog){
   }
   // Pedidos já recebidos/faturados podem deixar de vir nas grades de pedidos,
   // embora seus títulos continuem no histórico financeiro. Mantemos um vínculo
-  // mínimo a partir da própria relação do título durante os 45 dias de retenção.
+  // mínimo a partir da própria relação do título durante o período de retenção.
   if(!order&&numero){order={id:id??'',numero:String(numero),party:'',total:0,deliveryDates:[],raw:relation||{}};}
   return {order,numero:String(numero||order?.numero||'').trim()};
 }
@@ -7074,8 +7076,15 @@ function accountingInvoiceNumber(raw){
   return [...found].filter(value=>value&&!/^0+$/.test(value)).join(' · ')||'—';
 }
 function accountingSettlementDate(raw,due){
-  const direct=receberData(raw,['dataRecebimento','recebimentoData','dataPagamento','pagamentoData','dataBaixa','baixaData','dataLiquidacao','liquidacaoData','quitacaoData','dataQuitacao']);
-  return direct||null;
+  const aliases=['dataRecebimento','recebimentoData','dataUltimoRecebimento','ultimoRecebimentoData','dataPagamento','pagamentoData','dataBaixa','baixaData','dataUltimaBaixa','ultimaBaixaData','dataLiquidacao','liquidacaoData','quitacaoData','dataQuitacao'];
+  const direct=receberData(raw,aliases);if(direct)return direct;
+  let found=null;
+  const visit=(value,depth=0)=>{
+    if(found||!value||typeof value!=='object'||depth>5)return;
+    const parsed=receberData(value,aliases);if(parsed){found=parsed;return;}
+    Object.values(value).forEach(field=>{if(field&&typeof field==='object')visit(field,depth+1);});
+  };
+  visit(raw);return found;
 }
 function accountingRows(side){
   const catalog=accountingOrderCatalog(side);
@@ -7136,7 +7145,7 @@ function accountingRowsMarkup(rows,side){
     <td>${row.order?fmtBRL(row.order.total):'<span class="muted">Vínculo não localizado</span>'}</td>
   </tr>`).join('');
 }
-function accountingGroupRows(rows){
+function accountingGroupRows(rows,side='receber'){
   const groups=new Map();
   rows.forEach(row=>{
     const identified=row.numero&&row.numero!=='Não identificado';
@@ -7154,7 +7163,12 @@ function accountingGroupRows(rows){
     group.paidPercent=group.total>0?Math.min(100,(group.settled/group.total)*100):0;
     group.deliveryDates=salesDateList(group.order?.deliveryDates||[]);
     group.settledAt=group.rows.reduce((latest,row)=>row.settledAt&&(!latest||row.settledAt>latest)?row.settledAt:latest,null);
-    group.retentionExpired=group.balance<=0.004&&group.paidPercent>=99.995&&group.settledAt&&((Date.now()-group.settledAt.getTime())/(86400000)>45);
+    group.isFullyReceived=group.balance<=0.004&&group.paidPercent>=99.995;
+    group.removalDate=side==='receber'&&group.isFullyReceived&&group.settledAt?new Date(group.settledAt.getTime()+30*86400000):null;
+    group.removalDaysLeft=group.removalDate?Math.max(0,Math.ceil((group.removalDate.getTime()-Date.now())/86400000)):null;
+    group.retentionExpired=side==='receber'
+      ?Boolean(group.removalDate&&Date.now()>=group.removalDate.getTime())
+      :Boolean(group.isFullyReceived&&group.settledAt&&((Date.now()-group.settledAt.getTime())/(86400000)>45));
     return group;
   }).filter(group=>!group.retentionExpired).sort((a,b)=>{
     if(a.numero==='Não identificado'&&b.numero!=='Não identificado')return 1;
@@ -7187,7 +7201,7 @@ function accountingOrderBlocksMarkup(groups,side){
   const settledLabel=side==='receber'?'Recebido':'Pago';
   return groups.map(group=>{const delivery=accountingDeliveryInfo(group);return `<details class="accounting-order-card">
     <summary class="accounting-order-summary">
-      <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} condição(ões) de pagamento</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span></div></div>
+      <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} condição(ões) de pagamento</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span>${side==='receber'&&group.isFullyReceived?(group.removalDate?`<span class="accounting-removal-chip" title="Contagem de 30 dias após o último pagamento"><span class="msi msi-sm">hourglass_top</span>Remoção em: ${group.removalDaysLeft} dia(s)</span>`:`<span class="accounting-removal-chip missing" title="O MaxiProd não informou a data da última baixa"><span class="msi msi-sm">schedule</span>100% recebido · sem data da última baixa</span>`):''}</div></div>
       <div class="accounting-order-metric optional"><span>Valor total do pedido</span><b>${fmtBRL(group.total)}</b></div>
       <div class="accounting-order-metric advance optional"><span>Adiantamentos</span><b>${fmtBRL(group.advances)}</b></div>
       <div class="accounting-order-metric settled"><span>${settledLabel}</span><b>${fmtBRL(group.settled)}</b></div>
@@ -7206,9 +7220,9 @@ function accountingReportGroups(side,keyToken=''){
   const allRows=accountingRows(normalizedSide);
   if(keyToken){
     let key='';try{key=decodeURIComponent(keyToken);}catch(_){key=String(keyToken||'');}
-    return accountingGroupRows(allRows).filter(group=>group.key===key);
+    return accountingGroupRows(allRows,normalizedSide).filter(group=>group.key===key);
   }
-  return accountingGroupRows(accountingFilteredRows(allRows));
+  return accountingGroupRows(accountingFilteredRows(allRows),normalizedSide);
 }
 function accountingReportMoney(value){return fmtBRL(Number(value)||0).replace(/\u00a0/g,' ');}
 function accountingReportFilename(value){
@@ -7344,7 +7358,7 @@ function toggleAccountingAdvances(){accountingOnlyAdvances=!accountingOnlyAdvanc
 function renderAccountingPage(container=document.getElementById('contabilidadeContent')){
   if(!container)return;
   const side=accountingView==='pagar'?'pagar':'receber';
-  const rows=accountingGroupRows(accountingRows(side)).flatMap(group=>group.rows),filtered=accountingFilteredRows(rows),groups=accountingGroupRows(filtered);
+  const rows=accountingGroupRows(accountingRows(side),side).flatMap(group=>group.rows),filtered=accountingFilteredRows(rows),groups=accountingGroupRows(filtered,side);
   const advances=rows.filter(row=>row.kind.key==='advance').reduce((sum,row)=>sum+row.value,0);
   const settled=rows.reduce((sum,row)=>sum+row.settled,0),balance=rows.reduce((sum,row)=>sum+row.balance,0);
   const orderCount=new Set(rows.filter(row=>row.numero!=='Não identificado').map(row=>financeNormalize(row.numero))).size;
@@ -7361,7 +7375,7 @@ function renderAccountingPage(container=document.getElementById('contabilidadeCo
         <div class="accounting-summary-card settled"><span>${settledLabel}</span><b>${fmtBRL(settled)}</b></div>
         <div class="accounting-summary-card open"><span>Saldo em aberto</span><b>${fmtBRL(balance)}</b></div>
       </div>
-      <div class="accounting-note"><b>Leitura sem alterações:</b> o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. “Entrega / parcela” representa o valor não adiantado previsto na condição de pagamento. Pedidos 100% recebidos ou pagos são mantidos por 45 dias após a baixa e depois removidos do cache compartilhado.${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
+      <div class="accounting-note"><b>Leitura sem alterações:</b> o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. “Entrega / parcela” representa o valor não adiantado previsto na condição de pagamento. ${side==='receber'?'Pedidos 100% recebidos permanecem por 30 dias após a última baixa; o cabeçalho mostra quantos dias faltam para a remoção.':'Pedidos 100% pagos permanecem por 45 dias após a baixa.'}${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
       <div class="accounting-toolbar"><input id="accountingSearch" class="search-input" value="${escapeHTML(accountingSearch)}" oninput="applyAccountingSearch(this.value)" placeholder="Filtrar pedido, cliente, fornecedor, vencimento ou situação..."><button class="accounting-filter ${accountingOnlyAdvances?'active':''}" type="button" onclick="toggleAccountingAdvances()">Somente adiantamentos</button><span class="muted" style="font-size:12px;white-space:nowrap;">${groups.length} bloco(s) · ${filtered.length} de ${rows.length} condição(ões)</span><div class="accounting-general-reports"><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('pdf','${side}')" title="Gerar relatório geral em PDF"><span class="msi msi-sm">picture_as_pdf</span> PDF geral</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('excel','${side}')" title="Gerar relatório geral em Excel"><span class="msi msi-sm">table_view</span> Excel geral</button></div><div class="accounting-block-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(true)">Expandir todos</button><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(false)">Recolher todos</button></div></div>
       <div class="accounting-orders">${accountingOrderBlocksMarkup(groups,side)}</div>
     </div>`;
