@@ -940,6 +940,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .macro-stage input[type="date"],.macro-stage input[data-macro-date],.macro-field input[data-macro-date]{font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.01em;}
 .macro-filter-row{display:flex;align-items:center;gap:10px;margin:-6px 0 18px;color:var(--text2);font-size:13px;font-weight:700;}.macro-filter-row select{min-width:210px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:8px 10px;}.macro-filter-row option{color:#111;background:#fff;}
 .macro-summary-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto;}.macro-summary-chip{border:1px solid var(--border2);background:var(--bg3);border-radius:6px;padding:6px 8px;font-size:11px;color:var(--text2);white-space:nowrap;}.macro-summary-chip b{color:var(--green);margin-right:4px;}.macro-summary-chip.final b{color:var(--gold);}.macro-engineering-summary{margin-top:20px;border:1px solid rgba(92,184,92,.38);background:rgba(92,184,92,.06);border-radius:8px;padding:13px 15px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;}.macro-engineering-summary .sum-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:800;}.macro-engineering-summary .sum-value{font-size:17px;font-weight:800;color:#9cdb9c;margin-top:3px;}.macro-block-title{cursor:pointer;user-select:none;position:relative;}.macro-block-title::after{content:'⌃';position:absolute;right:14px;font-size:15px;line-height:12px;}.macro-block.collapsed .macro-stage-grid{display:none;}.macro-block.collapsed .macro-block-title::after{content:'⌄';}
+.notification-settings-panel>.panel-head{cursor:pointer;user-select:none;justify-content:center;position:relative}.notification-settings-panel>.panel-head .notification-panel-chevron{position:absolute;right:18px;transition:transform .2s ease}.notification-settings-panel.is-collapsed>.user-detail{display:none}.notification-settings-panel.is-collapsed>.panel-head .notification-panel-chevron{transform:rotate(180deg)}
 @media(max-width:640px){.macro-filter-row{align-items:stretch;flex-direction:column;gap:5px;}.macro-filter-row select{width:100%;}.macro-summary-chips{margin:4px 0 0;width:100%;}.macro-summary-chip{font-size:10px;}.macro-engineering-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;}.macro-order-summary{gap:7px;}}
 /* VENDAS / PEDIDOS DE VENDA */
 .sales-page{display:flex;flex-direction:column;gap:18px;}
@@ -1587,10 +1588,9 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
         <div class="user-detail"><div class="empty-state"><div class="ei"><span class="msi msi-xl">admin_panel_settings</span></div><h3>Selecione um administrador</h3><p>Escolha para visualizar</p></div></div>
       </div>
     </div>
-    <div class="panel notification-settings-panel" id="notificationSettingsPanel">
-      <div class="panel-head"><span class="msi msi-sm">notifications_active</span> Notificações do Cronograma <span class="role-badge-master">MESTRE</span></div>
+    <div class="panel notification-settings-panel is-collapsed" id="notificationSettingsPanel">
+      <div class="panel-head" onclick="this.parentElement.classList.toggle('is-collapsed')"><span class="msi msi-sm">notifications_active</span> Notificações do Cronograma <span class="role-badge-master">MESTRE</span><span class="msi notification-panel-chevron">expand_less</span></div>
       <div class="user-detail" id="notificationSettingsContent"></div>
-      <div class="user-detail" id="pushDiagnosticsPanel"></div>
     </div>
   </div>
 
@@ -2291,7 +2291,47 @@ const sColor    = s => ({done:'var(--text3)',delayed:'var(--red)',at_risk:'var(-
 const getInit   = n => n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
 const fileIcon  = n => {const e=n.split('.').pop().toLowerCase();const ic={pdf:'picture_as_pdf',jpg:'image',jpeg:'image',png:'image',doc:'description',docx:'description',xls:'table_chart',xlsx:'table_chart',dwg:'architecture',dxf:'architecture',zip:'folder_zip',rar:'folder_zip'}[e]||'attach_file';return `<span class="msi msi-sm">${ic}</span>`;};
 const fmtSize   = b => b<1024?b+'B':b<1048576?(b/1024).toFixed(1)+'KB':(b/1048576).toFixed(1)+'MB';
-const fileKey   = id => 'order_'+String(id);
+const normalizeOrderIdentity=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const clientOrderRef=order=>order?`v2_${normalizeOrderIdentity(order.code)}_${normalizeOrderIdentity(order.op)}_${normalizeOrderIdentity(order.name)}`:'';
+function resolveClientOrder(ref,source=ORDERS){
+  if(ref===null||ref===undefined||ref==='')return null;
+  const key=String(ref);
+  const exact=(source||[]).find(order=>clientOrderRef(order)===key);
+  if(exact)return exact;
+  if(/^\d+$/.test(key))return (source||[])[Number(key)]||(source||[]).find(order=>String(order.id)===key)||null;
+  if(key.startsWith('v2_')){
+    const parts=key.slice(3).split('_'),code=parts[0]||'',op=parts[1]||'';
+    const candidates=(source||[]).filter(order=>normalizeOrderIdentity(order.code)===code&&normalizeOrderIdentity(order.op)===op);
+    if(candidates.length===1)return candidates[0];
+  }
+  return null;
+}
+const clientOrders=client=>(client?.orders||[]).map(ref=>resolveClientOrder(ref)).filter(Boolean);
+const fileKey=id=>'order_'+String(id);
+const orderFileKey=order=>fileKey(clientOrderRef(order)||order?.id||'');
+function migrateClientOrderRefs(){
+  let changed=false;
+  (DB.clients||[]).forEach(client=>{
+    const refs=[];
+    (client.orders||[]).forEach(ref=>{
+      const order=resolveClientOrder(ref),stable=order?clientOrderRef(order):String(ref||'');
+      if(stable&&!refs.includes(stable))refs.push(stable);
+      if(stable!==String(ref))changed=true;
+    });
+    client.orders=refs;
+  });
+  if(DB.clientOrderRefsVersion!==2){DB.clientOrderRefsVersion=2;changed=true;}
+  return changed;
+}
+function migrateOrderFileKeys(){
+  let changed=false;
+  (ORDERS||[]).forEach((order,index)=>{
+    const oldKey=fileKey(index),idKey=fileKey(order.id),stableKey=orderFileKey(order),legacy=FILE_STORE[oldKey]||FILE_STORE[idKey];
+    if(legacy&&legacy.length&&!FILE_STORE[stableKey]){FILE_STORE[stableKey]=legacy;changed=true;}
+    [oldKey,idKey].forEach(key=>{if(key!==stableKey&&FILE_STORE[key]){delete FILE_STORE[key];changed=true;}});
+  });
+  return changed;
+}
 function toggleChip(id){document.getElementById(id).classList.toggle('active',document.querySelector('#'+id+' input').checked);}
 function togglePassword(inputId,btn){
   const input=document.getElementById(inputId);
@@ -2678,8 +2718,8 @@ function renderStats(){
   const nextDueSub=nextDue?statDaysText(nextDueDiff):'Sem pedidos ativos';
 
   const linked=new Set();
-  (DB.clients||[]).forEach(c=>(c.orders||[]).forEach(i=>{const n=Number(i);if(!Number.isNaN(n))linked.add(n);}));
-  const unlinked=ORDERS.reduce((sum,o,i)=>sum+(linked.has(i)?0:1),0);
+  (DB.clients||[]).forEach(c=>(c.orders||[]).forEach(ref=>{const order=resolveClientOrder(ref);if(order)linked.add(clientOrderRef(order));}));
+  const unlinked=ORDERS.reduce((sum,order)=>sum+(linked.has(clientOrderRef(order))?0:1),0);
   const lastUpdate=DB.lastImport||'Sem registro';
 
   const cards=[
@@ -2697,7 +2737,7 @@ function renderStats(){
 
 // ── Constrói o card de pedido (admin e cliente compartilham estrutura) ──
 function buildOrderCard(order,isClient=false,weekRangeVal=null){
-  const schedule=cronPrepareOrderSchedule(order),s=isClient?getStatus(order):(schedule.delay>0?'delayed':Number(order.pct)>=100?'done':'on_track'),sc=s==='delayed'?'delayed':s==='at_risk'?'at-risk':'on-track',sbadge=s==='delayed'?'<span class="status-badge badge-delayed">ATRASADO</span>':s==='at_risk'?'<span class="status-badge badge-risk">EM RISCO</span>':s==='done'?'<span class="status-badge badge-done">CONCLUÍDO</span>':'<span class="status-badge badge-ok">NO PRAZO</span>',diff=daysDiff(referenceFinish(order)),diffTxt=isClient?(order.pct>=100?'':diff<0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${Math.abs(diff)}d atraso</span>`:diff<30?`<span style="color:var(--warn);font-size:12px;">${diff}d restantes</span>`:''):(schedule.delay>0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${schedule.delay}d atraso</span>`:'<span style="color:var(--green);font-size:11px;font-weight:700;">NO PRAZO</span>'),archived=order._archived?'<span style="font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 7px;"><span class="msi msi-sm">archive</span> Arquivado</span>':'',datesHTML=isClient?`<div class="client-date-pair"><span><b>Início real</b>${fmtActualDate(order.actualStart)}</span><span><b>Término real</b>${fmtActualDate(order.actualFinish)}</span></div>`:`${cronCardMetric('Começou',schedule.began)}${cronCardMetric('Projetado',schedule.contract)}${cronCardMetric('Calculada',schedule.calculated,'calculated')}`,deptsHTML=isClient?buildClientOrderDetails(order,weekRangeVal):buildOfficialOrderDetails(order),weekMatch=weekRangeVal&&orderHasTaskInWeek(order,weekRangeVal);let filesHTML='';if(isClient){const fk=fileKey(order.id),files=FILE_STORE[fk]||[],docsGrid=files.length===0?'<div class="no-docs">Nenhum documento anexado para este equipamento.</div>':`<div class="docs-grid">${files.map((f,fi)=>`<div class="doc-card" onclick="downloadOrderFile('${fk}',${fi})"><div class="dc-icon">${fileIcon(f.name)}</div><div class="dc-name" title="${escapeHTML(f.name)}">${escapeHTML(f.name)}</div><div class="dc-size">${fmtSize(f.size)}</div><div class="dc-dl"><span class="msi msi-sm">download</span> Baixar</div></div>`).join('')}</div>`;filesHTML=`<div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docsGrid}</div>`;}const cc=isClient?'client-order-card':'order-card',ch=isClient?'client-order-head':'order-header',ct=isClient?'client-order-tasks':'order-tasks',codeLabel=order.code||'—',opLabel=order.op&&order.op!==order.code?order.op:'';return `<div class="${cc} ${sc}${weekMatch?' open':''}" id="card-${order.id}"><div class="${ch}" onclick="${isClient?'this.parentElement.classList.toggle(\'open\')':'toggleOfficialOrderCard(this)'}"><span class="status-dot" style="background:${sColor(s)}"></span><span class="order-code" title="${escapeHTML(codeLabel)}">${escapeHTML(codeLabel)}</span><div class="order-info"><div class="order-name" title="${escapeHTML(order.name)}">${escapeHTML(order.name)}</div>${opLabel?`<div class="order-op">OP: ${escapeHTML(opLabel)} · ${schedule.entries.length} operação(ões)</div>`:''}</div><div class="order-meta">${archived}${diffTxt}${isClient?sbadge:''}${datesHTML}<div class="pct-wrap"><div class="pct-bar"><div class="pct-fill ${pctClass(order.pct)}" style="width:${order.pct}%"></div></div><span class="pct-text" style="color:${pctColor(order.pct)}">${order.pct}%</span></div></div><span class="chevron">▾</span></div><div class="${ct}">${deptsHTML}${filesHTML}</div></div>`;
+  const schedule=cronPrepareOrderSchedule(order),s=isClient?getStatus(order):(schedule.delay>0?'delayed':Number(order.pct)>=100?'done':'on_track'),sc=s==='delayed'?'delayed':s==='at_risk'?'at-risk':'on-track',sbadge=s==='delayed'?'<span class="status-badge badge-delayed">ATRASADO</span>':s==='at_risk'?'<span class="status-badge badge-risk">EM RISCO</span>':s==='done'?'<span class="status-badge badge-done">CONCLUÍDO</span>':'<span class="status-badge badge-ok">NO PRAZO</span>',diff=daysDiff(referenceFinish(order)),diffTxt=isClient?(order.pct>=100?'':diff<0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${Math.abs(diff)}d atraso</span>`:diff<30?`<span style="color:var(--warn);font-size:12px;">${diff}d restantes</span>`:''):(schedule.delay>0?`<span style="color:var(--red);font-size:12px;font-weight:700;">${schedule.delay}d atraso</span>`:'<span style="color:var(--green);font-size:11px;font-weight:700;">NO PRAZO</span>'),archived=order._archived?'<span style="font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 7px;"><span class="msi msi-sm">archive</span> Arquivado</span>':'',datesHTML=isClient?`<div class="client-date-pair"><span><b>Início real</b>${fmtActualDate(order.actualStart)}</span><span><b>Término real</b>${fmtActualDate(order.actualFinish)}</span></div>`:`${cronCardMetric('Começou',schedule.began)}${cronCardMetric('Projetado',schedule.contract)}${cronCardMetric('Calculada',schedule.calculated,'calculated')}`,deptsHTML=isClient?buildClientOrderDetails(order,weekRangeVal):buildOfficialOrderDetails(order),weekMatch=weekRangeVal&&orderHasTaskInWeek(order,weekRangeVal);let filesHTML='';if(isClient){const fk=orderFileKey(order),files=FILE_STORE[fk]||[],docsGrid=files.length===0?'<div class="no-docs">Nenhum documento anexado para este equipamento.</div>':`<div class="docs-grid">${files.map((f,fi)=>`<div class="doc-card" onclick="downloadOrderFile('${fk}',${fi})"><div class="dc-icon">${fileIcon(f.name)}</div><div class="dc-name" title="${escapeHTML(f.name)}">${escapeHTML(f.name)}</div><div class="dc-size">${fmtSize(f.size)}</div><div class="dc-dl"><span class="msi msi-sm">download</span> Baixar</div></div>`).join('')}</div>`;filesHTML=`<div class="docs-section"><div class="section-title" style="margin-bottom:8px;"><span class="msi msi-sm">attach_file</span> Documentos &amp; Arquivos</div>${docsGrid}</div>`;}const cc=isClient?'client-order-card':'order-card',ch=isClient?'client-order-head':'order-header',ct=isClient?'client-order-tasks':'order-tasks',codeLabel=order.code||'—',opLabel=order.op&&order.op!==order.code?order.op:'';return `<div class="${cc} ${sc}${weekMatch?' open':''}" id="card-${order.id}"><div class="${ch}" onclick="${isClient?'this.parentElement.classList.toggle(\'open\')':'toggleOfficialOrderCard(this)'}"><span class="status-dot" style="background:${sColor(s)}"></span><span class="order-code" title="${escapeHTML(codeLabel)}">${escapeHTML(codeLabel)}</span><div class="order-info"><div class="order-name" title="${escapeHTML(order.name)}">${escapeHTML(order.name)}</div>${opLabel?`<div class="order-op">OP: ${escapeHTML(opLabel)} · ${schedule.entries.length} operação(ões)</div>`:''}</div><div class="order-meta">${archived}${diffTxt}${isClient?sbadge:''}${datesHTML}<div class="pct-wrap"><div class="pct-bar"><div class="pct-fill ${pctClass(order.pct)}" style="width:${order.pct}%"></div></div><span class="pct-text" style="color:${pctColor(order.pct)}">${order.pct}%</span></div></div><span class="chevron">▾</span></div><div class="${ct}">${deptsHTML}${filesHTML}</div></div>`;
 }
 
 function renderOrders(filtered,weekRangeVal){
@@ -5125,14 +5165,14 @@ function selectUser(id){
   const c=DB.clients.find(x=>x.id===id);
   renderClientsPanel();
   const master=isMaster(loggedUser);
-  const linkedOrderIndexes=new Set(DB.clients.flatMap(client=>client.orders||[]));
-  const orderOptions=ORDERS.map((o,i)=>({o,i}))
-    .filter(({i})=>!linkedOrderIndexes.has(i))
-    .map(({o,i})=>`<option value="${i}">${o.code} · ${o.name.slice(0,40)}</option>`).join('');
+  const linkedOrderRefs=new Set(DB.clients.flatMap(client=>client.orders||[]));
+  const orderOptions=ORDERS
+    .filter(order=>!linkedOrderRefs.has(clientOrderRef(order)))
+    .map(order=>`<option value="${clientOrderRef(order)}">${order.code} · ${order.name.slice(0,40)}</option>`).join('');
 
-  const activeTagsHTML=(c.orders||[]).map(i=>{
-    const o=ORDERS[i];if(!o)return'';
-    return `<span class="tag">${o.code} · ${o.name.slice(0,30)}${master?`<span class="rm" onclick="removeOrderFromUser(${c.id},${i})" title="Remover pedido"><span class="msi msi-sm">close</span></span>`:''}</span>`;
+  const activeTagsHTML=(c.orders||[]).map(ref=>{
+    const o=resolveClientOrder(ref);if(!o)return'';
+    return `<span class="tag">${o.code} · ${o.name.slice(0,30)}${master?`<span class="rm" onclick="removeOrderFromUser(${c.id},'${clientOrderRef(o)}')" title="Remover pedido"><span class="msi msi-sm">close</span></span>`:''}</span>`;
   }).join('');
 
   const archTagsHTML=(c.archivedOrders||[]).map(oid=>{
@@ -5140,10 +5180,10 @@ function selectUser(id){
     return `<span class="tag-archived"><span class="msi msi-sm">archive</span> ${arc.code} · ${arc.name.slice(0,25)}${master?`<span class="rm-arch" onclick="removeArchivedOrder(${c.id},${oid})" title="Excluir arquivado"><span class="msi msi-sm">delete</span></span>`:''}</span>`;
   }).join('');
 
-  const activeIdxs=c.orders||[];
+  const activeOrders=clientOrders(c);
   const archIds=c.archivedOrders||[];
   const allFileSections=[
-    ...activeIdxs.map(oidx=>{const o=ORDERS[oidx];return o?buildAdminFileSection(o.id,o.code,o.name,master):'';}),
+    ...activeOrders.map(o=>buildAdminFileSection(orderFileKey(o),o.code,o.name,master,true)),
     ...archIds.map(oid=>{const arc=DB.archivedOrdersData[oid];return arc?buildAdminFileSection(arc.id,arc.code,arc.name+' <span class="msi msi-sm">archive</span>',master):'';}),
   ].join('');
 
@@ -5161,11 +5201,11 @@ function selectUser(id){
     <div class="divider"></div>
     <div class="section-title">Pedidos Ativos</div>
     <div class="tag-list">${activeTagsHTML||'<span style="font-size:14px;color:var(--text3);">Nenhum pedido vinculado.</span>'}</div>
-    ${master?`<div style="margin-top:12px;"><select class="filter-select" onchange="addOrderToUser(${c.id},parseInt(this.value));this.value=''"><option value="">${orderOptions?'+ Adicionar pedido...':'Nenhum pedido disponível'}</option>${orderOptions}</select></div>`:''}
+    ${master?`<div style="margin-top:12px;"><select class="filter-select" onchange="addOrderToUser(${c.id},this.value);this.value=''"><option value="">${orderOptions?'+ Adicionar pedido...':'Nenhum pedido disponível'}</option>${orderOptions}</select></div>`:''}
     ${archTagsHTML?`<div class="divider"></div><div class="section-title">Arquivados ${master?'<span style="font-size:11px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;">(<span class="msi msi-sm">delete</span> para excluir)</span>':''}</div><div class="tag-list">${archTagsHTML}</div>`:''}
     <div class="divider"></div>
     <div class="section-title"><span class="msi msi-sm">attach_file</span> Arquivos por Equipamento</div>
-    ${(activeIdxs.length===0&&archIds.length===0)?'<div style="font-size:14px;color:var(--text3);">Nenhum pedido vinculado.</div>':allFileSections}
+    ${(activeOrders.length===0&&archIds.length===0)?'<div style="font-size:14px;color:var(--text3);">Nenhum pedido vinculado.</div>':allFileSections}
     ${master?`<div class="divider"></div><div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="btn btn-gold btn-sm" onclick="saveUserChanges()"><span class="msi msi-sm">save</span> Salvar Alterações</button><button class="btn btn-danger btn-sm" onclick="deleteUser(${c.id})">Excluir cliente</button></div>`:''}
   </div>`;
 }
@@ -5184,8 +5224,8 @@ function removeArchivedOrder(clientId,orderId){
   persist().then(()=>{selectUser(clientId);showToast('Pedido arquivado excluído');});
 }
 
-function buildAdminFileSection(orderId,code,name,master){
-  const fk=fileKey(orderId);
+function buildAdminFileSection(orderId,code,name,master,keyReady=false){
+  const fk=keyReady?orderId:fileKey(orderId);
   const files=FILE_STORE[fk]||[];
   const filesHTML=files.length===0
     ?'<div style="font-size:13px;color:var(--text3);padding:4px 0;">Nenhum arquivo.</div>'
@@ -5228,15 +5268,16 @@ function removeOrderFile(fk,fi){
   persistFiles().then(()=>{selectUser(selectedUserId);showToast('Arquivo removido');});
 }
 function updateUser(id,field,val){if(!isMaster(loggedUser))return;const c=DB.clients.find(x=>x.id===id);if(c)c[field]=val;}
-function addOrderToUser(id,oidx){
+function addOrderToUser(id,ref){
   if(!isMaster(loggedUser))return;
   const c=DB.clients.find(x=>x.id===id);
-  if(c&&!isNaN(oidx)&&!c.orders.includes(oidx)){c.orders.push(oidx);persist();selectUser(id);}
+  const order=resolveClientOrder(ref),stable=clientOrderRef(order);
+  if(c&&stable&&!c.orders.includes(stable)){c.orders.push(stable);persist();selectUser(id);}
 }
-function removeOrderFromUser(id,oidx){
+function removeOrderFromUser(id,ref){
   if(!isMaster(loggedUser))return;
   const c=DB.clients.find(x=>x.id===id);
-  if(c){c.orders=c.orders.filter(i=>i!==oidx);persist();selectUser(id);}
+  if(c){c.orders=c.orders.filter(item=>String(item)!==String(ref));persist();selectUser(id);}
 }
 function deleteUser(id){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
@@ -5617,7 +5658,7 @@ function clientCurrentDepartment(order,departments){
 function buildClientProgressCard(order){
   const departments=(order.depts||[]).map((department,index)=>({department,index,pct:clientDepartmentProgress(department)}));
   const current=clientCurrentDepartment(order,departments),overall=Math.max(0,Math.min(100,Math.round(Number(order.pct)||0)));
-  const fk=fileKey(order.id),files=FILE_STORE[fk]||[];
+  const fk=order._archived?fileKey(order.id):orderFileKey(order),files=FILE_STORE[fk]||[];
   const docs=files.length?`<div class="docs-grid">${files.map((file,index)=>`<div class="doc-card" onclick="downloadOrderFile('${fk}',${index})"><div class="dc-icon">${fileIcon(file.name)}</div><div class="dc-name" title="${escapeHTML(file.name)}">${escapeHTML(file.name)}</div><div class="dc-size">${fmtSize(file.size)}</div><div class="dc-dl"><span class="msi msi-sm">download</span> Baixar</div></div>`).join('')}</div>`:'<div class="no-docs">Nenhum documento anexado para este equipamento.</div>';
   const completed=!current&&(order._archived||overall>=100);
   const colors=['#26b36a','#8f3fb0','#1b9ed8','#d39b19','#c06f42','#4c75c5','#cf4d63','#6b9c3f','#8a6ec4','#2aafa5'];
@@ -5630,14 +5671,14 @@ function buildClientProgressCard(order){
 }
 function renderClientOrders(){
   const c=loggedUser.ref;
-  const active=(c.orders||[]).map(i=>ORDERS[i]).filter(Boolean);
+  const active=clientOrders(c);
   const archived=(c.archivedOrders||[]).map(oid=>{const item=DB.archivedOrdersData[oid];return item?{...item,_archived:true}:null;}).filter(Boolean);
   const all=[...active,...archived];renderClientStats(active,archived);
   document.getElementById('clientOrdersList').innerHTML=all.length?`<div class="client-progress-list">${all.map(buildClientProgressCard).join('')}</div>`:'<div class="empty-state"><div class="ei"><span class="msi msi-xl">assignment</span></div><h3>Nenhum pedido vinculado</h3><p>Entre em contato com a Cartamac</p></div>';
 }
 function renderClientGantt(){
   const c=loggedUser.ref;
-  const orders=(c.orders||[]).map(i=>ORDERS[i]).filter(Boolean);
+  const orders=clientOrders(c);
   const target=document.getElementById('clientGanttContainer');if(!target)return;
   if(!orders.length){
     target.innerHTML='<div class="empty-state"><div class="ei"><span class="msi msi-xl">bar_chart</span></div><h3>Nenhum pedido ativo vinculado</h3></div>';
@@ -5932,13 +5973,23 @@ function processXMLFile(file){
       if(xml.querySelector('parsererror'))throw new Error('Arquivo XML inválido ou corrompido. Exporte novamente pelo MS Project.');
       const extracted=parseProjectXML(xml);
       if(!extracted.length)throw new Error('Nenhum pedido encontrado no XML. Verifique se o arquivo foi exportado corretamente (Arquivo → Salvar como → XML no MS Project).');
-      ORDERS=extracted;
-      DB.projectOrders=extracted;
+       const previousOrders=ORDERS;
+       ORDERS=extracted;
+       DB.projectOrders=extracted;
+       // Os vínculos usam uma identidade estável; nunca mais dependem da posição
+       // do pedido no XML. Também aceitamos a migração de revisões antigas aqui.
+       (DB.clients||[]).forEach(client=>{
+         client.orders=(client.orders||[]).map(ref=>{
+           const previous=resolveClientOrder(ref,previousOrders);
+           if(!previous)return String(ref);
+           return clientOrderRef(ORDERS.find(order=>clientOrderRef(order)===clientOrderRef(previous))||previous);
+         });
+       });
       let archivedCount=0;
       ORDERS.forEach(o=>{
         if(o.pct>=100){
           DB.clients.forEach(c=>{
-            if((c.orders||[]).includes(o.id)){
+            if((c.orders||[]).includes(clientOrderRef(o))){
               if(!c.archivedOrders)c.archivedOrders=[];
               if(!c.archivedOrders.includes(o.id)){
                 c.archivedOrders.push(o.id);
@@ -7870,7 +7921,8 @@ function normalizeDB(data){
     }
   });
   ORDERS=(DB.projectOrders?.length>0?DB.projectOrders:getDefaultOrders()).map(normalizeCronograma16401Stages);
-  return DB.admins.length!==beforeAdmins;
+  const migratedClients=migrateClientOrderRefs();
+  return DB.admins.length!==beforeAdmins||migratedClients;
 }
 
 // Reflete na tela os dados atualizados (chamado no load inicial e a cada atualização remota)
@@ -7924,6 +7976,7 @@ function startRealtimeSync(){
   // Listener em tempo real dos arquivos anexados aos pedidos (mesmo princípio acima).
   onSnapshot(FILE_REF,(snap)=>{
     FILE_STORE=snap.exists()?(snap.data().files||{}):{};
+    if(migrateOrderFileKeys())persistFiles();
     if(document.getElementById('page-clientes')?.classList.contains('active')&&selectedUserId!=null&&typeof selectUser==='function')selectUser(selectedUserId);
   },err=>{
     console.error('Files sync error:',err);
@@ -7957,11 +8010,6 @@ function startRealtimeSync(){
     NOTIFICATION_STORE=snap.exists()&&Array.isArray(snap.data()?.items)?snap.data().items:[];
     renderNotificationBell();
   },err=>{console.error('Notification sync error:',err);});
-
-  onSnapshot(PUSH_DIAGNOSTICS_REF,(snap)=>{
-    PUSH_DIAGNOSTIC=snap.exists()?snap.data()?.last||null:null;
-    renderPushDiagnostics();
-  },err=>{console.error('Push diagnostics sync error:',err);});
 
   onSnapshot(SHARED_MAXIPROD_CACHE_REF,(snap)=>{
     if(!snap.exists())return;
