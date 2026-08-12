@@ -1106,6 +1106,9 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .accounting-summary-card.advance b{color:var(--gold);}
 .accounting-summary-card.settled b{color:var(--green);}
 .accounting-summary-card.open b{color:var(--warn);}
+.accounting-tracking{border:1px solid rgba(96,165,250,.38);border-radius:10px;background:rgba(96,165,250,.065);padding:13px 15px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;}
+.accounting-tracking-head{min-width:230px;}.accounting-tracking-head span{display:block;color:#a9c7ff;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.65px;margin-bottom:5px;}.accounting-tracking-head b{font-size:13px;color:var(--text);}
+.accounting-tracking-list{display:flex;gap:7px;flex-wrap:wrap;flex:1;}.accounting-tracking-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border2);border-radius:999px;background:#181818;color:var(--text2);padding:6px 9px;font-size:10px;font-weight:800;}.accounting-tracking-chip strong{color:var(--gold);font-family:'JetBrains Mono',monospace;}.accounting-tracking-chip.counting{border-color:rgba(96,165,250,.48);color:#b9d1ff;background:rgba(96,165,250,.09);}.accounting-tracking-chip.waiting{border-color:rgba(230,177,62,.4);color:#e6c45e;background:rgba(230,177,62,.07);}.accounting-tracking-empty{color:var(--text3);font-size:11px;padding:5px 0;}
 .accounting-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
 .accounting-toolbar .search-input{flex:1;min-width:260px;}
 .accounting-filter{border:1px solid var(--border2);background:var(--bg2);color:var(--text2);border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;}
@@ -6980,13 +6983,36 @@ async function refreshPurchaseOrdersMaxiprod(options={}){
 // ─────────────── CONTABILIDADE · CONDIÇÕES DOS PEDIDOS ───────────────
 // A tela é somente leitura. Ela cruza os pedidos já carregados com os títulos
 // do Financeiro/Fiscal e nunca grava ou altera informações no MaxiProd.
+function accountingInvoiceDate(record){
+  const raw=record?.raw||{},wanted=['dataFaturamento','faturamentoData','dataDoFaturamento','dataEmissaoNotaFiscal','notaFiscalEmissaoData','emissaoNotaFiscalData','dataUltimoFaturamento'].map(financeNormalize);
+  let found=null;
+  const visit=(value,depth=0,inInvoice=false)=>{
+    if(found||!value||typeof value!=='object'||depth>5)return;
+    for(const [key,field] of Object.entries(value)){
+      const normalized=financeNormalize(key),invoiceContext=inInvoice||/notafiscal|faturamento/.test(normalized);
+      if(field!==null&&field!==undefined&&field!==''&&(wanted.includes(normalized)||(invoiceContext&&/^(emissaodata|dataemissao|data)$/.test(normalized)))){const parsed=salesDate(field);if(parsed){found=parsed;return;}}
+      if(field&&typeof field==='object')visit(field,depth+1,invoiceContext);
+    }
+  };
+  visit(raw);return found;
+}
+function accountingInvoiceInfo(record){
+  const raw=record?.raw||{};
+  const state=financeNormalize(raw?.estadoPrincipalDetalhe??salesValue(raw,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido','estadoDescricao','statusDescricao']));
+  const total=Number(record?.valorTotal)||0,faturado=Number(record?.valorFaturado)||0;
+  return {state,date:accountingInvoiceDate(record),isInvoiced:state.includes('faturad')||state.includes('recebid')||(total>0&&faturado>=total-.01)};
+}
 function accountingOrderIsActive(record,side){
   const raw=record?.raw||{};
   if(raw.cancelado===true||raw.cancelada===true||raw.isCancelado===true||raw.isCancelled===true)return false;
   const state=financeNormalize(raw?.estadoPrincipalDetalhe??salesValue(raw,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido','estadoDescricao','statusDescricao']));
   if(state.includes('cancel')||state.includes('excluid'))return false;
   const futureDelivery=state.includes('entregafutura');
-  if(side==='receber'&&state.includes('recebido')&&!futureDelivery)return false;
+  if(side==='receber'){
+    const invoice=accountingInvoiceInfo(record);
+    if(invoice.isInvoiced&&invoice.date){const cutoff=new Date();cutoff.setHours(0,0,0,0);cutoff.setMonth(cutoff.getMonth()-3);if(invoice.date<cutoff)return false;}
+    return true;
+  }
   if(side==='pagar'&&state.includes('faturado')&&!futureDelivery)return false;
   if((state.includes('recebido')||state.includes('faturado'))&&!futureDelivery)return false;
   return true;
@@ -6995,11 +7021,14 @@ function accountingOrderCatalog(side){
   const records=(side==='receber'?salesRecords():purchaseOrderRecords()).filter(record=>accountingOrderIsActive(record,side));
   const byId=new Map(),byNumber=new Map();
   records.forEach(record=>{
+    const invoice=side==='receber'?accountingInvoiceInfo(record):{isInvoiced:false,date:null};
     const entry={
       id:record.id,
       numero:String(record.numero||'').trim(),
       party:side==='receber'?record.cliente:record.fornecedor,
       total:Number(record.valorTotal)||0,
+      isInvoiced:invoice.isInvoiced,
+      invoiceDate:invoice.date,
       deliveryDates:Array.isArray(record.entregas)&&record.entregas.length?record.entregas:(side==='receber'?(record.entrega?[record.entrega]:[]):(record.previsaoEntrega?[record.previsaoEntrega]:[])),
       raw:record.raw||{}
     };
@@ -7013,6 +7042,21 @@ function accountingRelation(raw,side){
   for(const name of names)if(raw?.[name]&&typeof raw[name]==='object')return raw[name];
   return null;
 }
+function accountingNestedOrderIdentity(source,side,depth=0){
+  if(!source||typeof source!=='object'||depth>5)return {id:null,numero:null};
+  const pattern=side==='receber'?/pedido.*venda|venda.*pedido/:/pedido.*compra|compra.*pedido/;
+  for(const [key,value] of Object.entries(source))if(pattern.test(financeNormalize(key))&&value&&typeof value==='object'){
+    return {id:receberChave(value,['id']),numero:receberChave(value,['numero','numeroPedido','pedidoNumero'])};
+  }
+  for(const value of Object.values(source))if(value&&typeof value==='object'){const found=accountingNestedOrderIdentity(value,side,depth+1);if(found.id!==null||found.numero!==null)return found;}
+  return {id:null,numero:null};
+}
+function accountingNestedValue(source,aliases,depth=0){
+  if(!source||typeof source!=='object'||depth>5)return null;
+  const direct=receberChave(source,aliases);if(direct!==null)return direct;
+  for(const value of Object.values(source))if(value&&typeof value==='object'){const found=accountingNestedValue(value,aliases,depth+1);if(found!==null)return found;}
+  return null;
+}
 function accountingOrderLink(item,side,catalog){
   const raw=item?.raw||{};
   const numberAliases=side==='receber'
@@ -7020,10 +7064,11 @@ function accountingOrderLink(item,side,catalog){
     :['pedidoDeCompraNumero','numeroPedidoDeCompra','pedidoCompraNumero','numeroPedidoCompra','pedidoNumero','numeroPedido'];
   const idAliases=side==='receber'?['pedidoDeVendaId','pedidoVendaId','pedidoId']:['pedidoDeCompraId','pedidoCompraId','pedidoId'];
   const relation=accountingRelation(raw,side);
+  const nested=accountingNestedOrderIdentity(raw,side);
   const directNumber=receberChave(raw,numberAliases);
-  const relationNumber=relation&&receberChave(relation,['numero','numeroPedido','pedidoNumero']);
+  const relationNumber=(relation&&receberChave(relation,['numero','numeroPedido','pedidoNumero']))??nested.numero;
   const directId=receberChave(raw,idAliases);
-  const relationId=relation&&receberChave(relation,['id']);
+  const relationId=(relation&&receberChave(relation,['id']))??nested.id;
   const id=directId??relationId;
   let numero=directNumber??relationNumber;
   let order=id!==null&&id!==undefined?catalog.byId.get(String(id)):null;
@@ -7035,11 +7080,12 @@ function accountingOrderLink(item,side,catalog){
     const match=source.match(new RegExp(`pedido\\s*(?:de\\s*)?${kind}\\s*(?:n[º°o.]*)?\\s*([A-Za-z0-9./-]+)`,'i'));
     if(match){numero=match[1];order=catalog.byNumber.get(financeNormalize(numero))||order;}
   }
+  const catalogMatched=Boolean(order);
   // Pedidos já recebidos/faturados podem deixar de vir nas grades de pedidos,
   // embora seus títulos continuem no histórico financeiro. Mantemos um vínculo
-  // mínimo a partir da própria relação do título durante os 45 dias de retenção.
+  // mínimo a partir da própria relação do título durante o acompanhamento.
   if(!order&&numero){order={id:id??'',numero:String(numero),party:'',total:0,deliveryDates:[],raw:relation||{}};}
-  return {order,numero:String(numero||order?.numero||'').trim()};
+  return {order,numero:String(numero||order?.numero||'').trim(),catalogMatched};
 }
 function accountingConditionKind(raw){
   const type=financeNormalize(receberChave(raw,['tipo','tipoDescricao','origem','natureza'])||'');
@@ -7049,12 +7095,16 @@ function accountingConditionKind(raw){
 }
 function accountingPaymentAmount(item,side,value){
   const raw=item?.raw||{};
+  const type=financeNormalize(receberChave(raw,['tipo','tipoDescricao','origem','natureza'])||'');
+  // Previsao do pedido faturado nunca e tratada como pagamento. O recebimento
+  // deve vir de um titulo financeiro real em Contas a receber.
+  if(side==='receber'&&type.includes('pedidodevenda'))return 0;
   const aliases=side==='receber'
     ?['valorRecebidoLiquido','valorRecebido','valorBaixado','valorLiquidado','valorPago']
     :['valorPagoLiquido','valorPago','valorBaixado','valorLiquidado','valorRecebido'];
-  const direct=receberChave(raw,aliases);
+  const direct=accountingNestedValue(raw,aliases);
   if(direct!==null)return Math.min(Math.abs(receberNumero(direct)),Math.abs(value));
-  const state=financeNormalize(receberChave(raw,['estado','status','situacao'])||'');
+  const state=financeNormalize(accountingNestedValue(raw,['estado','status','situacao'])||'');
   const settled=side==='receber'?state.includes('recebid'):state.includes('pago')||state.includes('liquid')||state.includes('quitad');
   return settled?Math.abs(value):0;
 }
@@ -7074,8 +7124,11 @@ function accountingInvoiceNumber(raw){
   return [...found].filter(value=>value&&!/^0+$/.test(value)).join(' · ')||'—';
 }
 function accountingSettlementDate(raw,due){
-  const direct=receberData(raw,['dataRecebimento','recebimentoData','dataPagamento','pagamentoData','dataBaixa','baixaData','dataLiquidacao','liquidacaoData','quitacaoData','dataQuitacao']);
-  return direct||null;
+  const aliases=['dataRecebimento','recebimentoData','dataPagamento','pagamentoData','dataBaixa','baixaData','dataLiquidacao','liquidacaoData','quitacaoData','dataQuitacao'];
+  const direct=receberData(raw,aliases);if(direct)return direct;
+  let found=null;
+  const visit=(value,depth=0)=>{if(found||!value||typeof value!=='object'||depth>5)return;const parsed=receberData(value,aliases);if(parsed){found=parsed;return;}Object.values(value).forEach(field=>{if(field&&typeof field==='object')visit(field,depth+1);});};
+  visit(raw);return found;
 }
 function accountingRows(side){
   const catalog=accountingOrderCatalog(side);
@@ -7091,10 +7144,8 @@ function accountingRows(side){
         .filter(item=>item.vencimento&&item.valorTitulo>0.004);
     }
   }else source=side==='receber'?receberRegistros():pagarRegistros();
-  return source.map((item,index)=>{
+  const candidates=source.map((item,index)=>{
     const raw=item.raw||{},kind=accountingConditionKind(raw),link=accountingOrderLink(item,side,catalog);
-    // Somente parcelas vinculadas a pedidos ainda ativos aparecem aqui.
-    if(!link.order)return null;
     const value=Math.abs(Number(side==='receber'?item.valorParcela:item.valorTitulo)||0);
     if(value<=0.004)return null;
     const settled=accountingPaymentAmount(item,side,value);
@@ -7107,8 +7158,24 @@ function accountingRows(side){
     const today=new Date();today.setHours(0,0,0,0);
     const overdue=balance>0.004&&due&&due<today;
     const status=balance<=0.004?{key:'done',label:side==='receber'?'Recebido':'Pago'}:settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
-    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoice:accountingInvoiceNumber(raw),settledAt:balance<=0.004?accountingSettlementDate(raw,due):null};
-  }).filter(Boolean).sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
+    return {id:index,raw,kind,order:link.order,catalogMatched:link.catalogMatched,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoice:accountingInvoiceNumber(raw),settledAt:balance<=0.004?accountingSettlementDate(raw,due):null};
+  }).filter(Boolean);
+  if(side==='receber'){
+    const conditions=candidates.filter(row=>row.order&&row.catalogMatched&&(row.kind.key==='delivery'||row.kind.key==='advance'));
+    const claimed=new Set();
+    candidates.filter(row=>!row.catalogMatched&&row.kind.key==='document'&&row.settled>0.004).forEach(title=>{
+      const titleParty=financeNormalize(title.party),titleDue=title.due?.toISOString().slice(0,10)||'';
+      const sameParty=condition=>{const key=financeNormalize(condition.party);return key===titleParty||(key.length>7&&titleParty.length>7&&(key.includes(titleParty)||titleParty.includes(key)));};
+      const exactCandidates=conditions.map((condition,index)=>({condition,index})).filter(({condition,index})=>!claimed.has(index)&&(condition.due?.toISOString().slice(0,10)||'')===titleDue&&Math.abs(condition.value-title.value)<=.01);
+      let match=exactCandidates.length===1?exactCandidates[0].index:-1;
+      if(match<0&&exactCandidates.length>1){const byParty=exactCandidates.filter(({condition})=>sameParty(condition));if(byParty.length===1)match=byParty[0].index;}
+      if(match<0)return;
+      claimed.add(match);
+      const condition=conditions[match];
+      title.order=condition.order;title.catalogMatched=true;title.numero=condition.numero;title.party=condition.party;title.linkSource='vencimento + valor exatos';
+    });
+  }
+  return candidates.filter(row=>row.order).sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
 }
 function accountingFilteredRows(rows){
   const term=financeNormalize(accountingSearch);
@@ -7148,13 +7215,45 @@ function accountingGroupRows(rows){
   });
   return [...groups.values()].map(group=>{
     group.total=Number(group.order?.total)||group.rows.reduce((sum,row)=>sum+row.value,0);
+    const deliveryRows=group.rows.filter(row=>row.kind.key==='delivery');
+    const documentRows=group.rows.filter(row=>row.kind.key==='document');
+    const usedDocuments=new Set();
+    // A linha exibida continua sendo a condicao do pedido. O titulo real de
+    // Contas a receber apenas confirma quanto foi recebido naquela parcela.
+    deliveryRows.forEach(delivery=>{
+      const dueKey=delivery.due?.toISOString().slice(0,10)||'';
+      let match=documentRows.findIndex((document,index)=>!usedDocuments.has(index)&&(document.due?.toISOString().slice(0,10)||'')===dueKey&&Math.abs(document.value-delivery.value)<=.01);
+      if(match<0)match=documentRows.findIndex((document,index)=>!usedDocuments.has(index)&&Math.abs(document.value-delivery.value)<=.01);
+      if(match<0)return;
+      usedDocuments.add(match);
+      const title=documentRows[match];
+      delivery.settled=Math.min(delivery.value,title.settled);
+      delivery.balance=Math.max(delivery.value-delivery.settled,0);
+      delivery.settledAt=title.settledAt;
+      delivery.invoice=title.invoice||delivery.invoice;
+      const today=new Date();today.setHours(0,0,0,0);
+      const overdue=delivery.balance>0.004&&delivery.due&&delivery.due<today;
+      delivery.status=delivery.balance<=0.004?{key:'done',label:'Recebido'}:delivery.settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
+    });
     group.advances=group.rows.filter(row=>row.kind.key==='advance').reduce((sum,row)=>sum+row.value,0);
-    group.settled=group.rows.reduce((sum,row)=>sum+row.settled,0);
-    group.balance=group.rows.reduce((sum,row)=>sum+row.balance,0);
+    const visibleSettled=group.rows.filter(row=>row.kind.key!=='document').reduce((sum,row)=>sum+row.settled,0);
+    const unmatchedSettled=documentRows.reduce((sum,row,index)=>sum+(usedDocuments.has(index)?0:row.settled),0);
+    group.settled=Math.min(group.total,visibleSettled+unmatchedSettled);
+    // Previsao faturada e titulo financeiro real podem coexistir no retorno.
+    // O saldo do pedido nao soma essas duas representacoes: total menos baixas.
+    group.balance=Math.max(group.total-group.settled,0);
     group.paidPercent=group.total>0?Math.min(100,(group.settled/group.total)*100):0;
     group.deliveryDates=salesDateList(group.order?.deliveryDates||[]);
     group.settledAt=group.rows.reduce((latest,row)=>row.settledAt&&(!latest||row.settledAt>latest)?row.settledAt:latest,null);
-    group.retentionExpired=group.balance<=0.004&&group.paidPercent>=99.995&&group.settledAt&&((Date.now()-group.settledAt.getTime())/(86400000)>45);
+    group.isInvoiced=Boolean(group.order?.isInvoiced);
+    group.invoiceDate=group.order?.invoiceDate||null;
+    group.countdownStarted=Boolean(group.isInvoiced&&group.balance<=0.004&&group.paidPercent>=99.995&&group.settledAt);
+    group.countdownDeadline=group.countdownStarted?new Date(group.settledAt.getTime()+30*86400000):null;
+    group.countdownDaysLeft=group.countdownStarted?Math.max(0,Math.ceil((group.countdownDeadline.getTime()-Date.now())/86400000)):null;
+    const invoicedExpired=group.countdownStarted&&group.countdownDeadline.getTime()<Date.now();
+    const standardExpired=!group.isInvoiced&&group.balance<=0.004&&group.paidPercent>=99.995&&group.settledAt&&((Date.now()-group.settledAt.getTime())/(86400000)>45);
+    group.retentionExpired=invoicedExpired||standardExpired;
+    group.rows=group.rows.filter(row=>row.kind.key!=='document');
     return group;
   }).filter(group=>!group.retentionExpired).sort((a,b)=>{
     if(a.numero==='Não identificado'&&b.numero!=='Não identificado')return 1;
@@ -7187,7 +7286,7 @@ function accountingOrderBlocksMarkup(groups,side){
   const settledLabel=side==='receber'?'Recebido':'Pago';
   return groups.map(group=>{const delivery=accountingDeliveryInfo(group);return `<details class="accounting-order-card">
     <summary class="accounting-order-summary">
-      <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} condição(ões) de pagamento</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span></div></div>
+      <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} condição(ões) de pagamento</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span>${group.countdownStarted?`<span class="accounting-tracking-chip counting" title="Baixa em ${receberDataFormat(group.settledAt)} · saída em ${receberDataFormat(group.countdownDeadline)}"><span class="msi msi-sm">timer</span><strong>30 dias:</strong> ${group.countdownDaysLeft} restante(s)</span>`:group.isInvoiced&&group.paidPercent>=99.995?`<span class="accounting-tracking-chip waiting"><span class="msi msi-sm">schedule</span>100% recebido · aguardando data da baixa</span>`:''}</div></div>
       <div class="accounting-order-metric optional"><span>Valor total do pedido</span><b>${fmtBRL(group.total)}</b></div>
       <div class="accounting-order-metric advance optional"><span>Adiantamentos</span><b>${fmtBRL(group.advances)}</b></div>
       <div class="accounting-order-metric settled"><span>${settledLabel}</span><b>${fmtBRL(group.settled)}</b></div>
@@ -7344,7 +7443,13 @@ function toggleAccountingAdvances(){accountingOnlyAdvances=!accountingOnlyAdvanc
 function renderAccountingPage(container=document.getElementById('contabilidadeContent')){
   if(!container)return;
   const side=accountingView==='pagar'?'pagar':'receber';
-  const rows=accountingGroupRows(accountingRows(side)).flatMap(group=>group.rows),filtered=accountingFilteredRows(rows),groups=accountingGroupRows(filtered);
+  const allGroups=accountingGroupRows(accountingRows(side));
+  const rows=allGroups.flatMap(group=>group.rows),filtered=accountingFilteredRows(rows),groups=accountingGroupRows(filtered);
+  const trackedInvoiced=side==='receber'?allGroups.filter(group=>group.isInvoiced).sort((a,b)=>{
+    if(a.countdownStarted!==b.countdownStarted)return a.countdownStarted?-1:1;
+    if(a.countdownStarted&&b.countdownStarted)return a.countdownDaysLeft-b.countdownDaysLeft;
+    return String(b.numero).localeCompare(String(a.numero),'pt-BR',{numeric:true});
+  }):[];
   const advances=rows.filter(row=>row.kind.key==='advance').reduce((sum,row)=>sum+row.value,0);
   const settled=rows.reduce((sum,row)=>sum+row.settled,0),balance=rows.reduce((sum,row)=>sum+row.balance,0);
   const orderCount=new Set(rows.filter(row=>row.numero!=='Não identificado').map(row=>financeNormalize(row.numero))).size;
@@ -7361,7 +7466,8 @@ function renderAccountingPage(container=document.getElementById('contabilidadeCo
         <div class="accounting-summary-card settled"><span>${settledLabel}</span><b>${fmtBRL(settled)}</b></div>
         <div class="accounting-summary-card open"><span>Saldo em aberto</span><b>${fmtBRL(balance)}</b></div>
       </div>
-      <div class="accounting-note"><b>Leitura sem alterações:</b> o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. “Entrega / parcela” representa o valor não adiantado previsto na condição de pagamento. Pedidos 100% recebidos ou pagos são mantidos por 45 dias após a baixa e depois removidos do cache compartilhado.${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
+      ${side==='receber'?`<div class="accounting-tracking"><div class="accounting-tracking-head"><span>Faturados · últimos 3 meses</span><b>${trackedInvoiced.length} pedido(s) em acompanhamento</b></div><div class="accounting-tracking-list">${trackedInvoiced.length?trackedInvoiced.map(group=>{const invoiceText=group.invoiceDate?`Faturado em ${receberDataFormat(group.invoiceDate)}`:'Data de faturamento não informada';if(group.countdownStarted)return `<span class="accounting-tracking-chip counting" title="${escapeHTML(group.party)} · ${invoiceText} · baixa em ${receberDataFormat(group.settledAt)} · saída em ${receberDataFormat(group.countdownDeadline)}"><strong>${escapeHTML(group.numero)}</strong><span class="msi msi-sm">timer</span>${group.countdownDaysLeft} dia(s)</span>`;const paidWithoutDate=group.balance<=0.004&&group.paidPercent>=99.995;return `<span class="accounting-tracking-chip waiting" title="${escapeHTML(group.party)} · ${invoiceText}"><strong>${escapeHTML(group.numero)}</strong>${paidWithoutDate?'100% recebido · sem data da baixa':`aguardando parcelas · ${accountingPercentText(group.paidPercent)}`}</span>`;}).join(''):`<span class="accounting-tracking-empty">Nenhum pedido faturado no período foi localizado.</span>`}</div></div>`:''}
+      <div class="accounting-note"><b>Regra de acompanhamento:</b> pedido faturado é diferente de parcela paga. Os faturados dos últimos 3 meses permanecem visíveis enquanto houver saldo, sem iniciar prazo. A contagem de 30 dias começa somente quando as parcelas atingem 100% recebido e existe uma data de baixa. Após esse prazo, o pedido sai do acompanhamento.${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
       <div class="accounting-toolbar"><input id="accountingSearch" class="search-input" value="${escapeHTML(accountingSearch)}" oninput="applyAccountingSearch(this.value)" placeholder="Filtrar pedido, cliente, fornecedor, vencimento ou situação..."><button class="accounting-filter ${accountingOnlyAdvances?'active':''}" type="button" onclick="toggleAccountingAdvances()">Somente adiantamentos</button><span class="muted" style="font-size:12px;white-space:nowrap;">${groups.length} bloco(s) · ${filtered.length} de ${rows.length} condição(ões)</span><div class="accounting-general-reports"><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('pdf','${side}')" title="Gerar relatório geral em PDF"><span class="msi msi-sm">picture_as_pdf</span> PDF geral</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('excel','${side}')" title="Gerar relatório geral em Excel"><span class="msi msi-sm">table_view</span> Excel geral</button></div><div class="accounting-block-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(true)">Expandir todos</button><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(false)">Recolher todos</button></div></div>
       <div class="accounting-orders">${accountingOrderBlocksMarkup(groups,side)}</div>
     </div>`;
