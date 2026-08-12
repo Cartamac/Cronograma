@@ -1,8 +1,8 @@
-/* CARTAMAC rev165 - ligacao de recebimentos e renovacao de cache */
+/* CARTAMAC rev165 - adiantamentos e parcelas conforme pedido de venda */
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-const CACHE_NAME='cartamac-v165-ligacao-recebidos';
+const CACHE_NAME='cartamac-v165-adiantamentos-do-pedido';
 const APP_FILES=['./','./index.html','./manifest.json','./cartamac-logo.png'];
 
 firebase.initializeApp({
@@ -27,11 +27,7 @@ self.addEventListener('activate',event=>{
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET'||new URL(event.request.url).origin!==self.location.origin)return;
   if(event.request.mode==='navigate'){
-    event.respondWith(fetch(event.request,{cache:'no-store'}).then(response=>{
-      const copy=response.clone();
-      caches.open(CACHE_NAME).then(cache=>cache.put('./index.html',copy));
-      return response;
-    }).catch(()=>caches.match('./index.html')));
+    event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put('./index.html',copy));return response;}).catch(()=>caches.match('./index.html')));
     return;
   }
   event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request)));
@@ -41,7 +37,7 @@ messaging.onBackgroundMessage(payload=>{
   if(payload.notification)return;
   const data=payload.data||{};
   return self.registration.showNotification(data.title||'CARTAMAC',{
-    body:data.body||'Ha uma nova atualizacao no cronograma.',
+    body:data.body||'Há uma nova atualização no cronograma.',
     icon:'./cartamac-logo.png',badge:'./cartamac-logo.png',
     tag:data.notificationId||'cartamac-cronograma',renotify:true,
     data:{url:data.url||'./'}
