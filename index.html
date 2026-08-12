@@ -1806,12 +1806,12 @@ localStorage.removeItem('cartamac_vendas_maxiprod_cache_v2');
 localStorage.removeItem('cartamac_vendas_maxiprod_cache_v3');
 localStorage.removeItem('cartamac_vendas_maxiprod_cache_v4');
 try{localStorage.removeItem('cartamac_vendas_maxiprod_cache_v5');localStorage.removeItem('cartamac_vendas_maxiprod_cache_v6');localStorage.removeItem('cartamac_vendas_maxiprod_cache_v7');}catch(_){ }
-const SALES_CACHE_KEY='cartamac_vendas_maxiprod_cache_v8';
+const SALES_CACHE_KEY='cartamac_vendas_maxiprod_cache_v10';
 let SALES_CACHE=(()=>{
-  try{return JSON.parse(localStorage.getItem(SALES_CACHE_KEY)||'{"version":8,"updatedAt":null,"items":[]}');}
-  catch(_){return {version:8,updatedAt:null,items:[]};}
+  try{return JSON.parse(localStorage.getItem(SALES_CACHE_KEY)||'{"version":10,"updatedAt":null,"items":[]}');}
+  catch(_){return {version:10,updatedAt:null,items:[]};}
 })();
-if(SALES_CACHE?.version!==8||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={version:8,updatedAt:null,items:[]};
+if(SALES_CACHE?.version!==10||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={version:10,updatedAt:null,items:[]};
 let salesRefreshInProgress=false;
 let salesSearch='';
 const salesExpandedYears=new Set();
@@ -1829,12 +1829,12 @@ let purchaseOrdersRefreshInProgress=false;
 let purchaseOrderSearch='';
 let purchaseOrdersOnlyOverdue=false;
 let purchaseOrdersOnlyToday=false;
-const ACCOUNTING_CACHE_KEY='cartamac_contabilidade_historica_cache_v1';
+const ACCOUNTING_CACHE_KEY='cartamac_contabilidade_historica_cache_v3';
 let ACCOUNTING_CACHE=(()=>{
-  try{return JSON.parse(localStorage.getItem(ACCOUNTING_CACHE_KEY)||'{"version":1,"updatedAt":null,"receivable":{"items":[]},"payable":{"items":[]}}');}
-  catch(_){return {version:1,updatedAt:null,receivable:{items:[]},payable:{items:[]}};}
+  try{return JSON.parse(localStorage.getItem(ACCOUNTING_CACHE_KEY)||'{"version":3,"updatedAt":null,"receivable":{"items":[]},"payable":{"items":[]}}');}
+  catch(_){return {version:3,updatedAt:null,receivable:{items:[]},payable:{items:[]}};}
 })();
-if(ACCOUNTING_CACHE?.version!==1)ACCOUNTING_CACHE={version:1,updatedAt:null,receivable:{items:[]},payable:{items:[]}};
+if(ACCOUNTING_CACHE?.version!==3)ACCOUNTING_CACHE={version:3,updatedAt:null,receivable:{items:[]},payable:{items:[]}};
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v2');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v3');
 localStorage.removeItem('cartamac_ativos_imobilizados_estoque_cache_v4');
@@ -2023,11 +2023,11 @@ function applySharedMaxiprodCache(payload){
     receivableYearCacheVersion:RECEIVABLE_YEAR_CACHE_VERSION
   };
 
-  if(payload.sales?.version===8&&Array.isArray(payload.sales.items))SALES_CACHE=payload.sales;
+  if(payload.sales?.version===10&&Array.isArray(payload.sales.items))SALES_CACHE=payload.sales;
   if(payload.purchaseOrders?.version===1&&Array.isArray(payload.purchaseOrders.items))PURCHASE_ORDERS_CACHE=payload.purchaseOrders;
-  if(payload.accounting?.version===1){
+  if(payload.accounting?.version===3){
     ACCOUNTING_CACHE={
-      version:1,
+      version:3,
       updatedAt:payload.accounting.updatedAt||payload.updatedAt||null,
       dateFrom:payload.accounting.dateFrom||null,
       dateTo:payload.accounting.dateTo||null,
@@ -6988,27 +6988,34 @@ function accountingOrderIsActive(record,side){
   const state=financeNormalize(raw?.estadoPrincipalDetalhe??salesValue(raw,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido','estadoDescricao','statusDescricao']));
   if(state.includes('cancel')||state.includes('excluid'))return false;
   const futureDelivery=state.includes('entregafutura');
-  if(side==='receber'&&state.includes('recebido')&&!futureDelivery)return false;
+  // Faturado/recebido no pedido de venda descreve o faturamento da previsão,
+  // não a baixa do título. Em vendas, somente o Contas a Receber pode iniciar
+  // a contagem de 30 dias; portanto o pedido continua no catálogo.
+  if(side==='receber')return true;
   if(side==='pagar'&&state.includes('faturado')&&!futureDelivery)return false;
   if((state.includes('recebido')||state.includes('faturado'))&&!futureDelivery)return false;
   return true;
 }
 function accountingOrderCatalog(side){
   const records=(side==='receber'?salesRecords():purchaseOrderRecords()).filter(record=>accountingOrderIsActive(record,side));
-  const byId=new Map(),byNumber=new Map();
+  const byId=new Map(),byNumber=new Map(),byInvoice=new Map(),entries=[];
   records.forEach(record=>{
+    const invoiceNumbers=side==='receber'?accountingInvoiceNumbers(record.raw||{}):[];
     const entry={
       id:record.id,
       numero:String(record.numero||'').trim(),
       party:side==='receber'?record.cliente:record.fornecedor,
       total:Number(record.valorTotal)||0,
+      invoiceNumbers,
       deliveryDates:Array.isArray(record.entregas)&&record.entregas.length?record.entregas:(side==='receber'?(record.entrega?[record.entrega]:[]):(record.previsaoEntrega?[record.previsaoEntrega]:[])),
       raw:record.raw||{}
     };
+    entries.push(entry);
     if(entry.id!==null&&entry.id!==undefined&&entry.id!=='')byId.set(String(entry.id),entry);
     if(entry.numero&&entry.numero!=='—')byNumber.set(financeNormalize(entry.numero),entry);
+    invoiceNumbers.forEach(invoice=>{if(!byInvoice.has(invoice))byInvoice.set(invoice,[]);byInvoice.get(invoice).push(entry);});
   });
-  return {byId,byNumber};
+  return {byId,byNumber,byInvoice,entries};
 }
 function accountingRelation(raw,side){
   const names=side==='receber'?['pedidoDeVenda','pedidoVenda','venda','pedido']:['pedidoDeCompra','pedidoCompra','compra','pedido'];
@@ -7030,6 +7037,12 @@ function accountingOrderLink(item,side,catalog){
   let numero=directNumber??relationNumber;
   let order=id!==null&&id!==undefined?catalog.byId.get(String(id)):null;
   if(!order&&numero!==null&&numero!==undefined)order=catalog.byNumber.get(financeNormalize(numero));
+  if(!order&&side==='receber'){
+    const invoiceMatches=accountingInvoiceNumbers(raw).flatMap(invoice=>catalog.byInvoice.get(invoice)||[]);
+    const unique=[...new Set(invoiceMatches)];
+    // O vínculo por NF só é aceito quando aponta para um único pedido.
+    if(unique.length===1){order=unique[0];numero=order.numero;}
+  }
   if(order&&!numero)numero=order.numero;
   if(!numero){
     const source=[item?.descricao,item?.referenteA,receberChave(raw,['descricao','historico','referenteA','referencia'])].filter(Boolean).join(' ');
@@ -7051,6 +7064,10 @@ function accountingConditionKind(raw){
 }
 function accountingPaymentAmount(item,side,value){
   const raw=item?.raw||{};
+  const type=financeNormalize(receberChave(raw,['tipo','tipoDescricao','origem','natureza'])||'');
+  // A previsão do pedido fornece parcela e vencimento, mas não comprova baixa.
+  // O recebimento só pode vir do título real da nota fiscal.
+  if(side==='receber'&&type.includes('pedidodevenda'))return 0;
   const aliases=side==='receber'
     ?['valorRecebidoLiquido','valorRecebido','valorBaixado','valorLiquidado','valorPago']
     :['valorPagoLiquido','valorPago','valorBaixado','valorLiquidado','valorRecebido'];
@@ -7060,20 +7077,27 @@ function accountingPaymentAmount(item,side,value){
   const settled=side==='receber'?state.includes('recebid'):state.includes('pago')||state.includes('liquid')||state.includes('quitad');
   return settled?Math.abs(value):0;
 }
-function accountingInvoiceNumber(raw){
+function accountingInvoiceNumbers(raw){
   const found=new Set();
+  const detailed=raw?.notasFiscaisDetalhe;
+  (Array.isArray(detailed)?detailed:[detailed]).filter(Boolean).forEach(value=>{const match=String(value).match(/\d+/);if(match)found.add(match[0]);});
   const visit=(value,depth=0,inInvoice=false)=>{
     if(!value||typeof value!=='object'||depth>4)return;
     Object.entries(value).forEach(([key,field])=>{
-      const normalized=financeNormalize(key),invoiceKey=/notafiscal|numeronf|referenciadanotafiscal|documentofiscal/.test(normalized),invoiceContext=inInvoice||invoiceKey;
+      const normalized=financeNormalize(key),invoiceKey=/notas?fisc|numeronf|referenciadanotafiscal|documentofiscal/.test(normalized)&&!/emissao|data|chave/.test(normalized),invoiceContext=inInvoice||invoiceKey;
       if(field&&typeof field==='object')visit(field,depth+1,invoiceContext);
       else if(field!==null&&field!==undefined&&String(field).trim()&&(
         invoiceKey||(invoiceContext&&/^(numero|referencia|documento|codigo|chave)$/.test(normalized))
-      ))found.add(String(field).trim());
+      )){const match=String(field).match(/\d+/);if(match)found.add(match[0]);}
     });
   };
   visit(raw);
-  return [...found].filter(value=>value&&!/^0+$/.test(value)).join(' · ')||'—';
+  const text=[receberChave(raw,['descricao','descricaoDetalhe','historico','referenteA','referencia'])].filter(Boolean).join(' ');
+  for(const match of text.matchAll(/(?:NF|nota\s*fiscal)[^0-9]{0,16}([0-9]+)/gi))found.add(match[1]);
+  return [...found].filter(value=>value&&!/^0+$/.test(value));
+}
+function accountingInvoiceNumber(raw){
+  return accountingInvoiceNumbers(raw).join(' · ')||'—';
 }
 function accountingSettlementDate(raw,due){
   const aliases=['dataRecebimento','recebimentoData','dataUltimoRecebimento','ultimoRecebimentoData','dataPagamento','pagamentoData','dataBaixa','baixaData','dataUltimaBaixa','ultimaBaixaData','dataLiquidacao','liquidacaoData','quitacaoData','dataQuitacao'];
@@ -7085,6 +7109,46 @@ function accountingSettlementDate(raw,due){
     Object.values(value).forEach(field=>{if(field&&typeof field==='object')visit(field,depth+1);});
   };
   visit(raw);return found;
+}
+function accountingOwnValue(raw,aliases){
+  const wanted=aliases.map(financeNormalize);
+  for(const [key,value] of Object.entries(raw||{})){
+    if(value!==null&&value!==undefined&&value!==''&&wanted.includes(financeNormalize(key)))return value;
+  }
+  return null;
+}
+function accountingOrderAdvanceRows(catalog,startIndex=1000000){
+  const rows=[],seen=new Set();
+  (catalog?.entries||[]).forEach(order=>{
+    const root=order?.raw?.condicoesPagamentoDetalhe;
+    if(!root||typeof root!=='object')return;
+    const visit=(value,advanceContext=false,depth=0)=>{
+      if(!value||typeof value!=='object'||depth>8)return;
+      if(Array.isArray(value)){value.forEach(item=>visit(item,advanceContext,depth+1));return;}
+      for(const [key,field] of Object.entries(value)){
+        if(field&&typeof field==='object')visit(field,advanceContext||financeNormalize(key).includes('adiant'),depth+1);
+      }
+      if(!advanceContext)return;
+      const amountRaw=accountingOwnValue(value,['valor','valorLiquido','valorOriginal','valorAdiantamento','valorDoAdiantamento']);
+      const due=receberData(value,['vencimentoData','vencimento','dataVencimento']);
+      const percentRaw=accountingOwnValue(value,['percentual','porcentagem','percentualDoPedido']);
+      const receivedRaw=accountingOwnValue(value,['valorRecebidoLiquido','valorRecebido','valorBaixado','valorLiquidado','valorPago']);
+      const typeRaw=accountingOwnValue(value,['tipo','tipoDescricao','descricao']);
+      if(amountRaw===null||!due||(percentRaw===null&&receivedRaw===null&&typeRaw===null))return;
+      const amount=Math.abs(receberNumero(amountRaw));if(amount<=.004)return;
+      const key=`${financeNormalize(order.numero)}|${due.toISOString().slice(0,10)}|${amount.toFixed(2)}`;
+      if(seen.has(key))return;seen.add(key);
+      const raw={...value,tipoOriginal:typeRaw,tipo:'ADIANTAMENTO'};
+      const settled=accountingPaymentAmount({raw},'receber',amount),balance=Math.max(amount-settled,0);
+      const percent=percentRaw!==null?receberNumero(percentRaw):(order.total>0?(amount/order.total)*100:null);
+      const today=new Date();today.setHours(0,0,0,0);
+      const overdue=balance>.004&&due<today;
+      const status=balance<=.004?{key:'done',label:'Recebido'}:settled>.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
+      rows.push({id:startIndex+rows.length,raw,kind:{key:'advance',label:'Adiantamento'},order,numero:order.numero,party:order.party||'—',value:amount,settled,balance,percent,due,status,invoiceNumbers:[],invoice:'—',settledAt:balance<=.004?accountingSettlementDate(raw,due):null});
+    };
+    visit(root,false,0);
+  });
+  return rows;
 }
 function accountingRows(side){
   const catalog=accountingOrderCatalog(side);
@@ -7100,7 +7164,7 @@ function accountingRows(side){
         .filter(item=>item.vencimento&&item.valorTitulo>0.004);
     }
   }else source=side==='receber'?receberRegistros():pagarRegistros();
-  return source.map((item,index)=>{
+  const rows=source.map((item,index)=>{
     const raw=item.raw||{},kind=accountingConditionKind(raw),link=accountingOrderLink(item,side,catalog);
     // Somente parcelas vinculadas a pedidos ainda ativos aparecem aqui.
     if(!link.order)return null;
@@ -7116,8 +7180,17 @@ function accountingRows(side){
     const today=new Date();today.setHours(0,0,0,0);
     const overdue=balance>0.004&&due&&due<today;
     const status=balance<=0.004?{key:'done',label:side==='receber'?'Recebido':'Pago'}:settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
-    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoice:accountingInvoiceNumber(raw),settledAt:balance<=0.004?accountingSettlementDate(raw,due):null};
-  }).filter(Boolean).sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
+    const invoiceNumbers=[...new Set([...accountingInvoiceNumbers(raw),...(link.order?.invoiceNumbers||[])])];
+    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoiceNumbers,invoice:invoiceNumbers.join(' · ')||'—',settledAt:balance<=0.004?accountingSettlementDate(raw,due):null};
+  }).filter(Boolean);
+  if(side==='receber'){
+    const advances=accountingOrderAdvanceRows(catalog,rows.length+1000000);
+    advances.forEach(advance=>{
+      const duplicate=rows.some(row=>row.kind.key==='advance'&&financeNormalize(row.numero)===financeNormalize(advance.numero)&&Math.abs(row.value-advance.value)<=.01&&((!row.due&&!advance.due)||(row.due&&advance.due&&row.due.toISOString().slice(0,10)===advance.due.toISOString().slice(0,10))));
+      if(!duplicate)rows.push(advance);
+    });
+  }
+  return rows.sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
 }
 function accountingFilteredRows(rows){
   const term=financeNormalize(accountingSearch);
@@ -7157,18 +7230,53 @@ function accountingGroupRows(rows,side='receber'){
   });
   return [...groups.values()].map(group=>{
     group.total=Number(group.order?.total)||group.rows.reduce((sum,row)=>sum+row.value,0);
-    group.advances=group.rows.filter(row=>row.kind.key==='advance').reduce((sum,row)=>sum+row.value,0);
-    group.settled=group.rows.reduce((sum,row)=>sum+row.settled,0);
-    group.balance=group.rows.reduce((sum,row)=>sum+row.balance,0);
+    const deliveryRows=group.rows.filter(row=>row.kind.key==='delivery');
+    const advanceRows=group.rows.filter(row=>row.kind.key==='advance');
+    const documentRows=group.rows.filter(row=>row.kind.key==='document');
+    const usedDocuments=new Set();
+    const sharesInvoice=(left,right)=>left.some(value=>right.includes(value));
+    // A parcela vem do pedido; pago/não pago vem exclusivamente do título da NF.
+    deliveryRows.forEach(delivery=>{
+      const matches=documentRows.map((document,index)=>({document,index})).filter(({document,index})=>
+        !usedDocuments.has(index)&&sharesInvoice(delivery.invoiceNumbers||[],document.invoiceNumbers||[])
+      );
+      let selected=matches.filter(({document})=>Math.abs(document.value-delivery.value)<=.01);
+      if(selected.length!==1&&matches.length===1&&deliveryRows.length===1)selected=matches;
+      if(selected.length!==1)return;
+      const {document,index}=selected[0];usedDocuments.add(index);
+      delivery.settled=Math.min(delivery.value,document.settled);
+      delivery.balance=Math.max(delivery.value-delivery.settled,0);
+      delivery.settledAt=document.settledAt;
+      delivery.invoice=document.invoice;
+      const today=new Date();today.setHours(0,0,0,0);
+      const overdue=delivery.balance>0.004&&delivery.due&&delivery.due<today;
+      delivery.status=delivery.balance<=0.004?{key:'done',label:'Recebido'}:delivery.settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
+    });
+    group.advances=advanceRows.reduce((sum,row)=>sum+row.value,0);
+    const receivedAdvances=advanceRows.reduce((sum,row)=>sum+row.settled,0);
+    const receivedDocuments=documentRows.reduce((sum,row)=>sum+row.settled,0);
+    const receivedDeliveries=deliveryRows.reduce((sum,row)=>sum+row.settled,0);
+    // Documento e parcela representam o mesmo valor, por isso nunca são somados
+    // duas vezes. Adiantamentos continuam contabilizados separadamente.
+    group.settled=Math.min(group.total,receivedAdvances+Math.max(receivedDocuments,receivedDeliveries));
+    group.balance=Math.max(group.total-group.settled,0);
     group.paidPercent=group.total>0?Math.min(100,(group.settled/group.total)*100):0;
     group.deliveryDates=salesDateList(group.order?.deliveryDates||[]);
-    group.settledAt=group.rows.reduce((latest,row)=>row.settledAt&&(!latest||row.settledAt>latest)?row.settledAt:latest,null);
+    group.settledAt=[...advanceRows,...deliveryRows,...documentRows].reduce((latest,row)=>row.settledAt&&(!latest||row.settledAt>latest)?row.settledAt:latest,null);
     group.isFullyReceived=group.balance<=0.004&&group.paidPercent>=99.995;
     group.removalDate=side==='receber'&&group.isFullyReceived&&group.settledAt?new Date(group.settledAt.getTime()+30*86400000):null;
     group.removalDaysLeft=group.removalDate?Math.max(0,Math.ceil((group.removalDate.getTime()-Date.now())/86400000)):null;
     group.retentionExpired=side==='receber'
       ?Boolean(group.removalDate&&Date.now()>=group.removalDate.getTime())
       :Boolean(group.isFullyReceived&&group.settledAt&&((Date.now()-group.settledAt.getTime())/(86400000)>45));
+    // O título real é ocultado quando já existe a parcela correspondente do
+    // pedido. Se for a única linha devolvida após o faturamento, permanece
+    // visível como parcela para que pedidos como o 157 nunca desapareçam.
+    const visibleConditions=group.rows.filter(row=>row.kind.key!=='document');
+    const documentFallbacks=deliveryRows.length===0
+      ?documentRows.map(row=>({...row,kind:{key:'delivery',label:'Entrega / parcela'}}))
+      :[];
+    group.rows=[...visibleConditions,...documentFallbacks].sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0));
     return group;
   }).filter(group=>!group.retentionExpired).sort((a,b)=>{
     if(a.numero==='Não identificado'&&b.numero!=='Não identificado')return 1;
@@ -7375,7 +7483,7 @@ function renderAccountingPage(container=document.getElementById('contabilidadeCo
         <div class="accounting-summary-card settled"><span>${settledLabel}</span><b>${fmtBRL(settled)}</b></div>
         <div class="accounting-summary-card open"><span>Saldo em aberto</span><b>${fmtBRL(balance)}</b></div>
       </div>
-      <div class="accounting-note"><b>Leitura sem alterações:</b> o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. “Entrega / parcela” representa o valor não adiantado previsto na condição de pagamento. ${side==='receber'?'Pedidos 100% recebidos permanecem por 30 dias após a última baixa; o cabeçalho mostra quantos dias faltam para a remoção.':'Pedidos 100% pagos permanecem por 45 dias após a baixa.'}${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
+      <div class="accounting-note"><b>Leitura sem alterações:</b> adiantamentos, parcelas, percentuais e vencimentos vêm da cobrança do pedido de venda; a situação das notas fiscais vem do Contas a Receber. <b>Faturado não significa pago.</b> A contagem de 30 dias só começa após a baixa integral do pedido.${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
       <div class="accounting-toolbar"><input id="accountingSearch" class="search-input" value="${escapeHTML(accountingSearch)}" oninput="applyAccountingSearch(this.value)" placeholder="Filtrar pedido, cliente, fornecedor, vencimento ou situação..."><button class="accounting-filter ${accountingOnlyAdvances?'active':''}" type="button" onclick="toggleAccountingAdvances()">Somente adiantamentos</button><span class="muted" style="font-size:12px;white-space:nowrap;">${groups.length} bloco(s) · ${filtered.length} de ${rows.length} condição(ões)</span><div class="accounting-general-reports"><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('pdf','${side}')" title="Gerar relatório geral em PDF"><span class="msi msi-sm">picture_as_pdf</span> PDF geral</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('excel','${side}')" title="Gerar relatório geral em Excel"><span class="msi msi-sm">table_view</span> Excel geral</button></div><div class="accounting-block-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(true)">Expandir todos</button><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(false)">Recolher todos</button></div></div>
       <div class="accounting-orders">${accountingOrderBlocksMarkup(groups,side)}</div>
     </div>`;
