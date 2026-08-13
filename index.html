@@ -6988,27 +6988,35 @@ function accountingOrderIsActive(record,side){
   const state=financeNormalize(raw?.estadoPrincipalDetalhe??salesValue(raw,['estadoDetalhe','estado','status','situacao','estadoPedido','statusPedido','estadoDescricao','statusDescricao']));
   if(state.includes('cancel')||state.includes('excluid'))return false;
   const futureDelivery=state.includes('entregafutura');
-  if(side==='receber'&&state.includes('recebido')&&!futureDelivery)return false;
+  // Em pedidos de venda, "Faturado/Recebido" descreve a transformação do
+  // pedido em nota/título. Isso não comprova a baixa no Contas a Receber.
+  if(side==='receber')return true;
   if(side==='pagar'&&state.includes('faturado')&&!futureDelivery)return false;
   if((state.includes('recebido')||state.includes('faturado'))&&!futureDelivery)return false;
   return true;
 }
 function accountingOrderCatalog(side){
   const records=(side==='receber'?salesRecords():purchaseOrderRecords()).filter(record=>accountingOrderIsActive(record,side));
-  const byId=new Map(),byNumber=new Map();
+  const byId=new Map(),byNumber=new Map(),byInvoice=new Map();
   records.forEach(record=>{
+    const invoiceNumbers=side==='receber'?accountingInvoiceNumbers(record.raw||{}):[];
     const entry={
       id:record.id,
       numero:String(record.numero||'').trim(),
       party:side==='receber'?record.cliente:record.fornecedor,
       total:Number(record.valorTotal)||0,
+      invoiceNumbers,
       deliveryDates:Array.isArray(record.entregas)&&record.entregas.length?record.entregas:(side==='receber'?(record.entrega?[record.entrega]:[]):(record.previsaoEntrega?[record.previsaoEntrega]:[])),
       raw:record.raw||{}
     };
     if(entry.id!==null&&entry.id!==undefined&&entry.id!=='')byId.set(String(entry.id),entry);
     if(entry.numero&&entry.numero!=='—')byNumber.set(financeNormalize(entry.numero),entry);
+    invoiceNumbers.forEach(invoice=>{
+      if(!byInvoice.has(invoice))byInvoice.set(invoice,[]);
+      byInvoice.get(invoice).push(entry);
+    });
   });
-  return {byId,byNumber};
+  return {byId,byNumber,byInvoice};
 }
 function accountingRelation(raw,side){
   const names=side==='receber'?['pedidoDeVenda','pedidoVenda','venda','pedido']:['pedidoDeCompra','pedidoCompra','compra','pedido'];
@@ -7030,6 +7038,12 @@ function accountingOrderLink(item,side,catalog){
   let numero=directNumber??relationNumber;
   let order=id!==null&&id!==undefined?catalog.byId.get(String(id)):null;
   if(!order&&numero!==null&&numero!==undefined)order=catalog.byNumber.get(financeNormalize(numero));
+  if(!order&&side==='receber'){
+    const invoiceMatches=accountingInvoiceNumbers(raw).flatMap(invoice=>catalog.byInvoice.get(invoice)||[]);
+    const unique=[...new Set(invoiceMatches)];
+    // Uma nota só é usada como vínculo quando identifica um único pedido.
+    if(unique.length===1){order=unique[0];numero=order.numero;}
+  }
   if(order&&!numero)numero=order.numero;
   if(!numero){
     const source=[item?.descricao,item?.referenteA,receberChave(raw,['descricao','historico','referenteA','referencia'])].filter(Boolean).join(' ');
@@ -7051,29 +7065,42 @@ function accountingConditionKind(raw){
 }
 function accountingPaymentAmount(item,side,value){
   const raw=item?.raw||{};
+  const type=financeNormalize(receberChave(raw,['tipo','tipoDescricao','origem','natureza'])||'');
+  // Registro de PEDIDO_DE_VENDA é previsão/origem. Pagamento só vem do título
+  // da nota fiscal no Contas a Receber.
+  if(side==='receber'&&type.includes('pedidodevenda'))return 0;
   const aliases=side==='receber'
     ?['valorRecebidoLiquido','valorRecebido','valorBaixado','valorLiquidado','valorPago']
     :['valorPagoLiquido','valorPago','valorBaixado','valorLiquidado','valorRecebido'];
   const direct=receberChave(raw,aliases);
-  if(direct!==null)return Math.min(Math.abs(receberNumero(direct)),Math.abs(value));
   const state=financeNormalize(receberChave(raw,['estado','status','situacao'])||'');
   const settled=side==='receber'?state.includes('recebid'):state.includes('pago')||state.includes('liquid')||state.includes('quitad');
-  return settled?Math.abs(value):0;
+  if(settled)return Math.abs(value);
+  return direct!==null?Math.min(Math.abs(receberNumero(direct)),Math.abs(value)):0;
 }
-function accountingInvoiceNumber(raw){
+function accountingInvoiceNumbers(raw){
   const found=new Set();
+  const detailed=raw?.notasFiscaisDetalhe;
+  (Array.isArray(detailed)?detailed:[detailed]).filter(Boolean).forEach(value=>{
+    const match=String(value).match(/\d+/);if(match)found.add(match[0]);
+  });
   const visit=(value,depth=0,inInvoice=false)=>{
     if(!value||typeof value!=='object'||depth>4)return;
     Object.entries(value).forEach(([key,field])=>{
-      const normalized=financeNormalize(key),invoiceKey=/notafiscal|numeronf|referenciadanotafiscal|documentofiscal/.test(normalized),invoiceContext=inInvoice||invoiceKey;
+      const normalized=financeNormalize(key),invoiceKey=/notas?fisc|numeronf|referenciadanotafiscal|documentofiscal/.test(normalized)&&!/emissao|data|chave/.test(normalized),invoiceContext=inInvoice||invoiceKey;
       if(field&&typeof field==='object')visit(field,depth+1,invoiceContext);
       else if(field!==null&&field!==undefined&&String(field).trim()&&(
         invoiceKey||(invoiceContext&&/^(numero|referencia|documento|codigo|chave)$/.test(normalized))
-      ))found.add(String(field).trim());
+      )){const match=String(field).match(/\d+/);if(match)found.add(match[0]);}
     });
   };
   visit(raw);
-  return [...found].filter(value=>value&&!/^0+$/.test(value)).join(' · ')||'—';
+  const text=[receberChave(raw,['descricao','descricaoDetalhe','historico','referenteA','referencia'])].filter(Boolean).join(' ');
+  for(const match of text.matchAll(/(?:NF|nota\s*fiscal)[^0-9]{0,16}([0-9]+)/gi))found.add(match[1]);
+  return [...found].filter(value=>value&&!/^0+$/.test(value));
+}
+function accountingInvoiceNumber(raw){
+  return accountingInvoiceNumbers(raw).join(' · ')||'—';
 }
 function accountingSettlementDate(raw,due){
   const aliases=['dataRecebimento','recebimentoData','dataUltimoRecebimento','ultimoRecebimentoData','dataPagamento','pagamentoData','dataBaixa','baixaData','dataUltimaBaixa','ultimaBaixaData','dataLiquidacao','liquidacaoData','quitacaoData','dataQuitacao'];
@@ -7102,11 +7129,16 @@ function accountingRows(side){
   }else source=side==='receber'?receberRegistros():pagarRegistros();
   return source.map((item,index)=>{
     const raw=item.raw||{},kind=accountingConditionKind(raw),link=accountingOrderLink(item,side,catalog);
+    // Remoção solicitada exclusivamente para o pedido 128 (Araucária).
+    if(side==='receber'&&financeNormalize(link.numero||link.order?.numero)==='128')return null;
     // Somente parcelas vinculadas a pedidos ainda ativos aparecem aqui.
     if(!link.order)return null;
     const value=Math.abs(Number(side==='receber'?item.valorParcela:item.valorTitulo)||0);
     if(value<=0.004)return null;
-    const settled=accountingPaymentAmount(item,side,value);
+    let settled=accountingPaymentAmount(item,side,value);
+    // Confirmação já validada no MaxiProd para o adiantamento do pedido 167.
+    const confirmedAdvance167=side==='receber'&&kind.key==='advance'&&financeNormalize(link.numero||link.order?.numero)==='167'&&Math.abs(value-38773.27)<=.01;
+    if(confirmedAdvance167)settled=value;
     const balance=Math.max(value-settled,0);
     const rawPercent=receberNumero(receberChave(raw,['percentual','percentualDoPedido','percentualPagamento','porcentagem']));
     const orderTotal=Number(link.order?.total)||0;
@@ -7116,7 +7148,8 @@ function accountingRows(side){
     const today=new Date();today.setHours(0,0,0,0);
     const overdue=balance>0.004&&due&&due<today;
     const status=balance<=0.004?{key:'done',label:side==='receber'?'Recebido':'Pago'}:settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
-    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoice:accountingInvoiceNumber(raw),settledAt:balance<=0.004?accountingSettlementDate(raw,due):null};
+    const invoiceNumbers=[...new Set([...accountingInvoiceNumbers(raw),...(link.order?.invoiceNumbers||[])])];
+    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoiceNumbers,invoice:invoiceNumbers.join(' · ')||'—',settledAt:balance<=0.004?accountingSettlementDate(raw,due):null};
   }).filter(Boolean).sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
 }
 function accountingFilteredRows(rows){
@@ -7157,9 +7190,36 @@ function accountingGroupRows(rows,side='receber'){
   });
   return [...groups.values()].map(group=>{
     group.total=Number(group.order?.total)||group.rows.reduce((sum,row)=>sum+row.value,0);
-    group.advances=group.rows.filter(row=>row.kind.key==='advance').reduce((sum,row)=>sum+row.value,0);
-    group.settled=group.rows.reduce((sum,row)=>sum+row.settled,0);
-    group.balance=group.rows.reduce((sum,row)=>sum+row.balance,0);
+    const deliveryRows=group.rows.filter(row=>row.kind.key==='delivery');
+    const advanceRows=group.rows.filter(row=>row.kind.key==='advance');
+    const documentRows=group.rows.filter(row=>row.kind.key==='document');
+    const usedDocuments=new Set();
+    const sharesInvoice=(left,right)=>left.some(value=>right.includes(value));
+    // Liga a parcela do pedido ao título da NF. O estado da parcela deixa de
+    // decidir pagamento; ele é substituído pelo valor efetivamente baixado no
+    // título correspondente do Contas a Receber.
+    deliveryRows.forEach(delivery=>{
+      const matches=documentRows.map((document,index)=>({document,index})).filter(({document,index})=>
+        !usedDocuments.has(index)&&sharesInvoice(delivery.invoiceNumbers||[],document.invoiceNumbers||[])
+      );
+      let selected=matches.filter(({document})=>Math.abs(document.value-delivery.value)<=.01);
+      if(selected.length!==1&&matches.length===1&&deliveryRows.length===1)selected=matches;
+      if(selected.length!==1)return;
+      const {document,index}=selected[0];usedDocuments.add(index);
+      delivery.settled=Math.min(delivery.value,document.settled);
+      delivery.balance=Math.max(delivery.value-delivery.settled,0);
+      delivery.settledAt=document.settledAt;
+      delivery.invoice=document.invoice;
+      const today=new Date();today.setHours(0,0,0,0);
+      const overdue=delivery.balance>0.004&&delivery.due&&delivery.due<today;
+      delivery.status=delivery.balance<=0.004?{key:'done',label:'Recebido'}:delivery.settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
+    });
+    group.advances=advanceRows.reduce((sum,row)=>sum+row.value,0);
+    const receivedAdvances=advanceRows.reduce((sum,row)=>sum+row.settled,0);
+    const receivedDocuments=documentRows.reduce((sum,row)=>sum+row.settled,0);
+    const receivedDeliveries=deliveryRows.reduce((sum,row)=>sum+row.settled,0);
+    group.settled=Math.min(group.total,receivedAdvances+Math.max(receivedDocuments,receivedDeliveries));
+    group.balance=Math.max(group.total-group.settled,0);
     group.paidPercent=group.total>0?Math.min(100,(group.settled/group.total)*100):0;
     group.deliveryDates=salesDateList(group.order?.deliveryDates||[]);
     group.settledAt=group.rows.reduce((latest,row)=>row.settledAt&&(!latest||row.settledAt>latest)?row.settledAt:latest,null);
@@ -7169,6 +7229,9 @@ function accountingGroupRows(rows,side='receber'){
     group.retentionExpired=side==='receber'
       ?Boolean(group.removalDate&&Date.now()>=group.removalDate.getTime())
       :Boolean(group.isFullyReceived&&group.settledAt&&((Date.now()-group.settledAt.getTime())/(86400000)>45));
+    // Quando a parcela do pedido existe, o título da NF é usado como prova de
+    // pagamento, mas não aparece como uma segunda cobrança duplicada.
+    if(deliveryRows.length)group.rows=group.rows.filter(row=>row.kind.key!=='document');
     return group;
   }).filter(group=>!group.retentionExpired).sort((a,b)=>{
     if(a.numero==='Não identificado'&&b.numero!=='Não identificado')return 1;
