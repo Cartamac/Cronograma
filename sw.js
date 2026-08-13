@@ -1,9 +1,9 @@
-/* CARTAMAC rev165 - adiantamentos e parcelas conforme pedido de venda */
+/* CARTAMAC rev166 - HTML sempre atualizado e limpeza dos caches antigos */
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-const CACHE_NAME='cartamac-v165-adiantamentos-do-pedido';
-const APP_FILES=['./','./index.html','./manifest.json','./cartamac-logo.png'];
+const CACHE_NAME='cartamac-v166-sem-cache-html';
+const STATIC_FILES=['./manifest.json','./cartamac-logo.png'];
 
 firebase.initializeApp({
   apiKey:'AIzaSyAlSFh4QVAZd2eIIhmJXBrT8yhIiH92pkM',
@@ -17,20 +17,56 @@ firebase.initializeApp({
 const messaging=firebase.messaging();
 
 self.addEventListener('install',event=>{
-  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_FILES)).then(()=>self.skipWaiting()));
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache=>Promise.all(STATIC_FILES.map(file=>cache.add(file).catch(()=>null))))
+      .then(()=>self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate',event=>{
-  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(
+      keys
+        .filter(key=>key.startsWith('cartamac-')&&key!==CACHE_NAME)
+        .map(key=>caches.delete(key))
+    );
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener('message',event=>{
+  if(event.data?.type==='SKIP_WAITING')self.skipWaiting();
 });
 
 self.addEventListener('fetch',event=>{
-  if(event.request.method!=='GET'||new URL(event.request.url).origin!==self.location.origin)return;
-  if(event.request.mode==='navigate'){
-    event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put('./index.html',copy));return response;}).catch(()=>caches.match('./index.html')));
+  if(event.request.method!=='GET')return;
+  const url=new URL(event.request.url);
+  if(url.origin!==self.location.origin)return;
+
+  // Nunca guarda index.html nem navegações. Assim uma nova revisão publicada
+  // não pode ser substituída por uma cópia antiga do Service Worker.
+  if(event.request.mode==='navigate'||url.pathname.endsWith('/index.html')){
+    event.respondWith(fetch(event.request,{cache:'no-store'}));
     return;
   }
-  event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request)));
+
+  // Manifesto e logo podem usar cache; os demais recursos seguem pela rede.
+  if(STATIC_FILES.some(file=>url.pathname.endsWith(file.replace('./','/')))){
+    event.respondWith(
+      caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{
+        if(response.ok){
+          const copy=response.clone();
+          caches.open(CACHE_NAME).then(cache=>cache.put(event.request,copy));
+        }
+        return response;
+      }))
+    );
+    return;
+  }
+
+  event.respondWith(fetch(event.request));
 });
 
 messaging.onBackgroundMessage(payload=>{
@@ -38,8 +74,10 @@ messaging.onBackgroundMessage(payload=>{
   const data=payload.data||{};
   return self.registration.showNotification(data.title||'CARTAMAC',{
     body:data.body||'Há uma nova atualização no cronograma.',
-    icon:'./cartamac-logo.png',badge:'./cartamac-logo.png',
-    tag:data.notificationId||'cartamac-cronograma',renotify:true,
+    icon:'./cartamac-logo.png',
+    badge:'./cartamac-logo.png',
+    tag:data.notificationId||'cartamac-cronograma',
+    renotify:true,
     data:{url:data.url||'./'}
   });
 });
