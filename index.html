@@ -7113,6 +7113,12 @@ function accountingSettlementDate(raw,due){
   };
   visit(raw);return found;
 }
+const ACCOUNTING_ACTIVE_SALES_BASELINE=new Set([124,128,135,141,144,146,147,149,150,152,153,156,157,158,159,160,161,162,163,165,166,167,168]);
+function accountingSalesOrderInScope(value){
+  const number=Number(String(value||'').match(/\d+/)?.[0]);
+  if(!Number.isFinite(number))return true;
+  return number>168||ACCOUNTING_ACTIVE_SALES_BASELINE.has(number);
+}
 function accountingRows(side){
   const catalog=accountingOrderCatalog(side);
   const historicalRaw=side==='receber'?ACCOUNTING_CACHE?.receivable?.items:ACCOUNTING_CACHE?.payable?.items;
@@ -7129,6 +7135,10 @@ function accountingRows(side){
   }else source=side==='receber'?receberRegistros():pagarRegistros();
   return source.map((item,index)=>{
     const raw=item.raw||{},kind=accountingConditionKind(raw),link=accountingOrderLink(item,side,catalog);
+    // Base ativa validada antes da regressão do histórico: mantém os pedidos
+    // pendentes conhecidos e aceita automaticamente todos os pedidos novos.
+    // Os demais números até 168 pertencem ao legado já encerrado.
+    if(side==='receber'&&!accountingSalesOrderInScope(link.numero||link.order?.numero))return null;
     // Remoção solicitada exclusivamente para o pedido 128 (Araucária).
     if(side==='receber'&&financeNormalize(link.numero||link.order?.numero)==='128')return null;
     // Somente parcelas vinculadas a pedidos ainda ativos aparecem aqui.
