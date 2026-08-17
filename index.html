@@ -1428,7 +1428,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
       <button class="dev-tab active" id="tabCronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="dev-tab" id="tabClientes" onclick="switchDevTab('clientes',this)"><span class="msi msi-sm">group</span> Clientes</button>
       <button class="dev-tab" id="tabAdmins" onclick="switchDevTab('admins',this)"><span class="msi msi-sm">shield_person</span> Admins</button>
-      <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">settings</span> Peças de Reposição</button>
+      <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">storefront</span> Comercial</button>
       <button class="dev-tab" id="tabSimulador" onclick="switchDevTab('simulador',this)"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
       <button class="dev-tab" id="tabMacroEngenharia" onclick="switchDevTab('macro-engenharia',this)"><span class="msi msi-sm">architecture</span> Macro Engenharia</button>
       <button class="dev-tab" id="tabCompras" onclick="switchDevTab('compras',this)"><span class="msi msi-sm">shopping_cart</span> Pedidos de compra</button>
@@ -1498,13 +1498,14 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
   <div class="page" id="page-compras"><div id="pedidosCompraContent"></div></div>
   <div class="page" id="page-contabilidade"><div id="contabilidadeContent"></div></div>
 
-  <!-- PEÇAS DE REPOSIÇÃO -->
+  <!-- COMERCIAL -->
   <div class="page" id="page-pecas">
     <div class="parts-head">
-      <div><h2><span class="msi">settings</span> Valores Padrões — Peças de Reposição</h2><p>Tabela padrão para consulta comercial. Exibe somente as colunas autorizadas da planilha.</p></div>
+      <div><h2><span class="msi">storefront</span> Comercial</h2><p>Tabela de peças, formação de preço e retorno de equipamentos removidos do Project.</p></div>
     </div>
     <div class="parts-subtabs">
       <button class="parts-subtab active" id="partsCatalogTab" onclick="switchPartsView('catalog')"><span class="msi msi-sm">table_chart</span> Tabela de peças</button>
+      <button class="parts-subtab" id="partsReturnTab" onclick="switchPartsView('return')"><span class="msi msi-sm">manage_search</span> Retorno equipamentos</button>
       <button class="parts-subtab" id="partsPriceTab" onclick="switchPartsView('price')"><span class="msi msi-sm">calculate</span> Formação de preço</button>
     </div>
     <div id="partsCatalog">
@@ -1528,6 +1529,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     </div>
     <div id="partsTableContainer"></div>
     </div>
+    <div class="price-calc" id="partsEquipmentReturn"></div>
     <div class="price-calc" id="partsPriceCalculator">
       <p class="price-intro">Informe o custo do equipamento e ajuste os índices. O cálculo segue a tabela padrão enviada: markup do equipamento, tributos e margem de desconto.</p>
       <div class="price-inputs"><div class="price-cost-row">
@@ -2124,9 +2126,16 @@ let ORDERS = getDefaultOrders();
 let costsUnlocked = true;
 let openCostCardId = null;
 let costsView = 'orders';
+let partsView = 'catalog';
 let selectedStructureOrderId = null;
 const COST_MANUAL_LOOKUP_ID=-9007199254740000;
 const COST_MANUAL_LOOKUP_ORDER={id:COST_MANUAL_LOOKUP_ID,code:'CONSULTA FIXA',op:'',name:'OP removida do Project',manualCostLookup:true};
+function isEquipmentReturnLookup(orderId){return String(orderId)===String(COST_MANUAL_LOOKUP_ID);}
+function canManageCostLookup(orderId){return isMaster(loggedUser)||(isEquipmentReturnLookup(orderId)&&hasAccess('pecas.return'));}
+function renderCostStructureHost(orderId){
+  if(isEquipmentReturnLookup(orderId)&&document.getElementById('page-pecas')?.classList.contains('active')&&partsView==='return')renderPartsEquipmentReturn();
+  else renderCostsContent();
+}
 const MAXIPROD_STRUCTURES = {};
 const productionBlockOpen = {};
 let sharedCostsLoaded=false;
@@ -2214,7 +2223,7 @@ const isEngineering = u => u && ['engineering','engenharia'].includes(String(u.t
 const ADMIN_ACCESS_GROUPS=[
   {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.atrasos','Atrasos por setor'],['cronograma.importar','Importar e históricos']]},
   {id:'cadastros',label:'Cadastros',icon:'group',items:[['clientes','Clientes'],['admins','Administradores']]},
-  {id:'pecas',label:'Peças de Reposição',icon:'settings',items:[['pecas.catalog','Tabela de peças'],['pecas.price','Formação de preço']]},
+  {id:'pecas',label:'Comercial',icon:'storefront',items:[['pecas.catalog','Tabela de peças'],['pecas.return','Retorno equipamentos'],['pecas.price','Formação de preço']]},
   {id:'planejamento',label:'Planejamento',icon:'event_available',items:[['simulador','Simular Cronograma']]},
   {id:'macro',label:'Macro Engenharia',icon:'architecture',items:[['macro-engenharia.active','OPs abertas'],['macro-engenharia.completed','Finalizadas'],['macro-engenharia.people','Responsáveis']]},
   {id:'compras',label:'Compras',icon:'shopping_cart',items:[['compras','Pedidos de compra']]},
@@ -2227,7 +2236,7 @@ function legacyAdminPermissions(admin){
   const role=String(admin?.role||'viewer').toLowerCase();
   if(role==='master'||MASTER_EMAILS.includes(admin?.email))return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,true]));
   const keys=['cronograma.cronograma','cronograma.atrasos'];
-  if(role==='seller')keys.push('pecas.catalog','pecas.price','simulador','financeiro.vendas');
+  if(role==='seller')keys.push('pecas.catalog','pecas.return','pecas.price','simulador','financeiro.vendas');
   else keys.push('clientes','admins');
   if(['engineering','engenharia'].includes(role))keys.push('macro-engenharia.active','macro-engenharia.completed','macro-engenharia.people');
   return Object.fromEntries(ADMIN_ACCESS_KEYS.map(key=>[key,keys.includes(key)]));
@@ -2262,7 +2271,7 @@ function applyNavigationPermissions(){
   const map={tabCronograma:'cronograma',tabClientes:'clientes',tabAdmins:'admins',tabPecas:'pecas',tabSimulador:'simulador',tabMacroEngenharia:'macro-engenharia',tabCompras:'compras',tabCustos:'custos',tabFinanceiro:'financeiro',tabContabilidade:'contabilidade'};
   Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAnyAccess(key)?'flex':'none';});
   document.querySelectorAll('.cronograma-subtab').forEach(tab=>tab.style.display=hasAccess(`cronograma.${tab.dataset.cronSubtab}`)?'flex':'none');
-  [['partsCatalogTab','pecas.catalog'],['partsPriceTab','pecas.price'],['macroTabActive','macro-engenharia.active'],['macroTabCompleted','macro-engenharia.completed'],['macroTabPeople','macro-engenharia.people']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAccess(key)?'':'none';});
+  [['partsCatalogTab','pecas.catalog'],['partsReturnTab','pecas.return'],['partsPriceTab','pecas.price'],['macroTabActive','macro-engenharia.active'],['macroTabCompleted','macro-engenharia.completed'],['macroTabPeople','macro-engenharia.people']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAccess(key)?'':'none';});
 }
 function firstAllowedDestination(){
   const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['simulador','simulador'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade']];
@@ -2309,9 +2318,7 @@ function enforceCurrentAccess(){
   if(activeId==='contabilidade'&&!hasAccess(`contabilidade.${accountingView}`))accountingView=hasAccess('contabilidade.receber')?'receber':'pagar';
   if(activeId==='macro-engenharia'&&!hasAccess(`macro-engenharia.${macroView}`))macroView=['active','completed','people'].find(view=>hasAccess(`macro-engenharia.${view}`))||'active';
   if(activeId==='pecas'){
-    const priceActive=document.getElementById('partsPriceCalculator')?.classList.contains('active');
-    if(priceActive&&!hasAccess('pecas.price'))switchPartsView('catalog');
-    else if(!priceActive&&!hasAccess('pecas.catalog'))switchPartsView('price');
+    if(!hasAccess(`pecas.${partsView}`))switchPartsView(['catalog','return','price'].find(view=>hasAccess(`pecas.${view}`))||'catalog');
   }
   return false;
 }
@@ -2669,11 +2676,11 @@ function switchDevTab(id,btn){
   if(id==='cronograma')renderDevAll();
   if(id==='atrasos')renderCronDelayPage();
   if(id==='gantt')     renderGantt();
-  if(id==='custos'){if(!hasAccess(`custos.${costsView}`))costsView=['orders','structure'].find(view=>hasAccess(`custos.${view}`))||'orders';renderCostsPage();}
+  if(id==='custos'){if(!hasAccess(`custos.${costsView}`))costsView=['orders','structure'].find(view=>hasAccess(`custos.${view}`))||'orders';if(String(selectedStructureOrderId)===String(COST_MANUAL_LOOKUP_ID))selectedStructureOrderId=null;renderCostsPage();}
   if(id==='financeiro'){if(!hasAccess(`financeiro.${financeiroView}`))financeiroView=Object.keys(FINANCE_VIEWS).find(view=>hasAccess(`financeiro.${view}`))||'fluxoCaixa';renderFinanceiroFiscal();}
   if(id==='compras')   renderPurchaseOrdersPage();
   if(id==='contabilidade'){if(!hasAccess(`contabilidade.${accountingView}`))accountingView=hasAccess('contabilidade.receber')?'receber':'pagar';renderAccountingPage();}
-  if(id==='pecas'){switchPartsView(hasAccess('pecas.catalog')?'catalog':'price');renderPartsPage();}
+  if(id==='pecas'){switchPartsView(['catalog','return','price'].find(view=>hasAccess(`pecas.${view}`))||'catalog');renderPartsPage();}
   if(id==='simulador') renderSimulator();
   if(id==='macro-engenharia'){if(!hasAccess(`macro-engenharia.${macroView}`))macroView=['active','completed','people'].find(view=>hasAccess(`macro-engenharia.${view}`))||'active';renderMacroEngineering();}
   if(id==='clientes')  renderClientsPanel();
@@ -4703,7 +4710,7 @@ function updateCostField(orderId,field,val){
   renderCostsContent();
 }
 function updateMaxiprodCode(orderId,value){
-  if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
+  if(!canManageCostLookup(orderId)){showToast('Sem permissão','err');return;}
   const e=getCostEntry(orderId);
   e.maxiprod=e.maxiprod||{};
   e.maxiprod.itemCode=String(value||'').trim().toUpperCase();
@@ -4711,7 +4718,7 @@ function updateMaxiprodCode(orderId,value){
   openCostCardId=orderId;
 }
 async function consultMaxiprodCost(orderId,options={}){
-  if(!isMaster(loggedUser)){showToast('Somente mestres podem atualizar pelo MaxiProd','err');return;}
+  if(!canManageCostLookup(orderId)){showToast('Sem permissão para atualizar pelo MaxiProd','err');return;}
   const silent=!!options.silent;
   const e=getCostEntry(orderId);
   const input=document.getElementById(`maxiprodCode-${orderId}`);
@@ -4769,14 +4776,14 @@ async function consultMaxiprodCost(orderId,options={}){
     e.maxiprod.custoTotal=getStructureGrandTotal(orderId);
     // Mostra imediatamente o retorno correto. Apenas o resumo fica em
     // cartamac/db; a árvore completa já foi salva separadamente.
-    if(!silent){openCostCardId=orderId;renderCostsContent();}
+    if(!silent){openCostCardId=orderId;renderCostStructureHost(orderId);}
     const saved=await persistCosts(orderId);
     // Se o listener tiver aplicado a fotografia anterior durante o await,
     // recoloca a estrutura recém-consultada antes da renderização definitiva.
     const currentEntry=getCostEntry(orderId);
     currentEntry.maxiprod=loadedMaxiprod;
     MAXIPROD_STRUCTURES[orderId]=loadedStructure;
-    if(!silent){openCostCardId=orderId;renderCostsContent();}
+    if(!silent){openCostCardId=orderId;renderCostStructureHost(orderId);}
     const suffix=loadedMaxiprod.itensSemCusto?` (${loadedMaxiprod.itensSemCusto} pendência(s))`:'';
     if(!silent){
       if(saved)showToast(`Custo MaxiProd atualizado — Total da OP: ${fmtBRL(getEntryProductionTotals(currentEntry).total)}${suffix}`);
@@ -4833,13 +4840,13 @@ function filterProductionRows(value,kind){
   const q=String(value||'').trim().toLowerCase();
   document.querySelectorAll(`.production-data-row${kind?`[data-kind="${kind}"]`:''}`).forEach(row=>{row.style.display=!q||row.dataset.search.includes(q)?'table-row':'none';});
 }
-function toggleProductionBlock(orderId,kind){const key=`${orderId}:${kind}`;productionBlockOpen[key]=!(productionBlockOpen[key]!==false);renderCostsContent();}
+function toggleProductionBlock(orderId,kind){const key=`${orderId}:${kind}`;productionBlockOpen[key]=!(productionBlockOpen[key]!==false);renderCostStructureHost(orderId);}
 async function updateOperationRate(orderId,operationId,value){
-  if(!isMaster(loggedUser)){showToast('Somente mestres podem informar o valor/hora','err');return;}
+  if(!canManageCostLookup(orderId)){showToast('Sem permissão para informar o valor/hora','err');return;}
   const entry=getCostEntry(orderId);entry.maxiprod=entry.maxiprod||{};entry.maxiprod.production=entry.maxiprod.production||{};
   entry.maxiprod.production.operationRates=entry.maxiprod.production.operationRates||{};
   entry.maxiprod.production.operationRates[String(operationId)]=Math.max(0,parseFloat(value)||0);
-  await persistCosts(orderId);openCostCardId=orderId;renderCostsContent();
+  await persistCosts(orderId);openCostCardId=orderId;renderCostStructureHost(orderId);
 }
 function productionCurrency(value){return fmtBRL(Number(value)||0);}
 function getOrderProductionTotals(order){
@@ -4889,7 +4896,7 @@ function buildProductionBlocks(order,master){
       </div></div>`;
 }
 async function clearCostStructure(orderId){
-  if(!isMaster(loggedUser))return;
+  if(!canManageCostLookup(orderId))return;
   if(!confirm('Limpar a estrutura carregada e o custo MaxiProd deste equipamento?'))return;
   const entry=getCostEntry(orderId);
   delete entry.maxiprod;
@@ -4918,7 +4925,7 @@ function buildCostStructuresView(master,readOnly=false){
       ?`<div class="production-block ${structureOpen?'':'is-collapsed'}"><button type="button" class="production-block-head production-toggle" onclick="toggleProductionBlock(${order.id},'estrutura')">Estrutura multinível <span>${structureOpen?'Retrair':'Expandir'}</span></button><div class="production-block-content"><div class="production-filter structure-block-filter"><input type="search" placeholder="Filtrar estrutura por código, item ou categoria..." oninput="filterStructureRows(this.value)"></div><div class="structure-tree"><div class="structure-tree-head"><div>Cód.</div><div>Item / descrição</div><div>Unid.</div><div>Qtd. (G)</div><div>Preço (P)</div><div>Total P × G</div></div>${renderStructureRows([rootNode],0,true)}</div></div></div>`
       :`<div class="production-block"><div class="production-block-head">Estrutura multinível</div><div class="structure-empty">${mp.itemCode?'Clique em “Atualizar pelo MaxiProd” para consultar todos os níveis.':'Informe o código raiz do equipamento no MaxiProd para carregar a estrutura.'}</div></div>`;
     return `<div class="structure-view-head">
-      <div><button class="btn btn-ghost btn-sm structure-return" onclick="closeCostStructure()"><span class="msi msi-sm">arrow_back</span> Todos os equipamentos</button><h3>${escapeHTML(titleCode)} — ${escapeHTML(order.name||'')}</h3><div class="structure-intro">${order.manualCostLookup?'Consulta independente do arquivo Project. Informe o código do item/OP removido para recuperar estrutura, insumos e operações no MaxiProd.':'Estrutura vinculada ao pedido do Project. São exibidos os níveis, a quantidade aplicada (G), o último preço do MaxiProd (P) e o total calculado por linha (P × G).'}</div></div>
+      <div>${order.manualCostLookup?'':`<button class="btn btn-ghost btn-sm structure-return" onclick="closeCostStructure()"><span class="msi msi-sm">arrow_back</span> Todos os equipamentos</button>`}<h3>${escapeHTML(titleCode)} — ${escapeHTML(order.name||'')}</h3><div class="structure-intro">${order.manualCostLookup?'Consulta independente do arquivo Project. Informe o código do item/OP removido para recuperar estrutura, insumos e operações no MaxiProd.':'Estrutura vinculada ao pedido do Project. São exibidos os níveis, a quantidade aplicada (G), o último preço do MaxiProd (P) e o total calculado por linha (P × G).'}</div></div>
       <div class="structure-summary">${mp.calculadoEm?`<span class="cost-client-tag"><span class="msi msi-sm">payments</span> Total da OP: ${fmtBRL(getEntryProductionTotals(entry).total)}</span>`:''}<span class="cost-client-tag"><span class="msi msi-sm">tag</span> Código: ${escapeHTML(mp.itemCode||'não definido')}</span></div>
     </div>
     ${statusNotice}
@@ -4932,9 +4939,7 @@ function buildCostStructuresView(master,readOnly=false){
     const e=getCostEntry(order.id),mp=e.maxiprod||{itemCode:''};
     return `<div class="structure-order"><div class="structure-order-main" onclick="openCostStructure(${order.id})"><div class="structure-order-name">${escapeHTML(order.code||'—')} — ${escapeHTML(order.name||'')}</div><div class="structure-order-meta">${order.op?`OP: ${escapeHTML(order.op)} · `:''}${mp.calculadoEm?`Estrutura atualizada: ${new Date(mp.calculadoEm).toLocaleString('pt-BR')}`:'Estrutura ainda não carregada'}</div></div><div class="form-group"><label>Código raiz MaxiProd</label><input type="text" value="${escapeHTML(mp.itemCode||'')}" placeholder="Ex.: DS2832" ${master?'':'disabled'} onchange="updateMaxiprodCode(${order.id},this.value)"></div><button class="btn btn-ghost btn-sm" onclick="openCostStructure(${order.id})"><span class="msi msi-sm">account_tree</span> Ver estrutura</button></div>`;
   }).join(''):'<div class="structure-empty">Nenhum equipamento foi encontrado no arquivo Project atual.</div>';
-  const manualEntry=getCostEntry(COST_MANUAL_LOOKUP_ID),manualMp=manualEntry.maxiprod||{itemCode:''};
-  const manualCard=`<div class="structure-order" data-fixed-cost-lookup="true" style="border-color:rgba(212,160,23,.72);"><div class="structure-order-main" onclick="openCostStructure(${COST_MANUAL_LOOKUP_ID})"><div class="structure-order-name"><span class="msi msi-sm">manage_search</span> CONSULTA FIXA — OP removida do Project</div><div class="structure-order-meta">Este campo permanece sempre no final da lista · ${manualMp.calculadoEm?`Atualizado: ${new Date(manualMp.calculadoEm).toLocaleString('pt-BR')}`:'Aguardando código para consulta'}</div></div><div class="form-group"><label>Código do item/OP no MaxiProd</label><input type="text" value="${escapeHTML(manualMp.itemCode||'')}" placeholder="Ex.: 00671 ou DS2832" ${master?'':'disabled'} onchange="updateMaxiprodCode(${COST_MANUAL_LOOKUP_ID},this.value)"></div><button class="btn btn-gold btn-sm" onclick="openCostStructure(${COST_MANUAL_LOOKUP_ID})"><span class="msi msi-sm">manage_search</span> Consultar custos</button></div>`;
-  return `<div class="structure-intro">Cada equipamento importado pelo arquivo Project aparece automaticamente abaixo. Para consultar sua estrutura, informe uma única vez o código raiz correspondente no MaxiProd e abra o equipamento.</div><div class="structure-order-list">${list}${manualCard}</div>`;
+  return `<div class="structure-intro">Cada equipamento importado pelo arquivo Project aparece automaticamente abaixo. Para consultar sua estrutura, informe uma única vez o código raiz correspondente no MaxiProd e abra o equipamento.</div><div class="structure-order-list">${list}</div>`;
 }
 async function openCostStructure(orderId){
   selectedStructureOrderId=orderId;
@@ -4995,7 +5000,7 @@ function exportCostStructurePDF(orderId){
   drawTable('ESTRUTURA MULTINÍVEL',['NÍVEL','CÓDIGO','ITEM / DESCRIÇÃO','UNID.','QTD.','TOTAL'],[13,29,72,15,21,36],report.rows.map(r=>[r.nivel,r.codigo,`${'  '.repeat(Math.max(0,r.nivel-1))}${r.descricao}`,r.unidade,fmtStructureNumber(r.quantidade),fmtBRL(r.total)]),[4,5]);
   drawTable('INSUMOS',['CÓDIGO','DESCRIÇÃO','QTD. BAIXADA','VALOR UNIT.','TOTAL'],[29,77,25,27,28],report.insumos.map(r=>[r.codigo||'—',r.descricao||'—',fmtStructureNumber(r.quantidadeBaixada),fmtBRL(r.valorUnitario),fmtBRL(r.valorTotal)]),[2,3,4]);
   drawTable('OPERAÇÕES',['DESCRIÇÃO','ESTAÇÃO','HORAS','R$/H','TOTAL'],[65,45,22,26,28],report.operacoes.map(r=>[r.descricao,r.estacao,fmtStructureNumber(r.horas),fmtBRL(r.valorHora),fmtBRL(r.total)]),[2,3,4]);
-  cartamacPdfSave(pdf,`${safeReportFileName(`Estrutura Multinivel - ${report.order.code||report.order.op||'OP'} — ${report.order.name||'Equipamento'}`)}.pdf`,{sector:'CUSTOS'});
+  cartamacPdfSave(pdf,`${safeReportFileName(`Estrutura Multinivel - ${report.order.code||report.order.op||'OP'} — ${report.order.name||'Equipamento'}`)}.pdf`,{sector:report.order.manualCostLookup?'COMERCIAL - RETORNO EQUIPAMENTOS':'CUSTOS'});
 }
 function updateCostMonth(orderId,key,val){
   if(!isMaster(loggedUser)){showToast('Sem permissão','err');return;}
@@ -5067,7 +5072,7 @@ function applyInstallmentPlan(orderId){
 
   persistCosts(orderId);
   openCostCardId=orderId;
-  renderCostsContent();
+  renderCostStructureHost(orderId);
   showToast('Parcelamento lançado no calendário');
 }
 function removeInstallmentPlan(orderId,planId){
@@ -5852,15 +5857,28 @@ function parseBRNumber(value){
   const number=Number(normalised);return Number.isFinite(number)?number:0;
 }
 function priceInputSum(selector){return Array.from(document.querySelectorAll(selector)).reduce((total,input)=>total+parseBRNumber(input.value),0);}
+function renderPartsEquipmentReturn(){
+  const container=document.getElementById('partsEquipmentReturn');if(!container)return;
+  selectedStructureOrderId=COST_MANUAL_LOOKUP_ID;
+  container.innerHTML=buildCostStructuresView(canManageCostLookup(COST_MANUAL_LOOKUP_ID),false);
+}
 function switchPartsView(view){
+  view=['catalog','return','price'].includes(view)?view:'catalog';
   if(!hasAccess(`pecas.${view}`)){showAccessDenied();return;}
-  const catalog=document.getElementById('partsCatalog'),calculator=document.getElementById('partsPriceCalculator');
-  if(!catalog||!calculator)return;
-  const price=view==='price';
-  catalog.style.display=price?'none':'';calculator.classList.toggle('active',price);
-  document.getElementById('partsCatalogTab')?.classList.toggle('active',!price);
-  document.getElementById('partsPriceTab')?.classList.toggle('active',price);
-  if(price)calculatePartsPrice();
+  const catalog=document.getElementById('partsCatalog'),equipmentReturn=document.getElementById('partsEquipmentReturn'),calculator=document.getElementById('partsPriceCalculator');
+  if(!catalog||!equipmentReturn||!calculator)return;
+  partsView=view;
+  catalog.style.display=view==='catalog'?'':'none';
+  equipmentReturn.classList.toggle('active',view==='return');
+  calculator.classList.toggle('active',view==='price');
+  document.getElementById('partsCatalogTab')?.classList.toggle('active',view==='catalog');
+  document.getElementById('partsReturnTab')?.classList.toggle('active',view==='return');
+  document.getElementById('partsPriceTab')?.classList.toggle('active',view==='price');
+  if(view==='return'){
+    selectedStructureOrderId=COST_MANUAL_LOOKUP_ID;renderPartsEquipmentReturn();
+    ensureCostStructureLoaded(COST_MANUAL_LOOKUP_ID).then(()=>{if(partsView==='return'&&document.getElementById('page-pecas')?.classList.contains('active'))renderPartsEquipmentReturn();});
+  }else if(String(selectedStructureOrderId)===String(COST_MANUAL_LOOKUP_ID))selectedStructureOrderId=null;
+  if(view==='price')calculatePartsPrice();
 }
 function calculatePartsPrice(){
   const cost=parseBRNumber(document.getElementById('priceCost')?.value);
