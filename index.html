@@ -131,17 +131,52 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .parts-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
 .parts-head h2{font-size:22px;margin-bottom:5px;display:flex;align-items:center;gap:9px;}
 .parts-head p{font-size:14px;color:var(--text3);}
-.parts-stats{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:14px;margin-bottom:22px;}
-.parts-stats .stat-card{min-height:98px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;}
-.parts-stats .stat-val{font-size:23px;color:var(--accent2);margin-top:6px;margin-bottom:0;}
-.parts-stats .stat-val.parts-date-val{font-size:16px;font-family:'Inter',sans-serif;}
 .parts-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.parts-toolbar .search-wrap{flex:1 1 100%;width:100%;min-height:52px;}
+.parts-toolbar .search-wrap .search-input{width:100%;height:52px;font-size:15px;padding-left:44px;}
+.parts-catalog-actions{display:flex;justify-content:flex-end;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px;}
+.parts-structure-panel-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.parts-manual-create{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;margin-bottom:18px;}
+.parts-manual-create h3{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--accent2);margin-bottom:6px;}
+.parts-manual-create>p{font-size:12px;color:var(--text3);margin-bottom:14px;}
+.parts-manual-create-grid{display:grid;grid-template-columns:minmax(170px,.8fr) minmax(150px,.65fr) minmax(300px,1.6fr) minmax(260px,1.25fr) auto;gap:12px;align-items:end;}
+.parts-manual-create-grid .form-group{margin:0;min-width:0;}
+.parts-manual-create-grid input,.parts-manual-create-grid select{width:100%;height:42px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:0 12px;font:500 13px Inter,sans-serif;outline:none;}
+.parts-manual-create-grid input:focus,.parts-manual-create-grid select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(205,173,72,.1);}
+.parts-manual-create-grid button{height:42px;white-space:nowrap;}
+.parts-manual-delete{display:grid;grid-template-columns:minmax(320px,1fr) auto;gap:12px;align-items:end;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.parts-manual-delete .form-group{margin:0;min-width:0;}
+.parts-manual-delete select{width:100%;height:42px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:0 12px;font:500 13px Inter,sans-serif;outline:none;}
+.parts-manual-delete select:focus{border-color:var(--red);box-shadow:0 0 0 2px rgba(239,68,68,.1);}
+.parts-manual-delete button{height:42px;white-space:nowrap;border-color:rgba(239,68,68,.55);color:var(--red);}
+@media(max-width:1200px){.parts-manual-create-grid{grid-template-columns:repeat(2,minmax(220px,1fr));}.parts-manual-create-grid button{width:100%;}}
+@media(max-width:640px){.parts-manual-create-grid,.parts-manual-delete{grid-template-columns:1fr;}}
 .parts-table-wrap{overflow:auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);}
 .parts-table{width:100%;border-collapse:collapse;min-width:850px;font-size:14px;}
 .parts-table th{background:var(--bg3);color:var(--text3);text-align:left;padding:12px 14px;font-size:11.5px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;border-bottom:1px solid var(--border2);position:sticky;top:0;}
 .parts-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text2);}
 .parts-table tr:last-child td{border-bottom:none;}
 .parts-table tr:hover td{background:rgba(255,255,255,.018);}
+.parts-table tr.parts-data-row{cursor:pointer;}
+.parts-table tr.parts-data-row.is-open td{background:rgba(205,173,72,.055);border-bottom-color:#6f5b20;}
+.parts-table tr.parts-data-row.is-loading td{opacity:.76;}
+.parts-cost-main{display:block;font-weight:800;color:var(--text);white-space:nowrap;}
+.parts-cost-source,.parts-refresh-state{display:block;margin-top:4px;font-size:10.5px;line-height:1.25;color:var(--text3);font-weight:500;white-space:normal;}
+.parts-refresh-state.fresh{color:var(--text3);}.parts-refresh-state.stale{color:var(--gold);}.parts-refresh-state.error{color:var(--red);}
+.parts-row-name{display:flex;align-items:flex-start;gap:7px;}.parts-row-name .msi{font-size:17px;color:var(--gold);transition:transform .18s ease;}.parts-data-row.is-open .parts-row-name .msi{transform:rotate(90deg);}
+.parts-structure-detail td{padding:0!important;background:#0b0b0b!important;border-bottom:1px solid #6f5b20!important;}
+.parts-structure-panel{padding:16px 18px 20px;border-left:3px solid var(--gold);}
+.parts-structure-panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:13px;}
+.parts-structure-panel-head h4{font-size:14px;color:var(--accent2);}.parts-structure-panel-head p{font-size:11.5px;color:var(--text3);margin-top:4px;}
+.parts-structure-message{padding:22px;text-align:center;color:var(--text3);border:1px dashed var(--border2);border-radius:var(--radius);}
+.parts-structure-editable{cursor:text;border:1px dashed transparent;border-radius:5px;padding:4px 6px;min-height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .15s ease,background .15s ease;}
+.parts-structure-editable:hover{border-color:#806921;background:rgba(205,173,72,.055);}
+.parts-structure-editable small{display:block;margin-top:2px;color:var(--gold);font:600 9px Inter,sans-serif;white-space:nowrap;}
+.parts-structure-inline-input{width:100%;min-width:72px;max-width:120px;background:var(--bg4);border:1px solid var(--gold);border-radius:5px;color:var(--text);padding:6px;text-align:center;font:700 12px 'JetBrains Mono',monospace;outline:none;}
+.parts-structure-missing{color:var(--red);font:700 10px Inter,sans-serif;text-transform:uppercase;letter-spacing:.25px;}
+.parts-structure-origin{display:block;margin-top:2px;color:var(--text3);font:500 8.5px Inter,sans-serif;line-height:1.2;text-align:center;max-width:150px;}
+.parts-structure-origin.edited{color:var(--gold);font-weight:700;}
+.parts-batch-status{font-size:12px;color:var(--text3);min-width:180px;}.parts-batch-status.running{color:var(--gold);}.parts-batch-status.ok{color:var(--green);}.parts-batch-status.err{color:var(--red);}
 .parts-table .parts-group td{background:#202020;color:#f0f0f0;border-top:1px solid #484848;border-bottom:1px solid #484848;font-weight:800;text-transform:uppercase;letter-spacing:.35px;font-size:13.5px;}
 .parts-table .parts-section td{background:#30270b;color:#ffd45d;border-top:1px solid #7a6220;border-bottom:1px solid #7a6220;font-size:13.5px;font-weight:800;text-align:center;text-transform:uppercase;letter-spacing:.9px;padding:13px 14px;cursor:pointer;}
 .parts-section-title{display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -252,7 +287,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 @media(max-width:620px){.finance-advanced-filters.receber,.finance-advanced-filters.pagar,.finance-advanced-filters.pedido-compra{grid-template-columns:1fr}.finance-filter-heading{display:grid}.finance-filter-range{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}}
 @media(max-width:760px){.sales-summary.purchase-summary{grid-template-columns:1fr;}}
 @media(max-width:760px){.pagar-detalhe-top{align-items:stretch;flex-direction:column;}.pagar-detalhe-actions{width:100%;display:grid;grid-template-columns:1fr;}.pagar-atrasados-btn,.pagar-detalhe-actions .btn{width:100%;}}
-@media(max-width:640px){.parts-head h2{font-size:19px}.parts-stats{grid-template-columns:1fr}.parts-toolbar .search-wrap{width:100%;}}
+@media(max-width:640px){.parts-head h2{font-size:19px}.parts-toolbar .search-wrap{width:100%;}}
 @media(max-width:640px){
   .parts-table-wrap,.sim-table-wrap{overflow:visible;}
   .parts-table,.sim-table{min-width:0;width:100%;}
@@ -262,6 +297,9 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
   .parts-table tr:not(.parts-group):not(.parts-section) td,.sim-table td{border-bottom:1px solid var(--border);padding:9px 12px;min-height:37px;}
   .parts-table tr:not(.parts-group):not(.parts-section) td:last-child,.sim-table td:last-child{border-bottom:0;}
   .parts-table tr:not(.parts-group):not(.parts-section) td::before{content:attr(data-label);display:block;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.45px;text-transform:uppercase;margin-bottom:3px;}
+  .parts-table tr.parts-structure-detail{margin-top:-10px;border:0;border-radius:0;background:transparent;box-shadow:none;}
+  .parts-table tr.parts-structure-detail td::before{display:none;content:none;}
+  .parts-structure-panel{padding:13px 10px 16px;border-left-width:2px;overflow:auto;}
   .sim-table td:first-child::before{content:'Etapa';display:block;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.45px;text-transform:uppercase;margin-bottom:3px;}
   .sim-table td:last-child::before{content:'Duração (dias)';display:block;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.45px;text-transform:uppercase;margin-bottom:3px;}
   .sim-table input[type=number]{width:100%;max-width:none;}
@@ -793,7 +831,7 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .structure-order-list{display:grid;gap:10px;}
 .structure-order{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px) auto;gap:12px;align-items:end;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius);padding:12px 14px;}
 .structure-order-main{min-width:0;cursor:pointer;}.structure-order-name{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.structure-order-meta{font-size:12px;color:var(--text3);margin-top:4px;}.structure-order .form-group{margin:0;}.structure-order .form-group label{font-size:10px;}.structure-order input{padding:8px 10px;}
-.structure-view-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;}.structure-view-head h3{font-size:17px;margin:18px 0 4px;}.structure-return{margin-bottom:4px!important;}.structure-tree{border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;background:var(--bg2);}.structure-tree-head,.structure-node{display:grid;grid-template-columns:72px minmax(270px,1fr) 96px 118px 132px 142px;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;}.structure-tree-head{background:#1b1b1b;font-size:10px;font-weight:800;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;}.structure-node:last-child{border-bottom:0;}.structure-node-code,.structure-node-number{font-family:'JetBrains Mono',monospace !important;}.structure-node-code{color:var(--accent2);font-weight:700;}.structure-node-number{font-size:16px;font-weight:700;letter-spacing:-.15px;font-variant-numeric:tabular-nums;}.structure-node-desc{min-width:0;display:flex;align-items:center;gap:8px;}.structure-node-desc b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}.structure-level{display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px;height:18px;border:1px solid var(--border2);border-radius:4px;color:var(--text3);font-size:10px;}.structure-category{font-size:10px;color:var(--text3);margin-left:auto;white-space:nowrap;}.structure-node-total{font-weight:800;color:var(--gold);}.structure-node-ds{background:#282828;border-top:1px solid #4c4c4c;border-bottom-color:#4c4c4c;}.structure-node-ds .structure-node-code,.structure-node-ds .structure-node-desc b{color:#f3f3f3;font-weight:900;}.structure-node-ds .structure-node-total{font-size:17px;color:#fff;}.structure-node-root{background:#373737;border-top:1px solid #666;border-bottom-color:#666;}.structure-node-root .structure-node-code,.structure-node-root .structure-node-desc b{color:#fff;font-size:14px;font-weight:900;}.structure-node-root .structure-node-total{font-size:20px;color:#fff;}.structure-summary{display:flex;gap:12px;flex-wrap:wrap;}.structure-summary .cost-client-tag{font-size:12px;}.structure-empty{padding:28px;text-align:center;color:var(--text3);background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--radius2);}.structure-tools{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:0 0 16px;}.structure-tools .form-group{min-width:260px;flex:1;}.structure-tools button{height:40px;}
+.structure-view-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;}.structure-view-head h3{font-size:17px;margin:18px 0 4px;}.structure-return{margin-bottom:4px!important;}.structure-tree{border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;background:var(--bg2);}.structure-tree-head,.structure-node{display:grid;grid-template-columns:72px minmax(270px,1fr) 96px 118px 132px 142px;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;}.structure-tree-head{background:#1b1b1b;font-size:10px;font-weight:800;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;}.structure-node:last-child{border-bottom:0;}.structure-node-code,.structure-node-number{font-family:'JetBrains Mono',monospace !important;}.structure-node-code{color:var(--accent2);font-weight:700;}.structure-node-number{font-size:16px;font-weight:700;letter-spacing:-.15px;font-variant-numeric:tabular-nums;}.structure-price-editable{display:flex;min-height:38px;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;padding:3px 6px;border-radius:6px;cursor:text;transition:background .15s,border-color .15s;outline:1px dashed transparent;}.structure-price-editable:hover{background:rgba(211,176,70,.09);outline-color:rgba(211,176,70,.55);}.structure-price-editable small{font-family:Inter,sans-serif;font-size:8px;font-weight:700;line-height:1;color:var(--gold);white-space:nowrap;}.structure-price-input{width:100%;min-width:92px;height:32px;padding:5px 7px;border:1px solid var(--gold)!important;border-radius:5px;background:#0c0c0c!important;color:#fff!important;font-family:'JetBrains Mono',monospace!important;font-size:15px!important;font-weight:700;text-align:right;outline:none;}.structure-node-desc{min-width:0;display:flex;align-items:center;gap:8px;}.structure-node-desc b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}.structure-level{display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px;height:18px;border:1px solid var(--border2);border-radius:4px;color:var(--text3);font-size:10px;}.structure-category{font-size:10px;color:var(--text3);margin-left:auto;white-space:nowrap;}.structure-node-total{font-weight:800;color:var(--gold);}.structure-node-ds{background:#282828;border-top:1px solid #4c4c4c;border-bottom-color:#4c4c4c;}.structure-node-ds .structure-node-code,.structure-node-ds .structure-node-desc b{color:#f3f3f3;font-weight:900;}.structure-node-ds .structure-node-total{font-size:17px;color:#fff;}.structure-node-root{background:#373737;border-top:1px solid #666;border-bottom-color:#666;}.structure-node-root .structure-node-code,.structure-node-root .structure-node-desc b{color:#fff;font-size:14px;font-weight:900;}.structure-node-root .structure-node-total{font-size:20px;color:#fff;}.structure-summary{display:flex;gap:12px;flex-wrap:wrap;}.structure-summary .cost-client-tag{font-size:12px;}.structure-empty{padding:28px;text-align:center;color:var(--text3);background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--radius2);}.structure-tools{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:0 0 16px;}.structure-tools .form-group{min-width:260px;flex:1;}.structure-tools button{height:40px;}
 .production-block{margin-top:20px;border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;background:var(--bg2);}.production-block-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;background:#202020;border-bottom:1px solid var(--border);font-size:13px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:.3px;}.production-toggle{width:100%;border:0;cursor:pointer;text-align:left;font:inherit;}.production-toggle:hover{background:#292929;}.production-block.is-collapsed .production-block-content{display:none;}.production-block-head span{font-size:11px;color:var(--text3);font-weight:600;text-transform:none;letter-spacing:0;}.production-filter{padding:10px 14px;background:#181818;border-bottom:1px solid var(--border);}.production-filter input{width:100%;min-height:36px;box-sizing:border-box;background:#292929!important;color:var(--text)!important;border-color:#505050!important;}.production-table{width:100%;border-collapse:collapse;font-size:12px;}.production-table th{padding:10px 14px;text-align:left;background:#191919;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.5px;}.production-table td{padding:10px 14px;border-top:1px solid var(--border);vertical-align:middle;}.production-table .production-number{font-family:'JetBrains Mono',monospace!important;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;}.production-table .production-total{color:var(--gold);font-weight:800;}.production-table input{width:112px;min-height:34px;padding:6px 8px;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;}.production-empty{padding:20px 14px;color:var(--text3);font-size:13px;}.production-hint{display:block;font-size:10px;color:var(--text3);margin-top:3px;}.production-op-ref{padding:10px 14px;background:#181818;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);}
 .cost-pct-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;align-items:end;}
 .cost-pct-row .form-group{margin-bottom:0;}
@@ -1370,6 +1408,36 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 .outlook-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.outlook-config-grid .form-group{margin:0}.outlook-enable{margin-top:14px}.outlook-test-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}.outlook-status{font-size:12px;color:var(--text3);margin-left:4px}.outlook-status.ok{color:var(--green)}.outlook-status.err{color:var(--red)}
 @media(max-width:820px){.outlook-config-grid{grid-template-columns:1fr}.outlook-test-head{flex-direction:column}}
 
+#partsEquipmentReturn .structure-tree-head>div:nth-child(5){text-align:center;}
+#partsEquipmentReturn .structure-price-cell{width:100%;min-width:0;justify-self:stretch;text-align:center;}
+#partsEquipmentReturn .structure-price-editable{align-items:center;}
+#partsEquipmentReturn .structure-price-editable>span,#partsEquipmentReturn .structure-price-editable>small{display:block;width:100%;text-align:center;}
+#partsEquipmentReturn .structure-price-input{text-align:center;}
+.price-cost-row{grid-template-columns:minmax(210px,1fr) minmax(185px,230px) minmax(260px,1.4fr) auto;}
+#partsPriceCalculator .price-grid{grid-template-columns:repeat(2,minmax(260px,1fr));}
+.price-breakdown-grid{display:grid;grid-template-columns:1fr;gap:14px;align-items:start;}
+.price-tax-group h3,.price-equipment-group h3{display:grid;grid-template-columns:minmax(160px,1fr) 100px minmax(160px,1fr);gap:10px;align-items:center;}
+.price-tax-group h3>span,.price-equipment-group h3>span{color:var(--text3);font-size:9px;text-align:center;}
+.price-tax-group h3>span:last-child,.price-equipment-group h3>span:last-child{text-align:right;padding-right:8px;}
+.price-tax-row,.price-equipment-row{grid-template-columns:minmax(160px,1fr) 100px minmax(160px,1fr);}
+.price-tax-row input,.price-equipment-row input{width:100px;justify-self:center;}
+.price-tax-value,.price-equipment-value{display:block;color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;text-align:right;white-space:nowrap;padding-right:8px;}
+.price-tax-row span small{display:inline-block;margin-left:5px;color:var(--gold);font-size:8px;font-weight:800;letter-spacing:.25px;text-transform:uppercase;}
+.price-formula-result{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 15px;border-top:1px solid rgba(211,176,70,.45);background:rgba(211,176,70,.08);color:var(--text2);font-size:12px;font-weight:750;}
+.price-formula-result strong{color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:900;text-align:right;white-space:nowrap;}
+.price-formula-result strong small{color:var(--text3);font-size:10px;font-weight:700;}
+.price-breakdown-card{overflow:hidden;border:1px solid var(--border);border-radius:var(--radius2);background:var(--bg2);}
+.price-breakdown-card h3{margin:0;padding:13px 15px;border-bottom:1px solid var(--border);background:var(--bg3);color:var(--accent2);font-size:12px;letter-spacing:.55px;text-transform:uppercase;}
+.price-breakdown-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.price-breakdown-table th{padding:10px 12px;background:#191919;color:var(--text3);font-size:10px;letter-spacing:.4px;text-align:right;text-transform:uppercase;}
+.price-breakdown-table th:first-child,.price-breakdown-table td:first-child{text-align:left;}
+.price-breakdown-table td{padding:10px 12px;border-top:1px solid var(--border);color:var(--text2);font-size:12px;text-align:right;vertical-align:middle;}
+.price-breakdown-table td:not(:first-child){font-family:'JetBrains Mono',monospace;font-weight:700;white-space:nowrap;}
+.price-breakdown-table tr.price-emphasis td{background:rgba(211,176,70,.08);color:var(--accent2);font-weight:850;}
+.price-breakdown-table tr.price-final-row td{background:rgba(67,199,101,.09);color:var(--green);font-size:14px;font-weight:900;}
+.price-breakdown-note{display:block;margin-top:4px;color:var(--text3);font-size:9px;font-family:Inter,sans-serif;font-weight:500;}
+@media(max-width:1050px){.price-cost-row{grid-template-columns:repeat(2,minmax(0,1fr));}.price-breakdown-grid{grid-template-columns:1fr;}#partsPriceCalculator .price-grid{grid-template-columns:1fr;}}
+@media(max-width:640px){.price-cost-row{grid-template-columns:1fr;}.price-breakdown-table{min-width:520px;}.price-breakdown-card{overflow-x:auto;}.price-tax-group h3,.price-equipment-group h3,.price-tax-row,.price-equipment-row{grid-template-columns:minmax(90px,1fr) 82px minmax(110px,1fr);}.price-tax-row input,.price-equipment-row input{width:82px;}.price-tax-value,.price-equipment-value{font-size:12px;}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -1509,9 +1577,25 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
       <button class="parts-subtab" id="partsPriceTab" onclick="switchPartsView('price')"><span class="msi msi-sm">calculate</span> Formação de preço</button>
     </div>
     <div id="partsCatalog">
-    <div class="parts-stats">
-      <div class="stat-card"><div class="stat-lbl">Total de peças cadastradas</div><div class="stat-val" id="partsStatCount">0</div></div>
-      <div class="stat-card"><div class="stat-lbl">Último carregamento</div><div class="stat-val parts-date-val" id="partsStatLast">Sem registro</div></div>
+    <div class="parts-catalog-actions">
+      <button class="btn btn-gold btn-sm" id="partsRefreshAllBtn" type="button" onclick="refreshAllPartsStructures()"><span class="msi msi-sm">sync</span> Atualizar estruturas vencidas</button>
+      <button class="btn btn-ghost btn-sm" type="button" onclick="exportAllPartsStructuresExcel()"><span class="msi msi-sm">table_view</span> Excel de todas as estruturas</button>
+      <button class="btn btn-ghost btn-sm" id="partsCancelRefreshBtn" type="button" style="display:none" onclick="cancelPartsStructureBatch()"><span class="msi msi-sm">stop_circle</span> Parar</button>
+    </div>
+    <div class="parts-manual-create" id="partsManualCreateBox">
+      <h3><span class="msi msi-sm">add_box</span> Cadastrar novo item por DS</h3>
+      <p>Informe as três primeiras colunas da tabela e escolha o equipamento/grupo ao qual o item pertence.</p>
+      <div class="parts-manual-create-grid">
+        <div class="form-group"><label>TAG</label><input id="partsManualTag" type="text" placeholder="Ex.: HBD 17 - HBD 23"></div>
+        <div class="form-group"><label>CÓD. DS</label><input id="partsManualCode" type="text" placeholder="Ex.: DS1003" autocomplete="off"></div>
+        <div class="form-group"><label>EQUIPAMENTO (DESENHO REF.)</label><input id="partsManualEquipment" type="text" placeholder="Nome do item / desenho"></div>
+        <div class="form-group"><label>PERTENCE AO EQUIPAMENTO</label><select id="partsManualParent"><option value="">Selecione o equipamento/grupo</option></select></div>
+        <button class="btn btn-gold" type="button" onclick="createManualPartItem()"><span class="msi msi-sm">add</span> Cadastrar item</button>
+      </div>
+      <div class="parts-manual-delete">
+        <div class="form-group"><label>EXCLUIR ITEM POR DS</label><select id="partsDeleteCode"><option value="">Selecione o DS que será excluído</option></select></div>
+        <button class="btn btn-ghost" type="button" onclick="deletePartItemByCode()"><span class="msi msi-sm">delete</span> Excluir DS</button>
+      </div>
     </div>
     <div class="import-box" id="partsImportBox">
       <h3><span class="msi msi-sm">folder_open</span> Importar tabela de peças (.xlsx)</h3>
@@ -1525,15 +1609,16 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     </div>
     <div class="parts-toolbar">
       <div class="search-wrap"><span class="msi msi-sm">search</span><input type="text" class="search-input" id="partsSearch" placeholder="Buscar por TAG, código ou equipamento..." oninput="renderPartsPage()"></div>
+      <span class="parts-batch-status" id="partsBatchStatus"></span>
       <span id="partsCount" style="font-size:13px;color:var(--text3);"></span>
     </div>
     <div id="partsTableContainer"></div>
     </div>
     <div class="price-calc" id="partsEquipmentReturn"></div>
     <div class="price-calc" id="partsPriceCalculator">
-      <p class="price-intro">Informe o custo do equipamento e ajuste os índices. O cálculo segue a tabela padrão enviada: markup do equipamento, tributos e margem de desconto.</p>
+      <p class="price-intro">Informe o custo do equipamento e ajuste os índices. Os impostos são discriminados individualmente e a margem de desconto é aplicada somente ao valor final.</p>
       <div class="price-inputs"><div class="price-cost-row">
-        <div class="form-group"><label>Custo do equipamento (R$)</label><input class="price-cost-input" id="priceCost" type="text" inputmode="decimal" value="25.867,08" oninput="calculatePartsPrice()"></div>
+        <div class="form-group"><label>Custo do equipamento (R$)</label><input class="price-cost-input" id="priceCost" type="text" inputmode="decimal" value="278.924,13" oninput="calculatePartsPrice()"></div>
         <div class="price-discount"><span>Margem de desconto (%)</span><input id="priceDiscount" type="number" min="0" max="99" step="0.01" value="5" oninput="calculatePartsPrice()"></div>
         <div class="form-group" style="min-width:270px;"><label>Nome da peça / equipamento</label><input id="priceItemName" type="text" placeholder="Ex.: Rotor Hidrapulper" oninput="calculatePartsPrice()"></div>
         <button class="btn btn-gold btn-sm" type="button" onclick="exportPartsPriceReport()"><span class="msi msi-sm">picture_as_pdf</span> Gerar relatório</button>
@@ -1541,35 +1626,32 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
       </div>
       <div class="price-section-title">ÍNDICES FORMAÇÃO DE PREÇO</div>
       <div class="price-grid">
-        <section class="price-group"><h3>Índices do equipamento</h3>
-          <div class="price-row"><span>Lucro sobre vendas</span><input class="price-equipment-index" type="number" step="0.01" value="20" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>Engenharia</span><input class="price-equipment-index" type="number" step="0.01" value="5" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>Custo fixo</span><input class="price-equipment-index" type="number" step="0.01" value="9" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>Fretes para cliente</span><input class="price-equipment-index" type="number" step="0.01" value="0" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>Comissão</span><input class="price-equipment-index" type="number" step="0.01" value="5" oninput="calculatePartsPrice()"></div>
+        <section class="price-group price-equipment-group"><h3>Índices do equipamento <span>Alíquota (%)</span><span>Valor calculado</span></h3>
+          <div class="price-row price-equipment-row"><span>Lucro sobre vendas</span><input class="price-equipment-index" type="number" step="0.01" value="20" oninput="calculatePartsPrice()"><strong class="price-equipment-value" data-equipment-value="0">R$ 0,00</strong></div>
+          <div class="price-row price-equipment-row"><span>Engenharia</span><input class="price-equipment-index" type="number" step="0.01" value="5" oninput="calculatePartsPrice()"><strong class="price-equipment-value" data-equipment-value="1">R$ 0,00</strong></div>
+          <div class="price-row price-equipment-row"><span>Custo fixo</span><input class="price-equipment-index" type="number" step="0.01" value="9" oninput="calculatePartsPrice()"><strong class="price-equipment-value" data-equipment-value="2">R$ 0,00</strong></div>
+          <div class="price-row price-equipment-row"><span>Fretes para cliente</span><input class="price-equipment-index" type="number" step="0.01" value="0" oninput="calculatePartsPrice()"><strong class="price-equipment-value" data-equipment-value="3">R$ 0,00</strong></div>
+          <div class="price-row price-equipment-row"><span>Comissão</span><input class="price-equipment-index" type="number" step="0.01" value="5" oninput="calculatePartsPrice()"><strong class="price-equipment-value" data-equipment-value="4">R$ 0,00</strong></div>
+          <div class="price-formula-result"><span>Markup do equipamento</span><strong id="priceEquipmentMarkup">0,00% <small>(0,0000)</small></strong></div>
         </section>
-        <section class="price-group"><h3>Índices comerciais</h3>
-          <div class="price-row"><span>Lucro sobre vendas</span><input class="price-commercial-index" type="number" step="0.01" value="5" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>Engenharia</span><input class="price-commercial-index" type="number" step="0.01" value="5" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>Custo fixo</span><input class="price-commercial-index" type="number" step="0.01" value="9" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>Fretes para cliente</span><input class="price-commercial-index" type="number" step="0.01" value="0" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>Comissão</span><input class="price-commercial-index" type="number" step="0.01" value="5" oninput="calculatePartsPrice()"></div>
-        </section>
-        <section class="price-group"><h3>Impostos</h3>
-          <div class="price-row"><span>PIS</span><input class="price-tax" type="number" step="0.01" value="0.65" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>COFINS</span><input class="price-tax" type="number" step="0.01" value="3" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>CSLL</span><input class="price-tax" type="number" step="0.01" value="1.08" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>IRPJ</span><input class="price-tax" type="number" step="0.01" value="2.2" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>ICMS</span><input class="price-tax" type="number" step="0.01" value="12" oninput="calculatePartsPrice()"></div>
-          <div class="price-row"><span>IPI</span><input class="price-tax-ipi" type="number" step="0.01" value="0" oninput="calculatePartsPrice()"></div>
+        <section class="price-group price-tax-group"><h3>Impostos <span>Alíquota (%)</span><span>Valor calculado</span></h3>
+          <div class="price-row price-tax-row"><span>PIS</span><input class="price-tax" type="number" step="0.01" value="0.65" oninput="calculatePartsPrice()"><strong class="price-tax-value" data-tax-value="PIS">R$ 0,00</strong></div>
+          <div class="price-row price-tax-row"><span>COFINS</span><input class="price-tax" type="number" step="0.01" value="3" oninput="calculatePartsPrice()"><strong class="price-tax-value" data-tax-value="COFINS">R$ 0,00</strong></div>
+          <div class="price-row price-tax-row"><span>CSLL</span><input class="price-tax" type="number" step="0.01" value="1.08" oninput="calculatePartsPrice()"><strong class="price-tax-value" data-tax-value="CSLL">R$ 0,00</strong></div>
+          <div class="price-row price-tax-row"><span>IRPJ <small>divisor: 1,20%</small></span><input class="price-tax" type="number" step="0.01" value="2.2" oninput="calculatePartsPrice()"><strong class="price-tax-value" data-tax-value="IRPJ">R$ 0,00</strong></div>
+          <div class="price-row price-tax-row"><span>ICMS</span><input class="price-tax" type="number" step="0.01" value="8.8" oninput="calculatePartsPrice()"><strong class="price-tax-value" data-tax-value="ICMS">R$ 0,00</strong></div>
+          <div class="price-row price-tax-row"><span>IPI</span><input class="price-tax-ipi" type="number" step="0.01" value="0" oninput="calculatePartsPrice()"><strong class="price-tax-value" data-tax-value="IPI">R$ 0,00</strong></div>
+          <div class="price-formula-result"><span>Divisor tributário</span><strong id="priceTaxDivisor">0,00% <small>(0,0000)</small></strong></div>
         </section>
       </div>
       <div class="price-section-title">RESUMO PREÇO DE VENDA</div>
       <div class="price-results">
-        <div class="stat-card"><div class="stat-lbl">Preço de venda</div><div class="stat-val" id="priceSale">R$ 0,00</div><div class="stat-sub">Com ICMS, sem IPI</div><div class="price-ipi-line" id="priceSaleWithIpi">Com IPI: R$ 0,00</div></div>
-        <div class="stat-card"><div class="stat-lbl">Preço com margem de desconto</div><div class="stat-val" id="priceDiscounted">R$ 0,00</div><div class="stat-sub">Conforme percentual de desconto</div><div class="price-ipi-line" id="priceDiscountedWithIpi">Com IPI: R$ 0,00</div></div>
-        <div class="stat-card"><div class="stat-lbl">Preço com margem sem imposto</div><div class="stat-val" id="priceWithoutTax">R$ 0,00</div><div class="stat-sub">Valor de referência sem tributos</div></div>
+        <div class="stat-card"><div class="stat-lbl">Preço com impostos</div><div class="stat-val" id="priceSale">R$ 0,00</div><div class="stat-sub">Valor do equipamento</div><div class="price-ipi-line" id="priceSaleWithIpi">IPI destacado: R$ 0,00</div></div>
+        <div class="stat-card"><div class="stat-lbl">Preço final com margem de desconto</div><div class="stat-val" id="priceDiscounted">R$ 0,00</div><div class="stat-sub">Valor para proposta comercial</div><div class="price-ipi-line" id="priceDiscountedWithIpi">Reserva para desconto: R$ 0,00</div></div>
+        <div class="stat-card"><div class="stat-lbl">Preço sem ICMS e IPI</div><div class="stat-val" id="priceWithoutTax">R$ 0,00</div><div class="stat-sub">Valor do equipamento antes de ICMS/IPI</div></div>
       </div>
+      <div class="price-section-title">DETALHAMENTO DA FORMAÇÃO DO PREÇO</div>
+      <div id="priceDetailedBreakdown"></div>
       <div id="priceCalcNote" style="font-size:12px;color:var(--text3);margin-top:14px;"></div>
     </div>
   </div>
@@ -1778,6 +1860,7 @@ const DEFAULT_DB = {
   costsAutoMonthKey: null,
   partsData:        [],
   partsLastImport:  null,
+  partsStructureCache: {},
   simulatorDraft:   null,
   simulatorTemplateVersion: 2,
   engineeringPeople: [],
@@ -2490,7 +2573,7 @@ function cleanCostEntryForSharedStorage(entry){
 }
 function costStructureRevision(entry){
   const mp=entry?.maxiprod||{};
-  return [mp.estruturaDocId||'',mp.estruturaChunkCount||0,mp.estruturaCharacterCount||0,mp.calculadoEm||'',mp.production?.atualizadoEm||''].join('|');
+  return [mp.estruturaDocId||'',mp.estruturaChunkCount||0,mp.estruturaCharacterCount||0,mp.calculadoEm||'',mp.production?.atualizadoEm||'',mp.commercialPriceRevision||''].join('|');
 }
 function applySharedCosts(payload){
   if(!payload||typeof payload!=='object')return;
@@ -2510,6 +2593,10 @@ function applySharedCosts(payload){
     if(selectedStructureOrderId!==null){
       ensureCostStructureLoaded(selectedStructureOrderId).then(()=>renderCostsContent());
     }
+  }
+  if(document.getElementById('page-pecas')?.classList.contains('active')&&partsView==='return'){
+    selectedStructureOrderId=COST_MANUAL_LOOKUP_ID;
+    ensureCostStructureLoaded(COST_MANUAL_LOOKUP_ID).then(()=>renderPartsEquipmentReturn());
   }
 }
 async function persistCosts(orderIds=null){
@@ -4741,6 +4828,9 @@ async function consultMaxiprodCost(orderId,options={}){
       production.erro=String(productionError?.message||'A consulta da Ordem de Produção não retornou dados.');
     }
     const loadedStructure=Array.isArray(result.estrutura)?result.estrutura:[];
+    const savedCommercialPrices=e.maxiprod?.commercialPriceOverrides||{};
+    const savedCommercialPriceRevision=e.maxiprod?.commercialPriceRevision||'';
+    applyCommercialPriceOverrides(loadedStructure,savedCommercialPrices);
     if(!loadedStructure.length&&(Number(result.custoTotal)||0)>0){
       throw new Error('A função de custos do Firebase está desatualizada: o total foi calculado, mas a estrutura multinível não foi enviada.');
     }
@@ -4759,6 +4849,8 @@ async function consultMaxiprodCost(orderId,options={}){
       estruturaDocId:structureStorage.docId,
       estruturaChunkCount:structureStorage.chunkCount,
       estruturaCharacterCount:structureStorage.characterCount,
+      commercialPriceOverrides:savedCommercialPrices,
+      commercialPriceRevision:savedCommercialPriceRevision,
       pendencias:(result.pendencias||[]).slice(0,50).map(p=>({codigo:p.codigo||'',descricao:p.descricao||'',motivo:p.motivo||''})),
       production:{
         itemCode:production.itemCode||itemCode,
@@ -4819,21 +4911,104 @@ function getStructureAggregateTotal(node){
   return own+(node.filhos||[]).reduce((sum,child)=>sum+getStructureAggregateTotal(child),0);
 }
 function getStructureGrandTotal(orderId){return (MAXIPROD_STRUCTURES[orderId]||[]).reduce((sum,node)=>sum+getStructureAggregateTotal(node),0);}
-function renderStructureRows(nodes,level=1,isRoot=false){
-  return (nodes||[]).map(node=>{
+function commercialStructurePriceEditingAllowed(orderId){
+  return isEquipmentReturnLookup(orderId)&&partsView==='return'&&document.getElementById('page-pecas')?.classList.contains('active')&&canManageCostLookup(orderId);
+}
+function structureNodeAtPath(nodes,path){
+  let list=Array.isArray(nodes)?nodes:[],node=null;
+  for(const index of path){
+    node=list[Number(index)];
+    if(!node)return null;
+    list=Array.isArray(node.filhos)?node.filhos:[];
+  }
+  return node;
+}
+function applyCommercialPriceOverrides(nodes,overrides,parentPath=[]){
+  (nodes||[]).forEach((node,index)=>{
+    const path=[...parentPath,index],saved=overrides?.[path.join('.')];
+    if(saved&&Number.isFinite(Number(saved.value))){
+      node.custoUnitario=Number(saved.value);
+      node._commercialPriceEditedAt=saved.updatedAt||node._commercialPriceEditedAt||new Date().toISOString();
+    }
+    applyCommercialPriceOverrides(node.filhos||[],overrides,path);
+  });
+  return nodes;
+}
+function renderStructureRows(nodes,level=1,isRoot=false,orderId=null,parentPath=[]){
+  return (nodes||[]).map((node,index)=>{
     const values=getStructureNodeValues(node), isDrawing=isRoot||/^DS/i.test(String(node.codigo||''));
     const displayedTotal=isDrawing?getStructureAggregateTotal(node):values.total;
     const searchText=`${node.codigo||''} ${node.descricao||''} ${node.categoria||''}`.toLowerCase();
+    const nodePath=isRoot?parentPath:[...parentPath,index];
+    const canEditPrice=!isRoot&&commercialStructurePriceEditingAllowed(orderId);
+    const priceContent=values.price==null?'—':fmtBRL(values.price);
+    const priceCell=canEditPrice
+      ?`<div class="structure-node-number structure-price-cell structure-price-editable" title="Clique duas vezes para editar" ondblclick="beginCommercialStructurePriceEdit(this,${Number(orderId)},'${nodePath.join('.')}')"><span>${priceContent}</span>${node._commercialPriceEditedAt?'<small>Valor alterado</small>':''}</div>`
+      :`<div class="structure-node-number structure-price-cell">${priceContent}</div>`;
     const row=`<div class="structure-node ${isRoot?'structure-node-root':isDrawing?'structure-node-ds':''}" data-search="${escapeHTML(searchText)}">
       <div class="structure-node-code">${escapeHTML(node.codigo||'—')}</div>
       <div class="structure-node-desc" style="padding-left:${Math.min(84,Math.max(0,level-1)*18)}px;"><span class="structure-level">${isRoot?'R':level}</span><b title="${escapeHTML(node.descricao||'')}">${escapeHTML(node.descricao||'—')}</b><span class="structure-category">${escapeHTML(node.categoria||'Comercial')}</span></div>
       <div>${escapeHTML(node.unidade||'—')}</div>
       <div class="structure-node-number">${fmtStructureNumber(values.quantity)}</div>
-      <div class="structure-node-number">${values.price==null?'—':fmtBRL(values.price)}</div>
+      ${priceCell}
       <div class="structure-node-number structure-node-total">${values.price==null&&!isDrawing?'—':fmtBRL(displayedTotal)}</div>
     </div>`;
-    return row+renderStructureRows(node.filhos,level+1,false);
+    return row+renderStructureRows(node.filhos,level+1,false,orderId,nodePath);
   }).join('');
+}
+function beginCommercialStructurePriceEdit(cell,orderId,pathText){
+  if(!commercialStructurePriceEditingAllowed(orderId)||cell.querySelector('input'))return;
+  const path=String(pathText||'').split('.').filter(Boolean).map(Number);
+  const node=structureNodeAtPath(MAXIPROD_STRUCTURES[orderId]||[],path);
+  if(!node){showToast('Item da estrutura não encontrado.','err');return;}
+  const original=cell.innerHTML;
+  const current=node.custoUnitario===null||node.custoUnitario===undefined?'':Number(node.custoUnitario).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:4});
+  cell.innerHTML=`<input class="structure-price-input" inputmode="decimal" aria-label="Editar preço" value="${escapeHTML(current)}">`;
+  const input=cell.querySelector('input');
+  let cancelled=false,finished=false;
+  const cancel=()=>{cancelled=true;finished=true;cell.innerHTML=original;};
+  input.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){event.preventDefault();cancel();}
+    if(event.key==='Enter'){event.preventDefault();input.blur();}
+  });
+  input.addEventListener('blur',()=>{
+    if(cancelled||finished)return;
+    finished=true;
+    saveCommercialStructurePrice(orderId,pathText,input.value);
+  });
+  input.focus();input.select();
+}
+async function saveCommercialStructurePrice(orderId,pathText,rawValue){
+  if(!commercialStructurePriceEditingAllowed(orderId)){showToast('Sem permissão para alterar este preço.','err');return;}
+  const cleaned=String(rawValue??'').replace(/\s/g,'').replace(/^R\$/i,'');
+  const numericText=cleaned.includes(',')?cleaned.replace(/\./g,'').replace(',','.'):cleaned;
+  const value=Number(numericText);
+  if(!/^\d+(?:\.\d+)?$/.test(numericText)||!Number.isFinite(value)||value<0){showToast('Informe um preço válido.','err');renderPartsEquipmentReturn();return;}
+  const path=String(pathText||'').split('.').filter(Boolean).map(Number);
+  const tree=MAXIPROD_STRUCTURES[orderId]||[];
+  const node=structureNodeAtPath(tree,path);
+  if(!node){showToast('Item da estrutura não encontrado.','err');renderPartsEquipmentReturn();return;}
+  const updatedAt=new Date().toISOString();
+  node.custoUnitario=value;
+  node._commercialPriceEditedAt=updatedAt;
+  const entry=getCostEntry(orderId);entry.maxiprod=entry.maxiprod||{};
+  entry.maxiprod.commercialPriceOverrides=entry.maxiprod.commercialPriceOverrides||{};
+  entry.maxiprod.commercialPriceOverrides[path.join('.')]={value,updatedAt};
+  entry.maxiprod.commercialPriceRevision=updatedAt;
+  entry.maxiprod.custoTotal=getStructureGrandTotal(orderId);
+  try{
+    const storage=await saveCostStructureDocument(orderId,entry.maxiprod.itemCode||'',tree);
+    entry.maxiprod.estruturaDocId=storage.docId;
+    entry.maxiprod.estruturaChunkCount=storage.chunkCount;
+    entry.maxiprod.estruturaCharacterCount=storage.characterCount;
+    const saved=await persistCosts(orderId);
+    renderPartsEquipmentReturn();
+    showToast(saved?'Preço alterado no Comercial.':'O preço foi alterado, mas o resumo não pôde ser sincronizado.',saved?'ok':'err');
+  }catch(error){
+    console.error('Preço Comercial:',error);
+    renderPartsEquipmentReturn();
+    showToast('Não foi possível salvar o preço alterado.','err');
+  }
 }
 function filterStructureRows(value){const q=String(value||'').trim().toLowerCase();document.querySelectorAll('.structure-node').forEach(row=>{row.style.display=!q||row.dataset.search.includes(q)?'grid':'none';});}
 function filterProductionRows(value,kind){
@@ -4922,7 +5097,7 @@ function buildCostStructuresView(master,readOnly=false){
     const totalsSummary=buildOrderTotalsSummary(order);
     const structureOpen=productionBlockOpen[`${order.id}:estrutura`]!==false;
     const content=tree?.length
-      ?`<div class="production-block ${structureOpen?'':'is-collapsed'}"><button type="button" class="production-block-head production-toggle" onclick="toggleProductionBlock(${order.id},'estrutura')">Estrutura multinível <span>${structureOpen?'Retrair':'Expandir'}</span></button><div class="production-block-content"><div class="production-filter structure-block-filter"><input type="search" placeholder="Filtrar estrutura por código, item ou categoria..." oninput="filterStructureRows(this.value)"></div><div class="structure-tree"><div class="structure-tree-head"><div>Cód.</div><div>Item / descrição</div><div>Unid.</div><div>Qtd. (G)</div><div>Preço (P)</div><div>Total P × G</div></div>${renderStructureRows([rootNode],0,true)}</div></div></div>`
+      ?`<div class="production-block ${structureOpen?'':'is-collapsed'}"><button type="button" class="production-block-head production-toggle" onclick="toggleProductionBlock(${order.id},'estrutura')">Estrutura multinível <span>${structureOpen?'Retrair':'Expandir'}</span></button><div class="production-block-content"><div class="production-filter structure-block-filter"><input type="search" placeholder="Filtrar estrutura por código, item ou categoria..." oninput="filterStructureRows(this.value)"></div><div class="structure-tree"><div class="structure-tree-head"><div>Cód.</div><div>Item / descrição</div><div>Unid.</div><div>Qtd. (G)</div><div>Preço (P)</div><div>Total P × G</div></div>${renderStructureRows([rootNode],0,true,order.id,[])}</div></div></div>`
       :`<div class="production-block"><div class="production-block-head">Estrutura multinível</div><div class="structure-empty">${mp.itemCode?'Clique em “Atualizar pelo MaxiProd” para consultar todos os níveis.':'Informe o código raiz do equipamento no MaxiProd para carregar a estrutura.'}</div></div>`;
     return `<div class="structure-view-head">
       <div>${order.manualCostLookup?'':`<button class="btn btn-ghost btn-sm structure-return" onclick="closeCostStructure()"><span class="msi msi-sm">arrow_back</span> Todos os equipamentos</button>`}<h3>${escapeHTML(titleCode)} — ${escapeHTML(order.name||'')}</h3><div class="structure-intro">${order.manualCostLookup?'Consulta independente do arquivo Project. Informe o código do item/OP removido para recuperar estrutura, insumos e operações no MaxiProd.':'Estrutura vinculada ao pedido do Project. São exibidos os níveis, a quantidade aplicada (G), o último preço do MaxiProd (P) e o total calculado por linha (P × G).'}</div></div>
@@ -5845,6 +6020,215 @@ function exportSimulationPDF(){
 
 // ─────────── PEÇAS DE REPOSIÇÃO ───────────
 function escapeHTML(value){return String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));}
+const PARTS_STRUCTURE_REFRESH_DAYS=90;
+const PARTS_STRUCTURE_LINK_VERSION=3;
+const PARTS_STRUCTURE_MEMORY={};
+const partsStructureOpen=new Set();
+const partsStructureLoading=new Set();
+const partsStructureErrors={};
+let partsStructureBatchRunning=false;
+let partsStructureBatchCancelRequested=false;
+let partsStructureAutoBatchScheduled=false;
+let partsStructureBatchMessage='';
+let partsStructureBatchMessageType='';
+function partsStructureCode(value){return String(value||'').trim().toUpperCase();}
+function partsStructureStorageId(code){return `parts_${partsStructureCode(code).replace(/[^A-Z0-9._+\-]/g,'_')}`;}
+function partsStructureCacheMeta(code){return DB.partsStructureCache?.[partsStructureCode(code)]||null;}
+function partsStructureIsStale(meta){
+  const timestamp=Date.parse(meta?.calculadoEm||'');
+  return Number(meta?.linkVersion)!==PARTS_STRUCTURE_LINK_VERSION||!Number.isFinite(timestamp)||(Date.now()-timestamp)>=PARTS_STRUCTURE_REFRESH_DAYS*86400000;
+}
+function partsStructureAgeLabel(meta){
+  if(!meta?.calculadoEm)return 'Ainda não consultada';
+  const timestamp=Date.parse(meta.calculadoEm);
+  if(!Number.isFinite(timestamp))return 'Data de consulta indisponível';
+  const days=Math.max(0,Math.floor((Date.now()-timestamp)/86400000));
+  return partsStructureIsStale(meta)?`Atualização vencida · ${days} dia(s)`:`MaxiProd · atualizado há ${days} dia(s)`;
+}
+function uniquePartsStructureCodes(){
+  return [...new Set((DB.partsData||[]).filter(row=>!row.group).map(row=>partsStructureCode(row.code)).filter(code=>/^[A-Z0-9._+\-]+$/.test(code)))];
+}
+function setPartsBatchStatus(message='',type=''){
+  partsStructureBatchMessage=message;partsStructureBatchMessageType=type;
+  const status=document.getElementById('partsBatchStatus'),start=document.getElementById('partsRefreshAllBtn'),stop=document.getElementById('partsCancelRefreshBtn');
+  if(status){status.textContent=message;status.className=`parts-batch-status ${type}`.trim();}
+  if(start){start.disabled=partsStructureBatchRunning||!isMaster(loggedUser);start.style.display=isMaster(loggedUser)?'':'none';}
+  if(stop)stop.style.display=partsStructureBatchRunning&&isMaster(loggedUser)?'inline-flex':'none';
+}
+async function ensurePartsStructureLoaded(code){
+  const key=partsStructureCode(code);
+  if(Array.isArray(PARTS_STRUCTURE_MEMORY[key]))return PARTS_STRUCTURE_MEMORY[key];
+  if(!partsStructureCacheMeta(key))return [];
+  try{
+    const tree=await loadCostStructureDocument(partsStructureStorageId(key));
+    applyPartsStructureOverrides(tree,partsStructureCacheMeta(key)?.overrides||{});
+    PARTS_STRUCTURE_MEMORY[key]=tree;
+    return tree;
+  }catch(error){
+    console.warn('Estrutura da peça:',key,error);partsStructureErrors[key]='Não foi possível carregar a estrutura salva.';return [];
+  }
+}
+function getPartsStructureTreeTotal(nodes){return (nodes||[]).reduce((sum,node)=>sum+getStructureAggregateTotal(node),0);}
+function countPartsStructureMissingPrices(nodes){
+  return (nodes||[]).reduce((count,node)=>{
+    const children=Array.isArray(node.filhos)?node.filhos:[],price=node.custoUnitario,isDrawing=/^DS/i.test(String(node.codigo||'').trim());
+    const validPrice=price!==null&&price!==undefined&&price!==''&&(Number(price)>0||!!node._partsPriceEditedAt);
+    return count+(!isDrawing&&!children.length&&!validPrice?1:0)+countPartsStructureMissingPrices(children);
+  },0);
+}
+function scalePartsStructureNode(node,ratio){
+  node.quantidade=(Number(node.quantidade)||0)*ratio;
+  (node.filhos||[]).forEach(child=>scalePartsStructureNode(child,ratio));
+}
+function applyPartsStructureOverrides(nodes,overrides,parentPath=[]){
+  (nodes||[]).forEach((node,index)=>{
+    const path=[...parentPath,index],saved=overrides?.[path.join('.')];
+    if(saved&&Number.isFinite(Number(saved.quantity))){
+      const oldQuantity=Number(node.quantidade)||0,newQuantity=Number(saved.quantity);
+      if(oldQuantity!==newQuantity){if(oldQuantity)scalePartsStructureNode(node,newQuantity/oldQuantity);else node.quantidade=newQuantity;}
+      node._partsQuantityEditedAt=saved.quantityUpdatedAt||saved.updatedAt||new Date().toISOString();
+    }
+    if(saved&&Number.isFinite(Number(saved.price))){
+      node.custoUnitario=Number(saved.price);
+      node._partsPriceEditedAt=saved.priceUpdatedAt||saved.updatedAt||new Date().toISOString();
+      node.origemDoValor='Valor informado manualmente no Comercial';
+    }
+    applyPartsStructureOverrides(node.filhos||[],overrides,path);
+  });
+  return nodes;
+}
+function partsCatalogStructureEditingAllowed(){return hasAccess('pecas.catalog')&&partsView==='catalog'&&document.getElementById('page-pecas')?.classList.contains('active');}
+function beginPartsStructureEdit(cell,code,pathText,field){
+  if(!partsCatalogStructureEditingAllowed()||cell.querySelector('input'))return;
+  const key=partsStructureCode(code),path=String(pathText||'').split('.').filter(Boolean).map(Number);
+  const node=structureNodeAtPath(PARTS_STRUCTURE_MEMORY[key]||[],path);
+  if(!node){showToast('Item da estrutura não encontrado.','err');return;}
+  const original=cell.innerHTML,current=field==='quantity'?Number(node.quantidade)||0:node.custoUnitario;
+  const formatted=current===null||current===undefined?'':Number(current).toLocaleString('pt-BR',{minimumFractionDigits:field==='price'?2:0,maximumFractionDigits:4});
+  cell.innerHTML=`<input class="parts-structure-inline-input" inputmode="decimal" aria-label="Editar ${field==='quantity'?'quantidade':'última compra'}" value="${escapeHTML(formatted)}">`;
+  const input=cell.querySelector('input');let cancelled=false,finished=false;
+  const cancel=()=>{cancelled=true;finished=true;cell.innerHTML=original;};
+  input.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();cancel();}if(event.key==='Enter'){event.preventDefault();input.blur();}});
+  input.addEventListener('blur',()=>{if(cancelled||finished)return;finished=true;savePartsStructureField(key,pathText,field,input.value);});
+  input.focus();input.select();
+}
+async function savePartsStructureField(code,pathText,field,rawValue){
+  if(!partsCatalogStructureEditingAllowed()){showToast('Sem permissão para alterar esta estrutura.','err');return;}
+  const key=partsStructureCode(code),cleaned=String(rawValue??'').replace(/\s/g,'').replace(/^R\$/i,'');
+  const numericText=cleaned.includes(',')?cleaned.replace(/\./g,'').replace(',','.'):cleaned,value=Number(numericText);
+  if(!/^\d+(?:\.\d+)?$/.test(numericText)||!Number.isFinite(value)||value<0){showToast('Informe um valor válido.','err');renderPartsPage();return;}
+  const path=String(pathText||'').split('.').filter(Boolean).map(Number),tree=PARTS_STRUCTURE_MEMORY[key]||await ensurePartsStructureLoaded(key);
+  const node=structureNodeAtPath(tree,path);if(!node){showToast('Item da estrutura não encontrado.','err');renderPartsPage();return;}
+  const updatedAt=new Date().toISOString();
+  if(field==='quantity'){
+    const oldQuantity=Number(node.quantidade)||0;
+    if(oldQuantity!==value){if(oldQuantity)scalePartsStructureNode(node,value/oldQuantity);else node.quantidade=value;}
+    node._partsQuantityEditedAt=updatedAt;
+  }else{
+    node.custoUnitario=value;node._partsPriceEditedAt=updatedAt;node.origemDoValor='Valor informado manualmente no Comercial';
+  }
+  DB.partsStructureCache=DB.partsStructureCache||{};
+  const meta=DB.partsStructureCache[key]=DB.partsStructureCache[key]||{itemCode:key,calculadoEm:updatedAt,linkVersion:PARTS_STRUCTURE_LINK_VERSION};
+  meta.overrides=meta.overrides||{};const override=meta.overrides[path.join('.')]=meta.overrides[path.join('.')]||{};
+  if(field==='quantity'){override.quantity=value;override.quantityUpdatedAt=updatedAt;}else{override.price=value;override.priceUpdatedAt=updatedAt;}
+  override.updatedAt=updatedAt;meta.manualRevision=updatedAt;meta.custoTotal=getPartsStructureTreeTotal(tree);meta.itensSemCusto=countPartsStructureMissingPrices(tree);
+  try{
+    const storage=await saveCostStructureDocument(partsStructureStorageId(key),key,tree);
+    meta.estruturaDocId=storage.docId;meta.estruturaChunkCount=storage.chunkCount;meta.estruturaCharacterCount=storage.characterCount;
+    const saved=await persist();renderPartsPage();
+    showToast(saved?`${field==='quantity'?'Quantidade':'Última compra'} alterada no Comercial.`:'O valor foi alterado, mas o resumo não pôde ser sincronizado.',saved?'ok':'err');
+  }catch(error){console.error('Edição da estrutura da peça:',error);renderPartsPage();showToast('Não foi possível salvar a alteração.','err');}
+}
+function renderPartsCatalogStructureRows(nodes,level=1,parentPath=[],isRoot=false,rootCode=''){
+  return (nodes||[]).map((node,index)=>{
+    const values=getStructureNodeValues(node),children=Array.isArray(node.filhos)?node.filhos:[],drawing=isRoot||/^DS/i.test(String(node.codigo||''));
+    // DS representa desenho/conjunto e por isso exibe o agregado dos componentes.
+    // IN, MP e demais itens exibem somente o seu próprio P × G, mesmo quando
+    // também possuem filhos. Isso evita somar os descendentes duas vezes na linha.
+    const displayedTotal=drawing?getStructureAggregateTotal(node):values.total,nodePath=isRoot?parentPath:[...parentPath,index],editable=!isRoot&&partsCatalogStructureEditingAllowed();
+    const quantityContent=`<span>${fmtStructureNumber(values.quantity)}</span>${node._partsQuantityEditedAt?'<small>Valor alterado</small>':''}`;
+    const quantityCell=editable?`<div class="structure-node-number parts-structure-editable" title="Clique duas vezes para editar" ondblclick="beginPartsStructureEdit(this,'${escapeHTML(partsStructureCode(rootCode))}','${nodePath.join('.')}','quantity')">${quantityContent}</div>`:`<div class="structure-node-number">${quantityContent}</div>`;
+    const noLink=values.price===null||values.price===undefined||(Number(values.price)===0&&!node._partsPriceEditedAt);
+    const priceMain=drawing?'<span>—</span>':noLink?'<span class="parts-structure-missing">Sem vínculo</span>':`<span>${fmtBRL(values.price)}</span>`;
+    const origin=drawing?'Custo formado pelos componentes':node._partsPriceEditedAt?'Valor alterado':node.origemDoValor||(!noLink?'Último preço MaxiProd':'Duplo clique para informar');
+    const priceContent=`${priceMain}<small class="parts-structure-origin ${node._partsPriceEditedAt?'edited':''}">${escapeHTML(origin)}</small>`;
+    const priceCell=editable&&!drawing?`<div class="structure-node-number parts-structure-editable" title="Clique duas vezes para editar" ondblclick="beginPartsStructureEdit(this,'${escapeHTML(partsStructureCode(rootCode))}','${nodePath.join('.')}','price')">${priceContent}</div>`:`<div class="structure-node-number">${priceContent}</div>`;
+    const row=`<div class="structure-node ${isRoot?'structure-node-root':drawing?'structure-node-ds':''}" data-search="${escapeHTML(`${node.codigo||''} ${node.descricao||''} ${node.categoria||''}`.toLowerCase())}">
+      <div class="structure-node-code">${escapeHTML(node.codigo||'—')}</div><div class="structure-node-desc" style="padding-left:${Math.min(84,Math.max(0,level-1)*18)}px;"><span class="structure-level">${isRoot?'R':level}</span><b title="${escapeHTML(node.descricao||'')}">${escapeHTML(node.descricao||'—')}</b><span class="structure-category">${escapeHTML(node.categoria||'Comercial')}</span></div>
+      <div>${escapeHTML(node.unidade||'—')}</div>${quantityCell}${priceCell}<div class="structure-node-number structure-node-total">${!drawing&&noLink?'<span class="parts-structure-missing">Sem vínculo</span>':fmtBRL(displayedTotal)}</div></div>`;
+    return row+renderPartsCatalogStructureRows(children,level+1,nodePath,false,rootCode);
+  }).join('');
+}
+async function refreshPartStructure(code,{persistAfter=true,renderAfter=true,clearOverrides=false}={}){
+  const key=partsStructureCode(code);
+  if(!/^[A-Z0-9._+\-]+$/.test(key)||partsStructureLoading.has(key))return false;
+  partsStructureLoading.add(key);delete partsStructureErrors[key];
+  if(renderAfter)renderPartsPage();
+  try{
+    const response=await calcularCustoMaxiprodRemoto({itemCode:key});
+    const result=response.data||{},tree=Array.isArray(result.estrutura)?result.estrutura:[];
+    if(!tree.length&&(Number(result.custoTotal)||0)>0)throw new Error('A estrutura não foi enviada pela função do MaxiProd.');
+    const previous=partsStructureCacheMeta(key)||{},savedOverrides=clearOverrides?{}:(previous.overrides||{});
+    applyPartsStructureOverrides(tree,savedOverrides);
+    PARTS_STRUCTURE_MEMORY[key]=tree;
+    const storage=await saveCostStructureDocument(partsStructureStorageId(key),key,tree);
+    DB.partsStructureCache=DB.partsStructureCache||{};
+    DB.partsStructureCache[key]={
+      itemCode:key,linkVersion:Number(result.linkVersion)||1,custoTotal:getPartsStructureTreeTotal(tree),
+      itensComCusto:Number(result.itensComCusto)||0,itensSemCusto:countPartsStructureMissingPrices(tree),
+      calculadoEm:result.calculadoEm||new Date().toISOString(),criterio:result.criterio||'Último preço de compra',
+      estruturaDocId:storage.docId,estruturaChunkCount:storage.chunkCount,estruturaCharacterCount:storage.characterCount,
+      overrides:savedOverrides,manualRevision:previous.manualRevision||''
+    };
+    if(persistAfter&&!await persist())throw new Error('A estrutura foi consultada, mas o resumo não pôde ser salvo.');
+    return true;
+  }catch(error){
+    console.error('Atualização da peça',key,error);
+    partsStructureErrors[key]=String(error?.message||'Não foi possível consultar o MaxiProd.').replace(/^.*?:\s*/,'');
+    return false;
+  }finally{
+    partsStructureLoading.delete(key);if(renderAfter)renderPartsPage();
+  }
+}
+async function togglePartsStructure(code){
+  const key=partsStructureCode(code);if(!key)return;
+  if(partsStructureOpen.has(key)){partsStructureOpen.delete(key);renderPartsPage();return;}
+  partsStructureOpen.add(key);renderPartsPage();
+  await ensurePartsStructureLoaded(key);renderPartsPage();
+  const meta=partsStructureCacheMeta(key);
+  if((!meta||partsStructureIsStale(meta))&&isMaster(loggedUser)&&!partsStructureBatchRunning){
+    setPartsBatchStatus(`${key}: consultando estrutura no MaxiProd...`,'running');
+    const ok=await refreshPartStructure(key);
+    setPartsBatchStatus(ok?`${key} atualizado. Validade: ${PARTS_STRUCTURE_REFRESH_DAYS} dias.`:`${key}: ${partsStructureErrors[key]||'falha na consulta.'}`,ok?'ok':'err');
+  }
+}
+function cancelPartsStructureBatch(){partsStructureBatchCancelRequested=true;setPartsBatchStatus('Parando após a consulta atual...','running');}
+async function refreshAllPartsStructures(){
+  if(!isMaster(loggedUser)){showToast('Somente o administrador mestre pode atualizar todas as estruturas.','err');return;}
+  if(partsStructureBatchRunning)return;
+  const allCodes=uniquePartsStructureCodes(),pending=allCodes.filter(code=>partsStructureIsStale(partsStructureCacheMeta(code)));
+  if(!pending.length){setPartsBatchStatus(`Todas as ${allCodes.length} estruturas estão dentro da validade de ${PARTS_STRUCTURE_REFRESH_DAYS} dias.`,'ok');showToast('Nenhuma estrutura vencida.');return;}
+  partsStructureBatchRunning=true;partsStructureBatchCancelRequested=false;
+  let success=0,failed=0,processed=0,unsaved=0;
+  setPartsBatchStatus(`0 de ${pending.length} · iniciando atualização...`,'running');
+  try{
+    for(const code of pending){
+      if(partsStructureBatchCancelRequested)break;
+      setPartsBatchStatus(`${processed+1} de ${pending.length} · consultando ${code}...`,'running');
+      const ok=await refreshPartStructure(code,{persistAfter:false,renderAfter:false});
+      processed++;if(ok){success++;unsaved++;}else failed++;
+      if(unsaved>=5&&await persist())unsaved=0;
+      renderPartsPage();
+    }
+    if(unsaved&&!await persist())failed++;
+  }finally{
+    partsStructureBatchRunning=false;
+    const stopped=partsStructureBatchCancelRequested;partsStructureBatchCancelRequested=false;
+    const remaining=Math.max(0,pending.length-processed);
+    setPartsBatchStatus(`${stopped?'Atualização interrompida':'Atualização concluída'} · ${success} atualizada(s) · ${failed} falha(s)${remaining?` · ${remaining} pendente(s)`:''}`,failed?'err':'ok');
+    renderPartsPage();
+  }
+}
 function fmtPartsCost(value){
   if(value===null||value===undefined||value==='')return '—';
   if(typeof value==='string'&&isNaN(Number(value.replace(',','.'))))return value;
@@ -5880,35 +6264,93 @@ function switchPartsView(view){
   }else if(String(selectedStructureOrderId)===String(COST_MANUAL_LOOKUP_ID))selectedStructureOrderId=null;
   if(view==='price')calculatePartsPrice();
 }
-function calculatePartsPrice(){
+function collectPartsPriceInputs(selector){
+  return Array.from(document.querySelectorAll(selector)).map(input=>{
+    const label=input.closest('.price-row')?.querySelector('span');
+    return {nome:label?.childNodes?.[0]?.textContent?.trim()||label?.textContent?.trim()||'Índice',valor:parseBRNumber(input.value)};
+  });
+}
+function getPartsPriceCalculation(){
+  const equipment=collectPartsPriceInputs('.price-equipment-index');
+  // O IRPJ informado na coluna vale para markup, valores laterais e PDF.
+  // A substituição por 1,20% existe exclusivamente no divisor tributário.
+  const markupTaxes=collectPartsPriceInputs('.price-tax');
+  const taxes=markupTaxes;
+  const divisorTaxes=markupTaxes.map(item=>String(item.nome).toUpperCase()==='IRPJ'?{...item,valor:1.2}:item);
   const cost=parseBRNumber(document.getElementById('priceCost')?.value);
-  const equipmentIndexes=priceInputSum('.price-equipment-index');
-  const taxes=priceInputSum('.price-tax');
-  const ipi=parseBRNumber(document.querySelector('.price-tax-ipi')?.value);
   const discount=parseBRNumber(document.getElementById('priceDiscount')?.value);
-  const remaining=(100-equipmentIndexes-taxes)/100;
-  const discountBase=1-discount/100;
-  const sale=remaining>0?cost/remaining:0;
-  const withDiscount=discountBase>0?sale/discountBase:0;
-  const withoutTax=withDiscount*(1-taxes/100);
-  const saleWithIpi=sale*(1+ipi/100);
-  const discountedWithIpi=withDiscount*(1+ipi/100);
-  document.getElementById('priceSale').textContent=remaining>0?fmtPartsCost(sale):'Índice inválido';
-  document.getElementById('priceDiscounted').textContent=remaining>0&&discountBase>0?fmtPartsCost(withDiscount):'Índice inválido';
-  document.getElementById('priceWithoutTax').textContent=remaining>0&&discountBase>0?fmtPartsCost(withoutTax):'Índice inválido';
-  document.getElementById('priceSaleWithIpi').textContent=remaining>0?`Com IPI: ${fmtPartsCost(saleWithIpi)}`:'Com IPI: —';
-  document.getElementById('priceDiscountedWithIpi').textContent=remaining>0&&discountBase>0?`Com IPI: ${fmtPartsCost(discountedWithIpi)}`:'Com IPI: —';
+  const ipi=parseBRNumber(document.querySelector('.price-tax-ipi')?.value);
+  const equipmentSum=equipment.reduce((sum,item)=>sum+item.valor,0);
+  const markupTaxSum=markupTaxes.reduce((sum,item)=>sum+item.valor,0);
+  const taxSum=divisorTaxes.reduce((sum,item)=>sum+item.valor,0);
+  const icms=taxes.find(item=>String(item.nome).trim().toUpperCase()==='ICMS')?.valor||0;
+  const equipmentFactor=(100-equipmentSum-markupTaxSum)/100;
+  const taxDivisor=1-taxSum/100;
+  const discountFactor=1-discount/100;
+  const valid=equipmentFactor>0&&discountFactor>0;
+  const equipmentWithIcms=equipmentFactor>0?cost/equipmentFactor:0;
+  // A planilha corrige a alíquota do ICMS pela incidência informada de IPI.
+  const adjustedIcms=icms*(1+ipi/100);
+  const equipmentWithoutIcmsIpi=equipmentWithIcms*(1-adjustedIcms/100);
+  const equipmentIpi=equipmentWithIcms*ipi/100;
+  const equipmentWithTaxes=equipmentWithIcms+equipmentIpi;
+  const totalCost=cost;
+  const totalWithoutIcmsIpi=equipmentWithoutIcmsIpi;
+  const totalWithIcmsNoIpi=equipmentWithIcms;
+  const ipiTotal=equipmentIpi;
+  const totalWithTaxes=equipmentWithTaxes;
+  const finalPrice=valid?totalWithTaxes/discountFactor:0;
+  const discountReserve=finalPrice-totalWithTaxes;
+  const taxValues=taxes.map(item=>({...item,valorCalculado:totalWithIcmsNoIpi*item.valor/100}));
+  return {valid,cost,totalCost,discount,equipment,taxes,markupTaxes,divisorTaxes,ipi,equipmentSum,markupTaxSum,taxSum,icms,adjustedIcms,equipmentFactor,taxDivisor,equipmentWithoutIcmsIpi,equipmentWithIcms,equipmentIpi,equipmentWithTaxes,totalWithoutIcmsIpi,totalWithIcmsNoIpi,ipiTotal,totalWithTaxes,finalPrice,discountReserve,taxValues};
+}
+function renderPartsPriceBreakdown(report){
+  const target=document.getElementById('priceDetailedBreakdown');if(!target)return;
+  if(!report.valid){target.innerHTML='<div class="structure-empty">A soma dos índices precisa ser menor que 100% e a margem de desconto precisa ser inferior a 100%.</div>';return;}
+  const row=(label,value,css='')=>`<tr class="${css}"><td>${escapeHTML(label)}</td><td>${fmtPartsCost(value)}</td></tr>`;
+  const pct=value=>`${Number(value||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+  target.innerHTML=`<div class="price-breakdown-grid">
+    <section class="price-breakdown-card"><h3>Composição do valor de venda</h3><table class="price-breakdown-table"><thead><tr><th>Etapa</th><th>Valor</th></tr></thead><tbody>
+      ${row('Custo base',report.cost)}
+      ${row('Preço sem ICMS e IPI',report.totalWithoutIcmsIpi)}
+      ${row(`ICMS embutido (${pct(report.icms)})`,report.totalWithIcmsNoIpi-report.totalWithoutIcmsIpi)}
+      ${row('Preço com ICMS, sem IPI',report.totalWithIcmsNoIpi,'price-emphasis')}
+      ${row(`IPI (${pct(report.ipi)})`,report.ipiTotal)}
+      ${row('Preço com todos os impostos',report.totalWithTaxes,'price-emphasis')}
+      ${row(`Reserva para desconto (${pct(report.discount)})`,report.discountReserve)}
+      ${row('Preço final com margem de desconto',report.finalPrice,'price-final-row')}
+    </tbody></table></section>
+  </div>`;
+}
+function calculatePartsPrice(){
+  const report=getPartsPriceCalculation();
+  const factorMarkup=document.getElementById('priceEquipmentMarkup');
+  const factorDivisor=document.getElementById('priceTaxDivisor');
+  const factorText=value=>`${(value*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% <small>(${value.toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4})})</small>`;
+  if(factorMarkup)factorMarkup.innerHTML=report.valid?factorText(report.equipmentFactor):'Índice inválido';
+  if(factorDivisor)factorDivisor.innerHTML=report.valid?factorText(report.taxDivisor):'Índice inválido';
+  document.querySelectorAll('[data-equipment-value]').forEach(element=>{
+    const index=Number(element.dataset.equipmentValue);
+    const amount=report.totalWithIcmsNoIpi*(report.equipment[index]?.valor||0)/100;
+    element.textContent=report.valid?fmtPartsCost(amount):'—';
+  });
+  document.querySelectorAll('[data-tax-value]').forEach(element=>{
+    const key=String(element.dataset.taxValue||'').toUpperCase();
+    const amount=key==='IPI'?report.ipiTotal:(report.taxValues.find(item=>String(item.nome).toUpperCase()===key)?.valorCalculado||0);
+    element.textContent=report.valid?fmtPartsCost(amount):'—';
+  });
+  document.getElementById('priceSale').textContent=report.valid?fmtPartsCost(report.totalWithTaxes):'Índice inválido';
+  document.getElementById('priceDiscounted').textContent=report.valid?fmtPartsCost(report.finalPrice):'Índice inválido';
+  document.getElementById('priceWithoutTax').textContent=report.valid?fmtPartsCost(report.totalWithoutIcmsIpi):'Índice inválido';
+  document.getElementById('priceSaleWithIpi').textContent=report.valid?`IPI destacado: ${fmtPartsCost(report.ipiTotal)}`:'IPI destacado: —';
+  document.getElementById('priceDiscountedWithIpi').textContent=report.valid?`Reserva para desconto: ${fmtPartsCost(report.discountReserve)}`:'Reserva para desconto: —';
+  renderPartsPriceBreakdown(report);
   const note=document.getElementById('priceCalcNote');
-  if(note)note.textContent=`Markup do equipamento: ${(remaining*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% · Tributos sem IPI: ${taxes.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% · IPI informado: ${ipi.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%. Os índices comerciais estão disponíveis como referência da planilha e só se aplicam quando houver custo comercial adicional.`;
+  if(note)note.textContent=`Markup do equipamento: ${(report.equipmentFactor*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% · Impostos usados no markup: ${report.markupTaxSum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% (IRPJ informado na coluna) · Divisor tributário: ${(report.taxDivisor*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% · Impostos usados no divisor: ${report.taxSum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% (IRPJ fixo em 1,20%; IPI excluído).`;
 }
 function getPartsPriceReportData(){
-  const collect=selector=>Array.from(document.querySelectorAll(selector)).map(input=>({nome:input.closest('.price-row')?.querySelector('span')?.textContent||'Índice',valor:parseBRNumber(input.value)}));
-  const cost=parseBRNumber(document.getElementById('priceCost')?.value),discount=parseBRNumber(document.getElementById('priceDiscount')?.value);
-  const equipment=collect('.price-equipment-index'),commercial=collect('.price-commercial-index'),taxes=collect('.price-tax');
-  const ipi=parseBRNumber(document.querySelector('.price-tax-ipi')?.value);
-  const equipmentSum=equipment.reduce((sum,x)=>sum+x.valor,0),taxSum=taxes.reduce((sum,x)=>sum+x.valor,0),remaining=(100-equipmentSum-taxSum)/100,discountBase=1-discount/100;
-  const sale=remaining>0?cost/remaining:0,discounted=discountBase>0?sale/discountBase:0;
-  return {name:document.getElementById('priceItemName')?.value.trim()||'Peça sem nome',cost,discount,equipment,commercial,taxes,ipi,markup:remaining*100,taxSum,sale,discounted,withoutTax:discounted*(1-taxSum/100),saleWithIpi:sale*(1+ipi/100),discountedWithIpi:discounted*(1+ipi/100)};
+  const report=getPartsPriceCalculation();
+  return {...report,name:document.getElementById('priceItemName')?.value.trim()||'Peça sem nome',sale:report.totalWithTaxes,discounted:report.finalPrice,withoutTax:report.totalWithoutIcmsIpi,saleWithIpi:report.totalWithTaxes,discountedWithIpi:report.finalPrice,markup:report.equipmentFactor*100};
 }
 function exportPartsPriceReport(){
   const report=getPartsPriceReportData(),js=window.jspdf?.jsPDF;
@@ -5922,21 +6364,19 @@ function exportPartsPriceReport(){
   const header=text=>{if(py>266)nextPage();premium.setFillColor(...dark);premium.rect(12,py,186,8,'F');premium.setFillColor(...gold);premium.rect(12,py,2,8,'F');premium.setTextColor(255,255,255);premium.setFont('helvetica','bold');premium.setFontSize(9);premium.text(text,16,py+5.3);py+=10;};
   const table=(heading,items)=>{header(heading);items.forEach((item,index)=>{if(py>274)nextPage(),header(`${heading} (continuação)`);premium.setFillColor(...(index%2?[250,250,250]:light));premium.rect(12,py,186,7,'F');premium.setDrawColor(220,220,220);premium.rect(12,py,186,7,'S');premium.setTextColor(35,35,35);premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(String(item[0]),16,py+4.7);premium.setFont('helvetica','bold');premium.text(String(item[1]),190,py+4.7,{align:'right'});py+=7;});py+=3;};
   premium.setTextColor(...dark);premium.setFont('helvetica','bold');premium.setFontSize(15);premium.text('CUSTO / FORMAÇÃO DE PREÇO',12,py);py+=7;premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(report.name,12,py,{maxWidth:186});py+=9;
-  table('DADOS PRINCIPAIS',[['Custo do equipamento',fmtPartsCost(report.cost)],['Margem de desconto',pct(report.discount)],['Markup calculado',pct(report.markup)],['Tributos sem IPI',pct(report.taxSum)],['IPI',pct(report.ipi)]]);
-  table('ÍNDICES DO EQUIPAMENTO',report.equipment.map(x=>[x.nome,pct(x.valor)]));
-  table('ÍNDICES COMERCIAIS',report.commercial.map(x=>[x.nome,pct(x.valor)]));
-  table('IMPOSTOS',report.taxes.map(x=>[x.nome,pct(x.valor)]).concat([['IPI',pct(report.ipi)]]));
-  table('RESUMO PREÇO DE VENDA',[['Preço de venda',fmtPartsCost(report.sale)],['Preço de venda com IPI',fmtPartsCost(report.saleWithIpi)],['Preço com margem de desconto',fmtPartsCost(report.discounted)],['Preço com desconto e IPI',fmtPartsCost(report.discountedWithIpi)],['Preço com margem sem imposto',fmtPartsCost(report.withoutTax)]]);
+  table('DADOS PRINCIPAIS',[['Custo do equipamento',fmtPartsCost(report.cost)],['Margem de desconto',pct(report.discount)],['Markup do equipamento',pct(report.equipmentFactor*100)],['Impostos usados no markup',pct(report.markupTaxSum)],['Divisor tributário',pct(report.taxDivisor*100)],['Impostos usados no divisor',pct(report.taxSum)],['IPI fora dos cálculos',pct(report.ipi)]]);
+  table('ÍNDICES DO EQUIPAMENTO',report.equipment.map(x=>[`${x.nome} · ${pct(x.valor)}`,fmtPartsCost(report.totalWithIcmsNoIpi*x.valor/100)]));
+  table('IMPOSTOS',report.taxValues.map(x=>[`${x.nome} · ${pct(x.valor)}`,fmtPartsCost(x.valorCalculado)]).concat([[`IPI · ${pct(report.ipi)}`,fmtPartsCost(report.ipiTotal)]]));
+  table('COMPOSIÇÃO DO PREÇO',[['Preço sem ICMS e IPI',fmtPartsCost(report.totalWithoutIcmsIpi)],['ICMS embutido',fmtPartsCost(report.totalWithIcmsNoIpi-report.totalWithoutIcmsIpi)],['Preço com ICMS, sem IPI',fmtPartsCost(report.totalWithIcmsNoIpi)],['IPI',fmtPartsCost(report.ipiTotal)],['Preço com todos os impostos',fmtPartsCost(report.totalWithTaxes)],['Reserva para desconto',fmtPartsCost(report.discountReserve)],['PREÇO FINAL',fmtPartsCost(report.finalPrice)]]);
   premium.setTextColor(100,100,100);premium.setFont('helvetica','normal');premium.setFontSize(7);premium.text(`Emitido em ${new Date().toLocaleString('pt-BR')}`,12,291);
-  cartamacPdfSave(premium,`${safeReportFileName(`Custo - ${report.name}`)}.pdf`,{sector:'CUSTOS'});
+  cartamacPdfSave(premium,`${safeReportFileName(`Formação de preço - ${report.name}`)}.pdf`,{sector:'COMERCIAL'});
   return;
   line('CARTAMAC — Custo / Formação de preço',15,true);line(report.name,12,true);line(`Emitido em ${new Date().toLocaleString('pt-BR')}`);y+=2;
   line(`Custo do equipamento: ${fmtPartsCost(report.cost)}`,10,true);line(`Margem de desconto: ${pct(report.discount)}`);line(`Markup calculado do equipamento: ${pct(report.markup)}`,10,true);line(`Tributos sem IPI: ${pct(report.taxSum)} | IPI: ${pct(report.ipi)}`);y+=2;
   line('ÍNDICES DO EQUIPAMENTO',11,true);report.equipment.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));
-  line('ÍNDICES COMERCIAIS',11,true);report.commercial.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));
   line('IMPOSTOS',11,true);report.taxes.forEach(x=>line(`${x.nome}: ${pct(x.valor)}`));line(`IPI: ${pct(report.ipi)}`);y+=2;
   line('RESUMO PREÇO DE VENDA',11,true);line(`Preço de venda: ${fmtPartsCost(report.sale)} | Com IPI: ${fmtPartsCost(report.saleWithIpi)}`,10,true);line(`Preço com margem de desconto: ${fmtPartsCost(report.discounted)} | Com IPI: ${fmtPartsCost(report.discountedWithIpi)}`,10,true);line(`Preço com margem sem imposto: ${fmtPartsCost(report.withoutTax)}`,10,true);
-  cartamacPdfSave(pdf,`${safeReportFileName(`Custo - ${report.name}`)}.pdf`,{sector:'CUSTOS'});
+  cartamacPdfSave(pdf,`${safeReportFileName(`Formação de preço - ${report.name}`)}.pdf`,{sector:'COMERCIAL'});
 }
 function fmtPartsDate(value){
   if(!value)return '—';
@@ -5946,6 +6386,9 @@ function fmtPartsDate(value){
   if(typeof value==='number'){
     const date=new Date(Date.UTC(1899,11,30)+value*86400000);
     return date.toLocaleDateString('pt-BR',{timeZone:'UTC'});
+  }
+  if(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}/.test(value)){
+    const parsed=new Date(value);if(!isNaN(parsed))return parsed.toLocaleDateString('pt-BR');
   }
   return String(value);
 }
@@ -5957,21 +6400,212 @@ function togglePartsSection(key){
   else collapsedPartsSections.add(key);
   renderPartsPage();
 }
+function partsManualGroups(){
+  const groups=[];let section='';
+  (DB.partsData||[]).forEach((row,index)=>{
+    if(!row?.group)return;
+    if(row.section||isPartsSection(row.tag)){section=String(row.tag||'').trim();return;}
+    groups.push({index,tag:String(row.tag||'').trim(),section});
+  });
+  return groups;
+}
+function populatePartsManualGroupOptions(){
+  const select=document.getElementById('partsManualParent');if(!select)return;
+  const previous=select.value,groups=partsManualGroups();
+  select.innerHTML=`<option value="">Selecione o equipamento/grupo</option>${groups.map(group=>`<option value="${group.index}">${escapeHTML(group.section?`${group.section} — ${group.tag}`:group.tag)}</option>`).join('')}`;
+  if(groups.some(group=>String(group.index)===previous))select.value=previous;
+  const deleteSelect=document.getElementById('partsDeleteCode');
+  if(deleteSelect){
+    const previousDelete=deleteSelect.value;let section='',group='';
+    const items=[];
+    (DB.partsData||[]).forEach(row=>{
+      if(row?.group){if(row.section||isPartsSection(row.tag)){section=String(row.tag||'').trim();group='';}else group=String(row.tag||'').trim();return;}
+      const code=partsStructureCode(row?.code||'');if(/^DS[A-Z0-9._+\-]+$/.test(code))items.push({code,equipment:String(row.equipment||'').trim(),section,group});
+    });
+    deleteSelect.innerHTML=`<option value="">Selecione o DS que será excluído</option>${items.map(item=>`<option value="${escapeHTML(item.code)}">${escapeHTML(`${item.code} — ${item.equipment}${item.group?` · ${item.group}`:''}`)}</option>`).join('')}`;
+    if(items.some(item=>item.code===previousDelete))deleteSelect.value=previousDelete;
+  }
+}
+function insertPartInManualGroup(target,item,parentGroup){
+  const wanted=normalisePartSearch(parentGroup),groupIndex=target.findIndex(row=>row?.group&&!row.section&&!isPartsSection(row.tag)&&normalisePartSearch(row.tag)===wanted);
+  let resolvedIndex=groupIndex;
+  if(resolvedIndex<0){
+    target.push({group:true,section:false,tag:parentGroup||'ITENS CADASTRADOS MANUALMENTE'});resolvedIndex=target.length-1;
+  }
+  let insertAt=resolvedIndex+1;while(insertAt<target.length&&!target[insertAt]?.group)insertAt++;
+  target.splice(insertAt,0,item);return insertAt;
+}
+async function createManualPartItem(){
+  if(!isMaster(loggedUser)){showToast('Somente o administrador mestre pode cadastrar itens.','err');return;}
+  const tag=String(document.getElementById('partsManualTag')?.value||'').trim();
+  const code=partsStructureCode(document.getElementById('partsManualCode')?.value||'');
+  const equipment=String(document.getElementById('partsManualEquipment')?.value||'').trim();
+  const parentRaw=String(document.getElementById('partsManualParent')?.value||''),parentIndex=parentRaw===''?NaN:Number(parentRaw),data=Array.isArray(DB.partsData)?DB.partsData:[];
+  const parent=Number.isInteger(parentIndex)?data[parentIndex]:null;
+  if(!tag||!code||!equipment||!parent?.group||parent.section||isPartsSection(parent.tag)){showToast('Preencha TAG, código DS, equipamento e o grupo ao qual pertence.','err');return;}
+  if(!/^DS[A-Z0-9._+\-]+$/.test(code)){showToast('Informe um código DS válido, por exemplo DS1003.','err');return;}
+  if(data.some(row=>!row.group&&partsStructureCode(row.code)===code)){showToast(`O código ${code} já está cadastrado na tabela.`,'err');return;}
+  const now=new Date().toISOString(),item={tag,code,equipment,cost:'',updatedAt:'',createdManuallyAt:now,parentGroup:String(parent.tag||'').trim()};
+  DB.partsDeletedCodes=(DB.partsDeletedCodes||[]).filter(savedCode=>partsStructureCode(savedCode)!==code);
+  insertPartInManualGroup(data,item,item.parentGroup);DB.partsData=data;DB.partsLastManualChange=now;
+  const saved=await persist();
+  if(!saved){showToast('O item foi incluído neste navegador, mas não pôde ser sincronizado.','err');renderPartsPage();return;}
+  ['partsManualTag','partsManualCode','partsManualEquipment'].forEach(id=>{const input=document.getElementById(id);if(input)input.value='';});
+  const parentSelect=document.getElementById('partsManualParent');if(parentSelect)parentSelect.value='';
+  partsStructureOpen.add(code);renderPartsPage();setPartsBatchStatus(`${code}: item cadastrado; consultando a estrutura no MaxiProd...`,'running');
+  const refreshed=await refreshPartStructure(code,{clearOverrides:true});
+  setPartsBatchStatus(refreshed?`${code} cadastrado e estrutura consultada no MaxiProd.`:`${code} foi cadastrado, mas a estrutura não pôde ser consultada agora.`,refreshed?'ok':'err');
+  showToast(refreshed?`${code} cadastrado com sucesso.`:`${code} cadastrado; tente atualizar a estrutura novamente.`,refreshed?'ok':'err');
+}
+async function deletePartItemByCode(){
+  if(!isMaster(loggedUser)){showToast('Somente o administrador mestre pode excluir itens.','err');return;}
+  const code=partsStructureCode(document.getElementById('partsDeleteCode')?.value||'');
+  if(!/^DS[A-Z0-9._+\-]+$/.test(code)){showToast('Selecione o DS que deseja excluir.','err');return;}
+  const data=Array.isArray(DB.partsData)?DB.partsData:[],index=data.findIndex(row=>!row?.group&&partsStructureCode(row.code)===code);
+  if(index<0){showToast(`${code} não está mais cadastrado.`,'err');renderPartsPage();return;}
+  const row=data[index],label=`${code} — ${row.equipment||'item sem descrição'}`;
+  if(!confirm(`Excluir ${label}?\n\nA peça será retirada da tabela e do Excel, continuará excluída nas próximas importações e a estrutura salva será apagada do Firebase.`))return;
+  const previousData=data.slice(),previousCache=DB.partsStructureCache?.[code],previousDeletedCodes=[...(DB.partsDeletedCodes||[])];
+  data.splice(index,1);DB.partsData=data;DB.partsDeletedCodes=[...new Set([...previousDeletedCodes,code])];DB.partsStructureCache=DB.partsStructureCache||{};delete DB.partsStructureCache[code];DB.partsLastManualChange=new Date().toISOString();
+  const saved=await persist();
+  if(!saved){DB.partsData=previousData;DB.partsDeletedCodes=previousDeletedCodes;if(previousCache)DB.partsStructureCache[code]=previousCache;renderPartsPage();showToast('A exclusão não pôde ser sincronizada; nenhuma peça foi removida.','err');return;}
+  delete PARTS_STRUCTURE_MEMORY[code];delete partsStructureErrors[code];partsStructureOpen.delete(code);partsStructureLoading.delete(code);
+  await deleteCostStructureDocument(partsStructureStorageId(code));
+  renderPartsPage();showToast(`${code} excluído com sucesso.`,'ok');
+}
+async function manualRefreshPartStructure(code){
+  const key=partsStructureCode(code);
+  if(!isMaster(loggedUser)){showToast('Somente o administrador mestre pode atualizar a estrutura.','err');return;}
+  setPartsBatchStatus(`${key}: consultando estrutura no MaxiProd...`,'running');
+  const ok=await refreshPartStructure(key,{clearOverrides:true});
+  setPartsBatchStatus(ok?`${key} atualizado pelo MaxiProd. Ajustes manuais removidos e nova validade de ${PARTS_STRUCTURE_REFRESH_DAYS} dias.`:`${key}: ${partsStructureErrors[key]||'falha na consulta.'}`,ok?'ok':'err');
+}
+function partsCatalogRowByCode(code){
+  const key=partsStructureCode(code);
+  return (DB.partsData||[]).find(row=>!row.group&&partsStructureCode(row.code)===key)||null;
+}
+function partsCatalogContextByCode(code){
+  const key=partsStructureCode(code);let section='',group='';
+  for(const row of DB.partsData||[]){
+    if(row?.group){if(row.section||isPartsSection(row.tag)){section=String(row.tag||'').trim();group='';}else group=String(row.tag||'').trim();continue;}
+    if(partsStructureCode(row?.code)===key)return {row,section,group:group||section||'OUTROS'};
+  }
+  return {row:null,section:'',group:'OUTROS'};
+}
+function groupPartsExportEntries(entries){
+  const groups=[];
+  (entries||[]).forEach(entry=>{
+    const context=partsCatalogContextByCode(entry.code),title=context.group||'OUTROS',section=context.section||'';
+    let group=groups.find(item=>item.title===title&&item.section===section);
+    if(!group){group={title,section,items:[]};groups.push(group);}
+    group.items.push({...entry,tag:entry.tag||context.row?.tag||'',equipment:entry.equipment||context.row?.equipment||'',catalog:context.row});
+  });
+  return groups;
+}
+function partsStructureExcelRows(rootCode,tree){
+  const rows=[];
+  const visit=nodes=>{
+    (nodes||[]).forEach(node=>{
+      const values=getStructureNodeValues(node),drawing=/^DS/i.test(String(node.codigo||'').trim());
+      rows.push([rootCode,node.codigo||'',node.descricao||'',node.categoria||'',node.unidade||'',values.quantity,values.price===null||values.price===undefined?'':Number(values.price),drawing?getStructureAggregateTotal(node):values.total]);
+      visit(node.filhos||[]);
+    });
+  };
+  visit(tree);return rows;
+}
+function markPartsExcelHeading(sheet,row,columnCount,color='FFF3E5AB'){
+  const cell=sheet[XLSX.utils.encode_cell({r:row,c:0})];if(cell)cell.s={font:{bold:true,color:{rgb:'FF111111'}},fill:{patternType:'solid',fgColor:{rgb:color}},alignment:{horizontal:'center',vertical:'center'}};
+  sheet['!merges']=sheet['!merges']||[];sheet['!merges'].push({s:{r:row,c:0},e:{r:row,c:columnCount-1}});
+}
+function makePartsStructureWorkbook(entries,title){
+  const workbook=XLSX.utils.book_new();workbook.Props={Title:title,Subject:'Estruturas multinível das peças comerciais',Author:'CARTAMAC',CreatedDate:new Date()};
+  const groups=groupPartsExportEntries(entries),summaryRows=[['TAG','CÓD. DS','EQUIPAMENTO (DESENHO REF.)','CUSTO ATUAL']],summaryGroupRows=[],summaryDataRows=[];
+  groups.forEach((group,groupIndex)=>{
+    if(groupIndex)summaryRows.push(['','','','']);
+    summaryGroupRows.push(summaryRows.length);summaryRows.push([group.title,'','','']);
+    group.items.forEach(item=>{summaryDataRows.push(summaryRows.length);summaryRows.push([item.tag||'',item.code,item.equipment||'',Number(item.total)||0]);});
+  });
+  const summary=XLSX.utils.aoa_to_sheet(summaryRows);summary['!cols']=[{wch:25},{wch:17},{wch:68},{wch:18}];summary['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'};
+  summaryGroupRows.forEach(row=>markPartsExcelHeading(summary,row,4));
+  summaryDataRows.forEach(row=>{const cell=summary[XLSX.utils.encode_cell({r:row,c:3})];if(cell&&typeof cell.v==='number')cell.z='"R$" #,##0.00';});
+  const structureRows=[['Estrutura raiz','Código','Item / descrição','Categoria','Unid.','Qtd. (G)','Última compra (P)','Total P × G']],structureGroupRows=[],structurePieceRows=[],structureDataRows=[];
+  groups.forEach((group,groupIndex)=>{
+    if(groupIndex)structureRows.push(['','','','','','','','']);
+    structureGroupRows.push(structureRows.length);structureRows.push([group.title,'','','','','','','']);
+    group.items.forEach(item=>{
+      if(item.tree?.length){
+        structurePieceRows.push(structureRows.length);structureRows.push([`${item.code} — ${item.equipment||'Peça sem descrição'}`,'','','','','','','']);
+        partsStructureExcelRows(item.code,item.tree).forEach(row=>{structureDataRows.push(structureRows.length);structureRows.push(row);});
+        structureRows.push(['','','','','','','','']);
+      }
+    });
+  });
+  const structure=XLSX.utils.aoa_to_sheet(structureRows);structure['!cols']=[{wch:17},{wch:17},{wch:62},{wch:22},{wch:10},{wch:14},{wch:18},{wch:18}];structure['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'};
+  structureGroupRows.forEach(row=>markPartsExcelHeading(structure,row,8));structurePieceRows.forEach(row=>markPartsExcelHeading(structure,row,8,'FFE7E6E3'));
+  structureDataRows.forEach(row=>{const quantity=structure[XLSX.utils.encode_cell({r:row,c:5})];if(quantity)quantity.z='#,##0.0000';[6,7].forEach(column=>{const cell=structure[XLSX.utils.encode_cell({r:row,c:column})];if(cell&&typeof cell.v==='number')cell.z='"R$" #,##0.00';});});
+  XLSX.utils.book_append_sheet(workbook,summary,'Resumo');XLSX.utils.book_append_sheet(workbook,structure,'Estruturas');return workbook;
+}
+async function exportPartStructureExcel(code){
+  if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const key=partsStructureCode(code),meta=partsStructureCacheMeta(key),catalog=partsCatalogRowByCode(key),tree=await ensurePartsStructureLoaded(key);
+  if(!Array.isArray(tree)||!tree.length){showToast('Esta estrutura ainda não possui dados para exportação.','err');return;}
+  const description=catalog?.equipment||'Peça de reposição',total=getPartsStructureTreeTotal(tree);
+  const workbook=makePartsStructureWorkbook([{code:key,tag:catalog?.tag||'',equipment:description,total,tree}],`Estrutura ${key}`);
+  XLSX.writeFile(workbook,`${safeReportFileName(`Estrutura - ${key} - ${description}`)}.xlsx`,{compression:true});showToast(`Excel da estrutura ${key} gerado com sucesso.`);
+}
+async function exportAllPartsStructuresExcel(){
+  if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const codes=uniquePartsStructureCodes(),entries=[];let exported=0,missing=0;
+  setPartsBatchStatus(`Preparando Excel: 0 de ${codes.length} estruturas...`,'running');
+  for(let index=0;index<codes.length;index++){
+    const code=codes[index],meta=partsStructureCacheMeta(code),catalog=partsCatalogRowByCode(code);
+    setPartsBatchStatus(`Preparando Excel: ${index+1} de ${codes.length} · ${code}...`,'running');
+    const tree=meta?await ensurePartsStructureLoaded(code):[];
+    if(Array.isArray(tree)&&tree.length){
+      exported++;entries.push({code,tag:catalog?.tag||'',equipment:catalog?.equipment||'',total:getPartsStructureTreeTotal(tree),tree});
+    }else{
+      missing++;entries.push({code,tag:catalog?.tag||'',equipment:catalog?.equipment||'',total:Number(meta?.custoTotal)||0,tree:[]});
+    }
+  }
+  if(!exported){setPartsBatchStatus('Nenhuma estrutura carregada para exportação.','err');showToast('Nenhuma estrutura carregada para exportação.','err');return;}
+  const workbook=makePartsStructureWorkbook(entries,'Todas as estruturas comerciais');
+  XLSX.writeFile(workbook,`Estruturas_Comerciais_${new Date().toISOString().slice(0,10)}.xlsx`,{compression:true});
+  setPartsBatchStatus(`Excel concluído · ${exported} estrutura(s) exportada(s)${missing?` · ${missing} ainda não carregada(s)`:''}`,'ok');showToast('Excel consolidado das estruturas gerado com sucesso.');
+}
+function renderPartsStructureDetail(row,code){
+  const key=partsStructureCode(code),meta=partsStructureCacheMeta(key),tree=PARTS_STRUCTURE_MEMORY[key];
+  const loading=partsStructureLoading.has(key),error=partsStructureErrors[key];
+  let content='';
+  if(loading)content='<div class="parts-structure-message"><span class="msi">hourglass_top</span><br>Consultando a estrutura e os últimos preços de compra no MaxiProd...</div>';
+  else if(error&&!Array.isArray(tree))content=`<div class="parts-structure-message" style="color:var(--red)">${escapeHTML(error)}</div>`;
+  else if(meta&&!Array.isArray(tree))content='<div class="parts-structure-message"><span class="msi">cloud_download</span><br>Carregando a estrutura salva no Firebase...</div>';
+  else if(Array.isArray(tree)&&tree.length){
+    const root={codigo:key,descricao:row.equipment||'Peça de reposição',categoria:'Peça principal',unidade:'PC',quantidade:1,custoUnitario:null,filhos:tree};
+    content=`<div class="structure-tree"><div class="structure-tree-head"><div>Cód.</div><div>Item / descrição</div><div>Unid.</div><div>Qtd. (G)</div><div>Última compra (P)</div><div>Total P × G</div></div>${renderPartsCatalogStructureRows([root],0,[],true,key)}</div>`;
+  }else if(meta)content='<div class="parts-structure-message">A consulta foi concluída, mas este código não possui componentes cadastrados na estrutura.</div>';
+  else content=`<div class="parts-structure-message">${isMaster(loggedUser)?'Iniciando a primeira consulta desta peça...':'Esta peça ainda aguarda a primeira consulta pelo administrador.'}</div>`;
+  const updated=meta?.calculadoEm?new Date(meta.calculadoEm).toLocaleString('pt-BR'):'Nunca';
+  const pending=Array.isArray(tree)?countPartsStructureMissingPrices(tree):(Number(meta?.itensSemCusto)||0);
+  return `<tr class="parts-structure-detail"><td colspan="5"><div class="parts-structure-panel">
+    <div class="parts-structure-panel-head"><div><h4>${escapeHTML(key)} — ${escapeHTML(row.equipment||'Peça de reposição')}</h4><p>Atualizado: ${escapeHTML(updated)} · validade de ${PARTS_STRUCTURE_REFRESH_DAYS} dias${pending?` · ${pending} item(ns) sem custo`:''}</p></div>
+    <div class="parts-structure-panel-actions"><button class="btn btn-ghost btn-sm" type="button" data-parts-code="${escapeHTML(key)}" onclick="event.stopPropagation();exportPartStructureExcel(this.dataset.partsCode)"><span class="msi msi-sm">table_view</span> Excel</button>${isMaster(loggedUser)?`<button class="btn btn-ghost btn-sm" type="button" data-parts-code="${escapeHTML(key)}" title="Recarrega o MaxiProd e remove os ajustes manuais desta peça" onclick="event.stopPropagation();manualRefreshPartStructure(this.dataset.partsCode)"><span class="msi msi-sm">sync</span> Atualizar esta peça</button>`:''}</div></div>${content}
+  </div></td></tr>`;
+}
 function renderPartsPage(){
   const isAllowed=hasAnyAccess('pecas');
   if(!isAllowed)return;
   const importer=document.getElementById('partsImportBox');
   if(importer)importer.style.display=isMaster(loggedUser)?'':'none';
-  const last=DB.partsLastImport||'Sem registro';
-  document.getElementById('partsStatLast').textContent=last;
+  const manualCreate=document.getElementById('partsManualCreateBox');
+  if(manualCreate)manualCreate.style.display=isMaster(loggedUser)?'':'none';
+  if(isMaster(loggedUser))populatePartsManualGroupOptions();
   const query=normalisePartSearch((document.getElementById('partsSearch')?.value||'').trim());
   const source=Array.isArray(DB.partsData)?DB.partsData:[];
   const rows=source.filter(row=>row.group||!query||normalisePartSearch([row.tag,row.code,row.equipment].join(' ')).includes(query));
   const partCount=source.filter(row=>!row.group).length;
   document.getElementById('partsCount').textContent=`${partCount} peça(s) cadastrada(s)`;
-  document.getElementById('partsStatCount').textContent=partCount;
   const container=document.getElementById('partsTableContainer');
-  if(!source.length){container.innerHTML='<div class="empty-state"><div class="ei"><span class="msi msi-xl">settings</span></div><h3>Nenhuma tabela de peças carregada</h3><p>Um administrador mestre deve importar a planilha padrão.</p></div>';return;}
+  if(!source.length){setPartsBatchStatus('',partsStructureBatchMessageType);container.innerHTML='<div class="empty-state"><div class="ei"><span class="msi msi-xl">settings</span></div><h3>Nenhuma tabela de peças carregada</h3><p>Um administrador mestre deve importar a planilha padrão.</p></div>';return;}
   let activeSection=null,body='';
   rows.forEach(row=>{
     const section=row.group&&(row.section||isPartsSection(row.tag));
@@ -5983,11 +6617,27 @@ function renderPartsPage(){
       return;
     }
     if(activeSection&&collapsedPartsSections.has(activeSection)&&!query)return;
-    body+=row.group
-      ?`<tr class="parts-group"><td colspan="5">${escapeHTML(row.tag)}</td></tr>`
-      :`<tr><td data-label="TAG">${escapeHTML(row.tag)}</td><td class="parts-code" data-label="CÓD. DS">${escapeHTML(row.code)}</td><td data-label="EQUIPAMENTO">${escapeHTML(row.equipment)}</td><td class="parts-cost" data-label="CUSTO">${escapeHTML(fmtPartsCost(row.cost))}</td><td class="parts-date" data-label="DATA DE ATUALIZAÇÃO">${escapeHTML(fmtPartsDate(row.updatedAt))}</td></tr>`;
+    if(row.group){body+=`<tr class="parts-group"><td colspan="5">${escapeHTML(row.tag)}</td></tr>`;return;}
+    const code=partsStructureCode(row.code),validCode=/^[A-Z0-9._+\-]+$/.test(code),meta=validCode?partsStructureCacheMeta(code):null;
+    const open=validCode&&partsStructureOpen.has(code),loading=validCode&&partsStructureLoading.has(code),stale=meta&&partsStructureIsStale(meta);
+    const liveCost=meta?Number(meta.custoTotal):null,costText=meta?fmtPartsCost(liveCost):fmtPartsCost(row.cost);
+    const statusClass=partsStructureErrors[code]?'error':stale?'stale':meta?'fresh':'';
+    const statusText=partsStructureErrors[code]||partsStructureAgeLabel(meta);
+    body+=`<tr class="parts-data-row ${open?'is-open':''} ${loading?'is-loading':''}" ${validCode?`data-parts-code="${escapeHTML(code)}" onclick="togglePartsStructure(this.dataset.partsCode)"`:''}>
+      <td data-label="TAG">${escapeHTML(row.tag)}</td><td class="parts-code" data-label="CÓD. DS">${escapeHTML(row.code)}</td>
+      <td data-label="EQUIPAMENTO"><div class="parts-row-name">${validCode?`<span class="msi">chevron_right</span>`:''}<span>${escapeHTML(row.equipment)}</span></div></td>
+      <td class="parts-cost" data-label="CUSTO"><span class="parts-cost-main">${escapeHTML(costText)}</span>${meta?`<small class="parts-cost-source">Planilha: ${escapeHTML(fmtPartsCost(row.cost))}</small>`:''}</td>
+      <td class="parts-date" data-label="DATA DE ATUALIZAÇÃO">${meta?escapeHTML(fmtPartsDate(meta.calculadoEm)):escapeHTML(fmtPartsDate(row.updatedAt))}<small class="parts-refresh-state ${statusClass}">${escapeHTML(statusText)}</small></td></tr>`;
+    if(open)body+=renderPartsStructureDetail(row,code);
   });
   container.innerHTML=`<div class="parts-table-wrap"><table class="parts-table"><thead><tr><th>TAG</th><th>CÓD. DS</th><th>EQUIPAMENTO (DESENHO REF.)</th><th>CUSTO</th><th>DATA DE ATUALIZAÇÃO</th></tr></thead><tbody>${body||'<tr><td colspan="5" style="text-align:center;color:var(--text3);">Nenhuma peça encontrada.</td></tr>'}</tbody></table></div>`;
+  const allCodes=uniquePartsStructureCodes(),staleCount=allCodes.filter(code=>partsStructureIsStale(partsStructureCacheMeta(code))).length;
+  if(!partsStructureBatchMessage)setPartsBatchStatus(`${allCodes.length-staleCount} atualizada(s) · ${staleCount} aguardando ou vencida(s)`,'');
+  else setPartsBatchStatus(partsStructureBatchMessage,partsStructureBatchMessageType);
+  if(isMaster(loggedUser)&&staleCount&&!partsStructureBatchRunning&&!partsStructureAutoBatchScheduled){
+    partsStructureAutoBatchScheduled=true;
+    setTimeout(()=>{if(document.getElementById('page-pecas')?.classList.contains('active')&&partsView==='catalog')refreshAllPartsStructures();},1500);
+  }
 }
 function handlePartsDrop(event){
   event.preventDefault();event.currentTarget.style.borderColor='';
@@ -6014,11 +6664,22 @@ function processPartsFile(file){
       const data=window.XLSX.utils.sheet_to_json(workbook.Sheets[sheetName],{header:1,defval:'',raw:true});
       const headers=data[3]||[];
       if(String(headers[1]).trim()!=='TAG'||String(headers[2]).trim()!=='CÓD. DS'||String(headers[3]).trim()!=='EQUIPAMENTO (DESENHO REF.)')throw new Error('A estrutura da aba não corresponde ao padrão esperado.');
-      const parts=[];
+      let parts=[];
       data.slice(4).forEach(row=>{
         const tag=String(row[1]??'').trim(),code=String(row[2]??'').trim(),equipment=String(row[3]??'').trim(),cost=row[5]??'',updatedAt=row[8]??'';
         if(code||equipment)parts.push({tag,code,equipment,cost,updatedAt:fmtPartsDate(updatedAt)});
         else if(tag&&!cost&&!updatedAt&&!normalisePartSearch(tag).startsWith('*ajustar impostos'))parts.push({group:true,section:isPartsSection(tag),tag});
+      });
+      const deletedCodes=new Set((DB.partsDeletedCodes||[]).map(partsStructureCode));
+      parts=parts.filter(row=>row.group||!deletedCodes.has(partsStructureCode(row.code)));
+      // Uma nova importação em massa não pode apagar itens cadastrados no app.
+      // Se o mesmo DS passar a existir na planilha, a linha oficial importada
+      // prevalece; caso contrário, o cadastro manual volta ao grupo escolhido.
+      const manualItems=(DB.partsData||[]).filter(row=>!row.group&&row.createdManuallyAt);
+      manualItems.forEach(item=>{
+        if(!parts.some(row=>!row.group&&partsStructureCode(row.code)===partsStructureCode(item.code))){
+          insertPartInManualGroup(parts,{...item},item.parentGroup||'ITENS CADASTRADOS MANUALMENTE');
+        }
       });
       const count=parts.filter(row=>!row.group).length;
       if(!count)throw new Error('Nenhuma peça foi encontrada nas colunas B, C, D, F e I.');
@@ -8076,6 +8737,7 @@ function normalizeDB(data){
   DB.importHistory=DB.importHistory||[];
   DB.partsData=(Array.isArray(DB.partsData)?DB.partsData:[]).filter(row=>!(row.group&&normalisePartSearch(row.tag).startsWith('*ajustar impostos')));
   DB.partsLastImport=DB.partsLastImport||null;
+  DB.partsStructureCache=DB.partsStructureCache&&typeof DB.partsStructureCache==='object'?DB.partsStructureCache:{};
   if(DB.simulatorTemplateVersion!==2){DB.simulatorDraft={equipment:'',durations:{}};DB.simulatorTemplateVersion=2;}
   else DB.simulatorDraft=DB.simulatorDraft||{equipment:'',durations:{}};
   DB.engineeringPeople=Array.isArray(DB.engineeringPeople)?DB.engineeringPeople:[];
@@ -8228,9 +8890,9 @@ Object.assign(window,{
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,setAccessEditor,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,sendGmailTestEmail,runNotificationEngine,enableMobilePush,disableMobilePush,
-  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,switchPartsView,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
+  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
-  unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,
+  unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,beginCommercialStructurePriceEdit,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
