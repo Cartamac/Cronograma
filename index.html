@@ -2710,7 +2710,7 @@ async function filesLoad(){
   return {};
 }
 async function persist(){
-  try{await setDoc(DB_REF,DB);return true;}
+  try{if(typeof hoursCalendarSyncActiveMonth==='function')hoursCalendarSyncActiveMonth();await setDoc(DB_REF,DB);return true;}
   catch(e){console.warn('DB save:',e);showToast('Erro ao salvar dados','err');return false;}
 }
 async function persistFiles(){
@@ -9640,6 +9640,8 @@ let hoursEmployeeFilter='';
 let hoursConfigEmployeeNameFilter='';
 let hoursConfigEmploymentFilter='all';
 let hoursBankSelectedEmployeeKey='';
+let hoursCalendarSelectedMonth='';
+let hoursCalendarImportMonth='';
 let hoursView='balanco';
 let hoursPaymentEmployeeId='';
 let hoursConfigPeopleOpen=true;
@@ -9662,6 +9664,7 @@ function hoursData(){
   if(!DB.hoursControl.payments||typeof DB.hoursControl.payments!=='object')DB.hoursControl.payments={};
   if(!DB.hoursControl.hourBank||typeof DB.hoursControl.hourBank!=='object')DB.hoursControl.hourBank={records:[],updatedAt:null,version:0};
   if(!Array.isArray(DB.hoursControl.hourBank.records))DB.hoursControl.hourBank.records=[];
+  hoursEnsureCalendar(DB.hoursControl);
   if(Number(DB.hoursControl.hourBank.version||0)<1&&Number(DB.hoursControl.parserVersion||0)>=3&&DB.hoursControl.employees.some(employee=>employee.delay!=null)){
     const migratedBank=hoursUpdateBank(DB.hoursControl.hourBank,DB.hoursControl.employees,DB.hoursControl.sourceName,DB.hoursControl.importedAt,false);
     migratedBank.version=1;DB.hoursControl.hourBank=migratedBank;hoursPlannedNormalizationPending=true;
@@ -9699,6 +9702,48 @@ function hoursEscape(value){return String(value??'').replace(/[&<>"']/g,char=>({
 function hoursMinutes(value){
   const match=String(value||'').match(/^(\d{1,3}):(\d{2})$/);
   return match?(Number(match[1])*60+Number(match[2])):0;
+}
+function hoursCalendarPeriodParts(period){
+  const match=String(period?.start||'').match(/^\d{2}\/(\d{2})\/(\d{4})$/);
+  return match?{month:match[1],year:Number(match[2])}:{month:'',year:0};
+}
+function hoursCalendarSnapshot(data){
+  return {
+    importedAt:data.importedAt||new Date().toISOString(),sourceName:String(data.sourceName||''),
+    period:{start:String(data.period?.start||''),end:String(data.period?.end||'')},
+    employees:JSON.parse(JSON.stringify(Array.isArray(data.employees)?data.employees:[])),
+    employeeChanges:JSON.parse(JSON.stringify(data.employeeChanges||{new:[],left:[],updatedAt:null})),
+    monthlyPayments:hoursCalendarMonthlyPayments(data)
+  };
+}
+function hoursCalendarMonthlyPayments(data){
+  const result={};
+  (data?.employees||[]).forEach(employee=>{const payment=data?.payments?.[employee.id];if(!payment)return;result[hoursEmployeeKey(employee.name)]={mealCountManual:Boolean(payment.mealCountManual),mealCount:hoursNumber(payment.mealCount),monthlyItems:JSON.parse(JSON.stringify(payment.monthlyItems||[])),benefitUnitValueManual:Boolean(payment.benefitUnitValueManual),benefitUnits:hoursNumber(payment.benefitUnits),benefitUnitValue:hoursNumber(payment.benefitUnitValue),mealBenefit:hoursNumber(payment.mealBenefit),otherDiscount:hoursNumber(payment.otherDiscount),pharmacy:hoursNumber(payment.pharmacy)};});
+  return result;
+}
+function hoursCalendarApplyMonthlyPayments(data,state){
+  Object.values(data.payments||{}).forEach(payment=>{payment.mealCountManual=false;payment.mealCount=0;payment.monthlyItems=[];payment.benefitUnitValueManual=false;payment.benefitUnits=0;payment.benefitUnitValue=0;payment.mealBenefit=0;payment.otherDiscount=0;payment.pharmacy=0;});
+  (data.employees||[]).forEach(employee=>{const saved=state?.[hoursEmployeeKey(employee.name)],payment=data.payments?.[employee.id];if(!saved||!payment)return;Object.assign(payment,JSON.parse(JSON.stringify(saved)));});
+}
+function hoursCalendarSyncActiveMonth(){
+  const data=DB.hoursControl,month=String(data?.activeMonth||'').padStart(2,'0');
+  if(!data?.calendar?.months?.[month]||hoursCalendarPeriodParts(data.period).month!==month)return;
+  data.calendar.months[month]=hoursCalendarSnapshot(data);
+}
+function hoursEnsureCalendar(data){
+  const currentYear=new Date().getFullYear();
+  if(!data.calendar||typeof data.calendar!=='object'){
+    data.calendar={year:currentYear,months:{},version:1};
+    const parts=hoursCalendarPeriodParts(data.period);
+    if(parts.year===currentYear&&parts.month&&Array.isArray(data.employees)&&data.employees.length){data.calendar.months[parts.month]=hoursCalendarSnapshot(data);data.activeMonth=parts.month;}
+    hoursPlannedNormalizationPending=true;
+  }
+  if(!data.calendar.months||typeof data.calendar.months!=='object')data.calendar.months={};
+  if(Number(data.calendar.year)!==currentYear){
+    data.calendar={year:currentYear,months:{},version:1};data.activeMonth='';data.importedAt=null;data.sourceName='';data.period={start:'',end:''};data.employees=[];data.employeeChanges={new:[],left:[],updatedAt:null};data.hourBank={records:[],updatedAt:new Date().toISOString(),version:1};
+    Object.values(data.payments||{}).forEach(payment=>{payment.mealCountManual=false;payment.mealCount=0;payment.monthlyItems=[];payment.benefitUnitValueManual=false;payment.pharmacy=0;});
+    hoursCalendarSelectedMonth='';hoursBankSelectedEmployeeKey='';hoursPlannedNormalizationPending=true;
+  }
 }
 function hoursEmployeeKey(name){
   return String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLocaleUpperCase('pt-BR').replace(/\s+/g,' ');
@@ -9856,14 +9901,20 @@ async function importHoursControlPdf(input){
     if(!employees.length)throw new Error('Não foi possível identificar funcionários no PDF.');
     normalizeHoursPlannedTotals(employees);
     const previousData=hoursData(),previousPayments=previousData.payments||{};
+    hoursCalendarSyncActiveMonth();
+    const importedPeriod=hoursCalendarPeriodParts(employees[0].period),calendarYear=Number(previousData.calendar?.year)||new Date().getFullYear(),targetMonth=hoursCalendarImportMonth||importedPeriod.month;
+    if(importedPeriod.year!==calendarYear)throw new Error(`O PDF pertence ao ano ${importedPeriod.year||'não identificado'}, mas o calendário aberto é de ${calendarYear}.`);
+    if(!targetMonth||importedPeriod.month!==targetMonth)throw new Error(`O PDF pertence ao mês ${importedPeriod.month||'não identificado'}, diferente do mês selecionado (${targetMonth||'—'}).`);
+    const previousMonthSnapshot=previousData.calendar?.months?.[targetMonth];
     const normalized=value=>String(value||'').trim().toLocaleUpperCase('pt-BR').replace(/\s+/g,' ');
-    const oldNames=new Map((previousData.employees||[]).map(item=>[normalized(item.name),item.name]));
+    const oldNames=new Map((previousMonthSnapshot?.employees||previousData.employees||[]).map(item=>[normalized(item.name),item.name]));
     const newNames=new Map(employees.map(item=>[normalized(item.name),item.name]));
     const changes=oldNames.size?{new:[...newNames].filter(([key])=>!oldNames.has(key)).map(([,name])=>name),left:[...oldNames].filter(([key])=>!newNames.has(key)).map(([,name])=>name),updatedAt:new Date().toISOString()}:{new:[],left:[],updatedAt:new Date().toISOString()};
     // O PDF pode alterar o id técnico ao ser importado. Mantemos a configuração
     // pelo nome normalizado para que PJ/CLT, valores e padrão não precisem ser refeitos.
     const payments={...previousPayments};
-    const oldEmployees=new Map((previousData.employees||[]).map(item=>[normalized(item.name),item]));
+    const knownEmployees=[...(previousData.employees||[]),...Object.values(previousData.calendar?.months||{}).flatMap(snapshot=>snapshot?.employees||[])];
+    const oldEmployees=new Map(knownEmployees.map(item=>[normalized(item.name),item]));
     employees.forEach(employee=>{const old=oldEmployees.get(normalized(employee.name));if(old?.id!==employee.id&&previousPayments[old?.id]&&!payments[employee.id])payments[employee.id]={...previousPayments[old.id]};});
     // Cada PDF representa um novo mês: preserva cadastro e remuneração, mas
     // restaura os almoços ao padrão e limpa descontos/auxílios lançados no mês.
@@ -9877,8 +9928,10 @@ async function importHoursControlPdf(input){
       payment.benefitUnitValueManual=false;
     });
     const importedAt=new Date().toISOString();
-    const hourBank=hoursUpdateBank(previousData.hourBank,employees,file.name,importedAt,true);
-    DB.hoursControl={importedAt,sourceName:file.name,parserVersion:3,period:employees[0].period,employees,payments,hourBank,discountProfiles:previousData.discountProfiles||[],inssTable:previousData.inssTable||[],employeeChanges:changes};
+    const hourBank=hoursUpdateBank(previousData.hourBank,employees,file.name,importedAt,true),calendar=previousData.calendar||{year:calendarYear,months:{},version:1};
+    DB.hoursControl={importedAt,sourceName:file.name,parserVersion:3,period:employees[0].period,employees,payments,hourBank,calendar,activeMonth:targetMonth,discountProfiles:previousData.discountProfiles||[],inssTable:previousData.inssTable||[],employeeChanges:changes};
+    if(previousMonthSnapshot?.monthlyPayments)hoursCalendarApplyMonthlyPayments(DB.hoursControl,previousMonthSnapshot.monthlyPayments);
+    DB.hoursControl.calendar.months[targetMonth]=hoursCalendarSnapshot(DB.hoursControl);hoursCalendarSelectedMonth=targetMonth;
     await persist();
     renderHoursControlPage();
     showToast(`${employees.length} funcionário(s) importado(s). Banco de horas do mês atualizado.`,'ok');
@@ -9886,7 +9939,7 @@ async function importHoursControlPdf(input){
     console.error('Falha ao importar cartão ponto:',error);
     renderHoursControlPage();
     showToast(`Não foi possível ler o relatório: ${error.message||'arquivo inválido'}.`,'err');
-  }finally{input.value='';}
+  }finally{hoursCalendarImportMonth='';input.value='';}
 }
 function filterHoursEmployees(value){hoursEmployeeFilter=String(value||'').trim().toLowerCase();renderHoursControlPage();}
 function filterHoursConfigEmployees(value){
@@ -9895,6 +9948,20 @@ function filterHoursConfigEmployees(value){
   requestAnimationFrame(()=>{const input=document.getElementById('hoursConfigEmployeeNameFilter');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}});
 }
 function filterHoursConfigEmployment(value){hoursConfigEmploymentFilter=['PJ','CLT'].includes(value)?value:'all';renderHoursControlPage();}
+function beginHoursCalendarImport(month){
+  const value=String(month||'').padStart(2,'0');if(!/^(0[1-9]|1[0-2])$/.test(value))return;
+  hoursCalendarImportMonth=value;document.getElementById('hoursCalendarPdfInput')?.click();
+}
+async function selectHoursCalendarMonth(month){
+  const value=String(month||'').padStart(2,'0'),data=hoursData(),snapshot=data.calendar?.months?.[value];
+  hoursCalendarSelectedMonth=value;
+  if(snapshot){
+    hoursCalendarSyncActiveMonth();
+    data.importedAt=snapshot.importedAt;data.sourceName=snapshot.sourceName;data.period=JSON.parse(JSON.stringify(snapshot.period||{}));data.employees=JSON.parse(JSON.stringify(snapshot.employees||[]));data.employeeChanges=JSON.parse(JSON.stringify(snapshot.employeeChanges||{new:[],left:[],updatedAt:null}));data.activeMonth=value;
+    hoursCalendarApplyMonthlyPayments(data,snapshot.monthlyPayments||{});normalizeHoursPlannedTotals(data.employees);await persist();
+  }
+  renderHoursControlPage();
+}
 function selectHoursBankEmployee(employeeKey){hoursBankSelectedEmployeeKey=String(employeeKey||'');renderHoursControlPage();}
 async function removeHoursBankRecord(encodedEmployeeKey,encodedPeriodKey){
   const employeeKey=decodeURIComponent(String(encodedEmployeeKey||'')),periodKey=decodeURIComponent(String(encodedPeriodKey||''));
@@ -9983,7 +10050,7 @@ function switchHoursView(view){
   renderHoursControlPage();
 }
 function hoursTabsHTML(){
-  return `<div class="cronograma-subtabs" style="margin-bottom:18px"><button class="cronograma-subtab ${hoursView==='balanco'?'active':''}" onclick="switchHoursView('balanco')"><span class="msi msi-sm">query_stats</span> Balanço de horas</button><button class="cronograma-subtab ${hoursView==='banco'?'active':''}" onclick="switchHoursView('banco')"><span class="msi msi-sm">account_balance</span> Banco de horas</button><button class="cronograma-subtab ${hoursView==='pagamentos'?'active':''}" onclick="switchHoursView('pagamentos')"><span class="msi msi-sm">calculate</span> Cálculo de pagamento</button><button class="cronograma-subtab ${hoursView==='descontos'?'active':''}" onclick="switchHoursView('descontos')"><span class="msi msi-sm">settings</span> Configuração</button></div>`;
+  return `<div class="cronograma-subtabs" style="margin-bottom:18px"><button class="cronograma-subtab ${hoursView==='balanco'?'active':''}" onclick="switchHoursView('balanco')"><span class="msi msi-sm">calendar_month</span> Calendário de horas</button><button class="cronograma-subtab ${hoursView==='banco'?'active':''}" onclick="switchHoursView('banco')"><span class="msi msi-sm">account_balance</span> Banco de horas</button><button class="cronograma-subtab ${hoursView==='pagamentos'?'active':''}" onclick="switchHoursView('pagamentos')"><span class="msi msi-sm">calculate</span> Cálculo de pagamento</button><button class="cronograma-subtab ${hoursView==='descontos'?'active':''}" onclick="switchHoursView('descontos')"><span class="msi msi-sm">settings</span> Configuração</button></div>`;
 }
 function hoursPdfClean(value){return String(value??'—').replace(/\u00a0/g,' ').replace(/[–—−]/g,'-');}
 function hoursPdfFilename(value){return hoursPdfClean(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/^_+|_+$/g,'');}
@@ -10024,14 +10091,14 @@ function hoursPdfTable(report,columns,rows){
   report.y+=5;
 }
 function exportHoursBalancePDF(){
-  const data=hoursData(),employees=data.employees||[];
+  const root=hoursData(),data=root.calendar?.months?.[hoursCalendarSelectedMonth]||root,employees=data.employees||[];
   if(!employees.length){showToast('Importe um cartão ponto antes de gerar o relatório.','err');return;}
   const period=`Período: ${data.period?.start||'—'} a ${data.period?.end||'—'} · Arquivo: ${data.sourceName||'—'}`;
-  const report=hoursPdfStart('landscape','Balanço de horas',period);if(!report)return;
+  const report=hoursPdfStart('landscape',`Controle de horas · ${hoursBankMonthLabel({period:data.period})}`,period);if(!report)return;
   const normal=employees.reduce((sum,item)=>sum+hoursMinutes(item.normal),0),planned=employees.reduce((sum,item)=>sum+hoursMinutes(item.planned),0),delay=employees.reduce((sum,item)=>sum+hoursMinutes(item.delay),0),extra=employees.reduce((sum,item)=>sum+hoursMinutes(item.extra),0),balance=extra-delay;
   hoursPdfCards(report,[{label:'Funcionários',value:employees.length},{label:'Horas normais',value:hoursText(normal)},{label:'Horas previstas',value:hoursText(planned)},{label:'Falta e atraso',value:hoursText(delay),color:[205,45,58]},{label:'Extra diurna',value:hoursText(extra)},{label:'Balanço',value:hoursText(balance),color:balance<0?[205,45,58]:[39,145,72]}]);
   hoursPdfTable(report,[{label:'Funcionário',width:76},{label:'Horas normais',width:31},{label:'Horas previstas',width:31},{label:'Falta e atraso',width:31},{label:'Extra diurna',width:31},{label:'Balanço',width:32},{label:'Situação',width:45}],employees.map(employee=>{const value=Number(employee.balance)||0;return [{text:employee.name,bold:true},employee.normal||'00:00',employee.planned||'00:00',{text:employee.delay||'00:00',color:[205,45,58],bold:true},employee.extra||'00:00',{text:hoursText(value),color:value<0?[205,45,58]:[39,145,72],bold:true},{text:value<0?'Falta compensar':value>0?'Sobra de horas':'Compensado',color:value<0?[205,45,58]:[39,145,72]}];}));
-  cartamacPdfSave(report.doc,`${hoursPdfFilename(`Balanco_de_Horas_${hoursBankPeriodKey(data.period)}`)}.pdf`,{sector:'CONTROLE DE HORAS',footerText:'Documento gerado pelo aplicativo CARTAMAC · Fonte: cartão ponto Control ID · Somente leitura'});showToast('Relatório do balanço de horas gerado.','ok');
+  cartamacPdfSave(report.doc,`${hoursPdfFilename(`Controle_de_Horas_${hoursBankPeriodKey(data.period)}`)}.pdf`,{sector:'CONTROLE DE HORAS',footerText:'Documento gerado pelo aplicativo CARTAMAC · Fonte: cartão ponto Control ID · Somente leitura'});showToast('Relatório do mês selecionado gerado.','ok');
 }
 function exportHoursBankPDF(){
   const data=hoursData(),all=data.hourBank?.records||[],records=all.filter(record=>record.employeeKey===hoursBankSelectedEmployeeKey),employeeName=records[0]?.name;
@@ -10045,16 +10112,16 @@ function exportHoursBankPDF(){
 function exportHoursPaymentPDF(){
   const data=hoursData(),employee=(data.employees||[]).find(item=>item.id===hoursPaymentEmployeeId)||(data.employees||[])[0];
   if(!employee){showToast('Selecione um funcionário para gerar o relatório.','err');return;}
-  const payment=hoursPaymentFor(employee),isClt=payment.employmentType==='CLT',normalHours=hoursMinutes(employee.normal)/60,extraHours=hoursMinutes(employee.extra)/60,normalSubtotal=isClt?0:normalHours*hoursNumber(payment.normalRate),extraSubtotal=isClt?0:extraHours*hoursNumber(payment.extraRate);
+  const payment=hoursPaymentFor(employee),isClt=payment.employmentType==='CLT',normalHours=hoursMinutes(employee.normal)/60,extraHours=hoursMinutes(employee.extra)/60,normalSubtotal=isClt?0:normalHours*hoursNumber(payment.normalRate),extraSubtotal=isClt?0:extraHours*hoursNumber(payment.normalRate);
   const settlement=hoursCurrentBankSettlement(employee),record=settlement.record,entry=settlement.entry,paidMinutes=Number(record?.paidMinutes)||0,compensatedMinutes=Number(record?.compensatedMinutes)||0,paidRate=hoursNumber(record?.paidRate),paidValue=(paidMinutes/60)*paidRate,nextBalance=Number(entry?.accumulated)||0;
-  const baseGross=isClt?hoursNumber(payment.fixedSalary):normalSubtotal+extraSubtotal,gross=baseGross+paidValue,inss=isClt?hoursCalculateInss(gross).total:0,mealCount=payment.mealCountManual?hoursNumber(payment.mealCount):hoursNumber(employee.lunchCount),mealUnit=hoursNumber(payment.mealUnitIndividual)||8.5,meals=mealCount*mealUnit,monthly=hoursMonthlyItems(payment),monthlyDiscounts=monthly.filter(item=>item.type!=='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),monthlyBenefits=monthly.filter(item=>item.type==='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),uniodonto=hoursNumber(payment.uniodontoIndividual),discounts=meals+uniodonto+monthlyDiscounts+inss,benefits=monthlyBenefits,net=gross-discounts+benefits;
+  const baseGross=isClt?hoursNumber(payment.fixedSalary):normalSubtotal+extraSubtotal,gross=baseGross+(isClt?paidValue:0),inss=isClt?hoursCalculateInss(gross).total:0,mealCount=payment.mealCountManual?hoursNumber(payment.mealCount):hoursNumber(employee.lunchCount),mealUnit=hoursNumber(payment.mealUnitIndividual)||8.5,meals=mealCount*mealUnit,monthly=hoursMonthlyItems(payment),monthlyDiscounts=monthly.filter(item=>item.type!=='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),monthlyBenefits=monthly.filter(item=>item.type==='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),uniodonto=hoursNumber(payment.uniodontoIndividual),discounts=meals+uniodonto+monthlyDiscounts+inss,benefits=monthlyBenefits,net=gross-discounts+benefits;
   const report=hoursPdfStart('portrait',`Cálculo de pagamento - ${employee.name}`,`Período: ${data.period?.start||'—'} a ${data.period?.end||'—'} · Vínculo: ${isClt?'CLT':'PJ'}`);if(!report)return;
   hoursPdfCards(report,[{label:'Valor bruto',value:hoursMoney(gross)},{label:'Descontos',value:`- ${hoursMoney(discounts)}`,color:[205,45,58]},{label:'Auxílios',value:`+ ${hoursMoney(benefits)}`,color:[45,105,175]},{label:'Valor líquido',value:hoursMoney(net),color:[39,145,72]}]);
   hoursPdfSection(report,'Horas trabalhadas e banco de horas');
-  const workRows=[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Extra diurna',employee.extra||'00:00','Cartão ponto'],['Balanço do mês',hoursText(employee.balance),'Extra menos falta'],['Banco antes da baixa',hoursText(Number(entry?.beforeSettlement)||0),'Acumulado'],['Horas do banco pagas',hoursText(paidMinutes),`${hoursMoney(paidRate)} por hora`],['Valor do banco pago',hoursMoney(paidValue),'Acrescentado ao bruto'],['Horas compensadas',hoursText(compensatedMinutes),'Folga sem pagamento'],['Saldo do próximo mês',hoursText(nextBalance),'Após as baixas']];
+  const workRows=isClt?[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Extra diurna',employee.extra||'00:00','Cartão ponto'],['Balanço do mês',hoursText(employee.balance),'Extra menos falta'],['Banco antes da baixa',hoursText(Number(entry?.beforeSettlement)||0),'Acumulado'],['Horas do banco pagas',hoursText(paidMinutes),`${hoursMoney(paidRate)} por hora`],['Valor do banco pago',hoursMoney(paidValue),'Acrescentado ao bruto'],['Horas compensadas',hoursText(compensatedMinutes),'Folga sem pagamento'],['Saldo do próximo mês',hoursText(nextBalance),'Após as baixas']]:[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Horas extras',employee.extra||'00:00','Pagas automaticamente'],['Pagamento das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(payment.normalRate)}`],['Balanço do mês',hoursText(employee.balance),'Mantido somente como registro'],['Saldo registrado no banco',hoursText(nextBalance),'Não acrescentado novamente ao bruto']];
   hoursPdfTable(report,[{label:'Informação',width:68},{label:'Valor',width:54},{label:'Referência',width:68}],workRows.map(row=>[{text:row[0],bold:true},row[1],row[2]]));
   hoursPdfSection(report,'Composição financeira');
-  const financialRows=isClt?[['Salário mensal','Remuneração cadastrada',hoursMoney(payment.fixedSalary)],['Banco de horas pago',`${hoursText(paidMinutes)} x ${hoursMoney(paidRate)}`,hoursMoney(paidValue)],['Valor bruto','Salário + banco pago',hoursMoney(gross)]]:[['Horas diurnas',`${hoursText(hoursMinutes(employee.normal))} x ${hoursMoney(payment.normalRate)}`,hoursMoney(normalSubtotal)],['Horas extras',`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(payment.extraRate)}`,hoursMoney(extraSubtotal)],['Banco de horas pago',`${hoursText(paidMinutes)} x ${hoursMoney(paidRate)}`,hoursMoney(paidValue)],['Valor bruto','Horas diurnas + extras + banco',hoursMoney(gross)]];
+  const financialRows=isClt?[['Salário mensal','Remuneração cadastrada',hoursMoney(payment.fixedSalary)],['Banco de horas pago',`${hoursText(paidMinutes)} x ${hoursMoney(paidRate)}`,hoursMoney(paidValue)],['Valor bruto','Salário + banco pago',hoursMoney(gross)]]:[['Horas diurnas',`${hoursText(hoursMinutes(employee.normal))} x ${hoursMoney(payment.normalRate)}`,hoursMoney(normalSubtotal)],['Horas extras pagas automaticamente',`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(payment.normalRate)}`,hoursMoney(extraSubtotal)],['Valor bruto','Horas diurnas + horas extras',hoursMoney(gross)]];
   hoursPdfTable(report,[{label:'Item',width:62},{label:'Cálculo',width:78},{label:'Valor',width:50,align:'right'}],financialRows.map(row=>[{text:row[0],bold:true},row[1],{text:row[2],bold:true}]));
   hoursPdfSection(report,'Descontos e auxílios');
   const financeRows=[['Desconto','Almoços',`${mealCount} x ${hoursMoney(mealUnit)}`,`- ${hoursMoney(meals)}`],['Desconto','Uniodonto','Cadastro individual',`- ${hoursMoney(uniodonto)}`],...monthly.filter(item=>item.type!=='benefit').map(item=>['Desconto',item.name||'Sem descrição','Lançamento mensal',`- ${hoursMoney(item.value)}`]),...(isClt?[['Desconto','INSS','Cálculo progressivo',`- ${hoursMoney(inss)}`]]:[]),...monthly.filter(item=>item.type==='benefit').map(item=>['Auxílio',item.name||'Sem descrição','Lançamento mensal',`+ ${hoursMoney(item.value)}`]),['Total','Total de descontos','',`- ${hoursMoney(discounts)}`],['Total','Total de auxílios','',`+ ${hoursMoney(benefits)}`],['Líquido','Valor final a receber','Bruto - descontos + auxílios',hoursMoney(net)]];
@@ -10231,6 +10298,15 @@ function renderHoursBankPage(){
   const totalBalance=employees.reduce((total,employee)=>total+(hoursBankTimeline(records.filter(record=>record.employeeKey===employee.key)).at(-1)?.accumulated||0),0);
   host.innerHTML=`${hoursTabsHTML()}<div class="parts-head"><div><h2><span class="msi">account_balance</span> Banco de horas</h2><p>Cada importação guarda o balanço do mês. Uma nova importação da mesma competência atualiza a linha existente, sem duplicar.</p></div><button class="btn btn-ghost" type="button" onclick="exportHoursBankPDF()" ${records.length?'':'disabled'}><span class="msi msi-sm">picture_as_pdf</span> Relatório PDF</button></div>${records.length?`<div class="stats-row"><div class="stat-card"><span class="stat-label">Funcionários</span><span class="stat-value">${employees.length}</span><span class="stat-sub">Com histórico armazenado</span></div><div class="stat-card"><span class="stat-label">Apontamentos mensais</span><span class="stat-value">${records.length}</span><span class="stat-sub">Linhas armazenadas</span></div><div class="stat-card"><span class="stat-label">Faltas e atrasos</span><span class="stat-value" style="color:var(--red)">${hoursText(totalDelay)}</span><span class="stat-sub">Total de todos os meses</span></div><div class="stat-card"><span class="stat-label">Horas extras</span><span class="stat-value">${hoursText(totalExtra)}</span><span class="stat-sub">Total de todos os meses</span></div><div class="stat-card"><span class="stat-label">Saldo geral</span><span class="stat-value" style="color:${totalBalance<0?'var(--red)':'var(--green)'}">${hoursText(totalBalance)}</span><span class="stat-sub">${totalBalance<0?'Ainda falta compensar':totalBalance>0?'Sobra de horas':'Compensado'}</span></div></div><div class="panel" style="margin-top:18px"><div class="panel-head"><span>Consultar funcionário</span><select class="filter-select" style="margin-left:auto;min-width:320px" onchange="selectHoursBankEmployee(this.value)">${employees.map(employee=>`<option value="${hoursEscape(employee.key)}" ${employee.key===hoursBankSelectedEmployeeKey?'selected':''}>${hoursEscape(employee.name)}</option>`).join('')}</select></div>${selected?hoursEmployeeBankHTML(selected):''}</div>`:`<div class="panel"><div class="empty-state">O banco de horas ainda está vazio. Importe um cartão ponto na subaba <strong>Balanço de horas</strong> para registrar o primeiro mês.</div></div>`}`;
 }
+function hoursCalendarMarkup(data){
+  const names=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],calendar=data.calendar||{year:new Date().getFullYear(),months:{}};
+  const cards=names.map((name,index)=>{const month=String(index+1).padStart(2,'0'),snapshot=calendar.months?.[month],selected=month===hoursCalendarSelectedMonth;
+    const employees=snapshot?.employees||[],action=snapshot?`selectHoursCalendarMonth('${month}')`:`beginHoursCalendarImport('${month}')`;
+    return `<button class="receber-period-card${selected?' general':''}" type="button" onclick="${action}" title="${snapshot?'Abrir o cartão ponto importado':'Importar o cartão ponto deste mês'}"><b>${name}</b><span style="color:${snapshot?'var(--green)':'var(--text3)'}">${snapshot?'Importado':'Não importado'}</span><strong style="color:${snapshot?'#51cb68':'var(--text3)'}">${snapshot?`${employees.length} funcionário(s)`:'Nenhum funcionário'}</strong></button>`;
+  }).join('');
+  const importedCount=Object.keys(calendar.months||{}).filter(month=>calendar.months[month]?.employees?.length).length;
+  return `<input id="hoursCalendarPdfInput" type="file" accept="application/pdf,.pdf" style="display:none" onchange="importHoursControlPdf(this)"><section class="receber-navegacao" style="margin-top:0;margin-bottom:20px"><h3>${calendar.year}</h3><p>${importedCount?`${importedCount} de 12 mês(es) importado(s). Selecione um mês para abrir os apontamentos.`:'Nenhum mês importado. Selecione um mês para importar o cartão ponto.'} Na virada do ano, um calendário vazio é iniciado automaticamente.</p><div class="receber-month-grid">${cards}</div></section>`;
+}
 function renderHoursControlPage(){
   const host=document.getElementById('hoursControlContent');
   if(!host)return;
@@ -10239,7 +10315,11 @@ function renderHoursControlPage(){
   if(hoursView==='pagamentos'){renderHoursPaymentsPage();return;}
   if(hoursView==='banco'){renderHoursBankPage();return;}
   if(hoursView==='descontos'){renderHoursDiscountProfilesPage();return;}
-  const all=data.employees||[];
+  const importedMonths=Object.keys(data.calendar?.months||{}).sort();
+  if(!/^(0[1-9]|1[0-2])$/.test(hoursCalendarSelectedMonth))hoursCalendarSelectedMonth=data.calendar?.months?.[data.activeMonth]?data.activeMonth:(importedMonths.at(-1)||String(new Date().getMonth()+1).padStart(2,'0'));
+  const monthData=data.calendar?.months?.[hoursCalendarSelectedMonth],calendarHTML=hoursCalendarMarkup(data);
+  if(!monthData){host.innerHTML=`${hoursTabsHTML()}${calendarHTML}<div class="panel"><div class="empty-state"><strong>${['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][Number(hoursCalendarSelectedMonth)-1]||'Mês'} ainda não possui cartão ponto.</strong><br>Use o botão <strong>Importar PDF</strong> no card correspondente.</div></div>`;return;}
+  const all=monthData.employees||[];
   const employees=all.filter(employee=>String(employee.name||'').toLowerCase().includes(hoursEmployeeFilter));
   const normal=all.reduce((total,employee)=>total+hoursMinutes(employee.normal),0);
   const planned=all.reduce((total,employee)=>total+hoursMinutes(employee.planned),0);
@@ -10247,15 +10327,16 @@ function renderHoursControlPage(){
   const extra=all.reduce((total,employee)=>total+hoursMinutes(employee.extra),0);
   const balance=extra-delay;
   const balanceStatus=balance<0?'Ainda falta compensar':balance>0?'Sobra após compensar':'Totalmente compensado';
-  const period=data.period?.start&&data.period?.end?`${data.period.start} a ${data.period.end}`:'Período informado no relatório';
-  const changes=data.employeeChanges||{new:[],left:[]};
+  const period=monthData.period?.start&&monthData.period?.end?`${monthData.period.start} a ${monthData.period.end}`:'Período informado no relatório';
+  const changes=monthData.employeeChanges||{new:[],left:[]};
   const changeAlert=(changes.new?.length||changes.left?.length)?`<div class="hours-change-alert"><span class="msi msi-sm">groups</span>${changes.new?.length?`<span><strong>Novos no cartão ponto:</strong> ${changes.new.map(name=>hoursEscape(name)).join(', ')}.</span>`:''}${changes.left?.length?`<span><strong>Não localizados no cartão ponto:</strong> ${changes.left.map(name=>hoursEscape(name)).join(', ')}.</span>`:''}</div>`:'';
   const parserAlert=all.length&&Number(data.parserVersion||0)<3?`<div class="hours-change-alert"><span class="msi msi-sm">warning</span><span><strong>Reimporte o cartão ponto.</strong> Os dados salvos anteriormente não possuem a coluna “Falta e atraso” extraída diretamente do PDF.</span></div>`:'';
   host.innerHTML=`
     ${hoursTabsHTML()}
+    ${calendarHTML}
     <div class="parts-head">
-      <div><h2><span class="msi">schedule</span> Controle de horas</h2><p>Importe o cartão ponto do Control ID para conferir faltas, atrasos, horas extras e o balanço por funcionário.</p></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost" type="button" onclick="exportHoursBalancePDF()"><span class="msi msi-sm">picture_as_pdf</span> Relatório PDF</button><label class="btn btn-primary" style="cursor:pointer"><span class="msi msi-sm">upload_file</span> Importar cartão ponto (PDF)<input id="hoursPdfInput" type="file" accept="application/pdf,.pdf" style="display:none" onchange="importHoursControlPdf(this)"></label></div>
+      <div><h2><span class="msi">schedule</span> Detalhes do mês · ${hoursEscape(period)}</h2><p>Faltas, atrasos, horas extras e balanço dos funcionários importados neste mês.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost" type="button" onclick="exportHoursBalancePDF()"><span class="msi msi-sm">picture_as_pdf</span> Relatório PDF</button><button class="btn btn-primary" type="button" onclick="beginHoursCalendarImport('${hoursCalendarSelectedMonth}')"><span class="msi msi-sm">sync</span> Substituir PDF do mês</button></div>
     </div>
     <div class="sim-intro"><span class="msi msi-sm msi-gold">info</span> “Falta e atraso” e “Extra diurna” são lidos diretamente do PDF. O balanço é <strong>extra diurna − falta e atraso</strong>: positivo indica sobra de horas; negativo indica horas ainda não compensadas.</div>
     ${parserAlert}
@@ -10270,7 +10351,7 @@ function renderHoursControlPage(){
     </div>
     <div class="filters" style="margin-top:18px"><div class="search-wrap"><span class="msi msi-sm">search</span><input class="search-input" value="${hoursEscape(hoursEmployeeFilter)}" placeholder="Buscar funcionário..." oninput="filterHoursEmployees(this.value)"></div><span class="finance-result-count">${employees.length} de ${all.length} funcionário(s)</span></div>
     <div class="panel">
-      <div class="panel-head">Balanço por funcionário <span style="font-weight:400;color:var(--muted);font-size:12px">${data.sourceName?`· ${hoursEscape(data.sourceName)} · importado em ${hoursDateBR(data.importedAt)}`:''}</span></div>
+      <div class="panel-head">Balanço por funcionário <span style="font-weight:400;color:var(--muted);font-size:12px">${monthData.sourceName?`· ${hoursEscape(monthData.sourceName)} · importado em ${hoursDateBR(monthData.importedAt)}`:''}</span></div>
       ${employees.length?`<div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Funcionário</th><th>Horas normais</th><th>Horas previstas</th><th>Falta e atraso</th><th>Extra diurna</th><th>Balanço</th><th></th></tr></thead><tbody>${employees.map(employee=>`<tr><td><strong>${hoursEscape(employee.name)}</strong></td><td>${hoursEscape(employee.normal||'00:00')}</td><td>${hoursEscape(employee.planned||'00:00')}</td><td style="color:var(--red)"><strong>${hoursEscape(employee.delay||'00:00')}</strong></td><td>${hoursEscape(employee.extra||'00:00')}</td><td style="color:${Number(employee.balance)<0?'var(--red)':'var(--green)'}"><strong>${hoursText(employee.balance)}</strong><small style="display:block;color:var(--muted);white-space:nowrap">${Number(employee.balance)<0?'Falta compensar':Number(employee.balance)>0?'Sobra de horas':'Compensado'}</small></td><td>${employee.days?.length?`<details><summary style="cursor:pointer;color:var(--gold)">Detalhar dias</summary><div style="padding:10px 0;min-width:525px">${employee.days.map(day=>{const dayBalance=hoursMinutes(day.extra)-hoursMinutes(day.delay);return `<div style="display:grid;grid-template-columns:1fr 70px 70px 70px 70px 76px;gap:10px;border-bottom:1px solid var(--border);padding:5px 0;font-size:12px"><span>${hoursEscape(day.date)}</span><span>N: ${hoursEscape(day.normal||'—')}</span><span>P: ${hoursEscape(day.planned||'—')}</span><span>F: ${hoursEscape(day.delay||'—')}</span><span>E: ${hoursEscape(day.extra||'—')}</span><span style="color:${dayBalance<0?'var(--red)':'var(--green)'}">B: ${hoursText(dayBalance)}</span></div>`}).join('')}</div></details>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty-state">Nenhum relatório importado. Clique em <strong>Importar cartão ponto (PDF)</strong> para iniciar.</div>'}
     </div>`;
 }
@@ -10295,9 +10376,9 @@ function renderHoursPaymentsPage(){
   const normalHours=hoursMinutes(employee.normal)/60,extraHours=hoursMinutes(employee.extra)/60;
   const isClt=payment.employmentType==='CLT';
   const normalSubtotal=isClt?0:normalHours*hoursNumber(payment.normalRate);
-  const extraSubtotal=isClt?0:extraHours*hoursNumber(payment.extraRate);
+  const extraSubtotal=isClt?0:extraHours*hoursNumber(payment.normalRate);
   const baseGross=isClt?hoursNumber(payment.fixedSalary):normalSubtotal+extraSubtotal;
-  const gross=baseGross+bankPaidValue;
+  const gross=baseGross+(isClt?bankPaidValue:0);
   const inssCalculation=isClt?hoursCalculateInss(gross):{rows:[],total:0};
   const inssDiscount=inssCalculation.total;
   const mealCount=payment.mealCountManual?hoursNumber(payment.mealCount):hoursNumber(employee.lunchCount);
@@ -10331,15 +10412,12 @@ function renderHoursPaymentsPage(){
     ['Valor da hora',hoursMoney(payment.normalRate),'Hora diurna'],
     ['Subtotal das horas',hoursMoney(normalSubtotal),'Horas trabalhadas × valor hora'],
     ['Falta e atraso',employee.delay||'00:00','Extraído do cartão ponto'],
-    ['Horas extras',employee.extra||'00:00',`${extraHours.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} horas decimais`],
+    ['Horas extras',employee.extra||'00:00',`${extraHours.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} horas decimais · pagamento automático`],
     ['Balanço extra × falta',hoursText(employee.balance),Number(employee.balance)<0?'Ainda falta compensar':'Horas compensadas'],
-    ['Banco antes da baixa',hoursText(Number(bankEntry?.beforeSettlement)||0),'Saldo disponível na competência'],
-    ['Horas do banco pagas',hoursMoney(bankPaidValue),`${hoursText(bankPaidMinutes)} × ${hoursMoney(bankPaidRate)}`],
-    ['Horas compensadas',hoursText(bankCompensatedMinutes),'Folga sem pagamento'],
-    ['Saldo do próximo mês',hoursText(bankNextBalance),'Após pagamento e compensação'],
-    ['Valor da hora extra',hoursMoney(payment.extraRate),'Hora extra diurna'],
-    ['Subtotal das extras',hoursMoney(extraSubtotal),'Horas extras × valor hora extra'],
-    ['Valor bruto',hoursMoney(gross),bankPaidValue?'Horas normais + extras + banco pago':'Horas normais + horas extras']
+    ['Banco de horas',hoursText(bankNextBalance),'Somente registro; não gera pagamento duplicado'],
+    ['Valor da hora aplicado',hoursMoney(payment.normalRate),'Mesmo valor da hora diurna'],
+    ['Pagamento das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} × ${hoursMoney(payment.normalRate)}`],
+    ['Valor bruto',hoursMoney(gross),'Horas normais + horas extras pagas automaticamente']
   ];
   const discountSummaryRows=[
     ['Almoços',`${mealCount} × ${hoursMoney(mealUnit)}`,meals],
@@ -10367,6 +10445,18 @@ function renderHoursPaymentsPage(){
     <div class="panel" style="margin-bottom:18px"><div class="panel-head">Funcionário e período</div><div class="filters" style="padding:16px"><select class="filter-select" style="min-width:330px" onchange="selectHoursPaymentEmployee(this.value)">${employees.map(item=>`<option value="${hoursEscape(item.id)}" ${item.id===employee.id?'selected':''}>${hoursEscape(item.name)}</option>`).join('')}</select><span class="finance-result-count">Período: ${hoursEscape(data.period?.start||'—')} a ${hoursEscape(data.period?.end||'—')}</span><span class="finance-result-count">Vínculo: <strong>${isClt?'CLT':'PJ'}</strong></span></div></div>
     <div class="panel" style="margin-bottom:18px"><div class="panel-head">${isClt?'Salário na folha':'Horas trabalhadas'} · ${hoursEscape(employee.name)}</div><div class="stats-row" style="padding:16px"><div class="stat-card"><span class="stat-label">Horas diurnas</span><span class="stat-value">${hoursEscape(employee.normal||'00:00')}</span><span class="stat-sub">${isClt?'Apenas informativas':'Total de horas'}</span></div><div class="stat-card"><span class="stat-label">Hora extra diurna</span><span class="stat-value">${hoursEscape(employee.extra||'00:00')}</span><span class="stat-sub">${isClt?'Não entra no cálculo':'Conforme cartão ponto'}</span></div><div class="stat-card"><span class="stat-label">${isClt?'Salário mensal':'Subtotal diurno'}</span><span class="stat-value">${isClt?hoursMoney(payment.fixedSalary):hoursMoney(normalSubtotal)}</span><span class="stat-sub">${isClt?'Valor configurado':'Horas normais × valor hora'}</span></div><div class="stat-card"><span class="stat-label">${isClt?'Banco pago':'Subtotal extra'}</span><span class="stat-value">${isClt?hoursMoney(bankPaidValue):hoursMoney(extraSubtotal)}</span><span class="stat-sub">${isClt?'Acrescentado à folha':`${extraHours.toLocaleString('pt-BR',{maximumFractionDigits:2})} h × ${hoursMoney(payment.extraRate)}`}</span></div><div class="stat-card"><span class="stat-label">Bruto</span><span class="stat-value" style="color:var(--green)">${hoursMoney(gross)}</span><span class="stat-sub">${bankPaidValue?'Inclui banco de horas pago':isClt?'Salário fixo':'Diurno + extra'}</span></div></div>${bankSettlementHTML}</div>
     <div class="panel"><div class="panel-head">Descontos, auxílios e despesas</div><div class="form-grid" style="padding:16px;grid-template-columns:repeat(2,minmax(220px,1fr));gap:14px">${payment.mealCountManual?field('Total de almoços','mealCount',payment.mealCount,'1'):`<div style="padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius)" ondblclick="enableHoursMealCountEdit()"><strong>Total de almoços: ${mealCount}</strong></div>`}${field('Farmácia do mês (R$)','pharmacy',payment.pharmacy)}</div><div class="stats-row" style="padding:0 16px 16px"><div class="stat-card"><span class="stat-label">Outros descontos</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(standardDiscounts)}</span><span class="stat-sub">Padrão, almoços e farmácia</span></div>${isClt?`<div class="stat-card"><span class="stat-label">INSS progressivo</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(inssDiscount)}</span><span class="stat-sub">Calculado pelas faixas configuradas</span></div>`:''}<div class="stat-card"><span class="stat-label">Descontos totais</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(discounts)}</span><span class="stat-sub">${isClt?'Inclui INSS':'Sem INSS para vínculo PJ'}</span></div><div class="stat-card"><span class="stat-label">Auxílios totais</span><span class="stat-value" style="color:var(--blue)">+ ${hoursMoney(benefits)}</span><span class="stat-sub">Auxílios cadastrados no padrão</span></div><div class="stat-card"><span class="stat-label">R$ a receber</span><span class="stat-value" style="color:var(--green)">${hoursMoney(net)}</span><span class="stat-sub">Bruto − descontos + auxílios</span></div></div>${isClt?`<div class="panel-head" style="border-top:1px solid var(--border)">Memória de cálculo do INSS</div><div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Faixa</th><th>Base tributável</th><th>Alíquota</th><th>Desconto</th></tr></thead><tbody>${inssCalculation.rows.filter(row=>row.base>0).map((row,index)=>`<tr><td>${index+1}ª faixa · até ${hoursMoney(row.upper)}</td><td>${hoursMoney(row.base)}</td><td>${row.rate.toLocaleString('pt-BR')}%</td><td><strong>${hoursMoney(row.value)}</strong></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3"><strong>Total do INSS</strong></td><td><strong>${hoursMoney(inssDiscount)}</strong></td></tr></tfoot></table></div>`:''}</div>`;
+  if(!isClt){
+    const workPanel=[...host.querySelectorAll('.panel')].find(panel=>panel.querySelector('.panel-head')?.textContent.includes(employee.name));
+    const workCards=workPanel?[...workPanel.querySelectorAll('.stat-card')]:[];
+    if(workCards[3])workCards[3].querySelector('.stat-sub').textContent=`${extraHours.toLocaleString('pt-BR',{maximumFractionDigits:2})} h × ${hoursMoney(payment.normalRate)}`;
+    if(workCards[4])workCards[4].querySelector('.stat-sub').textContent='Horas diurnas + extras pagas automaticamente';
+    const bankHead=[...host.querySelectorAll('.panel-head')].find(item=>item.textContent.includes('Baixa do banco de horas'));
+    if(bankHead){
+      while(bankHead.nextElementSibling)bankHead.nextElementSibling.remove();
+      bankHead.innerHTML='<span><span class="msi msi-sm">account_balance_wallet</span> Banco de horas · somente registro</span><span style="margin-left:auto;color:var(--green);font-size:12px">Horas extras já incluídas automaticamente no bruto</span>';
+      bankHead.insertAdjacentHTML('afterend',`<div class="stats-row" style="padding:16px"><div class="stat-card"><span class="stat-label">Falta e atraso</span><span class="stat-value" style="color:var(--red)">${hoursEscape(employee.delay||'00:00')}</span><span class="stat-sub">Extraído do cartão ponto</span></div><div class="stat-card"><span class="stat-label">Horas extras pagas</span><span class="stat-value">${hoursEscape(employee.extra||'00:00')}</span><span class="stat-sub">${hoursText(hoursMinutes(employee.extra))} × ${hoursMoney(payment.normalRate)}</span></div><div class="stat-card"><span class="stat-label">Balanço registrado</span><span class="stat-value" style="color:${Number(employee.balance)<0?'var(--red)':'var(--green)'}">${hoursText(employee.balance)}</span><span class="stat-sub">Histórico do banco de horas</span></div><div class="stat-card"><span class="stat-label">Saldo acumulado</span><span class="stat-value" style="color:${bankNextBalance<0?'var(--red)':'var(--green)'}">${hoursText(bankNextBalance)}</span><span class="stat-sub">Não somado novamente ao pagamento</span></div></div>`);
+    }
+  }
   const discountsPanel=[...host.querySelectorAll('.panel')].find(panel=>panel.querySelector('.panel-head')?.textContent.includes('Descontos, auxílios e despesas'));
   if(discountsPanel){
     const pharmacyInput=discountsPanel.querySelector('input[onchange*="pharmacy"]');
@@ -10423,6 +10513,15 @@ function renderHoursDiscountProfilesPage(){
     <div class="parts-head"><div><h2><span class="msi">settings</span> Configuração</h2><p>Cadastre vínculo, remuneração, Uniodonto e valor do almoço. A quantidade de almoços é identificada automaticamente no cartão ponto.</p></div></div>
     <div class="panel" style="margin-bottom:18px"><div class="panel-head" style="cursor:pointer" onclick="toggleHoursConfigSection('people')"><span>Funcionários cadastrados</span><span style="margin-left:auto;color:var(--gold)">${hoursConfigPeopleOpen?'⌃ Recolher':'⌄ Expandir'}</span></div>${hoursConfigPeopleOpen?employeeFilters+employeeConfig:''}</div>
     <div class="panel" style="margin-bottom:18px"><div class="panel-head" style="cursor:pointer" onclick="toggleHoursConfigSection('inss')"><span>Tabela padrão do INSS</span><span style="margin-left:auto;color:var(--gold)">${hoursConfigInssOpen?'⌃ Recolher':'⌄ Expandir'}</span></div>${hoursConfigInssOpen?inssConfig:''}</div>`;
+  host.querySelectorAll('tbody tr').forEach(row=>{
+    const employment=row.querySelector('select[onchange*="employmentType"]');
+    if(employment?.value!=='PJ')return;
+    const remuneration=row.children[2],labels=remuneration?[...remuneration.querySelectorAll('label')]:[];
+    labels.find(label=>label.querySelector('span')?.textContent.trim()==='Hora extra')?.remove();
+    const rateLabel=labels.find(label=>label.querySelector('span')?.textContent.trim()==='Hora diurna');
+    if(rateLabel)rateLabel.querySelector('span').textContent='Valor da hora (R$)';
+    const grid=remuneration?.querySelector('div[style*="grid-template-columns"]');if(grid)grid.style.gridTemplateColumns='1fr';
+  });
 }
 
 // ─────────── EXPORTS GLOBAIS ───────────
@@ -10450,7 +10549,7 @@ mascararDataFiltroFinanceiro,abrirReceberAno,voltarReceberAnos,voltarReceberPara
   abrirPagarAno,voltarPagarAnos,voltarPagarParaMeses,abrirPagarGeral,abrirPagarMes,abrirPagarCalendario,alterarPagarCalendario,alterarFiltroPagar,limparFiltrosPagar,alternarFiltroAtrasadosPagar,alternarFiltroHojePagar,mostrarMaisContasPagar,atualizarContasPagarAno,limparContasPagarAno,
   exportFinanceCalendarPDF,exportFinancePeriodPDF,exportFinanceOverduePDF,
   updatePctPreview,applyInstallmentPlan,removeInstallmentPlan,
-  renderHoursControlPage,importHoursControlPdf,exportHoursBalancePDF,exportHoursBankPDF,exportHoursPaymentPDF,filterHoursEmployees,filterHoursConfigEmployees,filterHoursConfigEmployment,selectHoursBankEmployee,removeHoursBankRecord,toggleHoursBankSettlement,saveHoursBankSettlementField,switchHoursView,selectHoursPaymentEmployee,toggleHoursConfigSection,saveHoursPaymentField,enableHoursMealCountEdit,saveHoursMonthlyBenefitRate,setHoursEmploymentType,setHoursEmployeePaymentField,setHoursEmployeeProfileById,saveHoursDiscountProfileField,setHoursEmployeeDiscountProfile,addHoursProfileItem,saveHoursProfileItem,removeHoursProfileItem,addHoursMonthlyItem,saveHoursMonthlyItem,removeHoursMonthlyItem,saveHoursInssField,setHoursInssPreviewSalary
+  renderHoursControlPage,importHoursControlPdf,beginHoursCalendarImport,selectHoursCalendarMonth,exportHoursBalancePDF,exportHoursBankPDF,exportHoursPaymentPDF,filterHoursEmployees,filterHoursConfigEmployees,filterHoursConfigEmployment,selectHoursBankEmployee,removeHoursBankRecord,toggleHoursBankSettlement,saveHoursBankSettlementField,switchHoursView,selectHoursPaymentEmployee,toggleHoursConfigSection,saveHoursPaymentField,enableHoursMealCountEdit,saveHoursMonthlyBenefitRate,setHoursEmploymentType,setHoursEmployeePaymentField,setHoursEmployeeProfileById,saveHoursDiscountProfileField,setHoursEmployeeDiscountProfile,addHoursProfileItem,saveHoursProfileItem,removeHoursProfileItem,addHoursMonthlyItem,saveHoursMonthlyItem,removeHoursMonthlyItem,saveHoursInssField,setHoursInssPreviewSalary
 });
 let _cronAutomaticDay=cronTodayISO();setInterval(()=>{const day=cronTodayISO();if(day!==_cronAutomaticDay){_cronAutomaticDay=day;if(document.getElementById('page-cronograma')?.classList.contains('active'))renderDevAll();if(document.getElementById('page-atrasos')?.classList.contains('active'))renderCronDelayPage();}},15*60*1000);
 </script>
