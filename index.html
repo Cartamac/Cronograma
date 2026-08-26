@@ -393,6 +393,8 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .form-grid{display:grid;}
 .form-input{width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 12px;color:var(--text);font:600 14px 'Inter',sans-serif;outline:none;}
 .form-input:focus{border-color:var(--gold);}
+input[type=number]{appearance:textfield;-moz-appearance:textfield;}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{appearance:none;-webkit-appearance:none;margin:0;}
 #page-controle-horas .stats-row{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));}
 #page-controle-horas .stat-card{min-height:94px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;padding:16px 18px;}
 #page-controle-horas .stat-label{display:block;color:var(--text3);font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;}
@@ -1517,7 +1519,6 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
       <button class="dev-tab" id="tabClientes" onclick="switchDevTab('clientes',this)"><span class="msi msi-sm">group</span> Clientes</button>
       <button class="dev-tab" id="tabAdmins" onclick="switchDevTab('admins',this)"><span class="msi msi-sm">shield_person</span> Admins</button>
       <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">storefront</span> Comercial</button>
-      <button class="dev-tab" id="tabSimulador" onclick="switchDevTab('simulador',this)"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
       <button class="dev-tab" id="tabMacroEngenharia" onclick="switchDevTab('macro-engenharia',this)"><span class="msi msi-sm">architecture</span> Macro Engenharia</button>
       <button class="dev-tab" id="tabCompras" onclick="switchDevTab('compras',this)"><span class="msi msi-sm">shopping_cart</span> Pedidos de compra</button>
       <span class="dev-nav-separator" aria-hidden="true"></span>
@@ -1539,6 +1540,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab active" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
+      <button class="cronograma-subtab" data-cron-subtab="simulador" onclick="switchCronogramaSubtab('simulador')"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
       <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
     <div class="filters">
@@ -1568,6 +1570,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="cronograma-subtab active" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
+      <button class="cronograma-subtab" data-cron-subtab="simulador" onclick="switchCronogramaSubtab('simulador')"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
       <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
     <div class="parts-head"><div><h2><span class="msi">query_stats</span> Atrasos por setor</h2><p>Separa o atraso gerado no próprio setor do atraso recebido das tarefas predecessoras.</p></div></div>
@@ -1796,6 +1799,12 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 
   <!-- SIMULADOR DE CRONOGRAMA (MESTRES) -->
   <div class="page" id="page-simulador">
+    <div class="cronograma-subtabs">
+      <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
+      <button class="cronograma-subtab active" data-cron-subtab="simulador" onclick="switchCronogramaSubtab('simulador')"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
+      <button class="cronograma-subtab cron-subtab-import" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
+    </div>
     <div class="parts-head"><div><h2><span class="msi">event_available</span> Simulador de Cronograma</h2><p>Planeje as etapas de um novo equipamento considerando os serviços ainda em andamento na fábrica.</p></div></div>
     <div class="sim-intro"><span class="msi msi-sm msi-gold">info</span> Informe somente a duração de cada etapa aplicável. O simulador parte da data atual, consulta tarefas com menos de 100% concluído na mesma etapa e informa automaticamente o início disponível e a data final.</div>
     <div id="simulatorContent"></div>
@@ -1844,6 +1853,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
+      <button class="cronograma-subtab" data-cron-subtab="simulador" onclick="switchCronogramaSubtab('simulador')"><span class="msi msi-sm">event_available</span> Simular Cronograma</button>
       <button class="cronograma-subtab cron-subtab-import active" data-cron-subtab="importar" onclick="switchCronogramaSubtab('importar')"><span class="msi msi-sm">upload_file</span> Importar e históricos</button>
     </div>
     <div class="import-box">
@@ -2458,10 +2468,9 @@ async function deleteCostStructureDocument(orderId){
 const isMaster = u => u && (u.type==='master' || MASTER_EMAILS.includes(u.ref?.email));
 const isEngineering = u => u && ['engineering','engenharia'].includes(String(u.type||'').toLowerCase());
 const ADMIN_ACCESS_GROUPS=[
-  {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.atrasos','Atrasos por setor'],['cronograma.importar','Importar e históricos']]},
+  {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.atrasos','Atrasos por setor'],['simulador','Simular Cronograma'],['cronograma.importar','Importar e históricos']]},
   {id:'cadastros',label:'Cadastros',icon:'group',items:[['clientes','Clientes'],['admins','Administradores']]},
   {id:'pecas',label:'Comercial',icon:'storefront',items:[['pecas.catalog','Tabela de peças'],['pecas.return','Retorno equipamentos'],['pecas.price','Formação de preço'],['pecas.bndes','Cadastro BNDES']]},
-  {id:'planejamento',label:'Planejamento',icon:'event_available',items:[['simulador','Simular Cronograma']]},
   {id:'macro',label:'Macro Engenharia',icon:'architecture',items:[['macro-engenharia.active','OPs abertas'],['macro-engenharia.completed','Finalizadas'],['macro-engenharia.people','Responsáveis']]},
   {id:'compras',label:'Compras',icon:'shopping_cart',items:[['compras','Pedidos de compra']]},
   {id:'custos',label:'Custos',icon:'payments',items:[['custos.orders','Custos dos pedidos'],['custos.structure','Estrutura multinível']]},
@@ -2506,19 +2515,20 @@ function devTabAllowed(id){
 }
 function showAccessDenied(){showToast('Você não possui permissão para acessar esta área.','err');}
 function applyNavigationPermissions(){
-  const map={tabCronograma:'cronograma',tabClientes:'clientes',tabAdmins:'admins',tabPecas:'pecas',tabSimulador:'simulador',tabMacroEngenharia:'macro-engenharia',tabCompras:'compras',tabCustos:'custos',tabFinanceiro:'financeiro',tabContabilidade:'contabilidade',tabControleHoras:'controle-horas'};
+  const map={tabCronograma:'cronograma',tabClientes:'clientes',tabAdmins:'admins',tabPecas:'pecas',tabMacroEngenharia:'macro-engenharia',tabCompras:'compras',tabCustos:'custos',tabFinanceiro:'financeiro',tabContabilidade:'contabilidade',tabControleHoras:'controle-horas'};
   Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAnyAccess(key)?'flex':'none';});
-  document.querySelectorAll('.cronograma-subtab').forEach(tab=>tab.style.display=hasAccess(`cronograma.${tab.dataset.cronSubtab}`)?'flex':'none');
+  const cronHeader=document.getElementById('tabCronograma');if(cronHeader)cronHeader.style.display=(hasAnyAccess('cronograma')||hasAccess('simulador'))?'flex':'none';
+  document.querySelectorAll('.cronograma-subtab').forEach(tab=>{const id=tab.dataset.cronSubtab,key=id==='simulador'?'simulador':`cronograma.${id}`;tab.style.display=hasAccess(key)?'flex':'none';});
   [['partsCatalogTab','pecas.catalog'],['partsReturnTab','pecas.return'],['partsPriceTab','pecas.price'],['partsBndesTab','pecas.bndes'],['macroTabActive','macro-engenharia.active'],['macroTabCompleted','macro-engenharia.completed'],['macroTabPeople','macro-engenharia.people']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAccess(key)?'':'none';});
 }
 function firstAllowedDestination(){
-  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['simulador','simulador'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade'],['controle-horas','controle-horas']];
+  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['simulador','simulador'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade'],['controle-horas','controle-horas']];
   return order.find(([id])=>devTabAllowed(id))?.[0]||null;
 }
 function openAllowedDestination(id){
   if(!id)return false;
-  if(['cronograma','atrasos','importar'].includes(id))switchCronogramaSubtab(id);
-  else switchDevTab(id,document.getElementById({clientes:'tabClientes',admins:'tabAdmins',pecas:'tabPecas',simulador:'tabSimulador','macro-engenharia':'tabMacroEngenharia',compras:'tabCompras',custos:'tabCustos',financeiro:'tabFinanceiro',contabilidade:'tabContabilidade','controle-horas':'tabControleHoras'}[id]));
+  if(['cronograma','atrasos','simulador','importar'].includes(id))switchCronogramaSubtab(id);
+  else switchDevTab(id,document.getElementById({clientes:'tabClientes',admins:'tabAdmins',pecas:'tabPecas','macro-engenharia':'tabMacroEngenharia',compras:'tabCompras',custos:'tabCustos',financeiro:'tabFinanceiro',contabilidade:'tabContabilidade','controle-horas':'tabControleHoras'}[id]));
   return true;
 }
 function syncLoggedUserAccess(){
@@ -2934,7 +2944,8 @@ function syncCronogramaSubtabs(id){
   document.querySelectorAll('.cronograma-subtab').forEach(tab=>tab.classList.toggle('active',tab.dataset.cronSubtab===id));
 }
 function switchCronogramaSubtab(id){
-  if(!hasAccess(`cronograma.${id}`)){showAccessDenied();return;}
+  const accessKey=id==='simulador'?'simulador':`cronograma.${id}`;
+  if(!hasAccess(accessKey)){showAccessDenied();return;}
   const headerTab=document.getElementById('tabCronograma');
   if(!headerTab)return;
   switchDevTab(id,headerTab);
@@ -10011,7 +10022,8 @@ async function toggleHoursBankSettlement(mode,enabled){
   if(enabled&&Math.max(0,Number(settlement.entry?.beforeSettlement)||0)<=0){showToast('Este funcionário não possui saldo positivo disponível para baixa.','err');renderHoursControlPage();return;}
   if(mode==='paid'){
     settlement.record.paidEnabled=Boolean(enabled);
-    if(!enabled)settlement.record.paidMinutes=0;
+    if(enabled)settlement.record.paidRate=hoursConfiguredExtraRate(employee);
+    else settlement.record.paidMinutes=0;
   }else if(mode==='compensated'){
     settlement.record.compensatedEnabled=Boolean(enabled);
     if(!enabled)settlement.record.compensatedMinutes=0;
@@ -10029,6 +10041,7 @@ async function saveHoursBankSettlementField(field,value){
     const available=Math.max(0,Number(settlement.entry?.beforeSettlement)||0);
     if(minutes+other>available){showToast(`A baixa não pode ultrapassar o saldo disponível de ${hoursText(available)}.`,'err');renderHoursControlPage();return;}
     settlement.record[field]=minutes;
+    if(field==='paidMinutes')settlement.record.paidRate=hoursConfiguredExtraRate(employee);
     if(field==='paidMinutes')settlement.record.paidEnabled=true;else settlement.record.compensatedEnabled=true;
   }else return;
   await persist();renderHoursControlPage();
@@ -10112,16 +10125,16 @@ function exportHoursBankPDF(){
 function exportHoursPaymentPDF(){
   const data=hoursData(),employee=(data.employees||[]).find(item=>item.id===hoursPaymentEmployeeId)||(data.employees||[])[0];
   if(!employee){showToast('Selecione um funcionário para gerar o relatório.','err');return;}
-  const payment=hoursPaymentFor(employee),isClt=payment.employmentType==='CLT',normalHours=hoursMinutes(employee.normal)/60,extraHours=hoursMinutes(employee.extra)/60,normalSubtotal=isClt?0:normalHours*hoursNumber(payment.normalRate),extraSubtotal=isClt?0:extraHours*hoursNumber(payment.normalRate);
-  const settlement=hoursCurrentBankSettlement(employee),record=settlement.record,entry=settlement.entry,paidMinutes=Number(record?.paidMinutes)||0,compensatedMinutes=Number(record?.compensatedMinutes)||0,paidRate=hoursNumber(record?.paidRate),paidValue=(paidMinutes/60)*paidRate,nextBalance=Number(entry?.accumulated)||0;
-  const baseGross=isClt?hoursNumber(payment.fixedSalary):normalSubtotal+extraSubtotal,gross=baseGross+(isClt?paidValue:0),inss=isClt?hoursCalculateInss(gross).total:0,mealCount=payment.mealCountManual?hoursNumber(payment.mealCount):hoursNumber(employee.lunchCount),mealUnit=hoursNumber(payment.mealUnitIndividual)||8.5,meals=mealCount*mealUnit,monthly=hoursMonthlyItems(payment),monthlyDiscounts=monthly.filter(item=>item.type!=='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),monthlyBenefits=monthly.filter(item=>item.type==='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),uniodonto=hoursNumber(payment.uniodontoIndividual),discounts=meals+uniodonto+monthlyDiscounts+inss,benefits=monthlyBenefits,net=gross-discounts+benefits;
+  const payment=hoursPaymentFor(employee),isClt=payment.employmentType==='CLT',normalHours=hoursMinutes(employee.normal)/60,extraHours=hoursMinutes(employee.extra)/60,extraRateApplied=hoursNumber(payment.extraRate)||(!isClt?hoursNumber(payment.normalRate):0),normalSubtotal=isClt?0:normalHours*hoursNumber(payment.normalRate),extraSubtotal=extraHours*extraRateApplied;
+  const settlement=hoursCurrentBankSettlement(employee),record=settlement.record,entry=settlement.entry,paidMinutes=Number(record?.paidMinutes)||0,compensatedMinutes=Number(record?.compensatedMinutes)||0,paidRate=hoursNumber(record?.paidRate)||hoursConfiguredExtraRate(employee),paidValue=(paidMinutes/60)*paidRate,nextBalance=Number(entry?.accumulated)||0;
+  const baseGross=isClt?hoursNumber(payment.fixedSalary):normalSubtotal+extraSubtotal,gross=baseGross+(isClt?extraSubtotal+paidValue:0),inss=isClt?hoursCalculateInss(gross).total:0,mealCount=payment.mealCountManual?hoursNumber(payment.mealCount):hoursNumber(employee.lunchCount),mealUnit=hoursNumber(payment.mealUnitIndividual)||8.5,meals=mealCount*mealUnit,monthly=hoursMonthlyItems(payment),monthlyDiscounts=monthly.filter(item=>item.type!=='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),monthlyBenefits=monthly.filter(item=>item.type==='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),uniodonto=hoursNumber(payment.uniodontoIndividual),discounts=meals+uniodonto+monthlyDiscounts+inss,benefits=monthlyBenefits,net=gross-discounts+benefits;
   const report=hoursPdfStart('portrait',`Cálculo de pagamento - ${employee.name}`,`Período: ${data.period?.start||'—'} a ${data.period?.end||'—'} · Vínculo: ${isClt?'CLT':'PJ'}`);if(!report)return;
   hoursPdfCards(report,[{label:'Valor bruto',value:hoursMoney(gross)},{label:'Descontos',value:`- ${hoursMoney(discounts)}`,color:[205,45,58]},{label:'Auxílios',value:`+ ${hoursMoney(benefits)}`,color:[45,105,175]},{label:'Valor líquido',value:hoursMoney(net),color:[39,145,72]}]);
   hoursPdfSection(report,'Horas trabalhadas e banco de horas');
-  const workRows=isClt?[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Extra diurna',employee.extra||'00:00','Cartão ponto'],['Balanço do mês',hoursText(employee.balance),'Extra menos falta'],['Banco antes da baixa',hoursText(Number(entry?.beforeSettlement)||0),'Acumulado'],['Horas do banco pagas',hoursText(paidMinutes),`${hoursMoney(paidRate)} por hora`],['Valor do banco pago',hoursMoney(paidValue),'Acrescentado ao bruto'],['Horas compensadas',hoursText(compensatedMinutes),'Folga sem pagamento'],['Saldo do próximo mês',hoursText(nextBalance),'Após as baixas']]:[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Horas extras',employee.extra||'00:00','Pagas automaticamente'],['Pagamento das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(payment.normalRate)}`],['Balanço do mês',hoursText(employee.balance),'Mantido somente como registro'],['Saldo registrado no banco',hoursText(nextBalance),'Não acrescentado novamente ao bruto']];
+  const workRows=isClt?[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Extra diurna',employee.extra||'00:00','Cartão ponto'],['Valor da hora extra',hoursMoney(extraRateApplied),'Configuração individual'],['Subtotal das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(extraRateApplied)}`],['Balanço do mês',hoursText(employee.balance),'Extra menos falta'],['Banco antes da baixa',hoursText(Number(entry?.beforeSettlement)||0),'Acumulado'],['Horas do banco pagas',hoursText(paidMinutes),`${hoursMoney(paidRate)} por hora`],['Valor do banco pago',hoursMoney(paidValue),'Acrescentado ao bruto'],['Horas compensadas',hoursText(compensatedMinutes),'Folga sem pagamento'],['Saldo do próximo mês',hoursText(nextBalance),'Após as baixas']]:[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Horas extras',employee.extra||'00:00','Pagas automaticamente'],['Pagamento das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(extraRateApplied)}`],['Balanço do mês',hoursText(employee.balance),'Mantido somente como registro'],['Saldo registrado no banco',hoursText(nextBalance),'Não acrescentado novamente ao bruto']];
   hoursPdfTable(report,[{label:'Informação',width:68},{label:'Valor',width:54},{label:'Referência',width:68}],workRows.map(row=>[{text:row[0],bold:true},row[1],row[2]]));
   hoursPdfSection(report,'Composição financeira');
-  const financialRows=isClt?[['Salário mensal','Remuneração cadastrada',hoursMoney(payment.fixedSalary)],['Banco de horas pago',`${hoursText(paidMinutes)} x ${hoursMoney(paidRate)}`,hoursMoney(paidValue)],['Valor bruto','Salário + banco pago',hoursMoney(gross)]]:[['Horas diurnas',`${hoursText(hoursMinutes(employee.normal))} x ${hoursMoney(payment.normalRate)}`,hoursMoney(normalSubtotal)],['Horas extras pagas automaticamente',`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(payment.normalRate)}`,hoursMoney(extraSubtotal)],['Valor bruto','Horas diurnas + horas extras',hoursMoney(gross)]];
+  const financialRows=isClt?[['Salário mensal','Remuneração cadastrada',hoursMoney(payment.fixedSalary)],['Horas extras',`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(extraRateApplied)}`,hoursMoney(extraSubtotal)],['Banco de horas pago',`${hoursText(paidMinutes)} x ${hoursMoney(paidRate)}`,hoursMoney(paidValue)],['Valor bruto','Salário + extras + banco pago',hoursMoney(gross)]]:[['Horas diurnas',`${hoursText(hoursMinutes(employee.normal))} x ${hoursMoney(payment.normalRate)}`,hoursMoney(normalSubtotal)],['Horas extras pagas automaticamente',`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(extraRateApplied)}`,hoursMoney(extraSubtotal)],['Valor bruto','Horas diurnas + horas extras',hoursMoney(gross)]];
   hoursPdfTable(report,[{label:'Item',width:62},{label:'Cálculo',width:78},{label:'Valor',width:50,align:'right'}],financialRows.map(row=>[{text:row[0],bold:true},row[1],{text:row[2],bold:true}]));
   hoursPdfSection(report,'Descontos e auxílios');
   const financeRows=[['Desconto','Almoços',`${mealCount} x ${hoursMoney(mealUnit)}`,`- ${hoursMoney(meals)}`],['Desconto','Uniodonto','Cadastro individual',`- ${hoursMoney(uniodonto)}`],...monthly.filter(item=>item.type!=='benefit').map(item=>['Desconto',item.name||'Sem descrição','Lançamento mensal',`- ${hoursMoney(item.value)}`]),...(isClt?[['Desconto','INSS','Cálculo progressivo',`- ${hoursMoney(inss)}`]]:[]),...monthly.filter(item=>item.type==='benefit').map(item=>['Auxílio',item.name||'Sem descrição','Lançamento mensal',`+ ${hoursMoney(item.value)}`]),['Total','Total de descontos','',`- ${hoursMoney(discounts)}`],['Total','Total de auxílios','',`+ ${hoursMoney(benefits)}`],['Líquido','Valor final a receber','Bruto - descontos + auxílios',hoursMoney(net)]];
@@ -10155,6 +10168,10 @@ function hoursPaymentFor(employee){
   if(!Array.isArray(data.payments[employee.id].monthlyItems))data.payments[employee.id].monthlyItems=[];
   return data.payments[employee.id];
 }
+function hoursConfiguredExtraRate(employee){
+  const payment=hoursPaymentFor(employee),configured=hoursNumber(payment.extraRate);
+  return configured||((payment.employmentType||'PJ')!=='CLT'?hoursNumber(payment.normalRate):0);
+}
 function hoursDiscountProfiles(){return hoursData().discountProfiles||[];}
 function hoursProfileFor(payment){
   const profiles=hoursDiscountProfiles();
@@ -10178,6 +10195,10 @@ async function setHoursEmployeePaymentField(employeeId,field,value){
   const employee=hoursData().employees.find(item=>item.id===employeeId);if(!employee)return;
   const payment=hoursPaymentFor(employee);
   payment[field]=field==='employmentType'?(value==='CLT'?'CLT':'PJ'):hoursNumber(value);
+  if(field==='extraRate'){
+    const settlement=hoursCurrentBankSettlement(employee);
+    if(settlement.record?.paidEnabled)settlement.record.paidRate=hoursConfiguredExtraRate(employee);
+  }
   await persist();renderHoursControlPage();
 }
 async function setHoursEmployeeProfileById(employeeId,value){
@@ -10369,16 +10390,17 @@ function renderHoursPaymentsPage(){
   const bankSettlement=hoursCurrentBankSettlement(employee),bankRecord=bankSettlement.record,bankEntry=bankSettlement.entry;
   const bankAvailable=Math.max(0,Number(bankEntry?.beforeSettlement)||0);
   const bankPaidMinutes=Math.max(0,Number(bankRecord?.paidMinutes)||0),bankCompensatedMinutes=Math.max(0,Number(bankRecord?.compensatedMinutes)||0);
-  const bankPaidRate=Math.max(0,hoursNumber(bankRecord?.paidRate)),bankPaidValue=(bankPaidMinutes/60)*bankPaidRate;
+  const bankPaidRate=Math.max(0,hoursNumber(bankRecord?.paidRate)||hoursConfiguredExtraRate(employee)),bankPaidValue=(bankPaidMinutes/60)*bankPaidRate;
   const bankNextBalance=Number(bankEntry?.accumulated)||0;
   const discountValues=hoursDiscountValues(payment);
   const discountProfile=hoursProfileFor(payment);
   const normalHours=hoursMinutes(employee.normal)/60,extraHours=hoursMinutes(employee.extra)/60;
   const isClt=payment.employmentType==='CLT';
+  const extraRateApplied=hoursNumber(payment.extraRate)||(!isClt?hoursNumber(payment.normalRate):0);
   const normalSubtotal=isClt?0:normalHours*hoursNumber(payment.normalRate);
-  const extraSubtotal=isClt?0:extraHours*hoursNumber(payment.normalRate);
+  const extraSubtotal=extraHours*extraRateApplied;
   const baseGross=isClt?hoursNumber(payment.fixedSalary):normalSubtotal+extraSubtotal;
-  const gross=baseGross+(isClt?bankPaidValue:0);
+  const gross=baseGross+(isClt?extraSubtotal+bankPaidValue:0);
   const inssCalculation=isClt?hoursCalculateInss(gross):{rows:[],total:0};
   const inssDiscount=inssCalculation.total;
   const mealCount=payment.mealCountManual?hoursNumber(payment.mealCount):hoursNumber(employee.lunchCount);
@@ -10400,13 +10422,15 @@ function renderHoursPaymentsPage(){
     ['Horas previstas',employee.planned||'00:00','Carga prevista do período'],
     ['Falta e atraso',employee.delay||'00:00','Extraído do cartão ponto'],
     ['Horas extras',employee.extra||'00:00','Informativo'],
+    ['Valor da hora extra',hoursMoney(extraRateApplied),'Configuração individual'],
+    ['Subtotal das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} × ${hoursMoney(extraRateApplied)}`],
     ['Balanço extra × falta',hoursText(employee.balance),Number(employee.balance)<0?'Ainda falta compensar':'Horas compensadas'],
     ['Banco antes da baixa',hoursText(Number(bankEntry?.beforeSettlement)||0),'Saldo disponível na competência'],
     ['Horas do banco pagas',hoursMoney(bankPaidValue),`${hoursText(bankPaidMinutes)} × ${hoursMoney(bankPaidRate)}`],
     ['Horas compensadas',hoursText(bankCompensatedMinutes),'Folga sem pagamento'],
     ['Saldo do próximo mês',hoursText(bankNextBalance),'Após pagamento e compensação'],
     ['Salário mensal',hoursMoney(payment.fixedSalary),'Valor bruto da folha'],
-    ['Valor bruto',hoursMoney(gross),bankPaidValue?'Salário mensal + banco de horas pago':'Salário mensal']
+    ['Valor bruto',hoursMoney(gross),bankPaidValue?'Salário + extras + banco de horas pago':'Salário mensal + horas extras']
   ]:[
     ['Horas trabalhadas',employee.normal||'00:00',`${normalHours.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} horas decimais`],
     ['Valor da hora',hoursMoney(payment.normalRate),'Hora diurna'],
@@ -10415,8 +10439,8 @@ function renderHoursPaymentsPage(){
     ['Horas extras',employee.extra||'00:00',`${extraHours.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} horas decimais · pagamento automático`],
     ['Balanço extra × falta',hoursText(employee.balance),Number(employee.balance)<0?'Ainda falta compensar':'Horas compensadas'],
     ['Banco de horas',hoursText(bankNextBalance),'Somente registro; não gera pagamento duplicado'],
-    ['Valor da hora aplicado',hoursMoney(payment.normalRate),'Mesmo valor da hora diurna'],
-    ['Pagamento das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} × ${hoursMoney(payment.normalRate)}`],
+    ['Valor da hora extra',hoursMoney(extraRateApplied),hoursNumber(payment.extraRate)?'Configuração individual':'Mesmo valor da hora diurna'],
+    ['Pagamento das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} × ${hoursMoney(extraRateApplied)}`],
     ['Valor bruto',hoursMoney(gross),'Horas normais + horas extras pagas automaticamente']
   ];
   const discountSummaryRows=[
@@ -10445,17 +10469,33 @@ function renderHoursPaymentsPage(){
     <div class="panel" style="margin-bottom:18px"><div class="panel-head">Funcionário e período</div><div class="filters" style="padding:16px"><select class="filter-select" style="min-width:330px" onchange="selectHoursPaymentEmployee(this.value)">${employees.map(item=>`<option value="${hoursEscape(item.id)}" ${item.id===employee.id?'selected':''}>${hoursEscape(item.name)}</option>`).join('')}</select><span class="finance-result-count">Período: ${hoursEscape(data.period?.start||'—')} a ${hoursEscape(data.period?.end||'—')}</span><span class="finance-result-count">Vínculo: <strong>${isClt?'CLT':'PJ'}</strong></span></div></div>
     <div class="panel" style="margin-bottom:18px"><div class="panel-head">${isClt?'Salário na folha':'Horas trabalhadas'} · ${hoursEscape(employee.name)}</div><div class="stats-row" style="padding:16px"><div class="stat-card"><span class="stat-label">Horas diurnas</span><span class="stat-value">${hoursEscape(employee.normal||'00:00')}</span><span class="stat-sub">${isClt?'Apenas informativas':'Total de horas'}</span></div><div class="stat-card"><span class="stat-label">Hora extra diurna</span><span class="stat-value">${hoursEscape(employee.extra||'00:00')}</span><span class="stat-sub">${isClt?'Não entra no cálculo':'Conforme cartão ponto'}</span></div><div class="stat-card"><span class="stat-label">${isClt?'Salário mensal':'Subtotal diurno'}</span><span class="stat-value">${isClt?hoursMoney(payment.fixedSalary):hoursMoney(normalSubtotal)}</span><span class="stat-sub">${isClt?'Valor configurado':'Horas normais × valor hora'}</span></div><div class="stat-card"><span class="stat-label">${isClt?'Banco pago':'Subtotal extra'}</span><span class="stat-value">${isClt?hoursMoney(bankPaidValue):hoursMoney(extraSubtotal)}</span><span class="stat-sub">${isClt?'Acrescentado à folha':`${extraHours.toLocaleString('pt-BR',{maximumFractionDigits:2})} h × ${hoursMoney(payment.extraRate)}`}</span></div><div class="stat-card"><span class="stat-label">Bruto</span><span class="stat-value" style="color:var(--green)">${hoursMoney(gross)}</span><span class="stat-sub">${bankPaidValue?'Inclui banco de horas pago':isClt?'Salário fixo':'Diurno + extra'}</span></div></div>${bankSettlementHTML}</div>
     <div class="panel"><div class="panel-head">Descontos, auxílios e despesas</div><div class="form-grid" style="padding:16px;grid-template-columns:repeat(2,minmax(220px,1fr));gap:14px">${payment.mealCountManual?field('Total de almoços','mealCount',payment.mealCount,'1'):`<div style="padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius)" ondblclick="enableHoursMealCountEdit()"><strong>Total de almoços: ${mealCount}</strong></div>`}${field('Farmácia do mês (R$)','pharmacy',payment.pharmacy)}</div><div class="stats-row" style="padding:0 16px 16px"><div class="stat-card"><span class="stat-label">Outros descontos</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(standardDiscounts)}</span><span class="stat-sub">Padrão, almoços e farmácia</span></div>${isClt?`<div class="stat-card"><span class="stat-label">INSS progressivo</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(inssDiscount)}</span><span class="stat-sub">Calculado pelas faixas configuradas</span></div>`:''}<div class="stat-card"><span class="stat-label">Descontos totais</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(discounts)}</span><span class="stat-sub">${isClt?'Inclui INSS':'Sem INSS para vínculo PJ'}</span></div><div class="stat-card"><span class="stat-label">Auxílios totais</span><span class="stat-value" style="color:var(--blue)">+ ${hoursMoney(benefits)}</span><span class="stat-sub">Auxílios cadastrados no padrão</span></div><div class="stat-card"><span class="stat-label">R$ a receber</span><span class="stat-value" style="color:var(--green)">${hoursMoney(net)}</span><span class="stat-sub">Bruto − descontos + auxílios</span></div></div>${isClt?`<div class="panel-head" style="border-top:1px solid var(--border)">Memória de cálculo do INSS</div><div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Faixa</th><th>Base tributável</th><th>Alíquota</th><th>Desconto</th></tr></thead><tbody>${inssCalculation.rows.filter(row=>row.base>0).map((row,index)=>`<tr><td>${index+1}ª faixa · até ${hoursMoney(row.upper)}</td><td>${hoursMoney(row.base)}</td><td>${row.rate.toLocaleString('pt-BR')}%</td><td><strong>${hoursMoney(row.value)}</strong></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3"><strong>Total do INSS</strong></td><td><strong>${hoursMoney(inssDiscount)}</strong></td></tr></tfoot></table></div>`:''}</div>`;
+  const configuredBankRateInput=host.querySelector('input[onchange*="paidRate"]');
+  if(configuredBankRateInput){
+    configuredBankRateInput.value=bankPaidRate;
+    configuredBankRateInput.readOnly=true;
+    configuredBankRateInput.removeAttribute('onchange');
+    configuredBankRateInput.style.cursor='default';
+    configuredBankRateInput.style.color='var(--text2)';
+    const rateLabel=configuredBankRateInput.closest('label')?.querySelector('span');
+    if(rateLabel)rateLabel.textContent='Valor da hora extra (Configuração)';
+  }
   if(!isClt){
     const workPanel=[...host.querySelectorAll('.panel')].find(panel=>panel.querySelector('.panel-head')?.textContent.includes(employee.name));
     const workCards=workPanel?[...workPanel.querySelectorAll('.stat-card')]:[];
-    if(workCards[3])workCards[3].querySelector('.stat-sub').textContent=`${extraHours.toLocaleString('pt-BR',{maximumFractionDigits:2})} h × ${hoursMoney(payment.normalRate)}`;
+    if(workCards[3])workCards[3].querySelector('.stat-sub').textContent=`${extraHours.toLocaleString('pt-BR',{maximumFractionDigits:2})} h × ${hoursMoney(extraRateApplied)}`;
     if(workCards[4])workCards[4].querySelector('.stat-sub').textContent='Horas diurnas + extras pagas automaticamente';
     const bankHead=[...host.querySelectorAll('.panel-head')].find(item=>item.textContent.includes('Baixa do banco de horas'));
     if(bankHead){
       while(bankHead.nextElementSibling)bankHead.nextElementSibling.remove();
       bankHead.innerHTML='<span><span class="msi msi-sm">account_balance_wallet</span> Banco de horas · somente registro</span><span style="margin-left:auto;color:var(--green);font-size:12px">Horas extras já incluídas automaticamente no bruto</span>';
-      bankHead.insertAdjacentHTML('afterend',`<div class="stats-row" style="padding:16px"><div class="stat-card"><span class="stat-label">Falta e atraso</span><span class="stat-value" style="color:var(--red)">${hoursEscape(employee.delay||'00:00')}</span><span class="stat-sub">Extraído do cartão ponto</span></div><div class="stat-card"><span class="stat-label">Horas extras pagas</span><span class="stat-value">${hoursEscape(employee.extra||'00:00')}</span><span class="stat-sub">${hoursText(hoursMinutes(employee.extra))} × ${hoursMoney(payment.normalRate)}</span></div><div class="stat-card"><span class="stat-label">Balanço registrado</span><span class="stat-value" style="color:${Number(employee.balance)<0?'var(--red)':'var(--green)'}">${hoursText(employee.balance)}</span><span class="stat-sub">Histórico do banco de horas</span></div><div class="stat-card"><span class="stat-label">Saldo acumulado</span><span class="stat-value" style="color:${bankNextBalance<0?'var(--red)':'var(--green)'}">${hoursText(bankNextBalance)}</span><span class="stat-sub">Não somado novamente ao pagamento</span></div></div>`);
+      bankHead.insertAdjacentHTML('afterend',`<div class="stats-row" style="padding:16px"><div class="stat-card"><span class="stat-label">Falta e atraso</span><span class="stat-value" style="color:var(--red)">${hoursEscape(employee.delay||'00:00')}</span><span class="stat-sub">Extraído do cartão ponto</span></div><div class="stat-card"><span class="stat-label">Horas extras pagas</span><span class="stat-value">${hoursEscape(employee.extra||'00:00')}</span><span class="stat-sub">${hoursText(hoursMinutes(employee.extra))} × ${hoursMoney(extraRateApplied)}</span></div><div class="stat-card"><span class="stat-label">Balanço registrado</span><span class="stat-value" style="color:${Number(employee.balance)<0?'var(--red)':'var(--green)'}">${hoursText(employee.balance)}</span><span class="stat-sub">Histórico do banco de horas</span></div><div class="stat-card"><span class="stat-label">Saldo acumulado</span><span class="stat-value" style="color:${bankNextBalance<0?'var(--red)':'var(--green)'}">${hoursText(bankNextBalance)}</span><span class="stat-sub">Não somado novamente ao pagamento</span></div></div>`);
     }
+  }else{
+    const workPanel=[...host.querySelectorAll('.panel')].find(panel=>panel.querySelector('.panel-head')?.textContent.includes(employee.name));
+    const workCards=workPanel?[...workPanel.querySelectorAll('.stat-card')]:[];
+    if(workCards[1])workCards[1].querySelector('.stat-sub').textContent='Conforme cartão ponto';
+    if(workCards[3]){workCards[3].querySelector('.stat-label').textContent='Subtotal extra';workCards[3].querySelector('.stat-value').textContent=hoursMoney(extraSubtotal);workCards[3].querySelector('.stat-sub').textContent=`${hoursText(hoursMinutes(employee.extra))} × ${hoursMoney(extraRateApplied)}`;}
+    if(workCards[4])workCards[4].querySelector('.stat-sub').textContent=bankPaidValue?'Salário + extras + banco pago':'Salário mensal + horas extras';
   }
   const discountsPanel=[...host.querySelectorAll('.panel')].find(panel=>panel.querySelector('.panel-head')?.textContent.includes('Descontos, auxílios e despesas'));
   if(discountsPanel){
@@ -10510,18 +10550,26 @@ function renderHoursDiscountProfilesPage(){
   const singleProfileBlock=profileBlocks.replace(/<input class="form-input" style="max-width:420px;font-weight:700"[^>]*>/,'<strong style="font-size:15px">DESCONTOS</strong>');
   host.innerHTML=`
     ${hoursTabsHTML()}
-    <div class="parts-head"><div><h2><span class="msi">settings</span> Configuração</h2><p>Cadastre vínculo, remuneração, Uniodonto e valor do almoço. A quantidade de almoços é identificada automaticamente no cartão ponto.</p></div></div>
+    <div class="parts-head"><div><h2><span class="msi">settings</span> Configuração</h2><p>Cadastre vínculo, remuneração, valor da hora extra, Uniodonto e valor do almoço. A quantidade de almoços é identificada automaticamente no cartão ponto.</p></div></div>
     <div class="panel" style="margin-bottom:18px"><div class="panel-head" style="cursor:pointer" onclick="toggleHoursConfigSection('people')"><span>Funcionários cadastrados</span><span style="margin-left:auto;color:var(--gold)">${hoursConfigPeopleOpen?'⌃ Recolher':'⌄ Expandir'}</span></div>${hoursConfigPeopleOpen?employeeFilters+employeeConfig:''}</div>
     <div class="panel" style="margin-bottom:18px"><div class="panel-head" style="cursor:pointer" onclick="toggleHoursConfigSection('inss')"><span>Tabela padrão do INSS</span><span style="margin-left:auto;color:var(--gold)">${hoursConfigInssOpen?'⌃ Recolher':'⌄ Expandir'}</span></div>${hoursConfigInssOpen?inssConfig:''}</div>`;
-  host.querySelectorAll('tbody tr').forEach(row=>{
-    const employment=row.querySelector('select[onchange*="employmentType"]');
-    if(employment?.value!=='PJ')return;
-    const remuneration=row.children[2],labels=remuneration?[...remuneration.querySelectorAll('label')]:[];
-    labels.find(label=>label.querySelector('span')?.textContent.trim()==='Hora extra')?.remove();
-    const rateLabel=labels.find(label=>label.querySelector('span')?.textContent.trim()==='Hora diurna');
-    if(rateLabel)rateLabel.querySelector('span').textContent='Valor da hora (R$)';
-    const grid=remuneration?.querySelector('div[style*="grid-template-columns"]');if(grid)grid.style.gridTemplateColumns='1fr';
-  });
+  const employeeTable=[...host.querySelectorAll('.finance-table')].find(table=>table.querySelector('select[onchange*="employmentType"]'));
+  if(employeeTable){
+    const headerRow=employeeTable.querySelector('thead tr'),extraHeader=document.createElement('th');extraHeader.textContent='Valor da hora extra (R$)';headerRow.children[2].after(extraHeader);
+    [...employeeTable.querySelectorAll('tbody tr')].forEach((row,index)=>{
+      const employee=employees[index],payment=employee?hoursPaymentFor(employee):null,employment=row.querySelector('select[onchange*="employmentType"]'),remuneration=row.children[2],labels=remuneration?[...remuneration.querySelectorAll('label')]:[],extraCell=document.createElement('td');
+      extraCell.style.minWidth='180px';
+      if(employment?.value==='PJ'){
+        const rateLabel=labels.find(label=>label.querySelector('span')?.textContent.trim()==='Hora diurna'),extraLabel=labels.find(label=>label.querySelector('span')?.textContent.trim()==='Hora extra');
+        if(rateLabel)rateLabel.querySelector('span').textContent='Valor da hora (R$)';
+        const grid=remuneration?.querySelector('div[style*="grid-template-columns"]');if(grid)grid.style.gridTemplateColumns='1fr';
+        if(extraLabel){extraLabel.querySelector('span').textContent='Hora extra';extraCell.appendChild(extraLabel);}
+      }else if(employee&&payment){
+        extraCell.innerHTML=`<label><span style="font-size:11px;color:var(--muted)">Hora extra</span><input class="form-input" type="number" min="0" step="0.01" value="${hoursEscape(payment.extraRate||0)}" onchange="setHoursEmployeePaymentField('${hoursEscape(employee.id)}','extraRate',this.value)"></label>`;
+      }
+      remuneration.after(extraCell);
+    });
+  }
 }
 
 // ─────────── EXPORTS GLOBAIS ───────────
