@@ -272,6 +272,9 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .receber-period-card b{font-size:17px;}
 .receber-year-card strong,.receber-period-card strong{font-size:14px;}
 .finance-table.receber-table td.money.valor-atrasado{color:var(--red);}
+.finance-table.receber-table td.money.valor-recebido{color:var(--green);font-weight:800;}
+.finance-table.receber-table td.receber-observacao{min-width:260px;white-space:normal;line-height:1.4;color:var(--text2);}
+.finance-table.receber-table td.receber-observacao strong{color:var(--green);}
 .finance-table.pagar-table td.money.valor-atrasado{color:var(--red);}
 .pagar-detalhe-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;}
 .pagar-detalhe-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
@@ -1668,6 +1671,35 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     box-shadow:none!important;transform:none!important;
   }
 }
+/* REV301 — comissões por pedido e recebimento efetivo */
+.commission-shell{display:grid;gap:16px}
+.commission-toolbar{display:grid;grid-template-columns:150px 190px minmax(240px,1fr);gap:10px;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.commission-toolbar label{display:grid;gap:6px;color:var(--text3);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.commission-toolbar select,.commission-toolbar input,.commission-owner-select{width:100%;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);padding:10px 12px;font:inherit}
+.commission-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.commission-summary-card{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:16px;display:grid;gap:7px}
+.commission-summary-card span{color:var(--text3);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.commission-summary-card strong{font:800 23px 'JetBrains Mono',monospace;color:var(--text)}
+.commission-summary-card small{color:var(--text2);font-size:10px;line-height:1.45}.commission-summary-card small b{color:var(--green);font:700 10px 'JetBrains Mono',monospace}
+.commission-summary-card.received strong{color:var(--green)}
+.commission-summary-card.pending strong{color:var(--red)}
+.commission-rules{border:1px solid color-mix(in srgb,var(--gold) 42%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--gold) 7%,var(--surface));padding:14px 16px;color:var(--text2);font-size:12px;line-height:1.55}
+.commission-order-list{display:grid;gap:12px}
+.commission-order{border:1px solid var(--border);border-radius:12px;background:var(--surface);overflow:hidden}
+.commission-order[open]{border-color:color-mix(in srgb,var(--gold) 42%,var(--border))}
+.commission-order>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(190px,1.35fr) minmax(140px,.85fr) minmax(140px,.85fr) repeat(4,minmax(130px,.75fr));gap:14px;align-items:center;padding:15px 18px}
+.commission-order>summary::-webkit-details-marker{display:none}
+.commission-order-title{display:grid;gap:4px}.commission-order-title b{font-size:14px}.commission-order-title span{color:var(--text3);font-size:11px}
+.commission-order-metric{display:grid;gap:4px}.commission-order-metric span{color:var(--text3);font-size:10px;font-weight:800;text-transform:uppercase}.commission-order-metric strong{font:800 13px 'JetBrains Mono',monospace}
+.commission-order-owner{display:grid;gap:5px}.commission-order-owner span{color:var(--text3);font-size:10px;font-weight:800;text-transform:uppercase}
+.commission-owner-select.unassigned{border-color:var(--red);color:var(--red)}
+.commission-detail{border-top:1px solid var(--border);padding:0 16px 16px}
+.commission-detail>small.muted{display:none}
+.commission-table{width:100%;border-collapse:collapse;min-width:960px}.commission-table th,.commission-table td{padding:11px 10px;border-bottom:1px solid var(--border);text-align:left;font-size:12px}.commission-table th{color:var(--text3);font-size:10px;text-transform:uppercase}.commission-table td.money{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700}.commission-table .commission-value{color:var(--green)}
+.commission-status{font-size:11px;font-weight:800}.commission-status.late{color:var(--red)}.commission-status.paid{color:var(--green)}.commission-status.open{color:var(--text3)}
+.commission-empty{padding:40px 20px;border:1px dashed var(--border2);border-radius:12px;text-align:center;color:var(--text3)}
+@media(max-width:1100px){.commission-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.commission-order>summary{grid-template-columns:1fr 1fr}.commission-toolbar{grid-template-columns:1fr 1fr}.commission-toolbar label:last-child{grid-column:1/-1}}
+@media(max-width:650px){.commission-summary,.commission-toolbar,.commission-order>summary{grid-template-columns:1fr}.commission-toolbar label:last-child{grid-column:auto}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -2241,6 +2273,7 @@ const DEFAULT_DB = {
   engineeringMacros: {},
   cashFlowData: {bankNames:['Banco 1','Banco 2','Banco 3'],months:{}},
   financeiroFiscalMeta: {updatedAt:null},
+  commissionAssignments: {},
   notifications: [],
   notificationTaskState: {},
   notificationSettings: {enabled:true,daysBefore:2,notifyStart:true,notifyDueSoon:true,notifyOverdue:true,notifyReleased:true,notifyDateChanged:true,dailySummaryHour:'08:00',emailEnabled:false}
@@ -2268,6 +2301,10 @@ let receberSomenteHoje=false;
 let receberFiltroRenderTimer=null;
 let receivableYearRefreshInProgress=false;
 let receberTabelaLimite=200;
+let commissionYear=(new Date()).getFullYear();
+let commissionMonth=-1;
+let commissionSearch='';
+let commissionHistoryRefreshInProgress=false;
 // Estado exclusivo da visualização de Contas a pagar.
 let pagarAnoSelecionado=null;
 let pagarModo='anos'; // anos | meses | geral | calendario | mes
@@ -2684,7 +2721,7 @@ const ADMIN_ACCESS_GROUPS=[
   {id:'macro',label:'Macro Engenharia',icon:'architecture',items:[['macro-engenharia.active','OPs abertas'],['macro-engenharia.completed','Finalizadas'],['macro-engenharia.people','Responsáveis']]},
   {id:'compras',label:'Compras',icon:'shopping_cart',items:[['compras','Pedidos de compra']]},
   {id:'custos',label:'Custos',icon:'payments',items:[['custos.orders','Custos dos pedidos'],['custos.structure','Estrutura multinível']]},
-  {id:'financeiro',label:'Financeiro / Fiscal',icon:'account_balance',items:[['financeiro.fluxoCaixa','Fluxo de caixa mensal'],['financeiro.receber','Contas a receber'],['financeiro.pagar','Contas a pagar'],['financeiro.vendas','Vendas'],['financeiro.materiaPrima','Estoque']]},
+  {id:'financeiro',label:'Financeiro / Fiscal',icon:'account_balance',items:[['financeiro.fluxoCaixa','Fluxo de caixa mensal'],['financeiro.receber','Contas a receber'],['financeiro.comissoes','Comissões'],['financeiro.pagar','Contas a pagar'],['financeiro.vendas','Vendas'],['financeiro.materiaPrima','Estoque']]},
   {id:'contabilidade',label:'Contabilidade',icon:'request_quote',items:[['contabilidade.receber','A receber · Pedidos de venda'],['contabilidade.pagar','A pagar · Pedidos de compra']]}
   ,{id:'horas',label:'Controle de horas',icon:'schedule',items:[['controle-horas','Controle de horas']]}
 ];
@@ -3536,6 +3573,7 @@ const esc=escapeHTML;
 const FINANCE_VIEWS={
   fluxoCaixa:{title:'Fluxo de caixa mensal',source:null,columns:[]},
   receber:{title:'Contas a receber',source:'contaAReceber',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Descrição',['descricao','historico']],['Empresa',['empresaNome','empresa']],['Parcela',['parcela','numeroParcela']],['Nº parcelas',['numeroTotalParcelas','quantidadeParcelas']],['Referente a',['referenteA','referencia','referente']],['Valor',['valor','valorOriginal']],['Valor original',['valorOriginal']],['Valor recebido',['valorRecebido','valorBaixado']],['Valor a receber',['valorAReceber','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
+  comissoes:{title:'Comissões',source:null,columns:[]},
   pagar:{title:'Contas a pagar',source:'contaAPagar',columns:[['Venc. original',['vencimentoOriginalData','vencimentoData','vencimentoOriginal','vencimento']],['Emissão',['emissaoData','emissao']],['Tipo',['tipo','tipoDescricao']],['Empresa',['empresaNome','empresa']],['Descrição',['descricao','historico']],['Conta destino',['contaDestinoDescricao','contaDestino']],['Referente a',['referenteA','referencia','referente']],['Observações',['observacoes','observacao']],['Valor original',['valorOriginal','valor']],['Valor pago',['valorPago','valorBaixado']],['Valor a pagar',['valorAPagar','saldo']],['NF',['referenciaDaNotaFiscal','numeroNotaFiscal']]]},
   vendas:{title:'Vendas',source:'pedidosDeVenda',columns:[]},
   materiaPrima:{title:'Estoque',source:null,columns:[]}
@@ -3599,6 +3637,7 @@ function switchFinanceView(key){
   // A troca de subaba usa somente o cache já baixado, sem consultar o MaxiProd.
   financeiroView=key;
   scheduleFinanceRender();
+  if(key==='comissoes')setTimeout(()=>ensureCommissionHistory(false),0);
 }
 async function refreshFinanceiroFiscalAbaAtual(){
   // Compatibilidade com botões antigos: atualizar uma aba agora atualiza todas.
@@ -3857,15 +3896,40 @@ function receberRegistro(row,mapaPedidos){
   // nem multiplicamos parcelas: isso repetia o valor do pedido em cada linha.
   const valorTitulo=receberNumero(receberChave(row,['valorOriginal','valorLiquido','valorAReceber','valorParcela','valorDaParcela','valor','valorTitulo']));
   const recebido=receberNumero(receberChave(row,['valorRecebidoLiquido','valorRecebido','valorBaixado','valorLiquidado','valorPago']));
+  const recebimento=accountingSettlementDate(row,vencimento);
   const estado=String(row?.estado||'').trim().toUpperCase();
   return {
-    raw:row,vencimento,emissao,parcela,
+    raw:row,vencimento,emissao,recebimento,parcela,
     descricao:receberDescricaoMaxiprod(row,parcela,mapaPedidos),
     cliente:receberCliente(row),
     negociacao:valorTitulo,valorParcela:valorTitulo,
     recebido,
     aberto:estado==='RECEBIDO'?0:receberNumero(receberChave(row,['valorAReceber','valorLiquido','valorOriginal']))
   };
+}
+function receberMesEAnoIguais(a,b){return a instanceof Date&&b instanceof Date&&!Number.isNaN(a.getTime())&&!Number.isNaN(b.getTime())&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth();}
+function receberDataNoMes(date,year,month){return date instanceof Date&&!Number.isNaN(date.getTime())&&date.getFullYear()===year&&date.getMonth()===month;}
+function receberObservacao(item){
+  if(item.recebido>0){
+    if(item.recebimento){
+      const date=receberDataFormat(item.recebimento);
+      if(item.vencimento&&!receberMesEAnoIguais(item.recebimento,item.vencimento))return `Recebido em ${date} · referente à parcela com vencimento em ${receberDataFormat(item.vencimento)}`;
+      return `Recebido em ${date}`;
+    }
+    return 'Valor recebido; data do recebimento não informada pelo MaxiProd';
+  }
+  return receberEstaAtrasado(item)?`Parcela vencida em ${receberDataFormat(item.vencimento)} · aguardando recebimento`:'—';
+}
+function receberRegistrosDoMes(rows,year,month){
+  return rows.flatMap(item=>{
+    const dueInMonth=receberDataNoMes(item.vencimento,year,month),receivedInMonth=item.recebido>0&&receberDataNoMes(item.recebimento,year,month),differentMonths=item.recebimento&&item.vencimento&&!receberMesEAnoIguais(item.recebimento,item.vencimento),events=[];
+    if(dueInMonth){
+      if(item.aberto>0&&differentMonths)events.push({...item,recebido:0,valorParcela:item.aberto,_outstandingEvent:true});
+      else if(!differentMonths||item.aberto>0)events.push(item);
+    }
+    if(receivedInMonth&&(!dueInMonth||differentMonths))events.push({...item,negociacao:item.recebido,valorParcela:item.recebido,aberto:0,_paymentEvent:true});
+    return events;
+  }).sort((a,b)=>((b._paymentEvent?b.recebimento:b.vencimento)?.getTime()||0)-((a._paymentEvent?a.recebimento:a.vencimento)?.getTime()||0));
 }
 function receberChaveGrupo(item,index){
   const row=item.raw||{};
@@ -4006,8 +4070,8 @@ function receberResumoAtual(rows){
   const years=rows.map(row=>row.vencimento?.getFullYear()).filter(Boolean);
   const year=receberAnoSelecionado||(years.length?Math.max(...years):new Date().getFullYear());
   const mensal=receberModo==='mes'||receberModo==='calendario';
-  let periodoRows=receberModo==='anos'?rows:rows.filter(row=>row.vencimento?.getFullYear()===year);
-  if(mensal)periodoRows=periodoRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado);
+  let periodoRows=receberModo==='anos'?rows:rows.filter(row=>row.vencimento?.getFullYear()===year||row.recebimento?.getFullYear()===year);
+  if(mensal)periodoRows=receberRegistrosDoMes(rows,year,receberMesSelecionado);
   if(receberModo==='geral'||receberModo==='mes')periodoRows=receberListaFiltrada(periodoRows);
   const hoje=new Date();hoje.setHours(0,0,0,0);
   return {
@@ -4030,7 +4094,7 @@ function receberTabela(rows){
   const filtered=receberListaFiltrada(rows);
   const visible=filtered.slice(0,receberTabelaLimite);
   const remaining=Math.max(0,filtered.length-visible.length);
-  return `${receberFiltrosHtml()}<div class="finance-table-wrap">${visible.length?`<table class="finance-table receber-table"><thead><tr><th class="finance-filtered-column">Vencimento</th><th>Emissão</th><th class="finance-filtered-column">Descrição</th><th class="finance-filtered-column">Cliente pagador</th><th>Parcela</th><th>Nº parcelas</th><th>Valor total do pedido</th><th class="finance-filtered-column">Valor da parcela</th><th>Valor recebido (parcela)</th><th>Falta receber</th></tr></thead><tbody>${visible.map(item=>`<tr><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.emissao)}</td><td>${esc(item.descricao)}</td><td>${esc(item.cliente)}</td><td>${esc(item.parcela.numero)}</td><td>${esc(item.parcela.total)}</td><td class="money">${fmtBRL(item.negociacao)}</td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money">${fmtBRL(item.recebido)}</td><td class="money ${receberEstaAtrasado(item)?'valor-atrasado':''}">${fmtBRL(item.aberto)}</td></tr>`).join('')}</tbody></table>${remaining?`<div style="display:flex;justify-content:center;padding:16px;"><button class="btn btn-ghost" onclick="mostrarMaisContasReceber()">Mostrar mais 200 · ${remaining} restante(s)</button></div>`:''}`:`<div class="finance-empty">Nenhum lançamento para este filtro.</div>`}</div>`;
+  return `${receberFiltrosHtml()}<div class="finance-table-wrap">${visible.length?`<table class="finance-table receber-table"><thead><tr><th class="finance-filtered-column">Vencimento</th><th>Emissão</th><th class="finance-filtered-column">Descrição</th><th class="finance-filtered-column">Cliente pagador</th><th>Parcela</th><th>Nº parcelas</th><th>Valor total do pedido</th><th class="finance-filtered-column">Valor da parcela</th><th>Valor recebido (parcela)</th><th>Falta receber</th><th>Observações</th></tr></thead><tbody>${visible.map(item=>`<tr><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.emissao)}</td><td>${esc(item.descricao)}</td><td>${esc(item.cliente)}</td><td>${esc(item.parcela.numero)}</td><td>${esc(item.parcela.total)}</td><td class="money">${fmtBRL(item.negociacao)}</td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money ${item.recebido>0?'valor-recebido':''}">${fmtBRL(item.recebido)}</td><td class="money ${receberEstaAtrasado(item)?'valor-atrasado':''}">${fmtBRL(item.aberto)}</td><td class="receber-observacao">${item.recebido>0?`<strong>${esc(receberObservacao(item))}</strong>`:esc(receberObservacao(item))}</td></tr>`).join('')}</tbody></table>${remaining?`<div style="display:flex;justify-content:center;padding:16px;"><button class="btn btn-ghost" onclick="mostrarMaisContasReceber()">Mostrar mais 200 · ${remaining} restante(s)</button></div>`:''}`:`<div class="finance-empty">Nenhum lançamento para este filtro.</div>`}</div>`;
 }
 function receberCalendario(rows,year,month){
   const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),byDay={};
@@ -4053,10 +4117,204 @@ function renderContasAReceber(target){
   const years=Array.from({length:Math.max(1,currentYear-RECEIVABLE_FIRST_YEAR+1)},(_,index)=>currentYear-index);
   let content='';
   if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>O ano atual é atualizado pelo botão principal. Entre em um ano anterior para carregá-lo somente quando precisar.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
-  else {const year=receberAnoSelecionado||currentYear;const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button>${receberAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a receber.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Todos os vencimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=yearRows.filter(row=>row.vencimento?.getMonth()===month),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
+  else {const year=receberAnoSelecionado||currentYear;const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year||row.recebimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button>${receberAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a receber. Os meses consideram o recebimento efetivo das parcelas pagas.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Vencimentos e recebimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=receberRegistrosDoMes(rows,year,month),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} lançamento(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
     else if(receberModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
-    else {const list=receberModo==='mes'?yearRows.filter(row=>row.vencimento?.getMonth()===receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-ghost btn-hoje ${receberSomenteHoje?'active':''}" onclick="alternarFiltroHojeReceber()"><span class="msi msi-sm">today</span> ${receberSomenteHoje?'Exibindo hoje':`Hoje · ${rotuloHoje()}`}</button><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('receber')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} parcela(s) por vencimento.</p>${receberTabela(list)}</section>`;}}
+    else {const list=receberModo==='mes'?receberRegistrosDoMes(rows,year,receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-ghost btn-hoje ${receberSomenteHoje?'active':''}" onclick="alternarFiltroHojeReceber()"><span class="msi msi-sm">today</span> ${receberSomenteHoje?'Exibindo hoje':`Hoje · ${rotuloHoje()}`}</button><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('receber')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} lançamento(s) por vencimento ou recebimento efetivo.</p>${receberTabela(list)}</section>`;}}
   target.innerHTML=`${receberCabecalhoFinanceiro(data,rows)}${content}`;
+}
+
+// ───────────────── COMISSÕES ─────────────────
+// Regras transcritas da planilha "Tabela de comissões 2026": a faixa é
+// definida pelo valor total do pedido e a comissão nasce somente quando a
+// parcela é efetivamente recebida.
+const COMMISSION_BOUNDS=[100000,250000,500000,750000,1000000,1500000,1999999.99];
+const COMMISSION_RULES={
+  EVANDO:{2026:[.01,.009285714285714286,.008571428571428572,.007857142857142858,.0071428571428571435,.006428571428571429,.005714285714285715,.005],2027:[.02,.018571428571428572,.017142857142857144,.015714285714285715,.014285714285714287,.012857142857142859,.01142857142857143,.01]},
+  MOHR:{2026:[.05,.05,.05,.05,.05,.05,.05,.05],2027:[.03,.02857142857142857,.027142857142857142,.025714285714285714,.024285714285714285,.022857142857142857,.02142857142857143,.02]}
+};
+function commissionRate(owner,orderValue,year){
+  const rules=COMMISSION_RULES[owner]?.[Number(year)];if(!rules)return null;
+  const value=Math.max(0,Number(orderValue)||0);let index=COMMISSION_BOUNDS.findIndex(limit=>value<=limit);if(index<0)index=7;
+  return rules[index];
+}
+function commissionManagerRate(vendedor,gerente,year){return vendedor==='EVANDO'&&gerente==='MOHR'&&Number(year)>=2026 ? .005 : 0;}
+function commissionMoneyValue(value){
+  const amount=receberNumero(value);
+  // Identificadores internos do MaxiProd, como 206010009622039, podem vir
+  // dentro do objeto da NF. Eles nunca devem ser tratados como valor.
+  return Number.isFinite(amount)&&amount>0&&amount<=10000000000?amount:0;
+}
+function commissionSalesCatalog(){
+  const byNumber=new Map(),byId=new Map(),byInvoice=new Map();
+  for(const row of [...(FINANCE_CACHE?.datasets?.pedidosDeVenda?.items||[]),...(SALES_CACHE?.items||[])]){
+    const number=receberChave(row,['numero','pedidoNumero','numeroPedido','pedidoDeVendaNumero']);
+    const id=receberChave(row,['id','pedidoDeVendaId','pedidoId']);
+    const total=commissionMoneyValue(financeValue(row,['valorTotal','valorTotalPedido','valorLiquido','totalPedido','valor']));
+    const client=receberTexto(financeValue(row,['clienteNome','clienteRazaoSocial','nomeCliente','empresaNome','cliente']));
+    const reference=receberTexto(financeValue(row,['referenciaDetalhe','referencia','descricao','identificacao','nome','titulo','observacao']));
+    const invoiceNumbers=accountingInvoiceNumbers(row);
+    const numberText=number!==null?String(number):'',idText=id!==null?String(id):'',existing=(idText&&byId.get(idText))||(numberText&&byNumber.get(numberText));
+    const meta=existing||{row,number:numberText,id:idText,total,client,reference:'',invoiceNumbers:[]};
+    meta.row=row;meta.number=numberText||meta.number;meta.id=idText||meta.id;meta.total=total||meta.total;meta.client=client!=='—'?client:meta.client;
+    if(reference!=='—')meta.reference=reference;meta.invoiceNumbers=[...new Set([...(meta.invoiceNumbers||[]),...invoiceNumbers])];
+    if(meta.number)byNumber.set(meta.number,meta);if(meta.id)byId.set(meta.id,meta);
+    meta.invoiceNumbers.forEach(invoice=>{if(!byInvoice.has(invoice))byInvoice.set(invoice,[]);const list=byInvoice.get(invoice);if(!list.includes(meta))list.push(meta);});
+  }
+  return {byNumber,byId,byInvoice};
+}
+function commissionOrderDisplayLabel(meta,fallback){
+  const reference=String(meta?.reference||'').trim();
+  if(reference)return reference;
+  if(meta?.number)return `Pedido ${meta.number}`;
+  return fallback;
+}
+function commissionOrderIdentity(item,index,mapaPedidos,catalog){
+  const raw=item.raw||{},number=receberNumeroPedido(raw,mapaPedidos);
+  const id=receberChave(raw,['pedidoDeVendaId','pedidoId']);
+  if(number){const meta=catalog.byNumber.get(String(number));return {key:`pedido:${number}`,number:String(number),label:commissionOrderDisplayLabel(meta,`Pedido ${number}`),id:id!==null?String(id):''};}
+  if(id!==null){const meta=catalog.byId.get(String(id));return {key:`pedido-id:${id}`,number:meta?.number||'',label:commissionOrderDisplayLabel(meta,`Pedido ID ${id}`),id:String(id)};}
+  const invoiceNumbers=typeof accountingInvoiceNumbers==='function'?accountingInvoiceNumbers(raw):[];
+  const descriptionInvoice=String(item.descricao||'').match(/(?:NF|nota\s*fiscal)[^0-9]{0,16}([0-9]+)/i)?.[1]||'';
+  const invoiceCandidates=[descriptionInvoice,...invoiceNumbers].filter(Boolean);
+  const invoiceMatches=[...new Set(invoiceCandidates.flatMap(invoice=>catalog.byInvoice.get(String(invoice))||[]))];
+  if(invoiceMatches.length===1){const meta=invoiceMatches[0],technical=meta.number?`pedido:${meta.number}`:`pedido-id:${meta.id}`;return {key:technical,number:meta.number||'',label:commissionOrderDisplayLabel(meta,`Pedido ${meta.number||meta.id}`),id:meta.id||''};}
+  const doc=invoiceNumbers[0]??receberChave(raw,['documentoVinculadoNumero','numeroDocumentoVinculado','numeroNotaFiscal','notaFiscalNumero'])??raw?.notaFiscal?.numero??descriptionInvoice;
+  if(doc!==null&&doc!==undefined&&String(doc).trim())return {key:`documento:${doc}|${financeNormalize(item.cliente)}`,number:'',label:`Venda · ${item.cliente}`,id:''};
+  const description=financeNormalize(String(item.descricao||'').replace(/parc\.?\s*\d+\s*\/\s*\d+/i,''));
+  return {key:`sem-vinculo:${financeNormalize(item.cliente)}|${description||index}`,number:'',label:`Venda · ${item.cliente}`,id:''};
+}
+function commissionInvoiceTotal(raw){
+  const direct=receberChave(raw,['valorTotalNotaFiscal','notaFiscalValorTotal','valorNotaFiscal','totalNotaFiscal','valorTotalNfe','nfeValorTotal']);
+  const nested=raw?.notaFiscal?.valorTotal??raw?.notaFiscal?.total??raw?.documentoFiscal?.valorTotal??raw?.nfe?.valorTotal;
+  return commissionMoneyValue(direct??nested);
+}
+function commissionGroups(){
+  const mapaPedidos=receberMapaPedidos(),catalog=commissionSalesCatalog(),groups=new Map();
+  receberRegistros().forEach((item,index)=>{
+    const identity=commissionOrderIdentity(item,index,mapaPedidos,catalog);
+    let group=groups.get(identity.key);
+    if(!group){
+      const meta=(identity.number&&catalog.byNumber.get(identity.number))||(identity.id&&catalog.byId.get(identity.id))||null;
+      group={...identity,client:meta?.client&&meta.client!=='—'?meta.client:item.cliente,orderValue:meta?.total||0,orderValueSource:meta?.total?'MaxiProd · pedido':'Soma de todas as parcelas da nota',items:[]};groups.set(identity.key,group);
+    }
+    group.items.push(item);
+  });
+  return [...groups.values()].map(group=>{
+    const invoiceTotal=Math.max(0,...group.items.map(item=>commissionInvoiceTotal(item.raw||{})));
+    const installmentTotal=group.items.reduce((sum,item)=>sum+commissionMoneyValue(item.valorParcela),0),catalogTotal=commissionMoneyValue(group.orderValue);
+    group.orderValue=Math.max(invoiceTotal,installmentTotal,catalogTotal);
+    group.orderValueSource=invoiceTotal>=installmentTotal&&invoiceTotal>=catalogTotal&&invoiceTotal>0?'Valor total da nota fiscal no MaxiProd':catalogTotal>=installmentTotal&&catalogTotal>0?'Valor total do pedido no MaxiProd':'Soma de todas as parcelas da nota';
+    group.assignment=DB.commissionAssignments?.[group.key]||{};
+    return group;
+  }).sort((a,b)=>String(a.label).localeCompare(String(b.label),'pt-BR',{numeric:true}));
+}
+function commissionDateInPeriod(date,year,month){return date instanceof Date&&!Number.isNaN(date.getTime())&&date.getFullYear()===Number(year)&&(Number(month)<0||date.getMonth()===Number(month));}
+function commissionItemInPeriod(item,year,month){
+  const paid=item.recebido>0&&commissionDateInPeriod(item.recebimento,year,month);
+  const due=commissionDateInPeriod(item.vencimento,year,month);
+  return paid||(!item.recebimento&&due)||item.aberto>0&&due;
+}
+function commissionDelayDays(item){
+  if(!item.vencimento||!item.recebimento)return null;
+  const due=new Date(item.vencimento);due.setHours(0,0,0,0);const paid=new Date(item.recebimento);paid.setHours(0,0,0,0);
+  return Math.round((paid-due)/86400000);
+}
+function commissionStatus(item){
+  if(item.recebido>0){const delay=commissionDelayDays(item);if(delay>0)return {label:`Recebida com ${delay} dia(s) de atraso`,className:'late'};if(delay<0)return {label:`Recebida ${Math.abs(delay)} dia(s) antes`,className:'paid'};return {label:'Recebida no vencimento',className:'paid'};}
+  if(receberEstaAtrasado(item))return {label:'Atrasada · aguardando pagamento',className:'late'};
+  return {label:'Em aberto',className:'open'};
+}
+function commissionSetYear(value){commissionYear=Number(value)||(new Date()).getFullYear();renderFinanceiroFiscal();setTimeout(()=>ensureCommissionHistory(false),0);}
+function commissionSetMonth(value){commissionMonth=Number(value);renderFinanceiroFiscal();}
+let commissionSearchTimer=null;
+function commissionSetSearch(value){commissionSearch=String(value||'');clearTimeout(commissionSearchTimer);commissionSearchTimer=setTimeout(()=>{renderFinanceiroFiscal();requestAnimationFrame(()=>restaurarFocoFiltroFinanceiro('commissionSearch'));},140);}
+async function setCommissionVendedor(encodedKey,value){
+  const key=decodeURIComponent(encodedKey);DB.commissionAssignments=DB.commissionAssignments&&typeof DB.commissionAssignments==='object'?DB.commissionAssignments:{};
+  const current=DB.commissionAssignments[key]||{};
+  if(!value)delete DB.commissionAssignments[key];
+  else DB.commissionAssignments[key]={...current,vendedor:value,gerente:value==='EVANDO'?'MOHR':'',responsavel:value,updatedAt:new Date().toISOString(),updatedBy:loggedUser?.ref?.name||loggedUser?.name||''};
+  renderFinanceiroFiscal();const ok=await persist();showToast(ok?(value?`Vendedor ${value} salvo para o pedido.`:'Vendedor removido do pedido.'):'Não foi possível salvar o vendedor.',ok?'ok':'err');
+}
+async function setCommissionGerente(encodedKey,value){
+  const key=decodeURIComponent(encodedKey);DB.commissionAssignments=DB.commissionAssignments&&typeof DB.commissionAssignments==='object'?DB.commissionAssignments:{};
+  const current=DB.commissionAssignments[key]||{};DB.commissionAssignments[key]={...current,gerente:value,updatedAt:new Date().toISOString(),updatedBy:loggedUser?.ref?.name||loggedUser?.name||''};
+  renderFinanceiroFiscal();const ok=await persist();showToast(ok?(value?`Gerente ${value} salvo para o pedido.`:'Gerente removido do pedido.'):'Não foi possível salvar o gerente.',ok?'ok':'err');
+}
+async function ensureCommissionHistory(force=false){
+  if(!isMaster(loggedUser)||commissionHistoryRefreshInProgress||financeRefreshInProgress)return;
+  const current=(new Date()).getFullYear(),wanted=[commissionYear,commissionYear-1].filter(year=>year>=RECEIVABLE_FIRST_YEAR&&year<=current),loaded=receivableLoadedYears();
+  const years=force?wanted:wanted.filter(year=>!loaded.has(year));if(!years.length)return;
+  commissionHistoryRefreshInProgress=true;let total=0,updatedAt=new Date().toISOString();
+  try{
+    for(const year of years){
+      const bounds=payableYearBounds(year),items=[];let skip=0;
+      for(let page=0;page<250;page++){
+        showLoading(`Comissões — carregando todas as parcelas de ${year} · página ${page+1}`);
+        const result=await consultarFinanceiroFiscalMaxiprodRemoto({source:'contaAReceber',take:FINANCE_PAGE_SIZE,skip,dateFrom:bounds.dateFrom,dateTo:bounds.dateTo,includeDetails:true});
+        const dataset=result.data?.datasets?.contaAReceber||{items:[]};if(dataset.available===false)throw new Error(dataset.error||`Contas a receber de ${year} indisponíveis.`);
+        const pageItems=Array.isArray(dataset.items)?dataset.items:[];items.push(...pageItems);updatedAt=result.data?.updatedAt||updatedAt;if(result.data?.done===true)break;skip+=FINANCE_PAGE_SIZE;
+      }
+      FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};const others=(FINANCE_CACHE.datasets.contaAReceber?.items||[]).filter(item=>payableRawYear(item)!==year);
+      FINANCE_CACHE.datasets.contaAReceber={items:[...others,...items],available:true};loaded.add(year);total+=items.length;
+    }
+    FINANCE_CACHE.receivableLoadedYears=[...loaded].sort((a,b)=>b-a);FINANCE_CACHE.updatedAt=updatedAt;saveFinanceCacheLocal();DB.financeiroFiscalMeta={updatedAt};await persist();
+    showToast(`Comissões atualizadas: ${total} parcela(s) carregada(s), incluindo o ano anterior.`);
+  }catch(error){console.error('Histórico de comissões:',error);showToast(error?.message||'Não foi possível carregar todas as parcelas das comissões.','err');}
+  finally{commissionHistoryRefreshInProgress=false;hideLoading();renderFinanceiroFiscal();}
+}
+function commissionHeader(){
+  return `<div class="finance-head"><div><h2><span class="msi">percent</span> Comissões</h2><p>Notas, todas as respectivas parcelas e comissões calculadas pela data real do recebimento.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="ensureCommissionHistory(true)" ${commissionHistoryRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> ${commissionHistoryRefreshInProgress?'Atualizando parcelas...':'Atualizar parcelas e notas'}</button></div></div>${financeTabsHtml()}`;
+}
+function commissionPersonOrderTotals(group,year){
+  const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente=group.assignment?.gerente||(vendedor==='EVANDO'?'MOHR':'');
+  const sellerRate=commissionRate(vendedor,group.orderValue,year),managerRate=commissionManagerRate(vendedor,gerente,year);
+  const received=group.items.reduce((sum,item)=>sum+Math.max(0,item.recebido||0),0),open=group.items.reduce((sum,item)=>sum+Math.max(0,(item.valorParcela||0)-(item.recebido||0)),0);
+  const sellerEarned=sellerRate===null?0:received*sellerRate,sellerFuture=sellerRate===null?0:open*sellerRate,managerEarned=received*managerRate,managerFuture=open*managerRate;
+  return {assigned:Boolean(vendedor||gerente),evandoEarned:vendedor==='EVANDO'?sellerEarned:0,evandoFuture:vendedor==='EVANDO'?sellerFuture:0,mohrSellerEarned:vendedor==='MOHR'?sellerEarned:0,mohrSellerFuture:vendedor==='MOHR'?sellerFuture:0,mohrManagerEarned:gerente==='MOHR'?managerEarned:0,mohrManagerFuture:gerente==='MOHR'?managerFuture:0};
+}
+function renderCommissionsPage(target){
+  const allGroups=commissionGroups();
+  const availableYears=[...new Set([2026,2027,(new Date()).getFullYear(),...allGroups.flatMap(group=>group.items.flatMap(item=>[item.vencimento?.getFullYear(),item.recebimento?.getFullYear()]).filter(Boolean))])].sort((a,b)=>b-a);
+  if(!availableYears.includes(commissionYear))commissionYear=availableYears[0]||2026;
+  const query=financeNormalize(commissionSearch);
+  const groups=allGroups.map(group=>({...group,periodItems:group.items.filter(item=>commissionItemInPeriod(item,commissionYear,commissionMonth))}))
+    .filter(group=>group.periodItems.length&&(!query||financeNormalize([group.label,group.client,group.assignment?.vendedor,group.assignment?.responsavel,group.assignment?.gerente,...group.items.map(item=>item.descricao)].join(' ')).includes(query)));
+  const installments=groups.flatMap(group=>group.periodItems.map(item=>{const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente=group.assignment?.gerente||(vendedor==='EVANDO'?'MOHR':'');return {group,item,sellerRate:commissionRate(vendedor,group.orderValue,commissionYear),managerRate:commissionManagerRate(vendedor,gerente,commissionYear)};}));
+  const paid=installments.filter(entry=>entry.item.recebido>0&&commissionDateInPeriod(entry.item.recebimento,commissionYear,commissionMonth));
+  const receivedBase=paid.reduce((sum,entry)=>sum+entry.item.recebido,0);
+  const sellerCommissionTotal=paid.reduce((sum,entry)=>sum+(entry.sellerRate===null?0:entry.item.recebido*entry.sellerRate),0);
+  const managerCommissionTotal=paid.reduce((sum,entry)=>sum+entry.item.recebido*entry.managerRate,0);
+  const evandoCommissionTotal=paid.reduce((sum,entry)=>{const vendedor=entry.group.assignment?.vendedor||entry.group.assignment?.responsavel||'';return sum+(vendedor==='EVANDO'&&entry.sellerRate!==null?entry.item.recebido*entry.sellerRate:0);},0);
+  const mohrSellerCommissionTotal=paid.reduce((sum,entry)=>{const vendedor=entry.group.assignment?.vendedor||entry.group.assignment?.responsavel||'';return sum+(vendedor==='MOHR'&&entry.sellerRate!==null?entry.item.recebido*entry.sellerRate:0);},0);
+  const mohrManagerCommissionTotal=managerCommissionTotal,mohrCommissionTotal=mohrSellerCommissionTotal+mohrManagerCommissionTotal;
+  const commissionTotal=sellerCommissionTotal+managerCommissionTotal;
+  const delayed=installments.filter(entry=>commissionStatus(entry.item).className==='late').length;
+  const unassigned=groups.filter(group=>!(group.assignment?.vendedor||group.assignment?.responsavel)).length;
+  const monthOptions=[`<option value="-1" ${commissionMonth<0?'selected':''}>Ano completo</option>`,...Array.from({length:12},(_,month)=>`<option value="${month}" ${commissionMonth===month?'selected':''}>${receberMesNome(month)}</option>`)].join('');
+  const ordersHtml=groups.map(group=>{
+    const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente=group.assignment?.gerente||(vendedor==='EVANDO'?'MOHR':''),sellerRate=commissionRate(vendedor,group.orderValue,commissionYear),managerRate=commissionManagerRate(vendedor,gerente,commissionYear);
+    const groupPaid=group.items.filter(item=>item.recebido>0&&commissionDateInPeriod(item.recebimento,commissionYear,commissionMonth));
+    const groupReceived=groupPaid.reduce((sum,item)=>sum+item.recebido,0),sellerCommission=sellerRate===null?0:groupReceived*sellerRate,managerCommission=groupReceived*managerRate,groupCommission=sellerCommission+managerCommission;
+    const receivedAll=group.items.reduce((sum,item)=>sum+Math.max(0,item.recebido||0),0),openAll=group.items.reduce((sum,item)=>sum+Math.max(0,(item.valorParcela||0)-(item.recebido||0)),0);
+    const sellerEarned=sellerRate===null?0:receivedAll*sellerRate,sellerFuture=sellerRate===null?0:openAll*sellerRate,managerEarned=receivedAll*managerRate,managerFuture=openAll*managerRate;
+    const evandoEarned=vendedor==='EVANDO'?sellerEarned:0,evandoFuture=vendedor==='EVANDO'?sellerFuture:0,mohrSellerEarned=vendedor==='MOHR'?sellerEarned:0,mohrSellerFuture=vendedor==='MOHR'?sellerFuture:0,mohrEarned=mohrSellerEarned+(gerente==='MOHR'?managerEarned:0),mohrFuture=mohrSellerFuture+(gerente==='MOHR'?managerFuture:0);
+    const encoded=encodeURIComponent(group.key);
+    return `<details class="commission-order"><summary><div class="commission-order-title"><b>${esc(group.label)}</b><span>${esc(group.client)} · ${group.items.length} parcela(s) no total · ${group.periodItems.length} no período</span></div><div class="commission-order-owner" onclick="event.stopPropagation()"><span>Vendedor</span><select class="commission-owner-select ${vendedor?'':'unassigned'}" onchange="setCommissionVendedor('${encoded}',this.value)"><option value="" ${!vendedor?'selected':''}>Selecionar</option><option value="EVANDO" ${vendedor==='EVANDO'?'selected':''}>EVANDO</option><option value="MOHR" ${vendedor==='MOHR'?'selected':''}>MOHR</option></select></div><div class="commission-order-owner" onclick="event.stopPropagation()"><span>Gerente comercial</span><select class="commission-owner-select" onchange="setCommissionGerente('${encoded}',this.value)"><option value="" ${!gerente?'selected':''}>Sem gerente</option><option value="MOHR" ${gerente==='MOHR'?'selected':''}>MOHR</option></select></div><div class="commission-order-metric"><span>Valor total da nota</span><strong>${fmtBRL(group.orderValue)}</strong></div><div class="commission-order-metric"><span>Comissão vendedor</span><strong style="color:var(--green)">${sellerRate===null?'—':(sellerRate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'% · '+fmtBRL(sellerCommission)}</strong></div><div class="commission-order-metric"><span>Comissão gerente</span><strong style="color:var(--green)">${managerRate?(managerRate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'% · '+fmtBRL(managerCommission):'—'}</strong></div></summary><div class="commission-detail"><div class="finance-table-wrap"><table class="commission-table"><thead><tr><th>Parcela</th><th>Descrição</th><th>Vencimento</th><th>Recebimento</th><th>Situação</th><th>Valor da parcela</th><th>Valor recebido</th><th>${esc(vendedor||'Vendedor')}</th><th>${esc(gerente||'Gerente')}</th><th>Total comissão</th></tr></thead><tbody>${group.items.map(item=>{const status=commissionStatus(item),inPaymentPeriod=item.recebido>0&&commissionDateInPeriod(item.recebimento,commissionYear,commissionMonth),sellerValue=inPaymentPeriod&&sellerRate!==null?item.recebido*sellerRate:0,managerValue=inPaymentPeriod?item.recebido*managerRate:0,total=sellerValue+managerValue;return `<tr><td>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</td><td>${esc(item.descricao)}</td><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.recebimento)}</td><td><span class="commission-status ${status.className}">${esc(status.label)}</span></td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money ${item.recebido>0?'commission-value':''}">${fmtBRL(item.recebido)}</td><td class="money ${sellerValue>0?'commission-value':''}">${sellerRate===null?'—':fmtBRL(sellerValue)}</td><td class="money ${managerValue>0?'commission-value':''}">${managerRate?fmtBRL(managerValue):'—'}</td><td class="money ${total>0?'commission-value':''}">${sellerRate===null?'—':fmtBRL(total)}</td></tr>`;}).join('')}</tbody></table></div><small class="muted">Base da faixa: ${fmtBRL(group.orderValue)} · fonte: ${esc(group.orderValueSource)}. Todas as parcelas vinculadas à mesma nota são exibidas, mesmo quando pertencem a outro ano.</small></div></details>`;
+  }).join('');
+  target.innerHTML=`${commissionHeader()}<section class="commission-shell"><div class="commission-toolbar"><label>Ano<select onchange="commissionSetYear(this.value)">${availableYears.map(year=>`<option value="${year}" ${year===commissionYear?'selected':''}>${year}</option>`).join('')}</select></label><label>Período<select onchange="commissionSetMonth(this.value)">${monthOptions}</select></label><label>Pesquisar nota, pedido ou cliente<input id="commissionSearch" value="${esc(commissionSearch)}" oninput="commissionSetSearch(this.value)" placeholder="Nota, pedido, cliente ou vendedor"></label></div><div class="commission-summary"><div class="commission-summary-card"><span>Notas/pedidos no período</span><strong>${groups.length}</strong></div><div class="commission-summary-card received"><span>Base recebida</span><strong>${fmtBRL(receivedBase)}</strong></div><div class="commission-summary-card received"><span>Comissão vendedores</span><strong>${fmtBRL(sellerCommissionTotal)}</strong></div><div class="commission-summary-card received"><span>Comissão gerência</span><strong>${fmtBRL(managerCommissionTotal)}</strong></div><div class="commission-summary-card received"><span>Total de comissões</span><strong>${fmtBRL(commissionTotal)}</strong></div><div class="commission-summary-card ${unassigned?'pending':''}"><span>Pendências</span><strong>${unassigned} sem vendedor · ${delayed} atraso(s)</strong></div></div><div class="commission-rules"><b>Regras da planilha:</b> o valor total da nota define a faixa do vendedor e a comissão é aplicada a cada parcela efetivamente recebida. Quando EVANDO é o vendedor, MOHR é preenchido como gerente comercial e recebe 0,50% adicional. Pagamentos atrasados entram no mês do recebimento real.</div><div class="commission-order-list">${ordersHtml||`<div class="commission-empty">Nenhuma nota ou parcela encontrada neste período. Atualize as parcelas e notas ou altere os filtros.</div>`}</div></section>`;
+  const summaryCards=target.querySelectorAll('.commission-summary-card');
+  if(summaryCards[2]){summaryCards[2].querySelector('span').textContent='Comissão Evandro';summaryCards[2].querySelector('strong').textContent=fmtBRL(evandoCommissionTotal);summaryCards[2].insertAdjacentHTML('beforeend',`<small>Como vendedor no período: <b>${fmtBRL(evandoCommissionTotal)}</b></small>`);}
+  if(summaryCards[3]){summaryCards[3].querySelector('span').textContent='Comissão Mohr';summaryCards[3].querySelector('strong').textContent=fmtBRL(mohrCommissionTotal);summaryCards[3].insertAdjacentHTML('beforeend',`<small>Como vendedor: <b>${fmtBRL(mohrSellerCommissionTotal)}</b><br>Como gerente: <b>${fmtBRL(mohrManagerCommissionTotal)}</b></small>`);}
+  if(summaryCards[5])summaryCards[5].remove();
+  const orderCards=target.querySelectorAll('.commission-order');
+  groups.forEach((group,index)=>{
+    const card=orderCards[index],totals=commissionPersonOrderTotals(group,commissionYear);if(!card)return;
+    card.querySelector('.commission-detail>small.muted')?.remove();
+    const metrics=card.querySelectorAll('.commission-order-metric');
+    const evandoTotal=totals.evandoEarned+totals.evandoFuture,mohrEarned=totals.mohrSellerEarned+totals.mohrManagerEarned,mohrFuture=totals.mohrSellerFuture+totals.mohrManagerFuture,mohrTotal=mohrEarned+mohrFuture,totalPedido=evandoTotal+mohrTotal,totalRecebido=totals.evandoEarned+mohrEarned;
+    if(metrics[1]){metrics[1].querySelector('span').textContent='Comissão Evandro';metrics[1].querySelector('strong').innerHTML=totals.assigned?`${fmtBRL(evandoTotal)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(totals.evandoEarned)}</span>`:'—';}
+    if(metrics[2]){metrics[2].querySelector('span').textContent='Comissão Mohr';metrics[2].querySelector('strong').innerHTML=totals.assigned?`${fmtBRL(mohrTotal)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(mohrEarned)}</span>`:'—';metrics[2].title=`Como vendedor: total ${fmtBRL(totals.mohrSellerEarned+totals.mohrSellerFuture)}, recebido ${fmtBRL(totals.mohrSellerEarned)}. Como gerente: total ${fmtBRL(totals.mohrManagerEarned+totals.mohrManagerFuture)}, recebido ${fmtBRL(totals.mohrManagerEarned)}.`;metrics[2].insertAdjacentHTML('afterend',`<div class="commission-order-metric"><span>Comissão total do pedido</span><strong style="color:var(--green)">${totals.assigned?`${fmtBRL(totalPedido)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(totalRecebido)}</span>`:'—'}</strong></div>`);}
+  });
 }
 function pagarFornecedor(row){
   const detalhe=receberChave(row,['fornecedorDetalhe']);
@@ -4407,8 +4665,9 @@ function exportFinancePeriodPDF(kind){
   const year=Number(isReceive?receberAnoSelecionado:pagarAnoSelecionado)||(new Date()).getFullYear();
   const mode=isReceive?receberModo:pagarModo;
   const month=Number(isReceive?receberMesSelecionado:pagarMesSelecionado);
-  let records=(isReceive?receberRegistros():pagarRegistros()).filter(row=>row.vencimento?.getFullYear()===year);
-  if(mode==='mes')records=records.filter(row=>row.vencimento?.getMonth()===month);
+  const sourceRecords=isReceive?receberRegistros():pagarRegistros();
+  let records=isReceive?sourceRecords.filter(row=>row.vencimento?.getFullYear()===year||row.recebimento?.getFullYear()===year):sourceRecords.filter(row=>row.vencimento?.getFullYear()===year);
+  if(mode==='mes')records=isReceive?receberRegistrosDoMes(sourceRecords,year,month):records.filter(row=>row.vencimento?.getMonth()===month);
   records=isReceive?receberListaFiltrada(records):pagarListaFiltrada(records);
   if(!records.length){showToast('Nenhum lançamento neste período e filtro.','err');return;}
   const monthMode=mode==='mes';
@@ -4434,11 +4693,11 @@ function exportFinanceCalendarExpandedPDF(kind,year,month,records,options={}){
   const open=sorted.reduce((sum,row)=>sum+(row.aberto||0),0);
   const overdue=sorted.reduce((sum,row)=>sum+((isReceive?receberEstaAtrasado(row):pagarEstaAtrasado(row))?(row.aberto||0):0),0);
   const headers=isReceive
-    ?['Venc.','Emissão','Descrição','Cliente pagador','Parc.','Nº parc.','Total pedido','Valor parcela','Recebido','Falta receber']
+    ?['Venc.','Emissão','Descrição','Cliente pagador','Parc.','Nº parc.','Total pedido','Valor parcela','Recebido','Falta receber','Observações']
     :['Venc.','Emissão','Descrição','Fornecedor','Referente a','Parc.','Nº parc.','Valor','Valor pago','Falta pagar'];
-  const widths=isReceive?[17,17,46,49,10,11,27,25,24,25]:[17,17,41,43,38,10,11,28,27,28];
+  const widths=isReceive?[17,17,38,41,10,11,24,22,22,22,59]:[17,17,41,43,38,10,11,28,27,28];
   const values=row=>isReceive
-    ?[receberDataFormat(row.vencimento),receberDataFormat(row.emissao),row.descricao,row.cliente,row.parcela.numero,row.parcela.total,fmtBRL(row.negociacao),fmtBRL(row.valorParcela),fmtBRL(row.recebido),fmtBRL(row.aberto)]
+    ?[receberDataFormat(row.vencimento),receberDataFormat(row.emissao),row.descricao,row.cliente,row.parcela.numero,row.parcela.total,fmtBRL(row.negociacao),fmtBRL(row.valorParcela),fmtBRL(row.recebido),fmtBRL(row.aberto),receberObservacao(row)]
     :[receberDataFormat(row.vencimento),receberDataFormat(row.emissao),row.descricao,row.fornecedor,row.referenteA,row.parcela.numero,row.parcela.total,fmtBRL(row.valorTitulo),fmtBRL(row.pago),fmtBRL(row.aberto)];
   const doc=cartamacPdfInit(new JsPDF({orientation:'landscape',unit:'mm',format:'a4'})),left=7,pageW=297,pageBottom=195;
   const drawHeader=(firstPage=false)=>{
@@ -4465,9 +4724,9 @@ function exportFinanceCalendarExpandedPDF(kind,year,month,records,options={}){
     if(index%2===0){doc.setFillColor(248,248,248);doc.rect(left,y,283,rowHeight,'F');}
     doc.setDrawColor(222,222,222);doc.line(left,y+rowHeight,left+283,y+rowHeight);doc.setFontSize(5.5);
     let x=left;lineSets.forEach((lines,column)=>{
-      const overdueValue=rowOverdue&&column===lineSets.length-1;
-      doc.setFont('helvetica',overdueValue?'bold':'normal');
-      doc.setTextColor(overdueValue?205:28,overdueValue?45:28,overdueValue?58:28);
+      const overdueValue=rowOverdue&&column===(isReceive?9:lineSets.length-1),receivedValue=isReceive&&column===8&&row.recebido>0;
+      doc.setFont('helvetica',overdueValue||receivedValue?'bold':'normal');
+      doc.setTextColor(overdueValue?205:receivedValue?35:28,overdueValue?45:receivedValue?145:28,overdueValue?58:receivedValue?70:28);
       doc.text(lines,x+1.2,y+3.8,{maxWidth:widths[column]-2.4});
       x+=widths[column];
     });y+=rowHeight;
@@ -4714,6 +4973,7 @@ function renderFinanceiroFiscal(){
   const target=document.getElementById('financeiroContent');if(!target)return;
   if(financeiroView==='fluxoCaixa'){renderCashFlowPage(target);return;}
   if(financeiroView==='receber'){renderContasAReceber(target);return;}
+  if(financeiroView==='comissoes'){renderCommissionsPage(target);return;}
   if(financeiroView==='vendas'){renderSalesPage(target);return;}
   if(financeiroView==='ativos'){renderFixedAssetsPage(target);return;}
   if(financeiroView==='materiaPrima'){renderRawMaterialPage(target);return;}
@@ -9997,6 +10257,7 @@ function normalizeDB(data){
   DB.partsStructureCache=DB.partsStructureCache&&typeof DB.partsStructureCache==='object'?DB.partsStructureCache:{};
   DB.bndesLaborProfiles=DB.bndesLaborProfiles&&typeof DB.bndesLaborProfiles==='object'?DB.bndesLaborProfiles:{};
   DB.bndesDraft=normalizeBndesDraft(DB.bndesDraft);
+  DB.commissionAssignments=DB.commissionAssignments&&typeof DB.commissionAssignments==='object'?DB.commissionAssignments:{};
   if(DB.simulatorTemplateVersion!==2){DB.simulatorDraft={equipment:'',durations:{}};DB.simulatorTemplateVersion=2;}
   else DB.simulatorDraft=DB.simulatorDraft||{equipment:'',durations:{}};
   DB.engineeringPeople=Array.isArray(DB.engineeringPeople)?DB.engineeringPeople:[];
@@ -10004,7 +10265,8 @@ function normalizeDB(data){
   DB.notifications=Array.isArray(DB.notifications)?DB.notifications:[];
   DB.notificationTaskState=DB.notificationTaskState&&typeof DB.notificationTaskState==='object'?DB.notificationTaskState:{};
   DB.notificationSettings=Object.assign({},NOTIFICATION_DEFAULT_SETTINGS,DB.notificationSettings||{});
-  (DB.admins||[]).forEach(admin=>{admin.projectOperators=Array.isArray(admin.projectOperators)?admin.projectOperators:[];if(admin.notificationsEnabled===undefined)admin.notificationsEnabled=true;});
+  let commissionAccessMigrated=false;
+  (DB.admins||[]).forEach(admin=>{admin.projectOperators=Array.isArray(admin.projectOperators)?admin.projectOperators:[];if(admin.notificationsEnabled===undefined)admin.notificationsEnabled=true;if(Array.isArray(admin.permissions)&&admin.permissions.includes('financeiro.receber')&&!admin.permissions.includes('financeiro.comissoes')){admin.permissions.push('financeiro.comissoes');commissionAccessMigrated=true;}});
   DB.clients=(DB.clients||[]);
   DB.clients.forEach(c=>{if(!c.archivedOrders)c.archivedOrders=[];});
   if(!DB.costsPassword)DB.costsPassword='000000';
@@ -10027,7 +10289,7 @@ function normalizeDB(data){
   });
   ORDERS=(DB.projectOrders?.length>0?DB.projectOrders:getDefaultOrders()).map(normalizeCronogramaFabricationStages);
   const migratedClients=migrateClientOrderRefs();
-  return DB.admins.length!==beforeAdmins||migratedClients;
+  return DB.admins.length!==beforeAdmins||migratedClients||commissionAccessMigrated;
 }
 
 // Reflete na tela os dados atualizados (chamado no load inicial e a cada atualização remota)
@@ -11232,6 +11494,7 @@ Object.assign(window,{
   unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,beginCommercialStructurePriceEdit,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
+  commissionSetYear,commissionSetMonth,commissionSetSearch,setCommissionVendedor,setCommissionGerente,ensureCommissionHistory,
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,toggleSalesGeography,setSalesGeographyYear,selectSalesGeographyUf,exportSalesYearReport,
   renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,applyPurchaseOrderFilter,clearPurchaseOrderFilters,togglePurchaseOrdersOverdue,togglePurchaseOrdersToday,exportPurchaseOrdersPDF,
