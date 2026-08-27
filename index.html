@@ -1895,7 +1895,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
         <div class="form-group"><label>Versão do XML</label><input id="bndesVersion" value="3.0999" inputmode="decimal"></div>
         <div class="form-group"><label>Código do item/pedido MaxiProd</label><input id="bndesRootCode" placeholder="Ex.: 00718" autocomplete="off" title="Informe o código do produto final exibido na linha do pedido de venda" onchange="loadBndesGeneralInfoFromMaxiprod()" onkeydown="if(event.key==='Enter'){event.preventDefault();loadBndesGeneralInfoFromMaxiprod(true)}"></div>
         <div class="form-group"><label>Identificação interna</label><input id="bndesInternalName" placeholder="Ex.: Depurador DPS 800 · revisão 2026"></div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost" type="button" onclick="saveBndesDraft()"><span class="msi msi-sm">save</span> Salvar</button><button class="btn btn-ghost" style="color:var(--red)" type="button" onclick="clearBndesRegistration()"><span class="msi msi-sm">delete_sweep</span> Limpar cadastro</button><button class="btn btn-gold" type="button" onclick="exportBndesXml({testWithoutPortalGeneral:true})"><span class="msi msi-sm">download</span> XML teste sem Informações Gerais</button></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn btn-gold" id="bndesLoadComponentsBtn" type="button" onclick="loadBndesMasterData()"><span class="msi msi-sm">sync</span> Puxar informações</button><button class="btn btn-ghost" type="button" onclick="saveBndesDraft()"><span class="msi msi-sm">save</span> Salvar</button><button class="btn btn-ghost" style="color:var(--red)" type="button" onclick="clearBndesRegistration()"><span class="msi msi-sm">delete_sweep</span> Limpar cadastro</button><button class="btn btn-gold" type="button" onclick="exportBndesXml({testWithoutPortalGeneral:true})"><span class="msi msi-sm">download</span> XML teste sem Informações Gerais</button></div>
       </div>
       <nav class="bndes-portal-tabs" aria-label="Seções do cadastro BNDES">
         <button class="bndes-portal-tab active" data-bndes-panel="general" type="button" onclick="switchBndesPortalTab('general')"><span class="msi msi-sm">info</span> Informações Gerais</button>
@@ -1974,7 +1974,6 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
           <span class="bndes-component-status" id="bndesComponentsStatus">Informe o código raiz e carregue a estrutura do MaxiProd.</span>
           <button class="btn btn-ghost btn-sm" type="button" onclick="toggleAllBndesComponents(true)"><span class="msi msi-sm">unfold_more</span> Expandir todos</button>
           <button class="btn btn-ghost btn-sm" type="button" onclick="toggleAllBndesComponents(false)"><span class="msi msi-sm">unfold_less</span> Recolher todos</button>
-          <button class="btn btn-gold btn-sm" id="bndesLoadComponentsBtn" type="button" onclick="loadBndesComponentsFromMaxiprod()"><span class="msi msi-sm">sync</span> Carregar estrutura</button>
         </div>
         <div class="bndes-component-list" id="bndesComponentsContainer"><div class="bndes-component-empty">Nenhum componente carregado neste rascunho.</div></div>
         <div class="bndes-actions"><span class="bndes-save-state" id="bndesComponentsSaveState">Os componentes são salvos junto com o rascunho.</span><button class="btn btn-gold" type="button" onclick="saveBndesDraft()"><span class="msi msi-sm">save</span> Salvar componentes</button></div>
@@ -3132,6 +3131,9 @@ function doLogin(){
 function switchDevTab(id,btn){
   if(!devTabAllowed(id)){showAccessDenied();return;}
   if(document.getElementById('page-simulador')?.classList.contains('active'))saveSimulatorDraft(true);
+  if(id!=='pecas'&&document.getElementById('page-pecas')?.classList.contains('active')&&partsView==='bndes'){
+    DB.bndesDraft=bndesLiveDraft();persist();
+  }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.dev-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
@@ -5209,6 +5211,7 @@ async function consultMaxiprodCost(orderId,options={}){
     const savedCommercialPrices=e.maxiprod?.commercialPriceOverrides||{};
     const savedCommercialPriceRevision=e.maxiprod?.commercialPriceRevision||'';
     applyCommercialPriceOverrides(loadedStructure,savedCommercialPrices);
+    await linkStructureLatestPurchaseOrders(loadedStructure,itemCode);
     if(!loadedStructure.length&&(Number(result.custoTotal)||0)>0){
       throw new Error('A função de custos do Firebase está desatualizada: o total foi calculado, mas a estrutura multinível não foi enviada.');
     }
@@ -5304,26 +5307,85 @@ function structurePurchaseUnitPrice(record){
   const number=typeof value==='number'?value:parseBRNumber(value);
   return Number.isFinite(number)?number:null;
 }
-function getStructureLastPurchaseValue(node){
+function structurePurchaseOrderEmissionValue(record){
+  const explicit=record?.pedidoEmissaoData||record?.emissaoPedidoData||record?.dataEmissaoPedido||record?.emissaoPedidoDeCompra||record?.dataEmissaoPedidoCompra||record?.pedidoEmissao||record?.emissaoDoPedido||record?.emissaoData||record?.dataEmissao||record?.dataDeEmissao||record?.dataPedido||record?.dataCompra||record?.emissao||record?.pedido?.emissaoData||record?.pedido?.dataEmissao||record?.pedido?.emissao||'';
+  if(explicit)return explicit;
+  // As respostas do MaxiProd não usam sempre o mesmo nome de propriedade.
+  // Aceita variações da emissão do pedido, mas rejeita qualquer campo fiscal,
+  // de NF, recebimento ou entrega para não associar outra data ao preço.
+  for(const [key,value] of Object.entries(record||{})){
+    const normalized=String(key).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/gi,'').toLowerCase();
+    if(/(fiscal|notafiscal|nfe|receb|entrega)/.test(normalized))continue;
+    if((normalized.includes('pedido')&&(normalized.includes('emissao')||normalized.includes('data')))||normalized==='emissao'){
+      if(Number.isFinite(structurePurchaseDateTimestamp(value)))return value;
+    }
+  }
+  return '';
+}
+function structureAllNodes(nodes,result=[]){
+  (Array.isArray(nodes)?nodes:[]).forEach(node=>{if(!node||typeof node!=='object')return;result.push(node);structureAllNodes(node.filhos||node.children||[],result);});
+  return result;
+}
+function structureLatestPurchaseRecord(value){
   const candidates=[],seen=new Set();
-  const collect=(value,depth=0)=>{
-    if(!value||typeof value!=='object'||seen.has(value)||depth>3)return;
-    seen.add(value);
-    if(Array.isArray(value)){value.forEach(item=>collect(item,depth+1));return;}
-    const dateValue=structurePurchaseDateValue(value),timestamp=structurePurchaseDateTimestamp(dateValue);
-    if(dateValue&&Number.isFinite(timestamp))candidates.push({dateValue,timestamp,price:structurePurchaseUnitPrice(value)});
-    Object.entries(value).forEach(([key,child])=>{
-      if(key==='filhos'||key==='children')return;
-      if(child&&typeof child==='object'&&/(compra|pedido|nota|fiscal|receb|histor|pre[cç]o|custo)/i.test(key))collect(child,depth+1);
+  const collect=(record,depth=0)=>{
+    if(!record||typeof record!=='object'||seen.has(record)||depth>5)return;
+    seen.add(record);
+    if(Array.isArray(record)){record.forEach(item=>collect(item,depth+1));return;}
+    const dateValue=structurePurchaseOrderEmissionValue(record),timestamp=structurePurchaseDateTimestamp(dateValue);
+    if(dateValue&&Number.isFinite(timestamp))candidates.push({record,dateValue,timestamp});
+    Object.entries(record).forEach(([key,child])=>{
+      // A busca continua apenas dentro de estruturas de pedido/compra.
+      // Objetos de NF, fiscal, recebimento e entrega não participam da data.
+      if(child&&typeof child==='object'&&/(compra|pedido|histor|registro|item|resultado)/i.test(key)&&!/(fiscal|nota|receb|entrega)/i.test(key))collect(child,depth+1);
     });
   };
-  collect(node);
-  if(!candidates.length)return '';
-  const target=Number(node?.custoUnitario),tolerance=Math.max(.005,Math.abs(target)*.0001);
-  const matching=Number.isFinite(target)?candidates.filter(item=>item.price!==null&&Math.abs(item.price-target)<=tolerance):[];
-  const pool=matching.length?matching:candidates;
-  pool.sort((a,b)=>b.timestamp-a.timestamp);
-  return pool[0]?.dateValue||'';
+  collect(value);candidates.sort((a,b)=>b.timestamp-a.timestamp);
+  return candidates[0]||null;
+}
+async function linkStructureLatestPurchaseOrders(nodes,rootCode=''){
+  const all=structureAllNodes(nodes),codes=[...new Set(all.map(node=>String(node.codigo||'').trim().toUpperCase()).filter(code=>code&&!/^DS/.test(code)))];
+  if(!codes.length)return false;
+  try{
+    // Serviços IN e materiais MP usam rotas diferentes no MaxiProd. A árvore
+    // de componentes contém as compras dos materiais; a consulta de serviços
+    // contém as compras dos códigos IN. Nenhuma consulta de NF-e participa.
+    const [servicesResult,componentsResult]=await Promise.allSettled([
+      consultarServicosBndesMaxiprodRemoto({itemCodes:codes}),
+      rootCode?consultarComponentesBndesMaxiprodRemoto({itemCode:String(rootCode).trim().toUpperCase()}):Promise.resolve({data:{estrutura:[]}})
+    ]);
+    const purchasesByCode=servicesResult.status==='fulfilled'?(servicesResult.value.data?.comprasPorCodigo||{}):{};
+    const componentData=componentsResult.status==='fulfilled'?(componentsResult.value.data||{}):{},componentTree=componentData.estrutura||componentData.componentes||componentData.items||componentData.nodes||[],componentPurchases=new Map();
+    structureAllNodes(componentTree).forEach(component=>{
+      const code=String(component.codigo||'').trim().toUpperCase();if(!code)return;
+      // Inclui o próprio nó: algumas versões da função retornam os campos do
+      // último pedido diretamente no componente, fora de ultimaCompraRecebida.
+      const sources=[component,component.ultimoPedidoCompra,component.ultimaCompraRecebida,component.ultimaCompra,component.pedidosCompra,component.historicoCompras,component.compras,component.pedidos].filter(Boolean);
+      for(const source of sources){const latest=structureLatestPurchaseRecord(source);if(!latest)continue;const current=componentPurchases.get(code);if(!current||latest.timestamp>current.timestamp)componentPurchases.set(code,latest);}
+    });
+    let linked=0;
+    all.forEach(node=>{
+      const code=String(node.codigo||'').trim().toUpperCase(),purchaseSources=[
+        componentPurchases.get(code)?.record,purchasesByCode[code],node,node.ultimoPedidoCompra,node.ultimaCompraRecebida,node.ultimaCompra,node.pedidosCompra,node.historicoCompras,node.compras,node.pedidos
+      ].filter(Boolean);
+      let latest=null;for(const source of purchaseSources){const candidate=structureLatestPurchaseRecord(source);if(candidate&&(!latest||candidate.timestamp>latest.timestamp))latest=candidate;}
+      delete node.compraVinculadaAoPreco;delete node.ultimoPedidoCompra;delete node.ultimoPedidoCompraVerificado;
+      if(!latest)return;
+      const purchase=latest.record;
+      node.ultimoPedidoCompraVerificado={
+        pedidoEmissaoData:latest.dateValue,
+        pedidoNumero:purchase.pedidoNumero||purchase.numeroPedido||purchase.numero||'',
+        fornecedorRazaoSocial:purchase.fornecedorRazaoSocial||purchase.fornecedorNome||'',
+        valorUnitario:structurePurchaseUnitPrice(purchase),
+        origem:componentPurchases.has(code)?'Emissão do último pedido do componente':'Emissão do último pedido do serviço'
+      };
+      linked++;
+    });
+    return linked>0;
+  }catch(error){console.warn('Emissão do último pedido de compra do item:',error);return false;}
+}
+function getStructureLastPurchaseValue(node){
+  return structurePurchaseDateValue(node?.ultimoPedidoCompraVerificado)||'';
 }
 function formatStructureLastPurchase(node){
   let value=getStructureLastPurchaseValue(node);
@@ -6381,7 +6443,7 @@ function canUseSimulator(){return hasAccess('simulador');}
 function renderSimulator(){
   if(!canUseSimulator())return;
   const draft=DB.simulatorDraft||{equipment:'',durations:{}};
-  const groups=SIM_TEMPLATE.map((dept,di)=>`<details class="sim-dept" open><summary>${dept.name}</summary><div class="sim-table-wrap"><table class="sim-table"><thead><tr><th>Etapa</th><th>Duração (dias)</th></tr></thead><tbody>${dept.tasks.map(([name,days],ti)=>{const key=`${di}-${ti}`;const value=draft.durations?.[key]??(days??'');return `<tr><td>${name}</td><td><input type="number" min="1" id="sim-days-${key}" value="${value}" oninput="saveSimulatorDraft()"></td></tr>`;}).join('')}</tbody></table></div></details>`).join('');
+  const groups=SIM_TEMPLATE.map((dept,di)=>`<details class="sim-dept"${uiCollapseAttributes(`simulador-${di}-${dept.name}`,true)}><summary>${dept.name}</summary><div class="sim-table-wrap"><table class="sim-table"><thead><tr><th>Etapa</th><th>Duração (dias)</th></tr></thead><tbody>${dept.tasks.map(([name,days],ti)=>{const key=`${di}-${ti}`;const value=draft.durations?.[key]??(days??'');return `<tr><td>${name}</td><td><input type="number" min="1" id="sim-days-${key}" value="${value}" oninput="saveSimulatorDraft()"></td></tr>`;}).join('')}</tbody></table></div></details>`).join('');
   document.getElementById('simulatorContent').innerHTML=`<div class="sim-controls"><div class="form-group"><label>Equipamento / proposta</label><input id="simEquipment" value="${escapeHTML(draft.equipment||'')}" placeholder="Ex: Rotor Hidrapulper" oninput="saveSimulatorDraft()"></div><div class="form-group"><label>Data de referência</label><input value="${simFmtDate(new Date())}" disabled></div><button class="btn btn-gold" onclick="runSimulation()"><span class="msi msi-sm">calculate</span> Calcular entrega estimada</button><button class="btn btn-ghost" onclick="clearSimulatorDraft()"><span class="msi msi-sm">delete_sweep</span> Limpar campos</button></div>${groups}<div id="simResult"></div>`;
 }
 function saveSimulatorDraft(immediate=false){
@@ -6455,7 +6517,7 @@ function exportSimulationPDF(){
 // ─────────── PEÇAS DE REPOSIÇÃO ───────────
 function escapeHTML(value){return String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));}
 const PARTS_STRUCTURE_REFRESH_DAYS=90;
-const PARTS_STRUCTURE_LINK_VERSION=3;
+const PARTS_STRUCTURE_LINK_VERSION=9;
 const PARTS_STRUCTURE_MEMORY={};
 const partsStructureOpen=new Set();
 const partsStructureLoading=new Set();
@@ -6605,11 +6667,12 @@ async function refreshPartStructure(code,{persistAfter=true,renderAfter=true,cle
     if(!tree.length&&(Number(result.custoTotal)||0)>0)throw new Error('A estrutura não foi enviada pela função do MaxiProd.');
     const previous=partsStructureCacheMeta(key)||{},savedOverrides=clearOverrides?{}:(previous.overrides||{});
     applyPartsStructureOverrides(tree,savedOverrides);
+    await linkStructureLatestPurchaseOrders(tree,key);
     PARTS_STRUCTURE_MEMORY[key]=tree;
     const storage=await saveCostStructureDocument(partsStructureStorageId(key),key,tree);
     DB.partsStructureCache=DB.partsStructureCache||{};
     DB.partsStructureCache[key]={
-      itemCode:key,linkVersion:Number(result.linkVersion)||1,custoTotal:getPartsStructureTreeTotal(tree),
+      itemCode:key,linkVersion:PARTS_STRUCTURE_LINK_VERSION,custoTotal:getPartsStructureTreeTotal(tree),
       itensComCusto:Number(result.itensComCusto)||0,itensSemCusto:countPartsStructureMissingPrices(tree),
       calculadoEm:result.calculadoEm||new Date().toISOString(),criterio:result.criterio||'Último preço de compra',
       estruturaDocId:storage.docId,estruturaChunkCount:storage.chunkCount,estruturaCharacterCount:storage.characterCount,
@@ -7203,8 +7266,8 @@ function renderBndesComponents(){
   const included=components.filter(component=>component.included!==false),complete=included.filter(bndesComponentFiscalComplete).length,converted=included.filter(component=>component.linearConversion?.applied&&!component.linearConversion?.manualOverride).length,conversionPending=included.filter(component=>component.linearConversion?.pending).length,query=bndesSearchKey(document.getElementById('bndesComponentsSearch')?.value),visible=components.map((component,index)=>({component,index})).filter(({component})=>!query||bndesSearchKey([component.code,component.name,component.ncm,component.supplierName,component.supplierCnpj,component.documentNumber,component.nfeItemCode,component.sourcePath].join(' ')).includes(query));
   const rootInForm=String(document.getElementById('bndesRootCode')?.value||draft.rootCode||'').trim().toUpperCase();
   if(!components.length){
-    container.innerHTML='<div class="bndes-component-empty">Nenhum componente carregado neste rascunho. Informe o código raiz e clique em <b>Carregar estrutura</b>.</div>';
-    status.textContent='Informe o código raiz e carregue a estrutura do MaxiProd.';return;
+    container.innerHTML='<div class="bndes-component-empty">Nenhum componente carregado neste rascunho. Informe o código raiz e clique em <b>Puxar informações</b> no cabeçalho.</div>';
+    status.textContent='Informe o código raiz e use o botão mestre Puxar informações.';return;
   }
   const loadedAt=meta.loadedAt?new Date(meta.loadedAt).toLocaleString('pt-BR'):'data não informada';
   status.textContent=`${query?`${visible.length} de `:''}${included.length} componente(s) incluído(s) · ${complete} fiscalmente completo(s) · ${converted} item(ns) linear(es) convertido(s) para kg${conversionPending?` · ${conversionPending} conversão(ões) pendente(s)`:''} · ${Number(meta.fiscalLocated)||0} compra(s) recebida(s) localizada(s) · ${Number(meta.serviceCandidates)||0} serviço(s) reservado(s) para a etapa 3 · estrutura ${meta.rootCode||draft.rootCode||'—'} carregada em ${loadedAt}${rootInForm&&meta.rootCode&&rootInForm!==meta.rootCode?' · ATENÇÃO: o código raiz foi alterado':''}`;
@@ -7215,7 +7278,7 @@ function renderBndesComponents(){
     const field=(label,key,value,extra='',span='')=>`<div class="form-group ${span}"><label>${label}</label><input ${extra} value="${escapeHTML(value??'')}" oninput="updateBndesComponentField(${index},'${key}',this.value)"></div>`;
     const calculated=(label,value,key)=>`<div class="form-group"><label>${label}</label><input id="bndesTax-${key}-${index}" readonly value="${escapeHTML(fmtBRL(value))}"></div>`;
     const unitField=bndesIsPieceUnit(component.unit)?`<div class="form-group"><label>Unidade de medida <small>(Portal BNDES)</small></label><select onchange="updateBndesComponentField(${index},'unit',this.value)"><option value="un" ${bndesCanonicalPieceUnit(component.unit)==='un'?'selected':''}>un</option><option value="Pc" ${bndesCanonicalPieceUnit(component.unit)==='Pc'?'selected':''}>Pc</option></select><small class="bndes-component-pending" style="color:var(--text3)">Escolha a opção solicitada pelo Portal; quantidade e preço não mudam.</small></div>`:field('Unidade de medida','unit',component.unit);
-    return `<details class="bndes-component" data-bndes-component="${index}">
+    return `<details class="bndes-component" data-bndes-component="${index}"${uiCollapseAttributes(`bndes-${draft.rootCode||'sem-codigo'}-${component.id||component.code||index}`,false)}>
       <summary class="bndes-component-summary">
         <label class="bndes-component-check" title="Incluir no cadastro BNDES" onclick="event.stopPropagation()"><input type="checkbox" ${enabled?'checked':''} onchange="updateBndesComponentField(${index},'included',this.checked)"></label>
         <span class="bndes-component-code">${escapeHTML(component.code||'—')}</span>
@@ -7381,11 +7444,19 @@ async function loadBndesGeneralInfoFromMaxiprod(force=false){
     draft.rootCode=rootCode;if(description){draft.product.name=description;if(!draft.product.technicalDescription)draft.product.technicalDescription=description;draft.internalName=description;}
     if(hasProduct)applyBndesProductFromSalesInvoice(draft,product,rootCode);
     else draft.productSalesInvoiceMeta={itemCode:rootCode,invoiceNumber:'',state:'',loadedAt:new Date().toISOString(),source:'MaxiProd · item localizado sem NF-e de venda'};
-    DB.bndesDraft=draft;bndesLastGeneralInfoCode=rootCode;renderBndesDraft();markBndesDraftDirty();
+    draft.updatedAt=new Date().toISOString();draft.updatedBy=loggedUser?.ref?.name||loggedUser?.name||'';
+    DB.bndesDraft=draft;bndesLastGeneralInfoCode=rootCode;const saved=await persist();renderBndesDraft();if(!saved)markBndesDraftDirty();
     const fiscalFields=[product.chaveNota,product.cfop,product.cst,product.ncm,product.dataNota,product.numeroNota].filter(value=>value!==null&&value!==undefined&&value!=='').length;
     if(hasProduct||description)showToast(`Informações de ${rootCode} carregadas${fiscalFields?` · ${fiscalFields} dado(s) fiscal(is) localizado(s)`:' · sem dados fiscais disponíveis'}.`);
     else showToast(`O código ${rootCode} não retornou informações gerais no MaxiProd${productError?`: ${String(productError?.message||productError).replace(/^.*?:\s*/,'')}`:'.'}`,'err');
   }finally{bndesGeneralInfoLookupRunning=false;if(input)input.removeAttribute('aria-busy');}
+}
+async function loadBndesMasterData(){
+  if(!hasAccess('pecas.bndes')){showAccessDenied();return;}
+  const rootCode=bndesFieldValue('bndesRootCode',{upper:true});
+  if(!rootCode||!(/^[A-Z0-9._+\-]+$/).test(rootCode)){showToast('Informe um código raiz MaxiProd válido.','err');document.getElementById('bndesRootCode')?.focus();return;}
+  await loadBndesGeneralInfoFromMaxiprod(true);
+  await loadBndesComponentsFromMaxiprod();
 }
 async function loadBndesComponentsFromMaxiprod(){
   if(!hasAccess('pecas.bndes')){showAccessDenied();return;}
@@ -7416,21 +7487,24 @@ async function loadBndesComponentsFromMaxiprod(){
     if(serviceError){const message=String(serviceError?.message||serviceError).replace(/^.*?:\s*/,'');automaticServices.forEach(service=>{service.lookupError=message;});}
     const flattened=flattenBndesStructure(tree,rootCode,fiscalPorCodigo),draft=normalizeBndesDraft(DB.bndesDraft),previousRoot=String(draft.rootCode||'').trim().toUpperCase(),equipmentChanged=previousRoot!==rootCode;
     if(equipmentChanged)resetBndesProductForEquipment(draft,rootCode,bndesRootDescription(tree,rootCode));
-    draft.rootCode=rootCode;draft.components=flattened.components;draft.services=mergeBndesAutomaticServices(automaticServices);draft.labor=(draft.labor||[]).filter(row=>!row?.automatic);draft.laborMeta={rootCode,source:'Manual',status:'manual'};draft.componentsMeta={rootCode,loadedAt:fiscalAudit.consultadoEm||new Date().toISOString(),source:'MaxiProd',serviceCandidates:flattened.serviceCandidates,drawingNodes:flattened.drawingNodes,fiscalLocated:Number(fiscalAudit.localizados)||Object.keys(fiscalPorCodigo).length,fiscalErrors:(fiscalError?1:0)+(structureFallback?1:0),servicesLocated:automaticServices.filter(service=>service.compraLocalizada).length};const productComplete=applyBndesProductFromSalesInvoice(draft,productAudit.produto,rootCode);DB.bndesDraft=draft;
-    renderBndesDraft();markBndesDraftDirty();
+    draft.rootCode=rootCode;draft.components=flattened.components;draft.services=mergeBndesAutomaticServices(automaticServices);draft.labor=(draft.labor||[]).filter(row=>!row?.automatic);draft.laborMeta={rootCode,source:'Manual',status:'manual'};draft.componentsMeta={rootCode,loadedAt:fiscalAudit.consultadoEm||new Date().toISOString(),source:'MaxiProd',serviceCandidates:flattened.serviceCandidates,drawingNodes:flattened.drawingNodes,fiscalLocated:Number(fiscalAudit.localizados)||Object.keys(fiscalPorCodigo).length,fiscalErrors:(fiscalError?1:0)+(structureFallback?1:0),servicesLocated:automaticServices.filter(service=>service.compraLocalizada).length};const productComplete=applyBndesProductFromSalesInvoice(draft,productAudit.produto,rootCode);draft.updatedAt=new Date().toISOString();draft.updatedBy=loggedUser?.ref?.name||loggedUser?.name||'';DB.bndesDraft=draft;
+    const saved=await persist();renderBndesDraft();if(!saved)markBndesDraftDirty();
     if(productError)showToast(`Estrutura carregada, mas a NF-e de venda do código ${rootCode} não foi localizada: ${String(productError?.message||productError).replace(/^.*?:\s*/,'')}`,'err');
     else if(!productComplete)showToast(`A NF-e de venda foi localizada, mas há campos fiscais incompletos para ${rootCode}. Confira Informações Gerais e Categorização.`,'err');
     else if(serviceError)showToast(`A NF-e de venda e a estrutura foram carregadas com ${automaticServices.length} serviço(s) IN, mas os pedidos de compra dos serviços não puderam ser consultados: ${String(serviceError?.message||serviceError).replace(/^.*?:\s*/,'')}`,'err');
     else if(fiscalError)showToast(`A estrutura e ${automaticServices.length} serviço(s) IN foram carregados, mas a consulta fiscal dos materiais falhou: ${String(fiscalError?.message||fiscalError).replace(/^.*?:\s*/,'')}`,'err');
-    else showToast(`NF-e ${productAudit.produto?.numeroNota||''}, dados do produto, ${flattened.components.length} componente(s) e ${draft.services.length} serviço(s) carregados.`);
+    else showToast(`NF-e ${productAudit.produto?.numeroNota||''}, dados do produto, ${flattened.components.length} componente(s) e ${draft.services.length} serviço(s) carregados e salvos.`);
   }catch(error){console.error('Componentes BNDES:',error);if(status)status.textContent='Falha ao carregar a estrutura.';showToast(String(error?.message||'Não foi possível consultar a estrutura.').replace(/^.*?:\s*/,''),'err');}
-  finally{if(button){button.disabled=false;button.innerHTML='<span class="msi msi-sm">sync</span> Carregar estrutura';}}
+  finally{if(button){button.disabled=false;button.innerHTML='<span class="msi msi-sm">sync</span> Puxar informações';}}
 }
 function switchPartsView(view){
   view=['catalog','return','price','bndes'].includes(view)?view:'catalog';
   if(!hasAccess(`pecas.${view}`)){showAccessDenied();return;}
   const catalog=document.getElementById('partsCatalog'),equipmentReturn=document.getElementById('partsEquipmentReturn'),calculator=document.getElementById('partsPriceCalculator'),bndes=document.getElementById('partsBndesRegistration');
   if(!catalog||!equipmentReturn||!calculator||!bndes)return;
+  if(partsView==='bndes'&&view!=='bndes'){
+    DB.bndesDraft=bndesLiveDraft();persist();
+  }
   partsView=view;
   catalog.style.display=view==='catalog'?'':'none';
   equipmentReturn.classList.toggle('active',view==='return');
@@ -9211,7 +9285,7 @@ function accountingConditionRowsMarkup(rows,side){
 function accountingOrderBlocksMarkup(groups,side){
   if(!groups.length)return '<div class="accounting-empty accounting-order-card">Nenhum pedido corresponde aos filtros atuais.</div>';
   const settledLabel=side==='receber'?'Recebido':'Pago';
-  return groups.map(group=>{const delivery=accountingDeliveryInfo(group);return `<details class="accounting-order-card">
+  return groups.map(group=>{const delivery=accountingDeliveryInfo(group);return `<details class="accounting-order-card"${uiCollapseAttributes(`contabilidade-${side}-${group.key||group.numero}`,false)}>
     <summary class="accounting-order-summary">
       <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} condição(ões) de pagamento</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span>${side==='receber'&&group.isFullyReceived?(group.removalDate?`<span class="accounting-removal-chip" title="Contagem de 30 dias após o último pagamento"><span class="msi msi-sm">hourglass_top</span>Remoção em: ${group.removalDaysLeft} dia(s)</span>`:`<span class="accounting-removal-chip missing" title="O MaxiProd não informou a data da última baixa"><span class="msi msi-sm">schedule</span>100% recebido · sem data da última baixa</span>`):''}</div></div>
       <div class="accounting-order-metric optional"><span>Valor total do pedido</span><b>${fmtBRL(group.total)}</b></div>
@@ -10069,6 +10143,19 @@ signInAnonymously(auth).catch((err)=>{
 });
 
 // ─────────── CONTROLE DE HORAS (CONTROL ID) ───────────
+const UI_COLLAPSE_STORAGE_KEY='cartamac_ui_collapsible_state_v1';
+function uiCollapseState(){
+  try{return JSON.parse(localStorage.getItem(UI_COLLAPSE_STORAGE_KEY)||'{}')||{};}catch(error){return {};}
+}
+function uiCollapseIsOpen(key,defaultOpen=true){
+  const state=uiCollapseState();return Object.prototype.hasOwnProperty.call(state,key)?Boolean(state[key]):defaultOpen;
+}
+function uiCollapseAttributes(key,defaultOpen=true){return ` data-collapse-key="${String(key).replace(/"/g,'')}"${uiCollapseIsOpen(key,defaultOpen)?' open':''}`;}
+function uiCollapseSave(key,open){
+  if(!key)return;const state=uiCollapseState();state[key]=Boolean(open);
+  try{localStorage.setItem(UI_COLLAPSE_STORAGE_KEY,JSON.stringify(state));}catch(error){console.warn('Memória dos blocos retráteis:',error);}
+}
+document.addEventListener('toggle',event=>{const details=event.target;if(details?.matches?.('details[data-collapse-key]'))uiCollapseSave(details.dataset.collapseKey,details.open);},true);
 let hoursEmployeeFilter='';
 let hoursConfigEmployeeNameFilter='';
 let hoursConfigEmploymentFilter='all';
@@ -10079,9 +10166,9 @@ let hoursMealSelectedMonth='';
 let hoursMealEmployeeFilter='';
 let hoursView='balanco';
 let hoursPaymentEmployeeId='';
-let hoursConfigPeopleOpen=true;
-let hoursConfigProfilesOpen=true;
-let hoursConfigInssOpen=true;
+let hoursConfigPeopleOpen=uiCollapseIsOpen('rh-config-funcionarios',true);
+let hoursConfigProfilesOpen=uiCollapseIsOpen('rh-config-padroes',true);
+let hoursConfigInssOpen=uiCollapseIsOpen('rh-config-inss',true);
 let hoursInssPreviewSalary=3000;
 let hoursProfileCleanupPending=false;
 let hoursProfileCleanupSaving=false;
@@ -10612,7 +10699,7 @@ function renderHoursMealsPage(){
       }).join('');
       return `<tr><td style="position:sticky;left:0;z-index:1;background:var(--panel);min-width:260px"><strong>${hoursEscape(employee.name)}</strong></td>${cells}<td style="text-align:center"><strong>${hoursMealCountForEmployee(employee,data,month)}</strong></td></tr>`;
     }).join('');
-    return `<details class="panel hours-meal-week" open><summary class="panel-head"><span>Semana ${weekIndex+1} · ${String(first.day).padStart(2,'0')}/${month} a ${String(last.day).padStart(2,'0')}/${month}</span><span style="margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--gold);font-size:12px"><span class="hours-week-open-label">Recolher</span><span class="hours-week-closed-label">Expandir</span><span class="msi msi-sm hours-week-chevron">expand_more</span></span></summary><div class="finance-table-wrap"><table class="finance-table"><thead><tr><th style="position:sticky;left:0;z-index:2;background:var(--panel2);min-width:260px">Funcionário</th>${headers}<th style="min-width:100px;text-align:center">Total mês</th></tr></thead><tbody>${rows||`<tr><td colspan="9"><div class="empty-state">Nenhum funcionário corresponde ao filtro.</div></td></tr>`}</tbody></table></div></details>`;
+    return `<details class="panel hours-meal-week"${uiCollapseAttributes(`rh-almocos-${year}-${month}-semana-${weekIndex+1}`,true)}><summary class="panel-head"><span>Semana ${weekIndex+1} · ${String(first.day).padStart(2,'0')}/${month} a ${String(last.day).padStart(2,'0')}/${month}</span><span style="margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--gold);font-size:12px"><span class="hours-week-open-label">Recolher</span><span class="hours-week-closed-label">Expandir</span><span class="msi msi-sm hours-week-chevron">expand_more</span></span></summary><div class="finance-table-wrap"><table class="finance-table"><thead><tr><th style="position:sticky;left:0;z-index:2;background:var(--panel2);min-width:260px">Funcionário</th>${headers}<th style="min-width:100px;text-align:center">Total mês</th></tr></thead><tbody>${rows||`<tr><td colspan="9"><div class="empty-state">Nenhum funcionário corresponde ao filtro.</div></td></tr>`}</tbody></table></div></details>`;
   }).join('');
   host.innerHTML=`${hoursTabsHTML()}<div class="parts-head"><div><h2><span class="msi">restaurant</span> Controle de almoços</h2><p>De segunda a quinta o almoço começa ativo para todos. Clique em <strong>Ativo</strong> para dar baixa quando o funcionário avisar que não almoçará.</p></div><button class="btn btn-ghost" type="button" onclick="resetHoursMealMonth('${month}')"><span class="msi msi-sm">restart_alt</span> Restaurar padrão do mês</button></div><div class="panel" style="margin-bottom:18px"><div class="filters" style="padding:16px"><select class="filter-select" style="min-width:210px" onchange="selectHoursMealMonth(this.value)">${options}</select><input id="hoursMealEmployeeFilter" class="form-input" style="max-width:340px" value="${hoursEscape(hoursMealEmployeeFilter)}" placeholder="Buscar funcionário..." oninput="filterHoursMealEmployees(this.value)"><span class="finance-result-count">${employees.length} de ${allEmployees.length} funcionário(s)</span></div></div><div class="stats-row" style="margin-bottom:18px"><div class="stat-card"><span class="stat-label">Dias com almoço</span><span class="stat-value">${eligibleDays.length}</span><span class="stat-sub">Segunda a quinta em ${names[Number(month)-1]}</span></div><div class="stat-card"><span class="stat-label">Funcionários</span><span class="stat-value">${allEmployees.length}</span><span class="stat-sub">Cadastro usado neste mês</span></div><div class="stat-card"><span class="stat-label">Almoços ativos</span><span class="stat-value" style="color:var(--green)">${totalMeals}</span><span class="stat-sub">Total previsto para cobrança</span></div><div class="stat-card"><span class="stat-label">Baixas realizadas</span><span class="stat-value" style="color:${removed?'var(--red)':'var(--text)'}">${removed}</span><span class="stat-sub">Almoços retirados pelo RH</span></div></div>${weeksHTML}`;
 }
@@ -10862,9 +10949,9 @@ async function setHoursEmploymentType(value){
 }
 function selectHoursPaymentEmployee(value){hoursPaymentEmployeeId=value;renderHoursControlPage();}
 function toggleHoursConfigSection(section){
-  if(section==='people')hoursConfigPeopleOpen=!hoursConfigPeopleOpen;
-  if(section==='profiles')hoursConfigProfilesOpen=!hoursConfigProfilesOpen;
-  if(section==='inss')hoursConfigInssOpen=!hoursConfigInssOpen;
+  if(section==='people'){hoursConfigPeopleOpen=!hoursConfigPeopleOpen;uiCollapseSave('rh-config-funcionarios',hoursConfigPeopleOpen);}
+  if(section==='profiles'){hoursConfigProfilesOpen=!hoursConfigProfilesOpen;uiCollapseSave('rh-config-padroes',hoursConfigProfilesOpen);}
+  if(section==='inss'){hoursConfigInssOpen=!hoursConfigInssOpen;uiCollapseSave('rh-config-inss',hoursConfigInssOpen);}
   renderHoursControlPage();
 }
 function renderHoursBankPage(){
@@ -11140,7 +11227,7 @@ Object.assign(window,{
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,setAccessEditor,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,sendGmailTestEmail,runNotificationEngine,enableMobilePush,disableMobilePush,
-  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,renderBndesDraft,markBndesDraftDirty,saveBndesDraft,clearBndesRegistration,switchBndesPortalTab,validateBndesDraft,exportBndesXml,loadBndesGeneralInfoFromMaxiprod,loadBndesComponentsFromMaxiprod,refreshBndesServicesFromMaxiprod,filterBndesComponents,filterBndesServices,updateBndesComponentField,toggleAllBndesComponents,addBndesService,updateBndesServiceField,removeBndesService,addBndesLabor,updateBndesLaborField,removeBndesLabor,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
+  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,renderBndesDraft,markBndesDraftDirty,saveBndesDraft,clearBndesRegistration,switchBndesPortalTab,validateBndesDraft,exportBndesXml,loadBndesGeneralInfoFromMaxiprod,loadBndesMasterData,loadBndesComponentsFromMaxiprod,refreshBndesServicesFromMaxiprod,filterBndesComponents,filterBndesServices,updateBndesComponentField,toggleAllBndesComponents,addBndesService,updateBndesServiceField,removeBndesService,addBndesLabor,updateBndesLaborField,removeBndesLabor,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,beginCommercialStructurePriceEdit,
   filterCostCards,saveCostsPassword,
