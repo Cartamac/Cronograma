@@ -4344,6 +4344,13 @@ async function toggleCommissionPayment(encodedKey){
   if(DB.commissionPayments[key])delete DB.commissionPayments[key];else DB.commissionPayments[key]={paid:true,paidAt:new Date().toISOString(),paidBy:loggedUser?.ref?.name||loggedUser?.name||''};
   renderFinanceiroFiscal();const ok=await persist();showToast(ok?(DB.commissionPayments[key]?'Comissão marcada como paga.':'Baixa da comissão removida.'):'Não foi possível salvar a baixa.',ok?'ok':'err');
 }
+function commissionGroupSettlement(group){
+  if(!group?.items?.length||!group.items.every(item=>(Number(item.recebido)||0)>0&&Math.max(0,Number(item.aberto)||0)<=.01))return {complete:false,archived:false,remainingDays:null,paid:0,total:0};
+  const due=[];group.items.forEach((item,index)=>{const year=item.recebimento?.getFullYear?.()||item.vencimento?.getFullYear?.()||commissionYear;commissionRecipients(group,item,year).filter(recipient=>recipient.amount>0).forEach(recipient=>{const key=`${commissionInstallmentKey(group,item,index)}|${recipient.person}|${recipient.role}`;due.push({key,payment:commissionPaymentRecord(key)});});});
+  if(!due.length||due.some(entry=>!entry.payment?.paidAt))return {complete:false,archived:false,remainingDays:null,paid:due.filter(entry=>entry.payment).length,total:due.length};
+  const completedAt=new Date(Math.max(...due.map(entry=>new Date(entry.payment.paidAt).getTime()).filter(Number.isFinite)));if(Number.isNaN(completedAt.getTime()))return {complete:false,archived:false,remainingDays:null,paid:due.length,total:due.length};
+  const elapsedDays=Math.floor((Date.now()-completedAt.getTime())/86400000),remainingDays=Math.max(0,15-elapsedDays);return {complete:true,archived:elapsedDays>=15,remainingDays,completedAt,paid:due.length,total:due.length};
+}
 function commissionScheduledPaymentDate(receivedAt){
   if(!(receivedAt instanceof Date)||Number.isNaN(receivedAt.getTime()))return null;
   return receivedAt.getDate()<=14?new Date(receivedAt.getFullYear(),receivedAt.getMonth(),15):new Date(receivedAt.getFullYear(),receivedAt.getMonth()+1,1);
@@ -4429,6 +4436,16 @@ function exportCommissionMonthPDF(){
   const filterFile=sellerLabel&&sellerLabel!=='Todos'?`_${hoursPdfFilename(sellerLabel)}`:'';
   cartamacPdfSave(report.doc,`Comissoes_${commissionYear}-${String(commissionMonth+1).padStart(2,'0')}${filterFile}.pdf`,{sector:'FINANCEIRO / FISCAL',footerText:'Documento gerado pelo aplicativo CARTAMAC · Relatório de comissões conforme filtros exibidos'});showToast('Relatório de comissões gerado conforme os filtros.','ok');
 }
+function exportCommissionOrderPDF(encodedKey,event){
+  event?.preventDefault?.();event?.stopPropagation?.();const key=decodeURIComponent(encodedKey),group=commissionGroups().find(item=>item.key===key);if(!group){showToast('Pedido não encontrado para gerar o relatório.','err');return;}
+  const rows=[];group.items.forEach((item,index)=>{const year=item.recebimento?.getFullYear?.()||item.vencimento?.getFullYear?.()||commissionYear,recipients=commissionRecipients(group,item,year),baseKey=commissionInstallmentKey(group,item,index);if(!recipients.length)rows.push({item,recipient:{person:'SEM VENDEDOR',role:'Verificação',rate:null,amount:0},payment:null});else recipients.forEach(recipient=>rows.push({item,recipient,payment:commissionPaymentRecord(`${baseKey}|${recipient.person}|${recipient.role}`)}));});
+  const received=group.items.reduce((sum,item)=>sum+Math.max(0,Number(item.recebido)||0),0),commissionTotal=rows.reduce((sum,row)=>sum+row.recipient.amount,0),commissionPaid=rows.reduce((sum,row)=>sum+(row.payment?row.recipient.amount:0),0),settlement=commissionGroupSettlement(group);
+  const status=settlement.complete?`Todas as comissões baixadas · ocultação automática em ${settlement.remainingDays} dia(s)`:settlement.total?`${settlement.paid} de ${settlement.total} comissão(ões) baixada(s)`:'Aguardando recebimentos ou definição dos vendedores';
+  const report=hoursPdfStart('landscape',`Comissões do pedido · ${group.label}`,`${group.client} · ${group.items.length} parcela(s) · ${status}`);if(!report)return;
+  hoursPdfCards(report,[{label:'Valor total do pedido',value:fmtBRL(group.orderValue)},{label:'Valor recebido',value:fmtBRL(received),color:[39,145,72]},{label:'Comissão total',value:fmtBRL(commissionTotal)},{label:'Comissão com baixa',value:fmtBRL(commissionPaid),color:[39,145,72]}]);
+  hoursPdfTable(report,[{label:'Parcela',width:14},{label:'Descrição',width:48},{label:'Vencimento',width:20},{label:'Recebimento',width:20},{label:'Valor parcela',width:27,align:'right'},{label:'Valor recebido',width:27,align:'right'},{label:'Vendedor',width:25},{label:'Função',width:20},{label:'Percentual',width:18,align:'right'},{label:'Comissão',width:25,align:'right'},{label:'Baixa',width:34}],rows.map(({item,recipient,payment})=>[`${item.parcela.numero}/${item.parcela.total}`,item.descricao,receberDataFormat(item.vencimento),receberDataFormat(item.recebimento),fmtBRL(item.valorParcela),{text:fmtBRL(item.recebido),color:item.recebido>0?[39,145,72]:[38,38,38]},recipient.person,recipient.role,recipient.rate===null?'—':`${(recipient.rate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`,{text:fmtBRL(recipient.amount),bold:true},payment?{text:`Pago em ${receberDataFormat(new Date(payment.paidAt))}`,color:[39,145,72],bold:true}:{text:recipient.amount>0?'Pendente':'—',color:recipient.amount>0?[205,45,58]:[95,95,95],bold:recipient.amount>0}]));
+  cartamacPdfSave(report.doc,`${hoursPdfFilename(`Comissoes_Pedido_${group.label}`)}.pdf`,{sector:'FINANCEIRO / FISCAL',footerText:'Documento gerado pelo aplicativo CARTAMAC · Relatório individual de comissões do pedido'});showToast('Relatório do pedido gerado com sucesso.','ok');
+}
 function commissionApplyGeneralSellerFilter(value){
   const empty=value==='__none__',seller=financeNormalize(value||'');let visible=0;document.querySelectorAll('.commission-order').forEach(card=>{const values=String(card.dataset.sellers||'').split('|').filter(Boolean),show=empty?!values.length:!seller||values.includes(seller);card.hidden=!show;if(show)visible++;});const count=document.getElementById('commissionGeneralSellerCount');if(count)count.textContent=`${visible} pedido(s)`;
 }
@@ -4442,7 +4459,7 @@ function renderCommissionsPage(target){
   const availableYears=[...new Set([2026,2027,(new Date()).getFullYear(),...allGroups.flatMap(group=>group.items.flatMap(item=>[item.vencimento?.getFullYear(),item.recebimento?.getFullYear()]).filter(Boolean))])].sort((a,b)=>b-a);
   if(!availableYears.includes(commissionYear))commissionYear=availableYears[0]||2026;
   const query=financeNormalize(commissionSearch);
-  const groups=allGroups.map(group=>({...group,periodItems:group.items.filter(item=>commissionItemInPeriod(item,commissionYear,commissionMonth))}))
+  const groups=allGroups.filter(group=>!commissionGroupSettlement(group).archived).map(group=>({...group,periodItems:group.items.filter(item=>commissionItemInPeriod(item,commissionYear,commissionMonth))}))
     .filter(group=>group.periodItems.length&&(!query||financeNormalize([group.label,group.client,...commissionAssignmentSellers(group.assignment).map(entry=>entry.name),...group.items.map(item=>item.descricao)].join(' ')).includes(query)));
   const installments=groups.flatMap(group=>group.periodItems.map(item=>{const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente=group.assignment?.gerente||(vendedor==='EVANDO'?'MOHR':'');return {group,item,sellerRate:commissionSellerRate(group,commissionYear),managerRate:commissionManagerRate(vendedor,gerente,commissionYear)};}));
   const paid=installments.filter(entry=>entry.item.recebido>0&&commissionDateInPeriod(entry.item.recebimento,commissionYear,commissionMonth));
@@ -4478,6 +4495,7 @@ function renderCommissionsPage(target){
   groups.forEach((group,index)=>{
     const card=orderCards[index],totals=commissionGroupGenericTotals(group,commissionYear);if(!card)return;
     card.dataset.sellers=commissionAssignmentSellers(group.assignment).map(entry=>financeNormalize(entry.name)).join('|');
+    const orderTitle=card.querySelector('.commission-order-title'),settlement=commissionGroupSettlement(group);if(orderTitle){const reportButton=document.createElement('button');reportButton.type='button';reportButton.className='btn btn-ghost btn-sm';reportButton.innerHTML='<span class="msi msi-sm">picture_as_pdf</span> PDF do pedido';reportButton.onclick=event=>exportCommissionOrderPDF(encodeURIComponent(group.key),event);orderTitle.append(reportButton);if(settlement.complete){const closing=document.createElement('span');closing.style.color='var(--gold)';closing.textContent=`Todas as baixas concluídas · ocultação em ${settlement.remainingDays} dia(s)`;orderTitle.append(closing);}}
     const detail=card.querySelector('.commission-detail');if(detail)detail.innerHTML=commissionGeneralDetailHtml(group,commissionYear);
     const owners=card.querySelectorAll('.commission-order-owner');if(owners[0])owners[0].innerHTML=commissionOrderSellersHtml(group);if(owners[1])owners[1].remove();
     const metrics=card.querySelectorAll('.commission-order-metric');
@@ -11665,7 +11683,7 @@ Object.assign(window,{
   unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,beginCommercialStructurePriceEdit,
   filterCostCards,saveCostsPassword,
   renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
-  commissionSetYear,commissionSetMonth,commissionSetSearch,setCommissionVendedor,setCommissionGerente,setCommissionCustomRate,addCommissionSeller,deleteCommissionSeller,addCommissionOrderSeller,removeCommissionOrderSeller,setCommissionSellerCustomRate,toggleCommissionPayment,commissionApplyMonthFilters,commissionApplyGeneralSellerFilter,exportCommissionMonthPDF,ensureCommissionHistory,
+  commissionSetYear,commissionSetMonth,commissionSetSearch,setCommissionVendedor,setCommissionGerente,setCommissionCustomRate,addCommissionSeller,deleteCommissionSeller,addCommissionOrderSeller,removeCommissionOrderSeller,setCommissionSellerCustomRate,toggleCommissionPayment,commissionApplyMonthFilters,commissionApplyGeneralSellerFilter,exportCommissionMonthPDF,exportCommissionOrderPDF,ensureCommissionHistory,
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,toggleSalesGeography,setSalesGeographyYear,selectSalesGeographyUf,exportSalesYearReport,
   renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,applyPurchaseOrderFilter,clearPurchaseOrderFilters,togglePurchaseOrdersOverdue,togglePurchaseOrdersToday,exportPurchaseOrdersPDF,
