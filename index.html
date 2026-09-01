@@ -144,13 +144,15 @@ body:not(.master-session) button[onclick^="refreshFinanceiroFiscal"],body:not(.m
 .parts-manual-create-grid input,.parts-manual-create-grid select{width:100%;height:42px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:0 12px;font:500 13px Inter,sans-serif;outline:none;}
 .parts-manual-create-grid input:focus,.parts-manual-create-grid select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(205,173,72,.1);}
 .parts-manual-create-grid button{height:42px;white-space:nowrap;}
+.parts-manual-group-create{display:grid;grid-template-columns:minmax(300px,1.4fr) minmax(280px,1fr) auto;gap:12px;align-items:end;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.parts-manual-group-create .form-group{margin:0;min-width:0;}.parts-manual-group-create input,.parts-manual-group-create select{width:100%;height:42px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:0 12px;font:500 13px Inter,sans-serif;outline:none;}.parts-manual-group-create input:focus,.parts-manual-group-create select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(205,173,72,.1);}.parts-manual-group-create button{height:42px;white-space:nowrap;}
 .parts-manual-delete{display:grid;grid-template-columns:minmax(320px,1fr) auto;gap:12px;align-items:end;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
 .parts-manual-delete .form-group{margin:0;min-width:0;}
 .parts-manual-delete select{width:100%;height:42px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);padding:0 12px;font:500 13px Inter,sans-serif;outline:none;}
 .parts-manual-delete select:focus{border-color:var(--red);box-shadow:0 0 0 2px rgba(239,68,68,.1);}
 .parts-manual-delete button{height:42px;white-space:nowrap;border-color:rgba(239,68,68,.55);color:var(--red);}
-@media(max-width:1200px){.parts-manual-create-grid{grid-template-columns:repeat(2,minmax(220px,1fr));}.parts-manual-create-grid button{width:100%;}}
-@media(max-width:640px){.parts-manual-create-grid,.parts-manual-delete{grid-template-columns:1fr;}}
+@media(max-width:1200px){.parts-manual-create-grid{grid-template-columns:repeat(2,minmax(220px,1fr));}.parts-manual-create-grid button{width:100%;}.parts-manual-group-create{grid-template-columns:1fr 1fr;}.parts-manual-group-create button{width:100%;}}
+@media(max-width:640px){.parts-manual-create-grid,.parts-manual-delete,.parts-manual-group-create{grid-template-columns:1fr;}}
 .parts-table-wrap{overflow:auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);}
 .parts-table{width:100%;border-collapse:collapse;min-width:850px;font-size:14px;}
 .parts-table th{background:var(--bg3);color:var(--text3);text-align:left;padding:12px 14px;font-size:11.5px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;border-bottom:1px solid var(--border2);position:sticky;top:0;}
@@ -1466,6 +1468,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 @media(max-width:1050px){.price-cost-row{grid-template-columns:repeat(2,minmax(0,1fr));}.price-breakdown-grid{grid-template-columns:1fr;}#partsPriceCalculator .price-grid{grid-template-columns:1fr;}}
 @media(max-width:640px){.price-cost-row{grid-template-columns:1fr;}.price-breakdown-table{min-width:520px;}.price-breakdown-card{overflow-x:auto;}.price-tax-group h3,.price-equipment-group h3,.price-tax-row,.price-equipment-row{grid-template-columns:minmax(90px,1fr) 82px minmax(110px,1fr);}.price-tax-row input,.price-equipment-row input{width:82px;}.price-tax-value,.price-equipment-value{font-size:12px;}}
 .price-quote-controls{display:grid;grid-template-columns:minmax(260px,1fr) minmax(240px,auto) auto auto auto;gap:12px;align-items:end;margin-bottom:16px;}.price-quote-controls .form-group{margin:0;}.price-manual-item-form{display:none;grid-template-columns:minmax(120px,.65fr) minmax(260px,2fr) minmax(145px,.75fr) minmax(110px,.55fr) auto auto;gap:10px;align-items:end;margin:-4px 0 16px;padding:14px;border:1px solid rgba(211,176,70,.42);border-radius:var(--radius2);background:rgba(211,176,70,.055);}.price-manual-item-form.active{display:grid;}.price-manual-item-form .form-group{margin:0;}.price-manual-item-form .btn{white-space:nowrap;}.price-quote-list{border:1px solid var(--border);border-radius:var(--radius2);overflow:auto;background:var(--bg2);}.price-quote-table{width:100%;min-width:1260px;border-collapse:collapse;table-layout:fixed;}.price-quote-table th{padding:10px 9px;background:#191919;color:var(--text3);font-size:9px;letter-spacing:.35px;text-align:left;text-transform:uppercase;line-height:1.25;}.price-quote-table th:nth-child(n+3),.price-quote-table td:nth-child(n+3){text-align:right;}.price-quote-table td{padding:10px 9px;border-top:1px solid var(--border);color:var(--text2);font-size:12px;vertical-align:middle;}.price-quote-table td:first-child{font-family:'JetBrains Mono',monospace;color:var(--accent2);font-weight:800;}.price-quote-table td:nth-child(3),.price-quote-table td:nth-child(n+5):nth-child(-n+7){font-family:'JetBrains Mono',monospace;font-weight:800;white-space:nowrap;}.price-quote-table td:nth-child(6){color:var(--accent2);}.price-quote-table td:nth-child(7){color:var(--green);}.price-quote-table input{width:72px;padding:7px 8px;border:1px solid var(--border2);border-radius:5px;background:var(--bg4);color:var(--text);font:800 13px 'JetBrains Mono',monospace;text-align:center;}.price-quote-table tfoot td{background:rgba(211,176,70,.08);color:var(--accent2);font-size:12px;font-weight:900;}.price-quote-table tfoot td:nth-child(7){color:var(--green);}.price-quote-empty{padding:24px;text-align:center;color:var(--text3);}.parts-quote-action{text-align:center!important;}.parts-quote-action .btn{white-space:nowrap;}.price-quote-count{display:inline-flex;margin-left:8px;padding:3px 8px;border:1px solid rgba(211,176,70,.45);border-radius:999px;color:var(--accent2);font-size:10px;font-weight:800;vertical-align:middle;}
+.price-quote-file-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:-4px 0 16px;}.price-quote-file-actions .btn{white-space:nowrap;}
 @media(max-width:1100px){.price-manual-item-form{grid-template-columns:1fr 2fr 1fr 1fr;}.price-manual-item-form .btn{width:100%;}}
 @media(max-width:900px){.price-quote-controls{grid-template-columns:1fr 1fr;}.price-manual-item-form{grid-template-columns:1fr 1fr;}.price-quote-list{overflow-x:auto;}.price-quote-table{min-width:760px;}}
 @media(max-width:560px){.price-quote-controls{grid-template-columns:1fr;}}
@@ -1866,7 +1869,12 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     </div>
     <div class="parts-manual-create" id="partsManualCreateBox">
       <h3><span class="msi msi-sm">add_box</span> Cadastrar novo item por DS</h3>
-      <p>Informe as três primeiras colunas da tabela e escolha o equipamento/grupo ao qual o item pertence.</p>
+      <p>Primeiro cadastre um equipamento/grupo quando ele ainda não existir. Depois, inclua os itens DS dentro dele.</p>
+      <div class="parts-manual-group-create">
+        <div class="form-group"><label>NOVO EQUIPAMENTO / GRUPO</label><input id="partsManualGroupName" type="text" placeholder="Ex.: HIDRAPULPER MBC 44"></div>
+        <div class="form-group"><label>SEÇÃO DA TABELA</label><select id="partsManualGroupSection"><option value="">Sem seção — final da tabela</option></select></div>
+        <button class="btn btn-gold" type="button" onclick="createManualPartGroup()"><span class="msi msi-sm">precision_manufacturing</span> Cadastrar equipamento</button>
+      </div>
       <div class="parts-manual-create-grid">
         <div class="form-group"><label>TAG</label><input id="partsManualTag" type="text" placeholder="Ex.: HBD 17 - HBD 23"></div>
         <div class="form-group"><label>CÓD. DS</label><input id="partsManualCode" type="text" placeholder="Ex.: DS1003" autocomplete="off"></div>
@@ -1906,6 +1914,11 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
         <button class="btn btn-ghost btn-sm" type="button" onclick="togglePartsPriceManualForm()"><span class="msi msi-sm">add_box</span> Criar item manual</button>
         <button class="btn btn-ghost btn-sm" type="button" onclick="clearPartsPriceQuote()"><span class="msi msi-sm">delete_sweep</span> Limpar orçamento</button>
         <button class="btn btn-gold btn-sm" type="button" onclick="exportPartsPriceReport()"><span class="msi msi-sm">picture_as_pdf</span> Gerar relatório</button>
+      </div>
+      <div class="price-quote-file-actions">
+        <button class="btn btn-ghost btn-sm" type="button" onclick="exportPartsPriceQuoteFile()"><span class="msi msi-sm">save</span> Salvar orçamento editável</button>
+        <button class="btn btn-ghost btn-sm" type="button" onclick="document.getElementById('priceQuoteImportInput').click()"><span class="msi msi-sm">upload_file</span> Importar orçamento</button>
+        <input id="priceQuoteImportInput" type="file" accept=".json,.cartamac-orcamento.json,application/json" hidden onchange="importPartsPriceQuoteFile(event)">
       </div>
       <div id="priceManualItemForm" class="price-manual-item-form">
         <div class="form-group"><label>Código (opcional)</label><input id="priceManualCode" type="text" placeholder="Ex.: MANUAL-01"></div>
@@ -8542,6 +8555,19 @@ function getPartsPriceReportData(){
   const items=partsPriceQuoteItems.map(item=>({...item,quantity:Math.max(1,Math.floor(Number(item.quantity)||1)),total:(Number(item.unitCost)||0)*Math.max(1,Math.floor(Number(item.quantity)||1))}));
   return {...report,items,name:document.getElementById('priceItemName')?.value.trim()||`${items.length} peça(s) para orçamento`,sale:report.totalWithTaxes,discounted:report.finalPrice,withoutTax:report.totalWithoutIcmsIpi,saleWithIpi:report.totalWithTaxes,discountedWithIpi:report.finalPrice,markup:report.equipmentFactor*100};
 }
+function partsPriceQuoteEditableData(){
+  const values=selector=>Array.from(document.querySelectorAll(selector)).map(input=>parseBRNumber(input.value));
+  return {format:'CARTAMAC_ORCAMENTO_FORMACAO_PRECO',version:1,exportedAt:new Date().toISOString(),name:document.getElementById('priceItemName')?.value.trim()||'',discount:parseBRNumber(document.getElementById('priceDiscount')?.value),items:partsPriceQuoteItems.map(item=>({code:item.code,equipment:item.equipment,unitCost:Math.max(0,Number(item.unitCost)||0),quantity:Math.max(1,Math.floor(Number(item.quantity)||1)),manual:Boolean(item.manual)})),equipmentIndexes:values('.price-equipment-index'),taxes:values('.price-tax'),ipi:parseBRNumber(document.querySelector('.price-tax-ipi')?.value)};
+}
+function exportPartsPriceQuoteFile(){
+  const data=partsPriceQuoteEditableData();if(!data.items.length){showToast('Adicione pelo menos uma peça antes de salvar o orçamento.','err');return;}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'}),link=document.createElement('a'),url=URL.createObjectURL(blob),name=data.name||'Orçamento de peças';link.href=url;link.download=`${safeReportFileName(name)}.cartamac-orcamento.json`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);showToast('Orçamento editável salvo com peças, quantidades, índices e impostos.','ok');
+}
+async function importPartsPriceQuoteFile(event){
+  const input=event?.target,file=input?.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data?.format!=='CARTAMAC_ORCAMENTO_FORMACAO_PRECO'||!Array.isArray(data.items))throw new Error('Este arquivo não é um orçamento editável válido do CARTAMAC.');if(partsPriceQuoteItems.length&&!confirm('Substituir o orçamento atual pelo orçamento deste arquivo?'))return;
+    const used=new Set(),items=[];data.items.forEach((raw,index)=>{const rawCode=partsStructureCode(raw?.code||''),base=rawCode.replace(/[^A-Z0-9._+-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')||`IMPORTADO-${index+1}`;let code=base,suffix=2;while(used.has(code))code=`${base}-${suffix++}`;used.add(code);const equipment=String(raw?.equipment||'').trim(),unitCost=Math.max(0,Number(raw?.unitCost)||0),quantity=Math.max(1,Math.floor(Number(raw?.quantity)||1));if(equipment&&unitCost>=0)items.push({code,equipment,unitCost,quantity,manual:Boolean(raw?.manual),addedAt:new Date().toISOString()});});if(!items.length)throw new Error('O arquivo não contém itens válidos para importar.');partsPriceQuoteItems=items;savePartsPriceQuote();
+    const nameInput=document.getElementById('priceItemName');if(nameInput)nameInput.value=String(data.name||'');const discountValue=Number(data.discount),discountInput=document.getElementById('priceDiscount');if(discountInput&&Number.isFinite(discountValue))discountInput.value=String(discountValue);const apply=(selector,values)=>{if(!Array.isArray(values))return;document.querySelectorAll(selector).forEach((element,index)=>{if(Number.isFinite(Number(values[index])))element.value=String(values[index]);});};apply('.price-equipment-index',data.equipmentIndexes);apply('.price-tax',data.taxes);if(Number.isFinite(Number(data.ipi)))document.querySelector('.price-tax-ipi').value=String(data.ipi);switchPartsView('price');renderPartsPriceQuote();showToast(`${items.length} item(ns) importado(s). Índices e impostos foram restaurados.`,'ok');
+  }catch(error){showToast(error?.message||'Não foi possível importar o orçamento.','err');}finally{if(input)input.value='';}
+}
 function exportPartsPriceReport(){
   const report=getPartsPriceReportData(),js=window.jspdf?.jsPDF;
   if(!report.items.length){showToast('Adicione pelo menos uma peça ao orçamento antes de gerar o relatório.','err');return;}
@@ -8601,11 +8627,13 @@ function partsManualGroups(){
   });
   return groups;
 }
+function partsManualSections(){return (DB.partsData||[]).map((row,index)=>({row,index})).filter(({row})=>row?.group&&(row.section||isPartsSection(row.tag))).map(({row,index})=>({index,tag:String(row.tag||'').trim()}));}
 function populatePartsManualGroupOptions(){
   const select=document.getElementById('partsManualParent');if(!select)return;
   const previous=select.value,groups=partsManualGroups();
   select.innerHTML=`<option value="">Selecione o equipamento/grupo</option>${groups.map(group=>`<option value="${group.index}">${escapeHTML(group.section?`${group.section} — ${group.tag}`:group.tag)}</option>`).join('')}`;
   if(groups.some(group=>String(group.index)===previous))select.value=previous;
+  const sectionSelect=document.getElementById('partsManualGroupSection');if(sectionSelect){const previousSection=sectionSelect.value,sections=partsManualSections();sectionSelect.innerHTML=`<option value="">Sem seção — final da tabela</option>${sections.map(section=>`<option value="${section.index}">${escapeHTML(section.tag)}</option>`).join('')}`;if(sections.some(section=>String(section.index)===previousSection))sectionSelect.value=previousSection;}
   const deleteSelect=document.getElementById('partsDeleteCode');
   if(deleteSelect){
     const previousDelete=deleteSelect.value;let section='',group='';
@@ -8617,6 +8645,16 @@ function populatePartsManualGroupOptions(){
     deleteSelect.innerHTML=`<option value="">Selecione o DS que será excluído</option>${items.map(item=>`<option value="${escapeHTML(item.code)}">${escapeHTML(`${item.code} — ${item.equipment}${item.group?` · ${item.group}`:''}`)}</option>`).join('')}`;
     if(items.some(item=>item.code===previousDelete))deleteSelect.value=previousDelete;
   }
+}
+async function createManualPartGroup(){
+  if(!isMaster(loggedUser)){showToast('Somente o administrador mestre pode cadastrar equipamentos.','err');return;}
+  const name=String(document.getElementById('partsManualGroupName')?.value||'').trim(),data=Array.isArray(DB.partsData)?DB.partsData:[],sectionRaw=String(document.getElementById('partsManualGroupSection')?.value||''),sectionIndex=sectionRaw===''?NaN:Number(sectionRaw);
+  if(!name){showToast('Informe o nome do novo equipamento/grupo.','err');document.getElementById('partsManualGroupName')?.focus();return;}
+  if(data.some(row=>row?.group&&!row.section&&!isPartsSection(row.tag)&&normalisePartSearch(row.tag)===normalisePartSearch(name))){showToast('Esse equipamento/grupo já está cadastrado.','err');return;}
+  const now=new Date().toISOString(),group={group:true,section:false,tag:name,createdManuallyAt:now};let insertAt=data.length;
+  if(Number.isInteger(sectionIndex)&&data[sectionIndex]?.group&&(data[sectionIndex].section||isPartsSection(data[sectionIndex].tag))){insertAt=sectionIndex+1;while(insertAt<data.length&&!(data[insertAt]?.group&&(data[insertAt].section||isPartsSection(data[insertAt].tag))))insertAt++;}
+  data.splice(insertAt,0,group);DB.partsData=data;DB.partsLastManualChange=now;const saved=await persist();if(!saved){data.splice(insertAt,1);DB.partsData=data;renderPartsPage();showToast('O equipamento não pôde ser sincronizado; nenhuma alteração foi mantida.','err');return;}
+  const input=document.getElementById('partsManualGroupName');if(input)input.value='';renderPartsPage();const parent=document.getElementById('partsManualParent'),createdIndex=(DB.partsData||[]).findIndex(row=>row===group);if(parent&&createdIndex>=0)parent.value=String(createdIndex);showToast(`${name} cadastrado. Agora você já pode incluir peças dentro dele.`,'ok');
 }
 function insertPartInManualGroup(target,item,parentGroup){
   const wanted=normalisePartSearch(parentGroup),groupIndex=target.findIndex(row=>row?.group&&!row.section&&!isPartsSection(row.tag)&&normalisePartSearch(row.tag)===wanted);
@@ -12168,7 +12206,7 @@ Object.assign(window,{
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,setAccessEditor,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,sendGmailTestEmail,runNotificationEngine,enableMobilePush,disableMobilePush,
-  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,addPartToPriceQuote,togglePartsPriceManualForm,addManualPartToPriceQuote,updatePartsPriceQuoteQuantity,removePartFromPriceQuote,clearPartsPriceQuote,renderPartsPriceQuote,renderBndesDraft,markBndesDraftDirty,saveBndesDraft,clearBndesRegistration,switchBndesPortalTab,validateBndesDraft,exportBndesXml,loadBndesGeneralInfoFromMaxiprod,loadBndesMasterData,loadBndesComponentsFromMaxiprod,refreshBndesServicesFromMaxiprod,filterBndesComponents,filterBndesServices,updateBndesComponentField,toggleAllBndesComponents,addBndesService,updateBndesServiceField,removeBndesService,addBndesLabor,updateBndesLaborField,removeBndesLabor,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
+  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartGroup,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,addPartToPriceQuote,togglePartsPriceManualForm,addManualPartToPriceQuote,updatePartsPriceQuoteQuantity,removePartFromPriceQuote,clearPartsPriceQuote,renderPartsPriceQuote,exportPartsPriceQuoteFile,importPartsPriceQuoteFile,renderBndesDraft,markBndesDraftDirty,saveBndesDraft,clearBndesRegistration,switchBndesPortalTab,validateBndesDraft,exportBndesXml,loadBndesGeneralInfoFromMaxiprod,loadBndesMasterData,loadBndesComponentsFromMaxiprod,refreshBndesServicesFromMaxiprod,filterBndesComponents,filterBndesServices,updateBndesComponentField,toggleAllBndesComponents,addBndesService,updateBndesServiceField,removeBndesService,addBndesLabor,updateBndesLaborField,removeBndesLabor,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,beginCommercialStructurePriceEdit,
   filterCostCards,saveCostsPassword,
