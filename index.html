@@ -1465,6 +1465,10 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 .price-breakdown-note{display:block;margin-top:4px;color:var(--text3);font-size:9px;font-family:Inter,sans-serif;font-weight:500;}
 @media(max-width:1050px){.price-cost-row{grid-template-columns:repeat(2,minmax(0,1fr));}.price-breakdown-grid{grid-template-columns:1fr;}#partsPriceCalculator .price-grid{grid-template-columns:1fr;}}
 @media(max-width:640px){.price-cost-row{grid-template-columns:1fr;}.price-breakdown-table{min-width:520px;}.price-breakdown-card{overflow-x:auto;}.price-tax-group h3,.price-equipment-group h3,.price-tax-row,.price-equipment-row{grid-template-columns:minmax(90px,1fr) 82px minmax(110px,1fr);}.price-tax-row input,.price-equipment-row input{width:82px;}.price-tax-value,.price-equipment-value{font-size:12px;}}
+.price-quote-controls{display:grid;grid-template-columns:minmax(260px,1fr) minmax(240px,auto) auto auto auto;gap:12px;align-items:end;margin-bottom:16px;}.price-quote-controls .form-group{margin:0;}.price-manual-item-form{display:none;grid-template-columns:minmax(120px,.65fr) minmax(260px,2fr) minmax(145px,.75fr) minmax(110px,.55fr) auto auto;gap:10px;align-items:end;margin:-4px 0 16px;padding:14px;border:1px solid rgba(211,176,70,.42);border-radius:var(--radius2);background:rgba(211,176,70,.055);}.price-manual-item-form.active{display:grid;}.price-manual-item-form .form-group{margin:0;}.price-manual-item-form .btn{white-space:nowrap;}.price-quote-list{border:1px solid var(--border);border-radius:var(--radius2);overflow:auto;background:var(--bg2);}.price-quote-table{width:100%;min-width:1260px;border-collapse:collapse;table-layout:fixed;}.price-quote-table th{padding:10px 9px;background:#191919;color:var(--text3);font-size:9px;letter-spacing:.35px;text-align:left;text-transform:uppercase;line-height:1.25;}.price-quote-table th:nth-child(n+3),.price-quote-table td:nth-child(n+3){text-align:right;}.price-quote-table td{padding:10px 9px;border-top:1px solid var(--border);color:var(--text2);font-size:12px;vertical-align:middle;}.price-quote-table td:first-child{font-family:'JetBrains Mono',monospace;color:var(--accent2);font-weight:800;}.price-quote-table td:nth-child(3),.price-quote-table td:nth-child(n+5):nth-child(-n+7){font-family:'JetBrains Mono',monospace;font-weight:800;white-space:nowrap;}.price-quote-table td:nth-child(6){color:var(--accent2);}.price-quote-table td:nth-child(7){color:var(--green);}.price-quote-table input{width:72px;padding:7px 8px;border:1px solid var(--border2);border-radius:5px;background:var(--bg4);color:var(--text);font:800 13px 'JetBrains Mono',monospace;text-align:center;}.price-quote-table tfoot td{background:rgba(211,176,70,.08);color:var(--accent2);font-size:12px;font-weight:900;}.price-quote-table tfoot td:nth-child(7){color:var(--green);}.price-quote-empty{padding:24px;text-align:center;color:var(--text3);}.parts-quote-action{text-align:center!important;}.parts-quote-action .btn{white-space:nowrap;}.price-quote-count{display:inline-flex;margin-left:8px;padding:3px 8px;border:1px solid rgba(211,176,70,.45);border-radius:999px;color:var(--accent2);font-size:10px;font-weight:800;vertical-align:middle;}
+@media(max-width:1100px){.price-manual-item-form{grid-template-columns:1fr 2fr 1fr 1fr;}.price-manual-item-form .btn{width:100%;}}
+@media(max-width:900px){.price-quote-controls{grid-template-columns:1fr 1fr;}.price-manual-item-form{grid-template-columns:1fr 1fr;}.price-quote-list{overflow-x:auto;}.price-quote-table{min-width:760px;}}
+@media(max-width:560px){.price-quote-controls{grid-template-columns:1fr;}}
 /* REV277 — menu lateral ERP mantendo as cores originais da revisão 275 */
 @media(min-width:1101px){
   #screen-dev{min-height:100vh;padding-left:264px;}
@@ -1678,6 +1682,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 .commission-toolbar select option,.commission-month-filters select option,.commission-owner-select option,.seller-select option{color:#111;background:#fff}
 .commission-toolbar label{display:grid;gap:6px;color:var(--text3);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
 .commission-toolbar select,.commission-toolbar input,.commission-owner-select{width:100%;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);padding:10px 12px;font:inherit}
+.commission-filter-report{display:flex;justify-content:flex-end;align-items:center;gap:12px;padding:10px 0 2px}.commission-filter-report span{color:var(--text3);font-size:12px;font-weight:700}
 .commission-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .commission-summary-card{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:16px;display:grid;gap:7px}
 .commission-summary-card span{color:var(--text3);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
@@ -1693,6 +1698,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 .commission-order>summary::-webkit-details-marker{display:none}
 .commission-order-title{display:grid;gap:4px}.commission-order-title b{font-size:14px}.commission-order-title span{color:var(--text3);font-size:11px}
 .commission-order-metric{display:grid;gap:4px}.commission-order-metric span{color:var(--text3);font-size:10px;font-weight:800;text-transform:uppercase}.commission-order-metric strong{font:800 13px 'JetBrains Mono',monospace}
+.commission-order-view-filter{display:grid;gap:4px;margin-top:7px}.commission-order-view-filter span{color:var(--gold);font-size:9px}.commission-order-view-filter select{width:100%;min-width:120px;border:1px solid color-mix(in srgb,var(--gold) 55%,var(--border2));border-radius:7px;background:#fff;color:#111;padding:7px 8px;font-size:11px;font-weight:800}.commission-order-view-filter select option{background:#fff;color:#111}
 .commission-order-owner{display:grid;gap:5px}.commission-order-owner span{color:var(--text3);font-size:10px;font-weight:800;text-transform:uppercase}
 .commission-owner-select.unassigned{border-color:var(--red);color:var(--red)}
 .commission-detail{border-top:1px solid var(--border);padding:0 16px 16px}
@@ -1766,12 +1772,13 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
       <button class="dev-tab active" id="tabCronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="dev-tab" id="tabClientes" onclick="switchDevTab('clientes',this)"><span class="msi msi-sm">group</span> Clientes</button>
       <button class="dev-tab" id="tabAdmins" onclick="switchDevTab('admins',this)"><span class="msi msi-sm">shield_person</span> Admins</button>
-      <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">storefront</span> Comercial</button>
+      <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">storefront</span> Custos</button>
       <button class="dev-tab" id="tabMacroEngenharia" onclick="switchDevTab('macro-engenharia',this)"><span class="msi msi-sm">architecture</span> Macro Engenharia</button>
       <button class="dev-tab" id="tabCompras" onclick="switchDevTab('compras',this)"><span class="msi msi-sm">shopping_cart</span> Pedidos de compra</button>
       <span class="dev-nav-separator" aria-hidden="true"></span>
       <button class="dev-tab" id="tabCustos" onclick="switchDevTab('custos',this)"><span class="msi msi-sm">payments</span> Custos</button>
       <button class="dev-tab" id="tabFinanceiro" onclick="switchDevTab('financeiro',this)"><span class="msi msi-sm">account_balance</span> Financeiro/Fiscal</button>
+      <button class="dev-tab" id="tabComercial" onclick="switchDevTab('comercial',this)"><span class="msi msi-sm">storefront</span> Comercial</button>
       <button class="dev-tab" id="tabContabilidade" onclick="switchDevTab('contabilidade',this)"><span class="msi msi-sm">request_quote</span> Contabilidade</button>
       <button class="dev-tab" id="tabControleHoras" onclick="switchDevTab('controle-horas',this)"><span class="msi msi-sm">schedule</span> RH</button>
     </nav>
@@ -1835,14 +1842,15 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
   </div>
 
   <div class="page" id="page-financeiro"><div id="financeiroContent"></div></div>
+  <div class="page" id="page-comercial"><div id="comercialContent"></div></div>
   <div class="page" id="page-compras"><div id="pedidosCompraContent"></div></div>
   <div class="page" id="page-contabilidade"><div id="contabilidadeContent"></div></div>
   <div class="page" id="page-controle-horas"><div id="hoursControlContent"></div></div>
 
-  <!-- COMERCIAL -->
+  <!-- CUSTOS · COMPONENTES E FORMAÇÃO DE PREÇO -->
   <div class="page" id="page-pecas">
     <div class="parts-head">
-      <div><h2><span class="msi">storefront</span> Comercial</h2><p>Tabela de peças, formação de preço, retorno de equipamentos e preparação de cadastros para o BNDES.</p></div>
+      <div><h2><span class="msi">storefront</span> Custos</h2><p>Tabela de peças, formação de preço, retorno de equipamentos e preparação de cadastros para o BNDES.</p></div>
     </div>
     <div class="parts-subtabs">
       <button class="parts-subtab active" id="partsCatalogTab" onclick="switchPartsView('catalog')"><span class="msi msi-sm">table_chart</span> Tabela de peças</button>
@@ -1890,13 +1898,25 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     </div>
     <div class="price-calc" id="partsEquipmentReturn"></div>
     <div class="price-calc" id="partsPriceCalculator">
-      <p class="price-intro">Informe o custo do equipamento e ajuste os índices. Os impostos são discriminados individualmente e a margem de desconto é aplicada somente ao valor final.</p>
-      <div class="price-inputs"><div class="price-cost-row">
-        <div class="form-group"><label>Custo do equipamento (R$)</label><input class="price-cost-input" id="priceCost" type="text" inputmode="decimal" value="278.924,13" oninput="calculatePartsPrice()"></div>
+      <p class="price-intro">Adicione as peças pela Tabela de peças, informe as quantidades e ajuste os índices. O custo base será a soma de todos os itens deste orçamento.</p>
+      <div class="price-inputs">
+      <div class="price-quote-controls">
+        <div class="form-group"><label>Identificação do orçamento</label><input id="priceItemName" type="text" placeholder="Ex.: Peças Hidrapulper MBC 44" oninput="calculatePartsPrice()"></div>
         <div class="price-discount"><span>Margem de desconto (%)</span><input id="priceDiscount" type="number" min="0" max="99" step="0.01" value="5" oninput="calculatePartsPrice()"></div>
-        <div class="form-group" style="min-width:270px;"><label>Nome da peça / equipamento</label><input id="priceItemName" type="text" placeholder="Ex.: Rotor Hidrapulper" oninput="calculatePartsPrice()"></div>
+        <button class="btn btn-ghost btn-sm" type="button" onclick="togglePartsPriceManualForm()"><span class="msi msi-sm">add_box</span> Criar item manual</button>
+        <button class="btn btn-ghost btn-sm" type="button" onclick="clearPartsPriceQuote()"><span class="msi msi-sm">delete_sweep</span> Limpar orçamento</button>
         <button class="btn btn-gold btn-sm" type="button" onclick="exportPartsPriceReport()"><span class="msi msi-sm">picture_as_pdf</span> Gerar relatório</button>
       </div>
+      <div id="priceManualItemForm" class="price-manual-item-form">
+        <div class="form-group"><label>Código (opcional)</label><input id="priceManualCode" type="text" placeholder="Ex.: MANUAL-01"></div>
+        <div class="form-group"><label>Equipamento / peça</label><input id="priceManualEquipment" type="text" placeholder="Descrição do item"></div>
+        <div class="form-group"><label>Custo unitário</label><input id="priceManualCost" type="text" inputmode="decimal" placeholder="R$ 0,00"></div>
+        <div class="form-group"><label>Quantidade</label><input id="priceManualQuantity" type="number" min="1" step="1" value="1"></div>
+        <button class="btn btn-gold btn-sm" type="button" onclick="addManualPartToPriceQuote()"><span class="msi msi-sm">playlist_add</span> Adicionar item</button>
+        <button class="btn btn-ghost btn-sm" type="button" onclick="togglePartsPriceManualForm(false)">Cancelar</button>
+      </div>
+      <input id="priceCost" type="hidden" value="0">
+      <div id="priceQuoteItems"></div>
       </div>
       <div class="price-section-title">ÍNDICES FORMAÇÃO DE PREÇO</div>
       <div class="price-grid">
@@ -2289,6 +2309,7 @@ const DEFAULT_DB = {
 let DB = JSON.parse(JSON.stringify(DEFAULT_DB));
 let FILE_STORE = {};
 let financeiroView='fluxoCaixa';
+let comercialView='vendas';
 let financeColumnFilters={};
 let financeRefreshInProgress=null;
 let financeRenderQueued=false;
@@ -2311,6 +2332,8 @@ let receberTabelaLimite=200;
 let commissionYear=(new Date()).getFullYear();
 let commissionMonth=-1;
 let commissionSearch='';
+let commissionGeneralSellerSelection='';
+let commissionOrderSellerFilters={};
 let commissionHistoryRefreshInProgress=false;
 let commissionSourcesRefreshInProgress=false;
 // Estado exclusivo da visualização de Contas a pagar.
@@ -2725,11 +2748,12 @@ const isEngineering = u => u && ['engineering','engenharia'].includes(String(u.t
 const ADMIN_ACCESS_GROUPS=[
   {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.atrasos','Atrasos por setor'],['simulador','Simular Cronograma'],['cronograma.importar','Importar e históricos']]},
   {id:'cadastros',label:'Cadastros',icon:'group',items:[['clientes','Clientes'],['admins','Administradores']]},
-  {id:'pecas',label:'Comercial',icon:'storefront',items:[['pecas.catalog','Tabela de peças'],['pecas.return','Retorno equipamentos'],['pecas.price','Formação de preço'],['pecas.bndes','Cadastro BNDES']]},
+  {id:'pecas',label:'Custos',icon:'storefront',items:[['pecas.catalog','Tabela de peças'],['pecas.return','Retorno equipamentos'],['pecas.price','Formação de preço'],['pecas.bndes','Cadastro BNDES']]},
   {id:'macro',label:'Macro Engenharia',icon:'architecture',items:[['macro-engenharia.active','OPs abertas'],['macro-engenharia.completed','Finalizadas'],['macro-engenharia.people','Responsáveis']]},
   {id:'compras',label:'Compras',icon:'shopping_cart',items:[['compras','Pedidos de compra']]},
   {id:'custos',label:'Custos',icon:'payments',items:[['custos.orders','Custos dos pedidos'],['custos.structure','Estrutura multinível']]},
-  {id:'financeiro',label:'Financeiro / Fiscal',icon:'account_balance',items:[['financeiro.fluxoCaixa','Fluxo de caixa mensal'],['financeiro.receber','Contas a receber'],['financeiro.comissoes','Comissões'],['financeiro.pagar','Contas a pagar'],['financeiro.vendas','Vendas'],['financeiro.materiaPrima','Estoque']]},
+  {id:'financeiro',label:'Financeiro / Fiscal',icon:'account_balance',items:[['financeiro.fluxoCaixa','Fluxo de caixa mensal'],['financeiro.receber','Contas a receber'],['financeiro.pagar','Contas a pagar'],['financeiro.materiaPrima','Estoque']]},
+  {id:'comercial',label:'Comercial',icon:'storefront',items:[['financeiro.vendas','Vendas'],['financeiro.comissoes','Comissões']]},
   {id:'contabilidade',label:'Contabilidade',icon:'request_quote',items:[['contabilidade.receber','A receber · Pedidos de venda'],['contabilidade.pagar','A pagar · Pedidos de compra']]}
   ,{id:'horas',label:'Controle de horas',icon:'schedule',items:[['controle-horas','Controle de horas']]}
 ];
@@ -2752,6 +2776,8 @@ function adminPermissions(admin){
 }
 function hasAccess(key,user=loggedUser){return isMaster(user)||adminPermissions(user?.ref)[key]===true;}
 function hasAnyAccess(prefix,user=loggedUser){return isMaster(user)||ADMIN_ACCESS_KEYS.some(key=>(key===prefix||key.startsWith(prefix+'.'))&&hasAccess(key,user));}
+function hasFinanceAreaAccess(user=loggedUser){return ['fluxoCaixa','receber','pagar','materiaPrima'].some(view=>hasAccess(`financeiro.${view}`,user));}
+function hasCommercialAreaAccess(user=loggedUser){return ['vendas','comissoes'].some(view=>hasAccess(`financeiro.${view}`,user));}
 function sectorLabel(admin){
   if(admin?.role==='master'||MASTER_EMAILS.includes(admin?.email))return admin?.sector||'Administração';
   if(admin?.sector)return admin.sector;
@@ -2765,25 +2791,27 @@ function setAccessEditor(prefix,value){if(!isMaster(loggedUser)){showToast('Some
 function readAccessEditor(prefix){const result={};ADMIN_ACCESS_KEYS.forEach(key=>result[key]=false);document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>result[input.dataset.accessKey]=input.checked);return result;}
 function devTabAllowed(id){
   if(['cronograma','atrasos','importar'].includes(id))return hasAccess(`cronograma.${id}`);
-  if(['pecas','macro-engenharia','custos','financeiro','contabilidade'].includes(id))return hasAnyAccess(id);
+  if(id==='financeiro')return hasFinanceAreaAccess();
+  if(id==='comercial')return hasCommercialAreaAccess();
+  if(['pecas','macro-engenharia','custos','contabilidade'].includes(id))return hasAnyAccess(id);
   return hasAccess(id);
 }
 function showAccessDenied(){showToast('Você não possui permissão para acessar esta área.','err');}
 function applyNavigationPermissions(){
-  const map={tabCronograma:'cronograma',tabClientes:'clientes',tabAdmins:'admins',tabPecas:'pecas',tabMacroEngenharia:'macro-engenharia',tabCompras:'compras',tabCustos:'custos',tabFinanceiro:'financeiro',tabContabilidade:'contabilidade',tabControleHoras:'controle-horas'};
-  Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAnyAccess(key)?'flex':'none';});
+  const map={tabCronograma:'cronograma',tabClientes:'clientes',tabAdmins:'admins',tabPecas:'pecas',tabMacroEngenharia:'macro-engenharia',tabCompras:'compras',tabCustos:'custos',tabFinanceiro:'financeiro',tabComercial:'comercial',tabContabilidade:'contabilidade',tabControleHoras:'controle-horas'};
+  Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=(key==='financeiro'?hasFinanceAreaAccess():key==='comercial'?hasCommercialAreaAccess():hasAnyAccess(key))?'flex':'none';});
   const cronHeader=document.getElementById('tabCronograma');if(cronHeader)cronHeader.style.display=(hasAnyAccess('cronograma')||hasAccess('simulador'))?'flex':'none';
   document.querySelectorAll('.cronograma-subtab').forEach(tab=>{const id=tab.dataset.cronSubtab,key=id==='simulador'?'simulador':`cronograma.${id}`;tab.style.display=hasAccess(key)?'flex':'none';});
   [['partsCatalogTab','pecas.catalog'],['partsReturnTab','pecas.return'],['partsPriceTab','pecas.price'],['partsBndesTab','pecas.bndes'],['macroTabActive','macro-engenharia.active'],['macroTabCompleted','macro-engenharia.completed'],['macroTabPeople','macro-engenharia.people']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAccess(key)?'':'none';});
 }
 function firstAllowedDestination(){
-  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['simulador','simulador'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['contabilidade','contabilidade'],['controle-horas','controle-horas']];
+  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['simulador','simulador'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['comercial','comercial'],['contabilidade','contabilidade'],['controle-horas','controle-horas']];
   return order.find(([id])=>devTabAllowed(id))?.[0]||null;
 }
 function openAllowedDestination(id){
   if(!id)return false;
   if(['cronograma','atrasos','simulador','importar'].includes(id))switchCronogramaSubtab(id);
-  else switchDevTab(id,document.getElementById({clientes:'tabClientes',admins:'tabAdmins',pecas:'tabPecas','macro-engenharia':'tabMacroEngenharia',compras:'tabCompras',custos:'tabCustos',financeiro:'tabFinanceiro',contabilidade:'tabContabilidade','controle-horas':'tabControleHoras'}[id]));
+  else switchDevTab(id,document.getElementById({clientes:'tabClientes',admins:'tabAdmins',pecas:'tabPecas','macro-engenharia':'tabMacroEngenharia',compras:'tabCompras',custos:'tabCustos',financeiro:'tabFinanceiro',comercial:'tabComercial',contabilidade:'tabContabilidade','controle-horas':'tabControleHoras'}[id]));
   return true;
 }
 function syncLoggedUserAccess(){
@@ -2817,7 +2845,8 @@ function enforceCurrentAccess(){
     return true;
   }
   if(activeId==='custos'&&!hasAccess(`custos.${costsView}`))costsView=['orders','structure'].find(view=>hasAccess(`custos.${view}`))||'orders';
-  if(activeId==='financeiro'&&!hasAccess(`financeiro.${financeiroView}`))financeiroView=Object.keys(FINANCE_VIEWS).find(view=>hasAccess(`financeiro.${view}`))||'fluxoCaixa';
+  if(activeId==='financeiro'&&!hasAccess(`financeiro.${financeiroView}`))financeiroView=['fluxoCaixa','receber','pagar','materiaPrima'].find(view=>hasAccess(`financeiro.${view}`))||'fluxoCaixa';
+  if(activeId==='comercial'&&!hasAccess(`financeiro.${comercialView}`))comercialView=['vendas','comissoes'].find(view=>hasAccess(`financeiro.${view}`))||'vendas';
   if(activeId==='contabilidade'&&!hasAccess(`contabilidade.${accountingView}`))accountingView=hasAccess('contabilidade.receber')?'receber':'pagar';
   if(activeId==='macro-engenharia'&&!hasAccess(`macro-engenharia.${macroView}`))macroView=['active','completed','people'].find(view=>hasAccess(`macro-engenharia.${view}`))||'active';
   if(activeId==='pecas'){
@@ -3187,7 +3216,8 @@ function switchDevTab(id,btn){
   if(id==='atrasos')renderCronDelayPage();
   if(id==='gantt')     renderGantt();
   if(id==='custos'){if(!hasAccess(`custos.${costsView}`))costsView=['orders','structure'].find(view=>hasAccess(`custos.${view}`))||'orders';if(String(selectedStructureOrderId)===String(COST_MANUAL_LOOKUP_ID))selectedStructureOrderId=null;renderCostsPage();}
-  if(id==='financeiro'){if(!hasAccess(`financeiro.${financeiroView}`))financeiroView=Object.keys(FINANCE_VIEWS).find(view=>hasAccess(`financeiro.${view}`))||'fluxoCaixa';renderFinanceiroFiscal();}
+  if(id==='financeiro'){if(!hasAccess(`financeiro.${financeiroView}`))financeiroView=['fluxoCaixa','receber','pagar','materiaPrima'].find(view=>hasAccess(`financeiro.${view}`))||'fluxoCaixa';renderFinanceiroFiscal();}
+  if(id==='comercial'){if(!hasAccess(`financeiro.${comercialView}`))comercialView=['vendas','comissoes'].find(view=>hasAccess(`financeiro.${view}`))||'vendas';renderCommercialPage();}
   if(id==='compras')   renderPurchaseOrdersPage();
   if(id==='contabilidade'){if(!hasAccess(`contabilidade.${accountingView}`))accountingView=hasAccess('contabilidade.receber')?'receber':'pagar';renderAccountingPage();}
   if(id==='controle-horas')renderHoursControlPage();
@@ -3634,18 +3664,29 @@ function financeRowsFiltered(view,search){
 }
 function toggleFinanceColumnFilter(index,value,checked){const view=FINANCE_VIEWS[financeiroView],values=financeColumnValues(view,index),id=financeColumnId(index),selected=new Set(Array.isArray(financeColumnFilters[id])?financeColumnFilters[id]:values);if(checked)selected.add(value);else selected.delete(value);financeColumnFilters[id]=[...selected];renderFinanceiroFiscal();}
 function toggleAllFinanceColumnFilter(index,checked){const view=FINANCE_VIEWS[financeiroView];financeColumnFilters[financeColumnId(index)]=checked?financeColumnValues(view,index):[];renderFinanceiroFiscal();}
-function financeVisibleEntries(){
-  return Object.entries(FINANCE_VIEWS).filter(([key])=>hasAccess(`financeiro.${key}`));
-}
+const FINANCE_AREA_VIEWS=['fluxoCaixa','receber','pagar','materiaPrima'];
+const COMMERCIAL_AREA_VIEWS=['vendas','comissoes'];
+function financeVisibleEntries(){return FINANCE_AREA_VIEWS.filter(key=>FINANCE_VIEWS[key]&&hasAccess(`financeiro.${key}`)).map(key=>[key,FINANCE_VIEWS[key]]);}
+function commercialVisibleEntries(){return COMMERCIAL_AREA_VIEWS.filter(key=>FINANCE_VIEWS[key]&&hasAccess(`financeiro.${key}`)).map(key=>[key,FINANCE_VIEWS[key]]);}
 function financeTabsHtml(){
   return `<div class="finance-tabs">${financeVisibleEntries().map(([key,item])=>`<button class="finance-tab ${key===financeiroView?'active':''}" onclick="switchFinanceView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;
 }
+function commercialTabsHtml(){return `<div class="finance-tabs">${commercialVisibleEntries().map(([key,item])=>`<button class="finance-tab ${key===comercialView?'active':''}" onclick="switchCommercialView('${key}')">${esc(item.title)}</button>`).join('')}</div>`;}
 function switchFinanceView(key){
-  if(!hasAccess(`financeiro.${key}`)){showAccessDenied();return;}
+  if(!FINANCE_AREA_VIEWS.includes(key)||!hasAccess(`financeiro.${key}`)){showAccessDenied();return;}
   // A troca de subaba usa somente o cache já baixado, sem consultar o MaxiProd.
   financeiroView=key;
   scheduleFinanceRender();
+}
+function switchCommercialView(key){
+  if(!COMMERCIAL_AREA_VIEWS.includes(key)||!hasAccess(`financeiro.${key}`)){showAccessDenied();return;}
+  comercialView=key;
+  renderCommercialPage();
   if(key==='comissoes')setTimeout(()=>ensureCommissionHistory(false),0);
+}
+function renderCommercialPage(){
+  const target=document.getElementById('comercialContent');if(!target)return;
+  if(comercialView==='comissoes')renderCommissionsPage(target);else renderSalesPage(target);
 }
 async function refreshFinanceiroFiscalAbaAtual(){
   // Compatibilidade com botões antigos: atualizar uma aba agora atualiza todas.
@@ -4644,8 +4685,8 @@ function commissionInstallmentKey(group,item,index=0){
   return `${group.key}|${id!==null&&id!==undefined?id:[item?.parcela?.numero,item?.parcela?.total,due,item?.valorParcela,financeNormalize(item?.descricao||'')].join('|')}`;
 }
 function commissionPaymentRecord(key){return DB.commissionPayments&&typeof DB.commissionPayments==='object'?DB.commissionPayments[key]||null:null;}
-function commissionInstallmentPaymentState(group,item,index,year){
-  const recipients=commissionRecipients(group,item,year);
+function commissionInstallmentPaymentState(group,item,index,year,selectedSeller=''){
+  const selected=canonicalCommissionSellerName(selectedSeller),recipients=commissionRecipients(group,item,year).filter(recipient=>!selected||recipient.person===selected);
   if(!recipients.length)return {label:'—',className:''};
   const payable=recipients.filter(recipient=>recipient.amount>0);
   if(!payable.length)return {label:'Não pago',className:'pending'};
@@ -4664,7 +4705,7 @@ function commissionGroupSettlement(group){
   const due=[];group.items.forEach((item,index)=>{const year=item.recebimento?.getFullYear?.()||item.vencimento?.getFullYear?.()||commissionYear;commissionRecipients(group,item,year).filter(recipient=>recipient.amount>0).forEach(recipient=>{const key=`${commissionInstallmentKey(group,item,index)}|${recipient.person}|${recipient.role}`;due.push({key,payment:commissionPaymentRecord(key)});});});
   if(!due.length||due.some(entry=>!entry.payment?.paidAt))return {complete:false,archived:false,remainingDays:null,paid:due.filter(entry=>entry.payment).length,total:due.length};
   const completedAt=new Date(Math.max(...due.map(entry=>new Date(entry.payment.paidAt).getTime()).filter(Number.isFinite)));if(Number.isNaN(completedAt.getTime()))return {complete:false,archived:false,remainingDays:null,paid:due.length,total:due.length};
-  const elapsedDays=Math.floor((Date.now()-completedAt.getTime())/86400000),remainingDays=Math.max(0,15-elapsedDays);return {complete:true,archived:elapsedDays>=15,remainingDays,completedAt,paid:due.length,total:due.length};
+  return {complete:true,archived:false,remainingDays:null,completedAt,paid:due.length,total:due.length};
 }
 function commissionScheduledPaymentDate(receivedAt){
   if(!(receivedAt instanceof Date)||Number.isNaN(receivedAt.getTime()))return null;
@@ -4711,7 +4752,7 @@ async function refreshCommissionSources(){
 }
 function commissionHeader(){
   const updating=commissionSourcesRefreshInProgress||salesRefreshInProgress||commissionHistoryRefreshInProgress;
-  return `<div class="finance-head"><div><h2><span class="msi">percent</span> Comissões</h2><p>Pedidos de venda, referências dos equipamentos, notas fiscais e situação real de cada recebimento.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshCommissionSources()" ${updating?'disabled':''}><span class="msi msi-sm">sync</span> ${updating?'Consultando MaxiProd...':'Atualizar pedidos, NFs e recebimentos'}</button></div></div>${financeTabsHtml()}`;
+  return `<div class="finance-head"><div><h2><span class="msi">percent</span> Comissões</h2><p>Pedidos de venda, referências dos equipamentos, notas fiscais e situação real de cada recebimento.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshCommissionSources()" ${updating?'disabled':''}><span class="msi msi-sm">sync</span> ${updating?'Consultando MaxiProd...':'Atualizar pedidos, NFs e recebimentos'}</button></div></div>${commercialTabsHtml()}`;
 }
 function commissionPersonOrderTotals(group,year){
   const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente=group.assignment?.gerente||(vendedor==='EVANDO'?'MOHR':'');
@@ -4744,11 +4785,26 @@ function commissionOrderSellersHtml(group){
   const key=encodeURIComponent(group.key),selected=commissionAssignmentSellers(group.assignment),available=commissionSellerRegistry().filter(name=>!selected.some(entry=>entry.name===name));
   return `<span>Vendedores do pedido</span><div class="commission-order-seller-tags">${selected.map(entry=>`<span>${esc(entry.name)}<button onclick="event.stopPropagation();removeCommissionOrderSeller('${key}','${encodeURIComponent(entry.name)}')">×</button></span>`).join('')||'<em>Nenhum selecionado</em>'}</div><select class="commission-owner-select" onchange="addCommissionOrderSeller('${key}',this.value)"><option value="">+ Adicionar vendedor</option>${available.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join('')}</select>`;
 }
-function commissionOrderCustomRatesHtml(group,year){
-  const key=encodeURIComponent(group.key),sellers=commissionAssignmentSellers(group.assignment);return `<span>Comissão personalizada</span><div class="commission-custom-rates">${sellers.map(entry=>{const rate=commissionRateForSeller(group,entry.name,year);return `<label>${esc(entry.name)}<input type="text" inputmode="decimal" value="${entry.customRate??''}" placeholder="${rate===null?'Informe %':(rate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'% · tabela'}" onchange="setCommissionSellerCustomRate('${key}','${encodeURIComponent(entry.name)}',this.value)"></label>`;}).join('')||'<em>Selecione um vendedor.</em>'}</div>`;
+function commissionOrderSellerNames(group,year){
+  return [...new Set(group.items.flatMap(item=>commissionRecipients(group,item,year).map(row=>row.person)))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
 }
-function commissionGeneralDetailHtml(group,year){
-  const rows=group.items.map((item,index)=>{const status=commissionStatus(item),invoices=accountingInvoiceNumbers(item.raw||{}),recipients=commissionRecipients(group,item,year),total=recipients.reduce((sum,row)=>sum+row.amount,0),detail=recipients.map(row=>`${esc(row.person)} · ${esc(row.role)}: ${fmtBRL(row.amount)}`).join('<br>')||'—',payment=commissionInstallmentPaymentState(group,item,index,year);return `<tr><td><b>${esc(invoices.join(' · ')||'—')}</b></td><td>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</td><td>${esc(item.descricao)}</td><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.recebimento)}</td><td><span class="commission-status ${status.className}">${esc(status.label)}</span></td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money ${item.recebido>0?'commission-value':''}">${fmtBRL(item.recebido)}</td><td>${detail}</td><td class="money ${total>0?'commission-value':''}">${fmtBRL(total)}</td><td><span class="commission-payment-state ${payment.className}">${esc(payment.label)}</span></td></tr>`;});
+function commissionOrderSellerFilterValue(group,year){
+  const selected=canonicalCommissionSellerName(commissionOrderSellerFilters[group.key]||'');return commissionOrderSellerNames(group,year).includes(selected)?selected:'';
+}
+function commissionOrderFilteredTotals(group,year,selectedSeller=''){
+  const all=commissionGroupGenericTotals(group,year),selected=canonicalCommissionSellerName(selectedSeller);if(!selected)return all;const rows=all.rows.filter(row=>row.person===selected);return {rows,received:rows.reduce((sum,row)=>sum+row.earned,0),total:rows.reduce((sum,row)=>sum+row.earned+row.future,0)};
+}
+function setCommissionOrderSellerFilter(encodedKey,value){
+  const key=decodeURIComponent(encodedKey),selected=canonicalCommissionSellerName(value),current=[...document.querySelectorAll('.commission-order[data-group-key]')].find(card=>decodeURIComponent(card.dataset.groupKey||'')===key),wasOpen=!!current?.open;if(selected)commissionOrderSellerFilters[key]=selected;else delete commissionOrderSellerFilters[key];renderFinanceiroFiscal();if(wasOpen){const updated=[...document.querySelectorAll('.commission-order[data-group-key]')].find(card=>decodeURIComponent(card.dataset.groupKey||'')===key);if(updated)updated.open=true;}
+}
+function commissionOrderSellerFilterHtml(group,year){
+  const key=encodeURIComponent(group.key),selected=commissionOrderSellerFilterValue(group,year),names=commissionOrderSellerNames(group,year);return `<label class="commission-order-view-filter" onclick="event.stopPropagation()"><span>Filtrar comissão</span><select onchange="setCommissionOrderSellerFilter('${key}',this.value)"><option value="">Todos os vendedores</option>${names.map(name=>`<option value="${esc(name)}" ${selected===name?'selected':''}>${esc(name)}</option>`).join('')}</select></label>`;
+}
+function commissionOrderCustomRatesHtml(group,year,selectedSeller=''){
+  const key=encodeURIComponent(group.key),selected=canonicalCommissionSellerName(selectedSeller),sellers=commissionAssignmentSellers(group.assignment).filter(entry=>!selected||entry.name===selected);return `<span>Comissão personalizada</span><div class="commission-custom-rates">${sellers.map(entry=>{const rate=commissionRateForSeller(group,entry.name,year);return `<label>${esc(entry.name)}<input type="text" inputmode="decimal" value="${entry.customRate??''}" placeholder="${rate===null?'Informe %':(rate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'% · tabela'}" onchange="setCommissionSellerCustomRate('${key}','${encodeURIComponent(entry.name)}',this.value)"></label>`;}).join('')||(selected?'<em>Percentual definido pela função.</em>':'<em>Selecione um vendedor.</em>')}</div>`;
+}
+function commissionGeneralDetailHtml(group,year,selectedSeller=''){
+  const selected=canonicalCommissionSellerName(selectedSeller),rows=group.items.map((item,index)=>{const status=commissionStatus(item),invoices=accountingInvoiceNumbers(item.raw||{}),recipients=commissionRecipients(group,item,year).filter(row=>!selected||row.person===selected),total=recipients.reduce((sum,row)=>sum+row.amount,0),detail=recipients.map(row=>`${esc(row.person)} · ${esc(row.role)}: ${fmtBRL(row.amount)}`).join('<br>')||'—',payment=commissionInstallmentPaymentState(group,item,index,year,selected);return `<tr><td><b>${esc(invoices.join(' · ')||'—')}</b></td><td>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</td><td>${esc(item.descricao)}</td><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.recebimento)}</td><td><span class="commission-status ${status.className}">${esc(status.label)}</span></td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money ${item.recebido>0?'commission-value':''}">${fmtBRL(item.recebido)}</td><td>${detail}</td><td class="money ${total>0?'commission-value':''}">${fmtBRL(total)}</td><td><span class="commission-payment-state ${payment.className}">${esc(payment.label)}</span></td></tr>`;});
   if(!rows.length){
     const invoices=group.invoiceNumbers?.length?group.invoiceNumbers:['—'];
     invoices.forEach(invoice=>rows.push(`<tr><td><b>${esc(invoice)}</b></td><td>—</td><td>${esc(group.reference||group.label)}</td><td>—</td><td>—</td><td><span class="commission-status">Nenhum título localizado em Contas a receber</span></td><td class="money">—</td><td class="money">—</td><td>—</td><td class="money">—</td><td><span class="commission-payment-state">—</span></td></tr>`));
@@ -4758,6 +4814,9 @@ function commissionGeneralDetailHtml(group,year){
 function commissionApplyMonthFilters(){
   const seller=financeNormalize(document.getElementById('commissionMonthSeller')?.value||''),client=financeNormalize(document.getElementById('commissionMonthClient')?.value||''),order=financeNormalize(document.getElementById('commissionMonthOrder')?.value||''),from=document.getElementById('commissionMonthFrom')?.value||'',to=document.getElementById('commissionMonthTo')?.value||'',status=document.getElementById('commissionMonthStatus')?.value||'';let visible=0;
   document.querySelectorAll('.commission-month-table tbody tr').forEach(row=>{const show=(!seller||row.dataset.seller===seller)&&(!client||row.dataset.client.includes(client))&&(!order||row.dataset.order.includes(order))&&(!from||row.dataset.received>=from)&&(!to||row.dataset.received<=to)&&(!status||row.dataset.status===status);row.hidden=!show;if(show)visible++;});const count=document.getElementById('commissionMonthCount');if(count)count.textContent=`${visible} item(ns)`;
+}
+function commissionPdfSignature(report,sellerName='VENDEDOR / RESPONSÁVEL'){
+  const {doc,left,contentW,bottom}=report,required=24;if(report.y+required>bottom){doc.addPage();report.y=24;}const y=Math.max(report.y+4,bottom-21),gap=18,lineW=(contentW-gap)/2,leftCenter=left+lineW/2,rightStart=left+lineW+gap,rightCenter=rightStart+lineW/2,name=String(sellerName||'VENDEDOR / RESPONSÁVEL').trim().toUpperCase();doc.setDrawColor(35,35,35);doc.setLineWidth(.4);doc.line(left,y,left+lineW,y);doc.line(rightStart,y,rightStart+lineW,y);doc.setFont('helvetica','bold');doc.setFontSize(6.7);doc.setTextColor(35,35,35);doc.text(hoursPdfClean(name),leftCenter,y+4,{align:'center',maxWidth:lineW});doc.text('CARTAMAC PAPER MACHINERY',rightCenter,y+4,{align:'center',maxWidth:lineW});doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(95,95,95);doc.text('Assinatura do vendedor',leftCenter,y+7,{align:'center'});doc.text('Assinatura da empresa',rightCenter,y+7,{align:'center'});doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(35,35,35);doc.text('RECEBIDO EM:  ____ / ____ / ________',left,y+15);report.y=y+18;
 }
 function exportCommissionMonthPDF(){
   if(commissionMonth<0){showToast('Selecione um mês antes de gerar o relatório.','err');return;}
@@ -4771,21 +4830,46 @@ function exportCommissionMonthPDF(){
   const report=hoursPdfStart('landscape',`Comissões · ${receberMesNome(commissionMonth)} de ${commissionYear}`,`Relatório conforme os filtros aplicados · ${activeFilters}`);if(!report)return;
   hoursPdfCards(report,[{label:'Linhas no relatório',value:rows.length},{label:'Comissões',value:fmtBRL(totalCommission),color:[39,145,72]},{label:'Comissões pagas',value:paidCount,color:[39,145,72]},{label:'Aguardando baixa',value:pendingCount,color:pendingCount?[205,45,58]:[39,145,72]}]);
   hoursPdfTable(report,[{label:'Pedido',width:37},{label:'Cliente',width:36},{label:'Parc.',width:13},{label:'Venc.',width:18},{label:'Receb.',width:18},{label:'Pgto. previsto',width:20},{label:'Valor pedido',width:25,align:'right'},{label:'Valor parcela',width:25,align:'right'},{label:'Valor recebido',width:25,align:'right'},{label:'Vendedor / função',width:30},{label:'%',width:14,align:'right'},{label:'Comissão',width:22,align:'right'},{label:'Baixa',width:17}],rows.map(row=>{const cell=row.cells;return [cell[0],cell[1],cell[2],cell[3],cell[4],cell[5],cell[6],cell[7],{text:cell[8],color:receberNumero(cell[8])>0?[39,145,72]:[38,38,38]},`${cell[9]} · ${cell[10]}`,cell[11],{text:cell[12],color:receberNumero(cell[12])>0?[39,145,72]:[38,38,38],bold:true},{text:cell[13],color:row.status==='paid'?[39,145,72]:row.status==='pending'?[205,45,58]:[95,95,95],bold:true}];}));
+  commissionPdfSignature(report,sellerLabel&&sellerLabel!=='Todos'?sellerLabel:'VENDEDOR / RESPONSÁVEL');
   const filterFile=sellerLabel&&sellerLabel!=='Todos'?`_${hoursPdfFilename(sellerLabel)}`:'';
   cartamacPdfSave(report.doc,`Comissoes_${commissionYear}-${String(commissionMonth+1).padStart(2,'0')}${filterFile}.pdf`,{sector:'FINANCEIRO / FISCAL',footerText:'Documento gerado pelo aplicativo CARTAMAC · Relatório de comissões conforme filtros exibidos'});showToast('Relatório de comissões gerado conforme os filtros.','ok');
 }
 function exportCommissionOrderPDF(encodedKey,event){
   event?.preventDefault?.();event?.stopPropagation?.();const key=decodeURIComponent(encodedKey),group=commissionGroups().find(item=>item.key===key);if(!group){showToast('Pedido não encontrado para gerar o relatório.','err');return;}
-  const rows=[];group.items.forEach((item,index)=>{const year=item.recebimento?.getFullYear?.()||item.vencimento?.getFullYear?.()||commissionYear,recipients=commissionRecipients(group,item,year),baseKey=commissionInstallmentKey(group,item,index);if(!recipients.length)rows.push({item,recipient:{person:'SEM VENDEDOR',role:'Verificação',rate:null,amount:0},payment:null});else recipients.forEach(recipient=>rows.push({item,recipient,payment:commissionPaymentRecord(`${baseKey}|${recipient.person}|${recipient.role}`)}));});
-  const received=group.items.reduce((sum,item)=>sum+Math.max(0,Number(item.recebido)||0),0),commissionTotal=rows.reduce((sum,row)=>sum+row.recipient.amount,0),commissionPaid=rows.reduce((sum,row)=>sum+(row.payment?row.recipient.amount:0),0),settlement=commissionGroupSettlement(group);
-  const status=settlement.complete?`Todas as comissões baixadas · ocultação automática em ${settlement.remainingDays} dia(s)`:settlement.total?`${settlement.paid} de ${settlement.total} comissão(ões) baixada(s)`:'Aguardando recebimentos ou definição dos vendedores';
-  const report=hoursPdfStart('landscape',`Comissões do pedido · ${group.label}`,`${group.client} · ${group.items.length} parcela(s) · ${status}`);if(!report)return;
+  const selectedSeller=commissionOrderSellerFilterValue(group,commissionYear),rows=[];group.items.forEach((item,index)=>{const year=item.recebimento?.getFullYear?.()||item.vencimento?.getFullYear?.()||commissionYear,recipients=commissionRecipients(group,item,year).filter(recipient=>!selectedSeller||recipient.person===selectedSeller),baseKey=commissionInstallmentKey(group,item,index);if(!recipients.length&&!selectedSeller)rows.push({item,recipient:{person:'SEM VENDEDOR',role:'Verificação',rate:null,amount:0},payment:null});else recipients.forEach(recipient=>rows.push({item,recipient,payment:commissionPaymentRecord(`${baseKey}|${recipient.person}|${recipient.role}`)}));});
+  if(selectedSeller&&!rows.length){showToast(`Nenhuma comissão de ${selectedSeller} foi localizada neste pedido.`,'err');return;}
+  const received=group.items.reduce((sum,item)=>sum+Math.max(0,Number(item.recebido)||0),0),commissionTotal=rows.reduce((sum,row)=>sum+row.recipient.amount,0),commissionPaid=rows.reduce((sum,row)=>sum+(row.payment?row.recipient.amount:0),0),payable=rows.filter(row=>row.recipient.amount>0),paid=payable.filter(row=>row.payment).length;
+  const status=payable.length?(paid===payable.length?'Todas as comissões exibidas estão pagas':`${paid} de ${payable.length} comissão(ões) exibida(s) baixada(s)`):'Aguardando recebimentos ou definição dos vendedores',filterLabel=selectedSeller?`Vendedor filtrado: ${selectedSeller}`:'Todos os vendedores';
+  const report=hoursPdfStart('landscape',`Comissões do pedido · ${group.label}`,`${group.client} · ${filterLabel} · ${group.items.length} parcela(s) · ${status}`);if(!report)return;
   hoursPdfCards(report,[{label:'Valor total do pedido',value:fmtBRL(group.orderValue)},{label:'Valor recebido',value:fmtBRL(received),color:[39,145,72]},{label:'Comissão total',value:fmtBRL(commissionTotal)},{label:'Comissão com baixa',value:fmtBRL(commissionPaid),color:[39,145,72]}]);
   hoursPdfTable(report,[{label:'Parcela',width:14},{label:'Descrição',width:48},{label:'Vencimento',width:20},{label:'Recebimento',width:20},{label:'Valor parcela',width:27,align:'right'},{label:'Valor recebido',width:27,align:'right'},{label:'Vendedor',width:25},{label:'Função',width:20},{label:'Percentual',width:18,align:'right'},{label:'Comissão',width:25,align:'right'},{label:'Baixa',width:34}],rows.map(({item,recipient,payment})=>[`${item.parcela.numero}/${item.parcela.total}`,item.descricao,receberDataFormat(item.vencimento),receberDataFormat(item.recebimento),fmtBRL(item.valorParcela),{text:fmtBRL(item.recebido),color:item.recebido>0?[39,145,72]:[38,38,38]},recipient.person,recipient.role,recipient.rate===null?'—':`${(recipient.rate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`,{text:fmtBRL(recipient.amount),bold:true},payment?{text:`Pago em ${receberDataFormat(new Date(payment.paidAt))}`,color:[39,145,72],bold:true}:{text:recipient.amount>0?'Pendente':'—',color:recipient.amount>0?[205,45,58]:[95,95,95],bold:recipient.amount>0}]));
-  cartamacPdfSave(report.doc,`${hoursPdfFilename(`Comissoes_Pedido_${group.label}`)}.pdf`,{sector:'FINANCEIRO / FISCAL',footerText:'Documento gerado pelo aplicativo CARTAMAC · Relatório individual de comissões do pedido'});showToast('Relatório do pedido gerado com sucesso.','ok');
+  commissionPdfSignature(report,selectedSeller||commissionAssignmentSellers(group.assignment).map(entry=>entry.name).join(' / ')||'VENDEDOR / RESPONSÁVEL');
+  const sellerFile=selectedSeller?`_${hoursPdfFilename(selectedSeller)}`:'';cartamacPdfSave(report.doc,`${hoursPdfFilename(`Comissoes_Pedido_${group.label}`)}${sellerFile}.pdf`,{sector:'FINANCEIRO / FISCAL',footerText:`Documento gerado pelo aplicativo CARTAMAC · Relatório individual de comissões do pedido · ${filterLabel}`});showToast(selectedSeller?`Relatório do pedido gerado somente para ${selectedSeller}.`:'Relatório do pedido gerado com sucesso.','ok');
 }
-function commissionApplyGeneralSellerFilter(value){
-  const empty=value==='__none__',seller=financeNormalize(value||'');let visible=0;document.querySelectorAll('.commission-order').forEach(card=>{const values=String(card.dataset.sellers||'').split('|').filter(Boolean),show=empty?!values.length:!seller||values.includes(seller);card.hidden=!show;if(show)visible++;});const count=document.getElementById('commissionGeneralSellerCount');if(count)count.textContent=`${visible} pedido(s)`;
+function commissionGroupMatchesGeneralSeller(group,value=commissionGeneralSellerSelection){
+  const selected=String(value||''),sellers=commissionAssignmentSellers(group?.assignment).map(entry=>financeNormalize(entry.name)).filter(Boolean);
+  if(selected==='__none__')return !sellers.length;
+  const normalized=financeNormalize(selected);return !normalized||sellers.includes(normalized);
+}
+function commissionApplyGeneralSellerFilter(value){commissionGeneralSellerSelection=String(value||'');renderFinanceiroFiscal();}
+function exportCommissionFilteredOrdersPDF(){
+  if(commissionMonth>=0){showToast('Use Ano completo ou Comissões pagas para gerar o PDF dos pedidos.','err');return;}
+  const cards=[...document.querySelectorAll('.commission-order[data-group-key]')].filter(card=>!card.hidden),catalog=new Map(commissionGroups().map(group=>[group.key,group]));
+  const groups=cards.map(card=>catalog.get(decodeURIComponent(card.dataset.groupKey||''))).filter(Boolean);
+  if(!groups.length){showToast('Nenhum pedido corresponde aos filtros atuais.','err');return;}
+  const selector=document.getElementById('commissionGeneralSeller'),sellerLabel=selector?.selectedOptions?.[0]?.textContent||'Todos',search=String(commissionSearch||'').trim();
+  const rows=groups.map(group=>{
+    const totals=commissionGroupGenericTotals(group,commissionYear),received=group.items.reduce((sum,item)=>sum+Math.max(0,Number(item.recebido)||0),0),sellers=commissionAssignmentSellers(group.assignment).map(entry=>entry.name).join(', ')||'Sem vendedor',settlement=commissionGroupSettlement(group);
+    const payment=settlement.complete?'Pago':settlement.total?`${settlement.paid}/${settlement.total} baixas`:'Não pago';
+    return [group.label,group.client,(group.invoiceNumbers||[]).join(', ')||'—',sellers,fmtBRL(group.orderValue),fmtBRL(received),fmtBRL(totals.total),fmtBRL(totals.received),payment];
+  });
+  const activeFilters=[`Ano: ${commissionYear}`,`Vendedor: ${sellerLabel}`,search&&`Pesquisa: ${search}`].filter(Boolean).join(' · '),report=hoursPdfStart('landscape',`Pedidos por vendedor · ${commissionYear}`,activeFilters);if(!report)return;
+  const totalOrders=groups.reduce((sum,group)=>sum+commissionMoneyValue(group.orderValue),0),totalCommission=groups.reduce((sum,group)=>sum+commissionGroupGenericTotals(group,commissionYear).total,0);
+  hoursPdfCards(report,[{label:'Pedidos no relatório',value:groups.length},{label:'Valor dos pedidos',value:fmtBRL(totalOrders)},{label:'Comissões',value:fmtBRL(totalCommission),color:[39,145,72]},{label:'Vendedor',value:sellerLabel}]);
+  hoursPdfTable(report,[{label:'Pedido / referência',width:43},{label:'Cliente',width:42},{label:'Notas fiscais',width:28},{label:'Vendedor(es)',width:27},{label:'Valor pedido',width:25,align:'right'},{label:'Recebido',width:24,align:'right'},{label:'Comissão total',width:24,align:'right'},{label:'Comissão recebida',width:26,align:'right'},{label:'Baixas',width:23}],rows);
+  commissionPdfSignature(report,sellerLabel&&sellerLabel!=='Todos'?sellerLabel:'VENDEDOR / RESPONSÁVEL');
+  const sellerFile=sellerLabel&&sellerLabel!=='Todos'?`_${hoursPdfFilename(sellerLabel)}`:'';
+  cartamacPdfSave(report.doc,`Pedidos_Comissoes_${commissionYear}${sellerFile}.pdf`,{sector:'FINANCEIRO / FISCAL',footerText:'Documento gerado pelo aplicativo CARTAMAC · Pedidos filtrados por vendedor'});showToast('PDF dos pedidos filtrados gerado com sucesso.','ok');
 }
 function commissionMonthlyTableV2(groups,year,month){
   const records=[];groups.forEach(group=>group.periodItems.forEach((item,index)=>{const receivedInPeriod=item.recebido>0&&commissionDateInPeriod(item.recebimento,year,month),recipients=commissionRecipients(group,item,year).map(recipient=>({...recipient,amount:receivedInPeriod?recipient.amount:0}));if(!recipients.length)recipients.push({person:'SEM VENDEDOR',role:'Verificação',rate:null,amount:0});recipients.forEach(recipient=>{const paymentDate=commissionScheduledPaymentDate(item.recebimento),key=`${commissionInstallmentKey(group,item,index)}|${recipient.person}|${recipient.role}`,payment=commissionPaymentRecord(key);records.push({group,item,recipient,paymentDate,key,payment});});}));
@@ -4796,9 +4880,11 @@ function renderCommissionsPage(target){
   const allGroups=commissionGroups();
   const availableYears=[...new Set([2026,2027,(new Date()).getFullYear(),...allGroups.flatMap(group=>[group.orderDate?.getFullYear?.(),...group.items.flatMap(item=>[item.vencimento?.getFullYear(),item.recebimento?.getFullYear()])].filter(Boolean))])].sort((a,b)=>b-a);
   if(!availableYears.includes(commissionYear))commissionYear=availableYears[0]||2026;
-  const query=financeNormalize(commissionSearch);
-  const groups=allGroups.filter(group=>!commissionGroupSettlement(group).archived).map(group=>({...group,periodItems:group.items.filter(item=>commissionItemInPeriod(item,commissionYear,commissionMonth))}))
-    .filter(group=>(group.periodItems.length||commissionOrderInPeriod(group,commissionYear,commissionMonth))&&(!query||financeNormalize([group.label,group.client,...(group.invoiceNumbers||[]),...commissionAssignmentSellers(group.assignment).map(entry=>entry.name),...group.items.map(item=>item.descricao)].join(' ')).includes(query)));
+  const query=financeNormalize(commissionSearch),paidView=commissionMonth===-2;
+  const groups=allGroups.map(group=>({...group,settlement:commissionGroupSettlement(group),periodItems:group.items.filter(item=>commissionItemInPeriod(item,commissionYear,commissionMonth))}))
+    .filter(group=>(group.periodItems.length||commissionOrderInPeriod(group,commissionYear,commissionMonth))&&(!query||financeNormalize([group.label,group.client,...(group.invoiceNumbers||[]),...commissionAssignmentSellers(group.assignment).map(entry=>entry.name),...group.items.map(item=>item.descricao)].join(' ')).includes(query)))
+    .filter(group=>paidView?group.settlement.complete:!group.settlement.complete)
+    .filter(group=>commissionMonth>=0||commissionGroupMatchesGeneralSeller(group));
   const installments=groups.flatMap(group=>group.periodItems.map(item=>{const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente=group.assignment?.gerente||(vendedor==='EVANDO'?'MOHR':'');return {group,item,sellerRate:commissionSellerRate(group,commissionYear),managerRate:commissionManagerRate(vendedor,gerente,commissionYear)};}));
   const paid=installments.filter(entry=>entry.item.recebido>0&&commissionDateInPeriod(entry.item.recebimento,commissionYear,commissionMonth));
   const receivedBase=paid.reduce((sum,entry)=>sum+entry.item.recebido,0);
@@ -4810,7 +4896,7 @@ function renderCommissionsPage(target){
   const commissionTotal=sellerCommissionTotal+managerCommissionTotal;
   const delayed=installments.filter(entry=>commissionStatus(entry.item).className==='late').length;
   const unassigned=groups.filter(group=>!(group.assignment?.vendedor||group.assignment?.responsavel)).length;
-  const monthOptions=[`<option value="-1" ${commissionMonth<0?'selected':''}>Ano completo</option>`,...Array.from({length:12},(_,month)=>`<option value="${month}" ${commissionMonth===month?'selected':''}>${receberMesNome(month)}</option>`)].join('');
+  const monthOptions=[`<option value="-1" ${commissionMonth===-1?'selected':''}>Ano completo</option>`,...Array.from({length:12},(_,month)=>`<option value="${month}" ${commissionMonth===month?'selected':''}>${receberMesNome(month)}</option>`),`<option value="-2" ${paidView?'selected':''}>COMISSÕES PAGAS</option>`].join('');
   const ordersHtml=groups.map(group=>{
     const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente=group.assignment?.gerente||(vendedor==='EVANDO'?'MOHR':''),sellerRate=commissionSellerRate(group,commissionYear),managerRate=commissionManagerRate(vendedor,gerente,commissionYear);
     const groupPaid=group.items.filter(item=>item.recebido>0&&commissionDateInPeriod(item.recebimento,commissionYear,commissionMonth));
@@ -4829,18 +4915,20 @@ function renderCommissionsPage(target){
   if(summaryCards[3])summaryCards[3].innerHTML=`<span>Comissão Mohr</span><strong>${fmtBRL(periodMohrSeller+periodMohrManager)}</strong><small>Como vendedor: <b>${fmtBRL(periodMohrSeller)}</b><br>Como gerente: <b>${fmtBRL(periodMohrManager)}</b></small>`;
   if(summaryCards[4])summaryCards[4].innerHTML=`<span>Total de comissões</span><strong>${fmtBRL(periodAll)}</strong>`;
   if(summaryCards[5])summaryCards[5].remove();
-  if(commissionMonth<0){const rules=target.querySelector('.commission-rules');rules?.insertAdjacentHTML('beforebegin',commissionSellerManagerHtml());const toolbar=target.querySelector('.commission-toolbar'),searchLabel=toolbar?.lastElementChild;toolbar?.classList.add('has-seller-filter');searchLabel?.insertAdjacentHTML('beforebegin',`<label>Filtrar vendedor<select onchange="commissionApplyGeneralSellerFilter(this.value)"><option value="">Todos</option><option value="__none__">Sem vendedor</option>${commissionSellerRegistry().map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join('')}</select></label>`);}
+  if(commissionMonth<0){const rules=target.querySelector('.commission-rules');rules?.insertAdjacentHTML('beforebegin',commissionSellerManagerHtml());const toolbar=target.querySelector('.commission-toolbar'),searchLabel=toolbar?.lastElementChild,selectedSeller=financeNormalize(commissionGeneralSellerSelection);toolbar?.classList.add('has-seller-filter');searchLabel?.insertAdjacentHTML('beforebegin',`<label>Filtrar vendedor<select id="commissionGeneralSeller" onchange="commissionApplyGeneralSellerFilter(this.value)"><option value="" ${!commissionGeneralSellerSelection?'selected':''}>Todos</option><option value="__none__" ${commissionGeneralSellerSelection==='__none__'?'selected':''}>Sem vendedor</option>${commissionSellerRegistry().map(name=>`<option value="${esc(name)}" ${selectedSeller===financeNormalize(name)?'selected':''}>${esc(name)}</option>`).join('')}</select></label>`);toolbar?.insertAdjacentHTML('afterend',`<div class="commission-filter-report"><span>${groups.length} pedido(s) no relatório</span><button class="btn btn-ghost" type="button" onclick="exportCommissionFilteredOrdersPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF dos pedidos filtrados</button></div>`);}
   const orderCards=target.querySelectorAll('.commission-order');
   groups.forEach((group,index)=>{
-    const card=orderCards[index],totals=commissionGroupGenericTotals(group,commissionYear);if(!card)return;
+    const card=orderCards[index],selectedSeller=commissionOrderSellerFilterValue(group,commissionYear),totals=commissionOrderFilteredTotals(group,commissionYear,selectedSeller);if(!card)return;
+    card.dataset.groupKey=encodeURIComponent(group.key);
     card.dataset.sellers=commissionAssignmentSellers(group.assignment).map(entry=>financeNormalize(entry.name)).join('|');
-    const orderTitle=card.querySelector('.commission-order-title'),settlement=commissionGroupSettlement(group);if(orderTitle){const reportButton=document.createElement('button');reportButton.type='button';reportButton.className='btn btn-ghost btn-sm';reportButton.innerHTML='<span class="msi msi-sm">picture_as_pdf</span> PDF do pedido';reportButton.onclick=event=>exportCommissionOrderPDF(encodeURIComponent(group.key),event);orderTitle.append(reportButton);if(settlement.complete){const closing=document.createElement('span');closing.style.color='var(--gold)';closing.textContent=`Todas as baixas concluídas · ocultação em ${settlement.remainingDays} dia(s)`;orderTitle.append(closing);}}
-    const detail=card.querySelector('.commission-detail');if(detail)detail.innerHTML=commissionGeneralDetailHtml(group,commissionYear);
+    const orderTitle=card.querySelector('.commission-order-title'),settlement=group.settlement||commissionGroupSettlement(group);if(orderTitle){const reportButton=document.createElement('button');reportButton.type='button';reportButton.className='btn btn-ghost btn-sm';reportButton.innerHTML='<span class="msi msi-sm">picture_as_pdf</span> PDF do pedido';reportButton.onclick=event=>exportCommissionOrderPDF(encodeURIComponent(group.key),event);orderTitle.append(reportButton);if(settlement.complete){const closing=document.createElement('span');closing.style.color='var(--green)';closing.style.fontWeight='800';closing.textContent='Comissões totalmente pagas';orderTitle.append(closing);}}
+    const detail=card.querySelector('.commission-detail');if(detail)detail.innerHTML=commissionGeneralDetailHtml(group,commissionYear,selectedSeller);
     const owners=card.querySelectorAll('.commission-order-owner');if(owners[0])owners[0].innerHTML=commissionOrderSellersHtml(group);if(owners[1])owners[1].remove();
     const metrics=card.querySelectorAll('.commission-order-metric');
     const evando=totals.rows.filter(row=>row.person==='EVANDRO').reduce((acc,row)=>({earned:acc.earned+row.earned,total:acc.total+row.earned+row.future}),{earned:0,total:0}),mohr=totals.rows.filter(row=>row.person==='MOHR').reduce((acc,row)=>({earned:acc.earned+row.earned,total:acc.total+row.earned+row.future}),{earned:0,total:0}),assigned=totals.rows.length>0;
-    if(metrics[1]){metrics[1].querySelector('span').textContent='Comissão Evandro';metrics[1].querySelector('strong').innerHTML=assigned?`${fmtBRL(evando.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(evando.earned)}</span>`:'—';}
-    if(metrics[2]){metrics[2].querySelector('span').textContent='Comissão Mohr';metrics[2].querySelector('strong').innerHTML=assigned?`${fmtBRL(mohr.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(mohr.earned)}</span>`:'—';metrics[2].insertAdjacentHTML('afterend',`<div class="commission-order-metric"><span>Comissão total do pedido</span><strong style="color:var(--green)">${assigned?`${fmtBRL(totals.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(totals.received)}</span>`:'—'}</strong></div>`);const totalMetric=metrics[2].nextElementSibling;totalMetric?.insertAdjacentHTML('afterend',`<div class="commission-order-owner commission-custom-owner" onclick="event.stopPropagation()">${commissionOrderCustomRatesHtml(group,commissionYear)}</div>`);}
+    if(metrics[0])metrics[0].insertAdjacentHTML('beforeend',commissionOrderSellerFilterHtml(group,commissionYear));
+    if(metrics[1]){metrics[1].hidden=!!selectedSeller&&selectedSeller!=='EVANDRO';metrics[1].querySelector('span').textContent='Comissão Evandro';metrics[1].querySelector('strong').innerHTML=assigned?`${fmtBRL(evando.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(evando.earned)}</span>`:'—';}
+    if(metrics[2]){metrics[2].hidden=!!selectedSeller&&selectedSeller!=='MOHR';metrics[2].querySelector('span').textContent='Comissão Mohr';metrics[2].querySelector('strong').innerHTML=assigned?`${fmtBRL(mohr.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(mohr.earned)}</span>`:'—';metrics[2].insertAdjacentHTML('afterend',`<div class="commission-order-metric"><span>${selectedSeller?`Total de ${esc(selectedSeller)}`:'Comissão total do pedido'}</span><strong style="color:var(--green)">${assigned?`${fmtBRL(totals.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(totals.received)}</span>`:'—'}</strong></div>`);const totalMetric=metrics[2].nextElementSibling;totalMetric?.insertAdjacentHTML('afterend',`<div class="commission-order-owner commission-custom-owner" onclick="event.stopPropagation()">${commissionOrderCustomRatesHtml(group,commissionYear,selectedSeller)}</div>`);}
   });
   if(commissionMonth>=0){const list=target.querySelector('.commission-order-list');if(list){list.innerHTML=commissionMonthlyTableV2(groups,commissionYear,commissionMonth);const title=list.querySelector('.commission-month-title'),count=title?.querySelector('#commissionMonthCount');if(title&&count){const actions=document.createElement('div');actions.style.cssText='display:flex;align-items:center;gap:10px';count.replaceWith(actions);actions.append(count);const pdf=document.createElement('button');pdf.type='button';pdf.className='btn btn-ghost';pdf.innerHTML='<span class="msi msi-sm">picture_as_pdf</span> Relatório PDF';pdf.onclick=exportCommissionMonthPDF;actions.append(pdf);}}}
 }
@@ -5498,11 +5586,10 @@ function renderCashFlowPage(container=document.getElementById('financeiroContent
     </section>`;
 }
 function renderFinanceiroFiscal(){
+  if(document.getElementById('page-comercial')?.classList.contains('active')){renderCommercialPage();return;}
   const target=document.getElementById('financeiroContent');if(!target)return;
   if(financeiroView==='fluxoCaixa'){renderCashFlowPage(target);return;}
   if(financeiroView==='receber'){renderContasAReceber(target);return;}
-  if(financeiroView==='comissoes'){renderCommissionsPage(target);return;}
-  if(financeiroView==='vendas'){renderSalesPage(target);return;}
   if(financeiroView==='ativos'){renderFixedAssetsPage(target);return;}
   if(financeiroView==='materiaPrima'){renderRawMaterialPage(target);return;}
   if(financeiroView==='pagar'){renderContasAPagar(target);return;}
@@ -7315,6 +7402,8 @@ let partsStructureBatchCancelRequested=false;
 let partsStructureAutoBatchScheduled=false;
 let partsStructureBatchMessage='';
 let partsStructureBatchMessageType='';
+const PARTS_PRICE_QUOTE_STORAGE_KEY='cartamac_parts_price_quote_v1';
+let partsPriceQuoteItems=(()=>{try{const saved=JSON.parse(localStorage.getItem(PARTS_PRICE_QUOTE_STORAGE_KEY)||'[]');return Array.isArray(saved)?saved.filter(item=>item&&item.code).map(item=>({...item,code:partsStructureCode(item.code),quantity:Math.max(1,Math.floor(Number(item.quantity)||1)),unitCost:Math.max(0,Number(item.unitCost)||0)})):[];}catch(_){return [];}})();
 function partsStructureCode(value){return String(value||'').trim().toUpperCase();}
 function partsStructureStorageId(code){return `parts_${partsStructureCode(code).replace(/[^A-Z0-9._+\-]/g,'_')}`;}
 function partsStructureCacheMeta(code){return DB.partsStructureCache?.[partsStructureCode(code)]||null;}
@@ -8296,6 +8385,49 @@ async function loadBndesComponentsFromMaxiprod(){
   }catch(error){console.error('Componentes BNDES:',error);if(status)status.textContent='Falha ao carregar a estrutura.';showToast(String(error?.message||'Não foi possível consultar a estrutura.').replace(/^.*?:\s*/,''),'err');}
   finally{if(button){button.disabled=false;button.innerHTML='<span class="msi msi-sm">sync</span> Puxar informações';}}
 }
+function savePartsPriceQuote(){try{localStorage.setItem(PARTS_PRICE_QUOTE_STORAGE_KEY,JSON.stringify(partsPriceQuoteItems));}catch(error){console.warn('Orçamento de peças:',error);}}
+function partsPriceQuoteSubtotal(){return partsPriceQuoteItems.reduce((sum,item)=>sum+Math.max(0,Number(item.unitCost)||0)*Math.max(1,Math.floor(Number(item.quantity)||1)),0);}
+function renderPartsPriceQuote(recalculate=true){
+  const target=document.getElementById('priceQuoteItems'),costInput=document.getElementById('priceCost');if(!target||!costInput)return;
+  const subtotal=partsPriceQuoteSubtotal();costInput.value=subtotal.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  target.innerHTML=partsPriceQuoteItems.length?`<div class="price-quote-list"><table class="price-quote-table"><thead><tr><th style="width:100px">Código</th><th style="width:330px">Equipamento</th><th style="width:125px">Custo unitário</th><th style="width:90px">Quantidade</th><th style="width:125px">Custo total</th><th style="width:165px">Preço com margem de desconto</th><th style="width:175px">Preço com margem de desconto sem imposto</th><th style="width:60px"></th></tr></thead><tbody>${partsPriceQuoteItems.map((item,index)=>{const quantity=Math.max(1,Math.floor(Number(item.quantity)||1)),total=(Number(item.unitCost)||0)*quantity;return `<tr><td>${escapeHTML(item.code)}</td><td>${escapeHTML(item.equipment||'Peça sem descrição')}</td><td>${fmtPartsCost(item.unitCost)}</td><td><input type="number" min="1" step="1" value="${quantity}" aria-label="Quantidade de ${escapeHTML(item.code)}" onchange="updatePartsPriceQuoteQuantity('${escapeHTML(item.code)}',this.value)"></td><td>${fmtPartsCost(total)}</td><td data-quote-discount="${index}">—</td><td data-quote-without-tax="${index}">—</td><td><button class="icon-btn" type="button" title="Remover do orçamento" onclick="removePartFromPriceQuote('${escapeHTML(item.code)}')"><span class="msi msi-sm">delete</span></button></td></tr>`;}).join('')}</tbody><tfoot><tr><td colspan="4">TOTAL DO ORÇAMENTO <span class="price-quote-count">${partsPriceQuoteItems.length} peça(s)</span></td><td>${fmtPartsCost(subtotal)}</td><td id="priceQuoteDiscountTotal">—</td><td id="priceQuoteWithoutTaxTotal">—</td><td></td></tr></tfoot></table></div>`:'<div class="price-quote-empty"><span class="msi msi-xl">playlist_add</span><h3>Nenhuma peça adicionada</h3><p>Volte à Tabela de peças e clique em “Adicionar ao orçamento”.</p></div>';
+  if(recalculate)calculatePartsPrice();
+}
+function partsPriceQuoteLinePricing(item,report){
+  const quantity=Math.max(1,Math.floor(Number(item.quantity)||1)),cost=Math.max(0,Number(item.unitCost)||0)*quantity;
+  if(!report.valid||report.equipmentFactor<=0)return {cost,withDiscount:0,withoutTax:0};
+  const withTaxes=(cost/report.equipmentFactor)*(1+report.ipi/100),withDiscount=withTaxes/(1-report.discount/100),withoutTax=withDiscount*Math.max(0,1-report.markupTaxSum/100);
+  return {cost,withDiscount,withoutTax};
+}
+function updatePartsPriceQuotePrices(report){
+  let discountTotal=0,withoutTaxTotal=0;
+  partsPriceQuoteItems.forEach((item,index)=>{const values=partsPriceQuoteLinePricing(item,report);discountTotal+=values.withDiscount;withoutTaxTotal+=values.withoutTax;const discountCell=document.querySelector(`[data-quote-discount="${index}"]`),withoutTaxCell=document.querySelector(`[data-quote-without-tax="${index}"]`);if(discountCell)discountCell.textContent=report.valid?fmtPartsCost(values.withDiscount):'—';if(withoutTaxCell)withoutTaxCell.textContent=report.valid?fmtPartsCost(values.withoutTax):'—';});
+  const discountTotalCell=document.getElementById('priceQuoteDiscountTotal'),withoutTaxTotalCell=document.getElementById('priceQuoteWithoutTaxTotal');if(discountTotalCell)discountTotalCell.textContent=report.valid?fmtPartsCost(discountTotal):'—';if(withoutTaxTotalCell)withoutTaxTotalCell.textContent=report.valid?fmtPartsCost(withoutTaxTotal):'—';
+}
+function togglePartsPriceManualForm(force){
+  const form=document.getElementById('priceManualItemForm');if(!form)return;const open=typeof force==='boolean'?force:!form.classList.contains('active');form.classList.toggle('active',open);if(open)setTimeout(()=>document.getElementById('priceManualEquipment')?.focus(),0);
+}
+function addManualPartToPriceQuote(){
+  if(!hasAccess('pecas.price')){showAccessDenied();return;}
+  const description=String(document.getElementById('priceManualEquipment')?.value||'').trim(),unitCost=Math.max(0,parseBRNumber(document.getElementById('priceManualCost')?.value||'')),quantity=Math.max(1,Math.floor(Number(document.getElementById('priceManualQuantity')?.value)||1));
+  if(!description){showToast('Informe o equipamento ou a descrição da peça.','err');document.getElementById('priceManualEquipment')?.focus();return;}
+  if(!(unitCost>0)){showToast('Informe um valor de custo maior que zero.','err');document.getElementById('priceManualCost')?.focus();return;}
+  const rawCode=partsStructureCode(document.getElementById('priceManualCode')?.value||''),baseCode=rawCode.replace(/[^A-Z0-9._+-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')||`MANUAL-${String(Date.now()).slice(-6)}`;
+  let code=baseCode,suffix=2;while(partsPriceQuoteItems.some(item=>item.code===code))code=`${baseCode}-${suffix++}`;
+  partsPriceQuoteItems.push({code,equipment:description,unitCost,quantity,manual:true,addedAt:new Date().toISOString()});savePartsPriceQuote();
+  ['priceManualCode','priceManualEquipment','priceManualCost'].forEach(id=>{const input=document.getElementById(id);if(input)input.value='';});const quantityInput=document.getElementById('priceManualQuantity');if(quantityInput)quantityInput.value='1';togglePartsPriceManualForm(false);renderPartsPriceQuote();showToast(`${code} adicionado manualmente ao orçamento.`,'ok');
+}
+function addPartToPriceQuote(code){
+  if(!hasAccess('pecas.price')){showAccessDenied();return;}
+  const key=partsStructureCode(code),catalog=partsCatalogRowByCode(key);if(!catalog){showToast('Peça não encontrada na tabela.','err');return;}
+  const meta=partsStructureCacheMeta(key),unitCost=Math.max(0,Number(meta?.custoTotal??catalog.cost)||0),existing=partsPriceQuoteItems.find(item=>item.code===key);
+  if(existing){existing.quantity=Math.max(1,Math.floor(Number(existing.quantity)||1))+1;existing.unitCost=unitCost;existing.equipment=catalog.equipment||existing.equipment;}
+  else partsPriceQuoteItems.push({code:key,equipment:catalog.equipment||'Peça sem descrição',unitCost,quantity:1,addedAt:new Date().toISOString()});
+  savePartsPriceQuote();switchPartsView('price');showToast(`${key} adicionada ao orçamento${existing?' · quantidade atualizada':''}.`);
+}
+function updatePartsPriceQuoteQuantity(code,value){const key=partsStructureCode(code),item=partsPriceQuoteItems.find(entry=>entry.code===key);if(!item)return;item.quantity=Math.max(1,Math.floor(Number(value)||1));savePartsPriceQuote();renderPartsPriceQuote();}
+function removePartFromPriceQuote(code){const key=partsStructureCode(code);partsPriceQuoteItems=partsPriceQuoteItems.filter(item=>item.code!==key);savePartsPriceQuote();renderPartsPriceQuote();}
+function clearPartsPriceQuote(){if(!partsPriceQuoteItems.length)return;if(!confirm('Limpar todas as peças deste orçamento?'))return;partsPriceQuoteItems=[];savePartsPriceQuote();renderPartsPriceQuote();showToast('Orçamento de peças limpo.');}
 function switchPartsView(view){
   view=['catalog','return','price','bndes'].includes(view)?view:'catalog';
   if(!hasAccess(`pecas.${view}`)){showAccessDenied();return;}
@@ -8317,7 +8449,7 @@ function switchPartsView(view){
     selectedStructureOrderId=COST_MANUAL_LOOKUP_ID;renderPartsEquipmentReturn();
     ensureCostStructureLoaded(COST_MANUAL_LOOKUP_ID).then(()=>{if(partsView==='return'&&document.getElementById('page-pecas')?.classList.contains('active'))renderPartsEquipmentReturn();});
   }else if(String(selectedStructureOrderId)===String(COST_MANUAL_LOOKUP_ID))selectedStructureOrderId=null;
-  if(view==='price')calculatePartsPrice();
+  if(view==='price')renderPartsPriceQuote();
   if(view==='bndes')renderBndesDraft();
 }
 function collectPartsPriceInputs(selector){
@@ -8380,6 +8512,7 @@ function renderPartsPriceBreakdown(report){
 }
 function calculatePartsPrice(){
   const report=getPartsPriceCalculation();
+  updatePartsPriceQuotePrices(report);
   const factorMarkup=document.getElementById('priceEquipmentMarkup');
   const factorDivisor=document.getElementById('priceTaxDivisor');
   const factorText=value=>`${(value*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% <small>(${value.toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4})})</small>`;
@@ -8406,10 +8539,12 @@ function calculatePartsPrice(){
 }
 function getPartsPriceReportData(){
   const report=getPartsPriceCalculation();
-  return {...report,name:document.getElementById('priceItemName')?.value.trim()||'Peça sem nome',sale:report.totalWithTaxes,discounted:report.finalPrice,withoutTax:report.totalWithoutIcmsIpi,saleWithIpi:report.totalWithTaxes,discountedWithIpi:report.finalPrice,markup:report.equipmentFactor*100};
+  const items=partsPriceQuoteItems.map(item=>({...item,quantity:Math.max(1,Math.floor(Number(item.quantity)||1)),total:(Number(item.unitCost)||0)*Math.max(1,Math.floor(Number(item.quantity)||1))}));
+  return {...report,items,name:document.getElementById('priceItemName')?.value.trim()||`${items.length} peça(s) para orçamento`,sale:report.totalWithTaxes,discounted:report.finalPrice,withoutTax:report.totalWithoutIcmsIpi,saleWithIpi:report.totalWithTaxes,discountedWithIpi:report.finalPrice,markup:report.equipmentFactor*100};
 }
 function exportPartsPriceReport(){
   const report=getPartsPriceReportData(),js=window.jspdf?.jsPDF;
+  if(!report.items.length){showToast('Adicione pelo menos uma peça ao orçamento antes de gerar o relatório.','err');return;}
   if(!js){showToast('Gerador de PDF indisponível. Verifique a conexão e tente novamente.','err');return;}
   const pdf=cartamacPdfInit(new js({unit:'mm',format:'a4'}));let y=25;
   const line=(text,size=9,bold=false)=>{if(y>280){pdf.addPage();y=21;}pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(size);const lines=pdf.splitTextToSize(String(text),185);pdf.text(lines,12,y);y+=lines.length*(size*.5+1.5)+2;};
@@ -8419,8 +8554,9 @@ function exportPartsPriceReport(){
   const nextPage=()=>{premium.addPage();py=21;};
   const header=text=>{if(py>266)nextPage();premium.setFillColor(...dark);premium.rect(12,py,186,8,'F');premium.setFillColor(...gold);premium.rect(12,py,2,8,'F');premium.setTextColor(255,255,255);premium.setFont('helvetica','bold');premium.setFontSize(9);premium.text(text,16,py+5.3);py+=10;};
   const table=(heading,items)=>{header(heading);items.forEach((item,index)=>{if(py>274)nextPage(),header(`${heading} (continuação)`);premium.setFillColor(...(index%2?[250,250,250]:light));premium.rect(12,py,186,7,'F');premium.setDrawColor(220,220,220);premium.rect(12,py,186,7,'S');premium.setTextColor(35,35,35);premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(String(item[0]),16,py+4.7);premium.setFont('helvetica','bold');premium.text(String(item[1]),190,py+4.7,{align:'right'});py+=7;});py+=3;};
-  premium.setTextColor(...dark);premium.setFont('helvetica','bold');premium.setFontSize(15);premium.text('CUSTO / FORMAÇÃO DE PREÇO',12,py);py+=7;premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(report.name,12,py,{maxWidth:186});py+=9;
-  table('DADOS PRINCIPAIS',[['Custo do equipamento',fmtPartsCost(report.cost)],['Margem de desconto',pct(report.discount)],['Markup do equipamento',pct(report.equipmentFactor*100)],['Impostos usados no markup',pct(report.markupTaxSum)],['Divisor tributário',pct(report.taxDivisor*100)],['Impostos usados no divisor',pct(report.taxSum)],['IPI fora dos cálculos',pct(report.ipi)]]);
+  premium.setTextColor(...dark);premium.setFont('helvetica','bold');premium.setFontSize(15);premium.text('ORÇAMENTO / FORMAÇÃO DE PREÇO',12,py);py+=7;premium.setFont('helvetica','normal');premium.setFontSize(9);premium.text(report.name,12,py,{maxWidth:186});py+=9;
+  table('PEÇAS DO ORÇAMENTO',report.items.map(item=>[`${item.code} · ${item.equipment} · ${item.quantity} un`,fmtPartsCost(item.total)]));
+  table('DADOS PRINCIPAIS',[['Custo total das peças',fmtPartsCost(report.cost)],['Margem de desconto',pct(report.discount)],['Markup do equipamento',pct(report.equipmentFactor*100)],['Impostos usados no markup',pct(report.markupTaxSum)],['Divisor tributário',pct(report.taxDivisor*100)],['Impostos usados no divisor',pct(report.taxSum)],['IPI fora dos cálculos',pct(report.ipi)]]);
   table('ÍNDICES DO EQUIPAMENTO',report.equipment.map(x=>[`${x.nome} · ${pct(x.valor)}`,fmtPartsCost(report.totalWithIcmsNoIpi*x.valor/100)]));
   table('IMPOSTOS',report.taxValues.map(x=>[`${x.nome} · ${pct(x.valor)}`,fmtPartsCost(x.valorCalculado)]).concat([[`IPI · ${pct(report.ipi)}`,fmtPartsCost(report.ipiTotal)]]));
   table('COMPOSIÇÃO DO PREÇO',[['Preço sem ICMS e IPI',fmtPartsCost(report.totalWithoutIcmsIpi)],['ICMS embutido',fmtPartsCost(report.totalWithIcmsNoIpi-report.totalWithoutIcmsIpi)],['Preço com ICMS, sem IPI',fmtPartsCost(report.totalWithIcmsNoIpi)],['IPI',fmtPartsCost(report.ipiTotal)],['Preço com todos os impostos',fmtPartsCost(report.totalWithTaxes)],['Reserva para desconto',fmtPartsCost(report.discountReserve)],['PREÇO FINAL',fmtPartsCost(report.finalPrice)]]);
@@ -8563,7 +8699,7 @@ function partsStructureExcelRows(rootCode,tree){
   const visit=nodes=>{
     (nodes||[]).forEach(node=>{
       const values=getStructureNodeValues(node),drawing=/^DS/i.test(String(node.codigo||'').trim());
-      rows.push([rootCode,node.codigo||'',node.descricao||'',node.categoria||'',node.unidade||'',values.quantity,values.price===null||values.price===undefined?'':Number(values.price),drawing?'—':formatStructureLastPurchase(node),drawing?getStructureAggregateTotal(node):values.total]);
+      rows.push([node.codigo||'',node.descricao||'',node.unidade||'',values.quantity,values.price===null||values.price===undefined?'':Number(values.price),drawing?getStructureAggregateTotal(node):values.total]);
       visit(node.filhos||[]);
     });
   };
@@ -8575,31 +8711,22 @@ function markPartsExcelHeading(sheet,row,columnCount,color='FFF3E5AB'){
 }
 function makePartsStructureWorkbook(entries,title){
   const workbook=XLSX.utils.book_new();workbook.Props={Title:title,Subject:'Estruturas multinível das peças comerciais',Author:'CARTAMAC',CreatedDate:new Date()};
-  const groups=groupPartsExportEntries(entries),summaryRows=[['TAG','CÓD. DS','EQUIPAMENTO (DESENHO REF.)','CUSTO ATUAL']],summaryGroupRows=[],summaryDataRows=[];
+  const groups=groupPartsExportEntries(entries),structureRows=[['Código','Item / descrição','Unid.','Qtd. (G)','Última compra (P)','Total P × G']],structurePieceRows=[],structureDataRows=[],structureDrawingRows=[];
   groups.forEach((group,groupIndex)=>{
-    if(groupIndex)summaryRows.push(['','','','']);
-    summaryGroupRows.push(summaryRows.length);summaryRows.push([group.title,'','','']);
-    group.items.forEach(item=>{summaryDataRows.push(summaryRows.length);summaryRows.push([item.tag||'',item.code,item.equipment||'',Number(item.total)||0]);});
-  });
-  const summary=XLSX.utils.aoa_to_sheet(summaryRows);summary['!cols']=[{wch:25},{wch:17},{wch:68},{wch:18}];summary['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'};
-  summaryGroupRows.forEach(row=>markPartsExcelHeading(summary,row,4));
-  summaryDataRows.forEach(row=>{const cell=summary[XLSX.utils.encode_cell({r:row,c:3})];if(cell&&typeof cell.v==='number')cell.z='"R$" #,##0.00';});
-  const structureRows=[['Estrutura raiz','Código','Item / descrição','Categoria','Unid.','Qtd. (G)','Última compra (P)','Data da última compra','Total P × G']],structureGroupRows=[],structurePieceRows=[],structureDataRows=[];
-  groups.forEach((group,groupIndex)=>{
-    if(groupIndex)structureRows.push(['','','','','','','','','']);
-    structureGroupRows.push(structureRows.length);structureRows.push([group.title,'','','','','','','','']);
+    if(groupIndex)structureRows.push(['','','','','','']);
     group.items.forEach(item=>{
       if(item.tree?.length){
-        structurePieceRows.push(structureRows.length);structureRows.push([`${item.code} — ${item.equipment||'Peça sem descrição'}`,'','','','','','','','']);
-        partsStructureExcelRows(item.code,item.tree).forEach(row=>{structureDataRows.push(structureRows.length);structureRows.push(row);});
-        structureRows.push(['','','','','','','','','']);
+        structurePieceRows.push(structureRows.length);structureRows.push([`${item.code} — ${item.equipment||'Peça sem descrição'}`,'','','','','']);
+        partsStructureExcelRows(item.code,item.tree).forEach(row=>{const rowIndex=structureRows.length;structureDataRows.push(rowIndex);if(/^DS/i.test(String(row[0]||'').trim()))structureDrawingRows.push(rowIndex);structureRows.push(row);});
+        structureRows.push(['','','','','','']);
       }
     });
   });
-  const structure=XLSX.utils.aoa_to_sheet(structureRows);structure['!cols']=[{wch:17},{wch:17},{wch:56},{wch:22},{wch:10},{wch:14},{wch:18},{wch:20},{wch:18}];structure['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'};
-  structureGroupRows.forEach(row=>markPartsExcelHeading(structure,row,9));structurePieceRows.forEach(row=>markPartsExcelHeading(structure,row,9,'FFE7E6E3'));
-  structureDataRows.forEach(row=>{const quantity=structure[XLSX.utils.encode_cell({r:row,c:5})];if(quantity)quantity.z='#,##0.0000';[6,8].forEach(column=>{const cell=structure[XLSX.utils.encode_cell({r:row,c:column})];if(cell&&typeof cell.v==='number')cell.z='"R$" #,##0.00';});});
-  XLSX.utils.book_append_sheet(workbook,summary,'Resumo');XLSX.utils.book_append_sheet(workbook,structure,'Estruturas');return workbook;
+  const structure=XLSX.utils.aoa_to_sheet(structureRows);structure['!cols']=[{wch:17},{wch:56},{wch:10},{wch:14},{wch:18},{wch:18}];structure['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'};
+  structurePieceRows.forEach(row=>markPartsExcelHeading(structure,row,6,'FFE7E6E3'));
+  structureDataRows.forEach(row=>{const quantity=structure[XLSX.utils.encode_cell({r:row,c:3})];if(quantity)quantity.z='#,##0.0000';[4,5].forEach(column=>{const cell=structure[XLSX.utils.encode_cell({r:row,c:column})];if(cell&&typeof cell.v==='number')cell.z='"R$" #,##0.00';});});
+  structureDrawingRows.forEach(row=>{for(let column=0;column<6;column++){const cell=structure[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.s={...(cell.s||{}),font:{...(cell.s?.font||{}),bold:true,color:{rgb:'FF111111'}},fill:{patternType:'solid',fgColor:{rgb:'FF808080'}},alignment:{...(cell.s?.alignment||{}),vertical:'center'}};}});
+  XLSX.utils.book_append_sheet(workbook,structure,'Estruturas');return workbook;
 }
 async function exportPartStructureExcel(code){
   if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
@@ -8642,7 +8769,7 @@ function renderPartsStructureDetail(row,code){
   else content=`<div class="parts-structure-message">${isMaster(loggedUser)?'Iniciando a primeira consulta desta peça...':'Esta peça ainda aguarda a primeira consulta pelo administrador.'}</div>`;
   const updated=meta?.calculadoEm?new Date(meta.calculadoEm).toLocaleString('pt-BR'):'Nunca';
   const pending=Array.isArray(tree)?countPartsStructureMissingPrices(tree):(Number(meta?.itensSemCusto)||0);
-  return `<tr class="parts-structure-detail"><td colspan="5"><div class="parts-structure-panel">
+  return `<tr class="parts-structure-detail"><td colspan="6"><div class="parts-structure-panel">
     <div class="parts-structure-panel-head"><div><h4>${escapeHTML(key)} — ${escapeHTML(row.equipment||'Peça de reposição')}</h4><p>Atualizado: ${escapeHTML(updated)} · validade de ${PARTS_STRUCTURE_REFRESH_DAYS} dias${pending?` · ${pending} item(ns) sem custo`:''}</p></div>
     <div class="parts-structure-panel-actions"><button class="btn btn-ghost btn-sm" type="button" data-parts-code="${escapeHTML(key)}" onclick="event.stopPropagation();exportPartStructureExcel(this.dataset.partsCode)"><span class="msi msi-sm">table_view</span> Excel</button>${isMaster(loggedUser)?`<button class="btn btn-ghost btn-sm" type="button" data-parts-code="${escapeHTML(key)}" title="Recarrega o MaxiProd e remove os ajustes manuais desta peça" onclick="event.stopPropagation();manualRefreshPartStructure(this.dataset.partsCode)"><span class="msi msi-sm">sync</span> Atualizar esta peça</button>`:''}</div></div>${content}
   </div></td></tr>`;
@@ -8669,11 +8796,11 @@ function renderPartsPage(){
       activeSection=normalisePartSearch(row.tag);
       const collapsed=collapsedPartsSections.has(activeSection);
       const icon=collapsed?'expand_more':'expand_less';
-      body+=`<tr class="parts-section" onclick="togglePartsSection('${activeSection}')"><td colspan="5"><div class="parts-section-title"><span class="msi msi-sm">${icon}</span>${escapeHTML(row.tag)}</div></td></tr>`;
+      body+=`<tr class="parts-section" onclick="togglePartsSection('${activeSection}')"><td colspan="6"><div class="parts-section-title"><span class="msi msi-sm">${icon}</span>${escapeHTML(row.tag)}</div></td></tr>`;
       return;
     }
     if(activeSection&&collapsedPartsSections.has(activeSection)&&!query)return;
-    if(row.group){body+=`<tr class="parts-group"><td colspan="5">${escapeHTML(row.tag)}</td></tr>`;return;}
+    if(row.group){body+=`<tr class="parts-group"><td colspan="6">${escapeHTML(row.tag)}</td></tr>`;return;}
     const code=partsStructureCode(row.code),validCode=/^[A-Z0-9._+\-]+$/.test(code),meta=validCode?partsStructureCacheMeta(code):null;
     const open=validCode&&partsStructureOpen.has(code),loading=validCode&&partsStructureLoading.has(code),stale=meta&&partsStructureIsStale(meta);
     const liveCost=meta?Number(meta.custoTotal):null,costText=meta?fmtPartsCost(liveCost):fmtPartsCost(row.cost);
@@ -8683,10 +8810,11 @@ function renderPartsPage(){
       <td data-label="TAG">${escapeHTML(row.tag)}</td><td class="parts-code" data-label="CÓD. DS">${escapeHTML(row.code)}</td>
       <td data-label="EQUIPAMENTO"><div class="parts-row-name">${validCode?`<span class="msi">chevron_right</span>`:''}<span>${escapeHTML(row.equipment)}</span></div></td>
       <td class="parts-cost" data-label="CUSTO"><span class="parts-cost-main">${escapeHTML(costText)}</span>${meta?`<small class="parts-cost-source">Planilha: ${escapeHTML(fmtPartsCost(row.cost))}</small>`:''}</td>
-      <td class="parts-date" data-label="DATA DE ATUALIZAÇÃO">${meta?escapeHTML(fmtPartsDate(meta.calculadoEm)):escapeHTML(fmtPartsDate(row.updatedAt))}<small class="parts-refresh-state ${statusClass}">${escapeHTML(statusText)}</small></td></tr>`;
+      <td class="parts-date" data-label="DATA DE ATUALIZAÇÃO">${meta?escapeHTML(fmtPartsDate(meta.calculadoEm)):escapeHTML(fmtPartsDate(row.updatedAt))}<small class="parts-refresh-state ${statusClass}">${escapeHTML(statusText)}</small></td>
+      <td class="parts-quote-action" data-label="ORÇAMENTO">${validCode&&hasAccess('pecas.price')?`<button class="btn btn-gold btn-sm" type="button" data-parts-code="${escapeHTML(code)}" onclick="event.stopPropagation();addPartToPriceQuote(this.dataset.partsCode)"><span class="msi msi-sm">playlist_add</span> Adicionar</button>`:'—'}</td></tr>`;
     if(open)body+=renderPartsStructureDetail(row,code);
   });
-  container.innerHTML=`<div class="parts-table-wrap"><table class="parts-table"><thead><tr><th>TAG</th><th>CÓD. DS</th><th>EQUIPAMENTO (DESENHO REF.)</th><th>CUSTO</th><th>DATA DE ATUALIZAÇÃO</th></tr></thead><tbody>${body||'<tr><td colspan="5" style="text-align:center;color:var(--text3);">Nenhuma peça encontrada.</td></tr>'}</tbody></table></div>`;
+  container.innerHTML=`<div class="parts-table-wrap"><table class="parts-table"><thead><tr><th>TAG</th><th>CÓD. DS</th><th>EQUIPAMENTO (DESENHO REF.)</th><th>CUSTO</th><th>DATA DE ATUALIZAÇÃO</th><th>ORÇAMENTO</th></tr></thead><tbody>${body||'<tr><td colspan="6" style="text-align:center;color:var(--text3);">Nenhuma peça encontrada.</td></tr>'}</tbody></table></div>`;
   const allCodes=uniquePartsStructureCodes(),staleCount=allCodes.filter(code=>partsStructureIsStale(partsStructureCacheMeta(code))).length;
   if(!partsStructureBatchMessage)setPartsBatchStatus(`${allCodes.length-staleCount} atualizada(s) · ${staleCount} aguardando ou vencida(s)`,'');
   else setPartsBatchStatus(partsStructureBatchMessage,partsStructureBatchMessageType);
@@ -9378,7 +9506,7 @@ function ensureSalesBrazilMap(){
     const candidate=module.default?.locations?module.default:module.brazil?.locations?module.brazil:module.default?.default?.locations?module.default.default:null;
     if(!candidate?.locations?.length)throw new Error('Mapa do Brasil sem estados.');
     SALES_BRAZIL_MAP=candidate;
-    if(financeiroView==='vendas')renderFinanceiroFiscal();
+    if(comercialView==='vendas'&&document.getElementById('page-comercial')?.classList.contains('active'))renderCommercialPage();
     return candidate;
   }).catch(error=>{console.error('Falha ao carregar mapa dos estados',error);return null;});
   return salesBrazilMapPromise;
@@ -9524,7 +9652,7 @@ function salesYearMarkup(year,records){
     </div>
   </section>`;
 }
-function renderSalesPage(container=document.getElementById('financeiroContent')){
+function renderSalesPage(container=document.getElementById('comercialContent')){
   if(!container)return;
   const records=salesRecords();
   const byYear=new Map();
@@ -9543,8 +9671,8 @@ function renderSalesPage(container=document.getElementById('financeiroContent'))
     salesExpandedInitialized=true;
   }
   const updated=SALES_CACHE?.updatedAt?new Date(SALES_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
-  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Pedidos de venda consultados diretamente no MaxiProd, sem pedidos cancelados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de vendas: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(salesRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(salesRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
-    ${financeTabsHtml()}
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">storefront</span> Comercial</h2><p>Pedidos de venda consultados diretamente no MaxiProd, sem pedidos cancelados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta de vendas: ${escapeHTML(updated)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${(salesRefreshInProgress||financeRefreshInProgress)?'disabled':''}><span class="msi msi-sm">sync</span> ${(salesRefreshInProgress||financeRefreshInProgress)?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+    ${commercialTabsHtml()}
     <div class="sales-page">
     <div class="sales-head">
       <div><h2><span class="msi">point_of_sale</span> Vendas</h2><p>Pedidos de venda consultados diretamente no MaxiProd e organizados pelo ano de emissão.</p></div>
@@ -10851,6 +10979,7 @@ function refreshUIFromDB(){
   if(loggedUser&&loggedUser.type!=='client'){renderNotificationBell();scheduleNotificationEngine();}
   if(document.getElementById('page-custos')?.classList.contains('active')&&costsUnlocked)renderCostsPage();
   if(document.getElementById('page-financeiro')?.classList.contains('active')&&typeof renderFinanceiroFiscal==='function')renderFinanceiroFiscal();
+  if(document.getElementById('page-comercial')?.classList.contains('active')&&typeof renderCommercialPage==='function')renderCommercialPage();
   if(document.getElementById('page-compras')?.classList.contains('active')&&typeof renderPurchaseOrdersPage==='function')renderPurchaseOrdersPage();
   if(document.getElementById('page-contabilidade')?.classList.contains('active')&&typeof renderAccountingPage==='function')renderAccountingPage();
 }
@@ -11536,24 +11665,24 @@ function hoursPdfCards(report,cards){
   cards.forEach((card,index)=>{const x=left+index*(w+gap),color=card.color||[38,38,38];doc.setFillColor(246,246,246);doc.setDrawColor(212,212,212);doc.roundedRect(x,y,w,14,1.2,1.2,'FD');doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(100,100,100);doc.text(hoursPdfClean(card.label).toUpperCase(),x+2.5,y+4.5,{maxWidth:w-5});doc.setFont('helvetica','bold');doc.setFontSize(8.6);doc.setTextColor(...color);doc.text(hoursPdfClean(card.value),x+2.5,y+10.5,{maxWidth:w-5});});
   report.y+=19;
 }
-function hoursPdfSection(report,title){
-  if(report.y+22>report.bottom){report.doc.addPage();report.y=24;}
-  report.doc.setFillColor(240,240,238);report.doc.setDrawColor(214,214,214);report.doc.roundedRect(report.left,report.y,report.contentW,8,1,1,'FD');report.doc.setFillColor(...CARTAMAC_PDF_THEME.gold);report.doc.rect(report.left,report.y,2,8,'F');report.doc.setFont('helvetica','bold');report.doc.setFontSize(7.4);report.doc.setTextColor(35,35,35);report.doc.text(hoursPdfClean(title).toUpperCase(),report.left+5,report.y+5.2);report.y+=10;
+function hoursPdfSection(report,title,compact=false){
+  const height=compact?6.5:8,advance=compact?8:10;if(report.y+(compact?16:22)>report.bottom){report.doc.addPage();report.y=24;}
+  report.doc.setFillColor(240,240,238);report.doc.setDrawColor(214,214,214);report.doc.roundedRect(report.left,report.y,report.contentW,height,1,1,'FD');report.doc.setFillColor(...CARTAMAC_PDF_THEME.gold);report.doc.rect(report.left,report.y,2,height,'F');report.doc.setFont('helvetica','bold');report.doc.setFontSize(compact?6.5:7.4);report.doc.setTextColor(35,35,35);report.doc.text(hoursPdfClean(title).toUpperCase(),report.left+5,report.y+(compact?4.35:5.2));report.y+=advance;
 }
-function hoursPdfTable(report,columns,rows){
-  const {doc,left,contentW,bottom}=report,totalWidth=columns.reduce((sum,column)=>sum+column.width,0),scale=contentW/totalWidth;
+function hoursPdfTable(report,columns,rows,options={}){
+  const {doc,left,contentW,bottom}=report,compact=options.compact===true,headerHeight=compact?6:8,headerFont=compact?5.2:5.8,headerTextY=compact?4:5,minRowHeight=compact?5:7,lineHeight=compact?2.35:3.2,rowPadding=compact?1.3:2.4,bodyFont=compact?5.15:6.1,bodyTextY=compact?3.35:4.2,endGap=compact?2:5,totalWidth=columns.reduce((sum,column)=>sum+column.width,0),scale=contentW/totalWidth;
   const cols=columns.map(column=>({...column,width:column.width*scale}));
-  const drawHeader=()=>{doc.setFillColor(40,40,40);doc.rect(left,report.y,contentW,8,'F');doc.setFont('helvetica','bold');doc.setFontSize(5.8);doc.setTextColor(255,255,255);let x=left;cols.forEach(column=>{const tx=column.align==='right'?x+column.width-1.7:x+1.7;doc.text(hoursPdfClean(column.label).toUpperCase(),tx,report.y+5,{align:column.align||'left',maxWidth:column.width-3.4});x+=column.width;});report.y+=8;};
+  const drawHeader=()=>{doc.setFillColor(40,40,40);doc.rect(left,report.y,contentW,headerHeight,'F');doc.setFont('helvetica','bold');doc.setFontSize(headerFont);doc.setTextColor(255,255,255);let x=left;cols.forEach(column=>{const tx=column.align==='right'?x+column.width-1.7:x+1.7;doc.text(hoursPdfClean(column.label).toUpperCase(),tx,report.y+headerTextY,{align:column.align||'left',maxWidth:column.width-3.4});x+=column.width;});report.y+=headerHeight;};
   drawHeader();
   rows.forEach((row,rowIndex)=>{
     const cells=cols.map((column,index)=>{const raw=row[index],cell=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{text:raw};const lines=doc.splitTextToSize(hoursPdfClean(cell.text),column.width-3.4);return {...cell,lines};});
-    const rowHeight=Math.max(7,...cells.map(cell=>Math.max(1,cell.lines.length)*3.2+2.4));
+    const rowHeight=Math.max(minRowHeight,...cells.map(cell=>Math.max(1,cell.lines.length)*lineHeight+rowPadding));
     if(report.y+rowHeight>bottom){doc.addPage();report.y=24;drawHeader();}
     if(rowIndex%2===0){doc.setFillColor(248,248,248);doc.rect(left,report.y,contentW,rowHeight,'F');}
     doc.setDrawColor(224,224,224);doc.line(left,report.y+rowHeight,left+contentW,report.y+rowHeight);
-    let x=left;cells.forEach((cell,index)=>{const column=cols[index],color=cell.color||[38,38,38],tx=column.align==='right'?x+column.width-1.7:x+1.7;doc.setFont('helvetica',cell.bold?'bold':'normal');doc.setFontSize(cell.fontSize||6.1);doc.setTextColor(...color);doc.text(cell.lines,tx,report.y+4.2,{align:column.align||'left',maxWidth:column.width-3.4});x+=column.width;});report.y+=rowHeight;
+    let x=left;cells.forEach((cell,index)=>{const column=cols[index],color=cell.color||[38,38,38],tx=column.align==='right'?x+column.width-1.7:x+1.7;doc.setFont('helvetica',cell.bold?'bold':'normal');doc.setFontSize(cell.fontSize||bodyFont);doc.setTextColor(...color);doc.text(cell.lines,tx,report.y+bodyTextY,{align:column.align||'left',maxWidth:column.width-3.4});x+=column.width;});report.y+=rowHeight;
   });
-  report.y+=5;
+  report.y+=endGap;
 }
 function exportHoursBalancePDF(){
   const root=hoursData(),data=root.calendar?.months?.[hoursCalendarSelectedMonth]||root,employees=data.employees||[];
@@ -11574,24 +11703,31 @@ function exportHoursBankPDF(){
   hoursPdfTable(report,[{label:'Mês',width:21},{label:'Falta e atraso',width:25},{label:'Extra diurna',width:25},{label:'Saldo do mês',width:26},{label:'Ajuste',width:25},{label:'Horas pagas',width:32},{label:'Compensadas',width:28},{label:'Saldo próximo mês',width:32},{label:'Arquivo de origem',width:63}],timeline.map(record=>[[hoursBankMonthLabel(record),`${record.start||'—'} a ${record.end||'—'}`].join('\n'),{text:record.delay||'00:00',color:[205,45,58]},record.extra||'00:00',{text:hoursText(record.balance),color:Number(record.balance)<0?[205,45,58]:[39,145,72],bold:true},{text:hoursSignedText(record.adjustmentMinutes),color:Number(record.adjustmentMinutes)<0?[205,45,58]:[170,120,22],bold:true},record.paidMinutes?`${hoursText(record.paidMinutes)}\n${hoursMoney(record.paidValue)}`:'—',record.compensatedMinutes?hoursText(record.compensatedMinutes):'—',{text:hoursText(record.accumulated),color:Number(record.accumulated)<0?[205,45,58]:[39,145,72],bold:true},record.sourceName||'—']));
   cartamacPdfSave(report.doc,`${hoursPdfFilename(`Banco_de_Horas_${employeeName}`)}.pdf`,{sector:'BANCO DE HORAS',footerText:'Documento gerado pelo aplicativo CARTAMAC · Banco de horas · Somente leitura'});showToast('Relatório do banco de horas gerado.','ok');
 }
-function exportHoursPaymentPDF(){
-  const data=hoursData(),employee=(data.employees||[]).find(item=>item.id===hoursPaymentEmployeeId)||(data.employees||[])[0];
-  if(!employee){showToast('Selecione um funcionário para gerar o relatório.','err');return;}
+function hoursPdfContinueEmployeePage(report,title,subtitle){
+  const {doc,left,contentW}=report;doc.addPage();report.y=26;doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(28,28,28);doc.text(hoursPdfClean(title),left,report.y,{maxWidth:contentW});report.y+=7;doc.setFont('helvetica','normal');doc.setFontSize(7.2);doc.setTextColor(98,98,98);const subtitleLines=doc.splitTextToSize(hoursPdfClean(subtitle),contentW);doc.text(subtitleLines,left,report.y);report.y+=subtitleLines.length*3.4+3;doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`,left,report.y);report.y+=6;return report;
+}
+function hoursPaymentPdfSignature(report,employee){
+  const {doc,left,contentW,bottom}=report,required=24;if(report.y+required>bottom){doc.addPage();report.y=24;}const y=Math.max(report.y+4,bottom-21),gap=18,lineW=(contentW-gap)/2,leftCenter=left+lineW/2,rightStart=left+lineW+gap,rightCenter=rightStart+lineW/2;doc.setDrawColor(35,35,35);doc.setLineWidth(.4);doc.line(left,y,left+lineW,y);doc.line(rightStart,y,rightStart+lineW,y);doc.setFont('helvetica','bold');doc.setFontSize(6.7);doc.setTextColor(35,35,35);doc.text(hoursPdfClean(employee.name),leftCenter,y+4,{align:'center',maxWidth:lineW});doc.text('CARTAMAC PAPER MACHINERY',rightCenter,y+4,{align:'center',maxWidth:lineW});doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(95,95,95);doc.text('Assinatura do funcionário',leftCenter,y+7,{align:'center'});doc.text('Assinatura do responsável',rightCenter,y+7,{align:'center'});doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(35,35,35);doc.text('RECEBIDO EM:  ____ / ____ / ________',left,y+15);report.y=y+18;
+}
+function exportHoursPaymentPDF(employeeOverride=null,sharedReport=null,deferSave=false){
+  const data=hoursData();
+  if(!employeeOverride){const employees=(data.employees||[]).slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR'));if(!employees.length){showToast('Importe o cartão ponto antes de gerar as folhas de pagamento.','err');return;}let report=null;employees.forEach(employee=>{report=exportHoursPaymentPDF(employee,report,true);});if(!report)return;cartamacPdfSave(report.doc,`${hoursPdfFilename(`Folhas_de_Pagamento_Todos_${hoursBankPeriodKey(data.period)}`)}.pdf`,{sector:'CÁLCULO DE PAGAMENTO',footerText:'Documento gerado pelo aplicativo CARTAMAC · Folhas de pagamento · Uma folha por funcionário · Somente leitura'});showToast(`${employees.length} folha(s) de pagamento gerada(s) em um único PDF.`,'ok');return;}
+  const employee=employeeOverride;
   const payment=hoursPaymentFor(employee),isClt=payment.employmentType==='CLT',normalHours=hoursMinutes(employee.normal)/60,extraHours=hoursMinutes(employee.extra)/60,extraRateApplied=hoursNumber(payment.extraRate)||(!isClt?hoursNumber(payment.normalRate):0),normalSubtotal=isClt?0:normalHours*hoursNumber(payment.normalRate),extraSubtotal=extraHours*extraRateApplied;
   const settlement=hoursCurrentBankSettlement(employee),record=settlement.record,entry=settlement.entry,paidMinutes=Number(record?.paidMinutes)||0,compensatedMinutes=Number(record?.compensatedMinutes)||0,paidRate=hoursNumber(record?.paidRate)||hoursConfiguredExtraRate(employee),paidValue=(paidMinutes/60)*paidRate,nextBalance=Number(entry?.accumulated)||0;
   const baseGross=isClt?hoursNumber(payment.fixedSalary):normalSubtotal+extraSubtotal,gross=baseGross+(isClt?extraSubtotal+paidValue:0),inss=isClt?hoursCalculateInss(gross).total:0,mealCount=hoursMealCountForEmployee(employee,data),mealUnit=hoursNumber(payment.mealUnitIndividual)||8.5,meals=mealCount*mealUnit,monthly=hoursMonthlyItems(payment),monthlyDiscounts=monthly.filter(item=>item.type!=='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),monthlyBenefits=monthly.filter(item=>item.type==='benefit').reduce((sum,item)=>sum+hoursNumber(item.value),0),uniodonto=hoursNumber(payment.uniodontoIndividual),discounts=meals+uniodonto+monthlyDiscounts+inss,benefits=monthlyBenefits,net=gross-discounts+benefits;
-  const report=hoursPdfStart('portrait',`Cálculo de pagamento - ${employee.name}`,`Período: ${data.period?.start||'—'} a ${data.period?.end||'—'} · Vínculo: ${isClt?'CLT':'PJ'}`);if(!report)return;
+  const reportTitle=`Cálculo de pagamento - ${employee.name}`,reportSubtitle=`Período: ${data.period?.start||'—'} a ${data.period?.end||'—'} · Vínculo: ${isClt?'CLT':'PJ'}`,report=sharedReport?hoursPdfContinueEmployeePage(sharedReport,reportTitle,reportSubtitle):hoursPdfStart('portrait',reportTitle,reportSubtitle);if(!report)return null;
   hoursPdfCards(report,[{label:'Valor bruto',value:hoursMoney(gross)},{label:'Descontos',value:`- ${hoursMoney(discounts)}`,color:[205,45,58]},{label:'Auxílios',value:`+ ${hoursMoney(benefits)}`,color:[45,105,175]},{label:'Valor líquido',value:hoursMoney(net),color:[39,145,72]}]);
-  hoursPdfSection(report,'Horas trabalhadas e banco de horas');
+  hoursPdfSection(report,'Horas trabalhadas e banco de horas',true);
   const workRows=isClt?[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Extra diurna',employee.extra||'00:00','Cartão ponto'],['Valor da hora extra',hoursMoney(extraRateApplied),'Configuração individual'],['Subtotal das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(extraRateApplied)}`],['Balanço do mês',hoursText(employee.balance),'Extra menos falta'],['Banco antes da baixa',hoursText(Number(entry?.beforeSettlement)||0),'Acumulado'],['Horas do banco pagas',hoursText(paidMinutes),`${hoursMoney(paidRate)} por hora`],['Valor do banco pago',hoursMoney(paidValue),'Acrescentado ao bruto'],['Horas compensadas',hoursText(compensatedMinutes),'Folga sem pagamento'],['Saldo do próximo mês',hoursText(nextBalance),'Após as baixas']]:[['Horas normais',employee.normal||'00:00','Cartão ponto'],['Horas previstas',employee.planned||'00:00','Carga do período'],['Falta e atraso',employee.delay||'00:00','Cartão ponto'],['Horas extras',employee.extra||'00:00','Pagas automaticamente'],['Pagamento das horas extras',hoursMoney(extraSubtotal),`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(extraRateApplied)}`],['Balanço do mês',hoursText(employee.balance),'Mantido somente como registro'],['Saldo registrado no banco',hoursText(nextBalance),'Não acrescentado novamente ao bruto']];
-  hoursPdfTable(report,[{label:'Informação',width:68},{label:'Valor',width:54},{label:'Referência',width:68}],workRows.map(row=>[{text:row[0],bold:true},row[1],row[2]]));
-  hoursPdfSection(report,'Composição financeira');
+  hoursPdfTable(report,[{label:'Informação',width:68},{label:'Valor',width:54},{label:'Referência',width:68}],workRows.map(row=>[{text:row[0],bold:true},row[1],row[2]]),{compact:true});
+  hoursPdfSection(report,'Composição financeira',true);
   const financialRows=isClt?[['Salário mensal','Remuneração cadastrada',hoursMoney(payment.fixedSalary)],['Horas extras',`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(extraRateApplied)}`,hoursMoney(extraSubtotal)],['Banco de horas pago',`${hoursText(paidMinutes)} x ${hoursMoney(paidRate)}`,hoursMoney(paidValue)],['Valor bruto','Salário + extras + banco pago',hoursMoney(gross)]]:[['Horas diurnas',`${hoursText(hoursMinutes(employee.normal))} x ${hoursMoney(payment.normalRate)}`,hoursMoney(normalSubtotal)],['Horas extras pagas automaticamente',`${hoursText(hoursMinutes(employee.extra))} x ${hoursMoney(extraRateApplied)}`,hoursMoney(extraSubtotal)],['Valor bruto','Horas diurnas + horas extras',hoursMoney(gross)]];
-  hoursPdfTable(report,[{label:'Item',width:62},{label:'Cálculo',width:78},{label:'Valor',width:50,align:'right'}],financialRows.map(row=>[{text:row[0],bold:true},row[1],{text:row[2],bold:true}]));
-  hoursPdfSection(report,'Descontos e auxílios');
+  hoursPdfTable(report,[{label:'Item',width:62},{label:'Cálculo',width:78},{label:'Valor',width:50,align:'right'}],financialRows.map(row=>[{text:row[0],bold:true},row[1],{text:row[2],bold:true}]),{compact:true});
+  hoursPdfSection(report,'Descontos e auxílios',true);
   const financeRows=[['Desconto','Almoços',`${mealCount} x ${hoursMoney(mealUnit)}`,`- ${hoursMoney(meals)}`],['Desconto','Uniodonto','Cadastro individual',`- ${hoursMoney(uniodonto)}`],...monthly.filter(item=>item.type!=='benefit').map(item=>['Desconto',item.name||'Sem descrição','Lançamento mensal',`- ${hoursMoney(item.value)}`]),...(isClt?[['Desconto','INSS','Cálculo progressivo',`- ${hoursMoney(inss)}`]]:[]),...monthly.filter(item=>item.type==='benefit').map(item=>['Auxílio',item.name||'Sem descrição','Lançamento mensal',`+ ${hoursMoney(item.value)}`]),['Total','Total de descontos','',`- ${hoursMoney(discounts)}`],['Total','Total de auxílios','',`+ ${hoursMoney(benefits)}`],['Líquido','Valor final a receber','Bruto - descontos + auxílios',hoursMoney(net)]];
-  hoursPdfTable(report,[{label:'Tipo',width:34},{label:'Descrição',width:62},{label:'Referência',width:58},{label:'Valor',width:36,align:'right'}],financeRows.map(row=>{const positive=row[3].startsWith('+')||row[0]==='Líquido',negative=row[3].startsWith('-');return [row[0],row[1],row[2],{text:row[3],bold:true,color:negative?[205,45,58]:positive?[39,145,72]:[38,38,38]}];}));
-  cartamacPdfSave(report.doc,`${hoursPdfFilename(`Calculo_de_Pagamento_${employee.name}_${hoursBankPeriodKey(data.period)}`)}.pdf`,{sector:'CÁLCULO DE PAGAMENTO',footerText:'Documento gerado pelo aplicativo CARTAMAC · Cálculo de pagamento · Somente leitura'});showToast('Relatório do cálculo de pagamento gerado.','ok');
+  hoursPdfTable(report,[{label:'Tipo',width:34},{label:'Descrição',width:62},{label:'Referência',width:58},{label:'Valor',width:36,align:'right'}],financeRows.map(row=>{const positive=row[3].startsWith('+')||row[0]==='Líquido',negative=row[3].startsWith('-');return [row[0],row[1],row[2],{text:row[3],bold:true,color:negative?[205,45,58]:positive?[39,145,72]:[38,38,38]}];}),{compact:true});
+  hoursPaymentPdfSignature(report,employee);if(deferSave)return report;cartamacPdfSave(report.doc,`${hoursPdfFilename(`Calculo_de_Pagamento_${employee.name}_${hoursBankPeriodKey(data.period)}`)}.pdf`,{sector:'CÁLCULO DE PAGAMENTO',footerText:'Documento gerado pelo aplicativo CARTAMAC · Cálculo de pagamento · Somente leitura'});showToast('Relatório do cálculo de pagamento gerado.','ok');return report;
 }
 function hoursNumber(value){const parsed=Number(String(value??'').replace(',','.'));return Number.isFinite(parsed)?parsed:0;}
 function hoursMoney(value){return Number(value||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
@@ -11917,7 +12053,7 @@ function renderHoursPaymentsPage(){
   const bankSettlementHTML=bankRecord?`<div class="panel-head" style="border-top:1px solid var(--border)"><span><span class="msi msi-sm">account_balance_wallet</span> Baixa do banco de horas</span><span style="margin-left:auto;color:var(--muted);font-size:12px">Pagamento ou compensação por folga</span></div><div class="stats-row" style="padding:16px 16px 0"><div class="stat-card"><span class="stat-label">Banco antes da baixa</span><span class="stat-value" style="color:${Number(bankEntry?.beforeSettlement)<0?'var(--red)':'var(--green)'}">${hoursText(Number(bankEntry?.beforeSettlement)||0)}</span><span class="stat-sub">Acumulado até este mês</span></div><div class="stat-card"><span class="stat-label">Horas pagas</span><span class="stat-value">${hoursText(bankPaidMinutes)}</span><span class="stat-sub">${hoursMoney(bankPaidValue)}</span></div><div class="stat-card"><span class="stat-label">Horas compensadas</span><span class="stat-value">${hoursText(bankCompensatedMinutes)}</span><span class="stat-sub">Folga sem pagamento</span></div><div class="stat-card"><span class="stat-label">Saldo do próximo mês</span><span class="stat-value" style="color:${bankNextBalance<0?'var(--red)':'var(--green)'}">${hoursText(bankNextBalance)}</span><span class="stat-sub">Após as baixas</span></div></div><div class="form-grid" style="grid-template-columns:repeat(2,minmax(320px,1fr));gap:14px;padding:16px"><div style="border:1px solid ${paidEnabled?'var(--gold)':'var(--border2)'};border-radius:var(--radius);padding:14px"><label style="display:flex;align-items:center;gap:9px;font-weight:700;cursor:pointer"><input type="checkbox" ${paidEnabled?'checked':''} ${bankAvailable<=0&&!paidEnabled?'disabled':''} onchange="toggleHoursBankSettlement('paid',this.checked)"> Pagamento de horas</label><p style="margin:7px 0 12px;color:var(--muted);font-size:12px">As horas são retiradas do banco e o valor é acrescentado ao bruto.</p>${paidEnabled?`<div class="form-grid" style="grid-template-columns:1fr 1fr;gap:10px"><label><span style="display:block;font-size:11px;color:var(--muted);margin-bottom:6px">Quantidade de horas (HH:MM)</span><input class="form-input" inputmode="numeric" value="${hoursText(bankPaidMinutes)}" placeholder="05:00" onchange="saveHoursBankSettlementField('paidMinutes',this.value)"></label><label><span style="display:block;font-size:11px;color:var(--muted);margin-bottom:6px">Valor da hora (R$)</span><input class="form-input" type="number" min="0" step="0.01" value="${hoursEscape(bankPaidRate)}" onchange="saveHoursBankSettlementField('paidRate',this.value)"></label></div>`:''}</div><div style="border:1px solid ${compensatedEnabled?'var(--gold)':'var(--border2)'};border-radius:var(--radius);padding:14px"><label style="display:flex;align-items:center;gap:9px;font-weight:700;cursor:pointer"><input type="checkbox" ${compensatedEnabled?'checked':''} ${bankAvailable<=0&&!compensatedEnabled?'disabled':''} onchange="toggleHoursBankSettlement('compensated',this.checked)"> Compensação de horas</label><p style="margin:7px 0 12px;color:var(--muted);font-size:12px">Registra a folga, retira as horas do banco e não acrescenta pagamento.</p>${compensatedEnabled?`<label><span style="display:block;font-size:11px;color:var(--muted);margin-bottom:6px">Quantidade compensada (HH:MM)</span><input class="form-input" inputmode="numeric" value="${hoursText(bankCompensatedMinutes)}" placeholder="05:00" onchange="saveHoursBankSettlementField('compensatedMinutes',this.value)"></label>`:''}</div></div>`:`<div class="empty-state" style="border-top:1px solid var(--border)">Não existe apontamento desta competência no banco de horas. Importe novamente o cartão ponto para habilitar pagamento ou compensação.</div>`;
   host.innerHTML=`
     ${hoursTabsHTML()}
-    <div class="parts-head"><div><h2><span class="msi">calculate</span> Cálculo de pagamento</h2><p>Preencha os valores negociados com cada profissional. As horas normais e extras vêm do cartão ponto importado.</p></div><button class="btn btn-ghost" type="button" onclick="exportHoursPaymentPDF()"><span class="msi msi-sm">picture_as_pdf</span> Relatório PDF</button></div>
+    <div class="parts-head"><div><h2><span class="msi">calculate</span> Cálculo de pagamento</h2><p>Preencha os valores negociados com cada profissional. As horas normais e extras vêm do cartão ponto importado.</p></div><button class="btn btn-ghost" type="button" onclick="exportHoursPaymentPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF de todos</button></div>
     <div class="panel" style="margin-bottom:18px"><div class="panel-head">Funcionário e período</div><div class="filters" style="padding:16px"><select class="filter-select" style="min-width:330px" onchange="selectHoursPaymentEmployee(this.value)">${employees.map(item=>`<option value="${hoursEscape(item.id)}" ${item.id===employee.id?'selected':''}>${hoursEscape(item.name)}</option>`).join('')}</select><span class="finance-result-count">Período: ${hoursEscape(data.period?.start||'—')} a ${hoursEscape(data.period?.end||'—')}</span><span class="finance-result-count">Vínculo: <strong>${isClt?'CLT':'PJ'}</strong></span></div></div>
     <div class="panel" style="margin-bottom:18px"><div class="panel-head">${isClt?'Salário na folha':'Horas trabalhadas'} · ${hoursEscape(employee.name)}</div><div class="stats-row" style="padding:16px"><div class="stat-card"><span class="stat-label">Horas diurnas</span><span class="stat-value">${hoursEscape(employee.normal||'00:00')}</span><span class="stat-sub">${isClt?'Apenas informativas':'Total de horas'}</span></div><div class="stat-card"><span class="stat-label">Hora extra diurna</span><span class="stat-value">${hoursEscape(employee.extra||'00:00')}</span><span class="stat-sub">${isClt?'Não entra no cálculo':'Conforme cartão ponto'}</span></div><div class="stat-card"><span class="stat-label">${isClt?'Salário mensal':'Subtotal diurno'}</span><span class="stat-value">${isClt?hoursMoney(payment.fixedSalary):hoursMoney(normalSubtotal)}</span><span class="stat-sub">${isClt?'Valor configurado':'Horas normais × valor hora'}</span></div><div class="stat-card"><span class="stat-label">${isClt?'Banco pago':'Subtotal extra'}</span><span class="stat-value">${isClt?hoursMoney(bankPaidValue):hoursMoney(extraSubtotal)}</span><span class="stat-sub">${isClt?'Acrescentado à folha':`${extraHours.toLocaleString('pt-BR',{maximumFractionDigits:2})} h × ${hoursMoney(payment.extraRate)}`}</span></div><div class="stat-card"><span class="stat-label">Bruto</span><span class="stat-value" style="color:var(--green)">${hoursMoney(gross)}</span><span class="stat-sub">${bankPaidValue?'Inclui banco de horas pago':isClt?'Salário fixo':'Diurno + extra'}</span></div></div>${bankSettlementHTML}</div>
     <div class="panel"><div class="panel-head">Descontos, auxílios e despesas</div><div class="form-grid" style="padding:16px;grid-template-columns:repeat(2,minmax(220px,1fr));gap:14px"><div style="padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius)"><strong>Total de almoços: ${mealCount}</strong><small style="display:block;color:var(--muted);margin-top:5px">Calculado pelo Controle de almoços · segunda a quinta</small></div>${field('Farmácia do mês (R$)','pharmacy',payment.pharmacy)}</div><div class="stats-row" style="padding:0 16px 16px"><div class="stat-card"><span class="stat-label">Outros descontos</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(standardDiscounts)}</span><span class="stat-sub">Padrão, almoços e farmácia</span></div>${isClt?`<div class="stat-card"><span class="stat-label">INSS progressivo</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(inssDiscount)}</span><span class="stat-sub">Calculado pelas faixas configuradas</span></div>`:''}<div class="stat-card"><span class="stat-label">Descontos totais</span><span class="stat-value" style="color:var(--red)">− ${hoursMoney(discounts)}</span><span class="stat-sub">${isClt?'Inclui INSS':'Sem INSS para vínculo PJ'}</span></div><div class="stat-card"><span class="stat-label">Auxílios totais</span><span class="stat-value" style="color:var(--blue)">+ ${hoursMoney(benefits)}</span><span class="stat-sub">Auxílios cadastrados no padrão</span></div><div class="stat-card"><span class="stat-label">R$ a receber</span><span class="stat-value" style="color:var(--green)">${hoursMoney(net)}</span><span class="stat-sub">Bruto − descontos + auxílios</span></div></div>${isClt?`<div class="panel-head" style="border-top:1px solid var(--border)">Memória de cálculo do INSS</div><div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Faixa</th><th>Base tributável</th><th>Alíquota</th><th>Desconto</th></tr></thead><tbody>${inssCalculation.rows.filter(row=>row.base>0).map((row,index)=>`<tr><td>${index+1}ª faixa · até ${hoursMoney(row.upper)}</td><td>${hoursMoney(row.base)}</td><td>${row.rate.toLocaleString('pt-BR')}%</td><td><strong>${hoursMoney(row.value)}</strong></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3"><strong>Total do INSS</strong></td><td><strong>${hoursMoney(inssDiscount)}</strong></td></tr></tfoot></table></div>`:''}</div>`;
@@ -12032,12 +12168,12 @@ Object.assign(window,{
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,openOwnPasswordModal,saveOwnPassword,setAccessEditor,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,sendGmailTestEmail,runNotificationEngine,enableMobilePush,disableMobilePush,
-  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,renderBndesDraft,markBndesDraftDirty,saveBndesDraft,clearBndesRegistration,switchBndesPortalTab,validateBndesDraft,exportBndesXml,loadBndesGeneralInfoFromMaxiprod,loadBndesMasterData,loadBndesComponentsFromMaxiprod,refreshBndesServicesFromMaxiprod,filterBndesComponents,filterBndesServices,updateBndesComponentField,toggleAllBndesComponents,addBndesService,updateBndesServiceField,removeBndesService,addBndesLabor,updateBndesLaborField,removeBndesLabor,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
+  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,addPartToPriceQuote,togglePartsPriceManualForm,addManualPartToPriceQuote,updatePartsPriceQuoteQuantity,removePartFromPriceQuote,clearPartsPriceQuote,renderPartsPriceQuote,renderBndesDraft,markBndesDraftDirty,saveBndesDraft,clearBndesRegistration,switchBndesPortalTab,validateBndesDraft,exportBndesXml,loadBndesGeneralInfoFromMaxiprod,loadBndesMasterData,loadBndesComponentsFromMaxiprod,refreshBndesServicesFromMaxiprod,filterBndesComponents,filterBndesServices,updateBndesComponentField,toggleAllBndesComponents,addBndesService,updateBndesServiceField,removeBndesService,addBndesLabor,updateBndesLaborField,removeBndesLabor,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,beginCommercialStructurePriceEdit,
   filterCostCards,saveCostsPassword,
-  renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
-  commissionSetYear,commissionSetMonth,commissionSetSearch,setCommissionVendedor,setCommissionGerente,setCommissionCustomRate,addCommissionSeller,deleteCommissionSeller,addCommissionOrderSeller,removeCommissionOrderSeller,setCommissionSellerCustomRate,toggleCommissionPayment,commissionApplyMonthFilters,commissionApplyGeneralSellerFilter,exportCommissionMonthPDF,exportCommissionOrderPDF,ensureCommissionHistory,refreshCommissionSources,
+  renderFinanceiroFiscal,refreshFinanceiroFiscal,switchFinanceView,renderCommercialPage,switchCommercialView,toggleFinanceColumnFilter,toggleAllFinanceColumnFilter,
+  commissionSetYear,commissionSetMonth,commissionSetSearch,setCommissionVendedor,setCommissionGerente,setCommissionCustomRate,addCommissionSeller,deleteCommissionSeller,addCommissionOrderSeller,removeCommissionOrderSeller,setCommissionSellerCustomRate,setCommissionOrderSellerFilter,toggleCommissionPayment,commissionApplyMonthFilters,commissionApplyGeneralSellerFilter,exportCommissionFilteredOrdersPDF,exportCommissionMonthPDF,exportCommissionOrderPDF,ensureCommissionHistory,refreshCommissionSources,
   renderCashFlowPage,selectCashFlowMonth,shiftCashFlowMonth,updateCashFlowBankName,updateCashFlowBankBalance,openCashFlowFinanceDetail,exportCashFlowPDF,
   renderSalesPage,refreshSalesMaxiprod,toggleSalesYear,toggleSalesCommercialSummary,toggleSalesGeography,setSalesGeographyYear,selectSalesGeographyUf,exportSalesYearReport,
   renderPurchaseOrdersPage,refreshPurchaseOrdersMaxiprod,applyPurchaseOrderSearch,applyPurchaseOrderFilter,clearPurchaseOrderFilters,togglePurchaseOrdersOverdue,togglePurchaseOrdersToday,exportPurchaseOrdersPDF,
