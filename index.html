@@ -1717,6 +1717,36 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 .commission-empty{padding:40px 20px;border:1px dashed var(--border2);border-radius:12px;text-align:center;color:var(--text3)}
 @media(max-width:1100px){.commission-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.commission-order>summary{grid-template-columns:1fr 1fr}.commission-toolbar{grid-template-columns:1fr 1fr}.commission-toolbar label:last-child{grid-column:1/-1}}
 @media(max-width:650px){.commission-summary,.commission-toolbar,.commission-order>summary{grid-template-columns:1fr}.commission-toolbar label:last-child{grid-column:auto}}
+.system-home{min-height:calc(100vh - 64px);padding:28px clamp(18px,3vw,46px) 48px;background:radial-gradient(circle at 12% 8%,rgba(211,176,70,.09),transparent 28%),radial-gradient(circle at 88% 18%,rgba(75,128,181,.08),transparent 30%),var(--bg)}
+.system-home-hero{display:flex;align-items:end;justify-content:space-between;gap:22px;max-width:1500px;margin:0 auto 24px;padding-bottom:20px;border-bottom:1px solid var(--border)}.system-home-eyebrow{display:block;margin-bottom:7px;color:var(--gold);font-size:10px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase}.system-home-hero h1{margin:0;color:var(--text);font-size:clamp(24px,3vw,38px);letter-spacing:-.8px}.system-home-hero p{max-width:780px;margin:8px 0 0;color:var(--text3);font-size:13px;line-height:1.6}.system-home-user{display:flex;align-items:center;gap:10px;padding:10px 13px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);white-space:nowrap}.system-home-user .msi{color:var(--gold)}.system-home-user small{display:block;color:var(--text3);font-size:9px;text-transform:uppercase}.system-home-user b{font-size:12px}
+.system-home-map{display:grid;gap:16px;max-width:1500px;margin:0 auto}.system-home-lane{position:relative;display:grid;grid-template-columns:140px minmax(0,1fr);gap:14px;align-items:stretch}.system-home-lane-label{display:flex;align-items:center;justify-content:center;min-height:118px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text2);font-size:11px;font-weight:900;letter-spacing:.8px;text-align:center;text-transform:uppercase}.system-home-lane-cards{display:grid;grid-template-columns:repeat(var(--home-columns),minmax(170px,1fr));gap:22px}.system-home-card{--home-color:var(--gold);position:relative;display:flex;flex-direction:column;align-items:flex-start;min-height:118px;padding:17px 18px;border:1px solid color-mix(in srgb,var(--home-color) 43%,var(--border));border-radius:12px;background:linear-gradient(145deg,color-mix(in srgb,var(--home-color) 12%,var(--surface)),var(--surface));color:var(--text);text-align:left;cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s}.system-home-card:hover{transform:translateY(-2px);border-color:var(--home-color);box-shadow:0 12px 30px rgba(0,0,0,.22)}.system-home-card.locked{opacity:.62;filter:saturate(.55)}.system-home-card.locked:hover{opacity:.86}.system-home-card:not(:last-child)::after{content:'→';position:absolute;right:-18px;top:50%;z-index:2;transform:translateY(-50%);color:var(--home-color);font-size:20px;font-weight:900}.system-home-card-head{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px}.system-home-card-icon{display:grid;place-items:center;width:36px;height:36px;border:1px solid color-mix(in srgb,var(--home-color) 52%,transparent);border-radius:9px;background:color-mix(in srgb,var(--home-color) 14%,transparent);color:var(--home-color)}.system-home-card-state{color:var(--text3);font-size:10px}.system-home-card h3{margin:12px 0 4px;font-size:14px}.system-home-card p{margin:0;color:var(--text3);font-size:10.5px;line-height:1.45}.system-home-card.blue{--home-color:#4e9ad0}.system-home-card.green{--home-color:#62a83e}.system-home-card.red{--home-color:#cf5252}.system-home-card.gold{--home-color:#d3b046}.system-home-card.purple{--home-color:#9b78d0}
+.system-home-denied{display:none;align-items:center;gap:12px;max-width:1500px;margin:0 auto 18px;padding:13px 15px;border:1px solid rgba(230,75,75,.45);border-radius:10px;background:rgba(230,75,75,.09);color:#ff9b9b;font-size:12px}.system-home-denied.show{display:flex}.system-home-denied strong{display:block;color:#ffd0d0;margin-bottom:2px}.system-home-foot{max-width:1500px;margin:18px auto 0;color:var(--text3);font-size:10px;text-align:center}
+.system-home-map{gap:18px}
+.system-home-lane{grid-template-columns:158px minmax(0,1fr);gap:16px}
+.system-home-lane-label{min-height:140px;padding:18px;font-size:13px;line-height:1.45;letter-spacing:1px}
+.system-home-lane-cards{gap:16px}
+.system-home-card{min-height:140px;padding:20px 20px 18px}
+.system-home-card:not(:last-child)::after{display:none!important;content:none!important}
+.system-home-card-icon{width:48px;height:48px;border-radius:11px}
+.system-home-card-icon .msi{font-size:25px}
+.system-home-card-state{font-size:11px;font-weight:700}
+.system-home-card-state .msi{font-size:15px}
+.system-home-card h3{margin:15px 0 6px;font-size:17px;line-height:1.25}
+.system-home-card p{font-size:12px;line-height:1.5}
+.system-home-motto{max-width:1500px;margin:34px auto 0;padding:25px 20px 6px;border-top:1px solid var(--border);color:var(--text);font-size:clamp(24px,3.5vw,48px);font-weight:300;letter-spacing:.02em;text-align:center;text-transform:uppercase}
+.system-home-motto strong{color:var(--gold);font-weight:750}
+.users-area-tabs{display:flex;align-items:center;gap:8px;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.users-area-tab{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg3);color:var(--text2);font:700 13px Inter,sans-serif;cursor:pointer;transition:all .15s}
+.users-area-tab:hover{border-color:#555;color:var(--text)}
+.users-area-tab.active{border-color:var(--gold);background:rgba(205,173,72,.15);color:var(--accent2)}
+.users-area-tab .msi{font-size:18px}
+body.system-home-active #screen-dev{padding-left:0!important}
+body.system-home-active #screen-dev>.dev-header{display:none!important}
+body.system-home-active #page-home{padding:0!important}
+.brand-icon-header{cursor:pointer}
+.brand-icon-header:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:8px}
+@media(max-width:1100px){.system-home-lane{grid-template-columns:1fr}.system-home-lane-label{min-height:auto;justify-content:flex-start}.system-home-lane-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.system-home{padding:18px 12px 34px}.system-home-hero{align-items:flex-start;flex-direction:column}.system-home-lane-cards{grid-template-columns:1fr}.system-home-user{width:100%}.system-home-card{min-height:132px}.system-home-motto{margin-top:25px;font-size:24px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -1732,7 +1762,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
   </div>
   <div class="login-box">
     <h2>Acesso ao Portal</h2>
-    <p>Entre com suas credenciais para acompanhar seus projetos.</p>
+    <p>Entre com suas credenciais de cliente ou da equipe CARTAMAC.</p>
     <div class="form-group">
       <label>Usuário / E-mail</label>
       <input type="text" id="loginUser" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')doLogin()">
@@ -1744,7 +1774,6 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     <button class="btn btn-primary btn-full" onclick="doLogin()">Entrar</button>
     <div class="error-msg" id="loginError">Usuário ou senha incorretos. Tente novamente.</div>
   </div>
-  <div class="dev-link"><a onclick="openAdminLogin()"><span class="msi msi-sm" style="vertical-align:-3px;margin-right:4px;">admin_panel_settings</span>Área do Desenvolvedor / Administrador</a></div>
 </div>
 
 <!-- ADMIN LOGIN OVERLAY -->
@@ -1773,14 +1802,13 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
   <header class="dev-header">
     <img class="brand-icon-header" src="data:image/png;base64,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" alt="Cartamac"><div class="dev-wordmark">CARTAMAC</div>
     <nav class="dev-nav">
-      <button class="dev-tab active" id="tabCronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
-      <button class="dev-tab" id="tabClientes" onclick="switchDevTab('clientes',this)"><span class="msi msi-sm">group</span> Clientes</button>
-      <button class="dev-tab" id="tabAdmins" onclick="switchDevTab('admins',this)"><span class="msi msi-sm">shield_person</span> Admins</button>
-      <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">storefront</span> Custos</button>
+      <button class="dev-tab" id="tabCronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
+      <button class="dev-tab" id="tabUsuarios" onclick="openUsersArea()"><span class="msi msi-sm">manage_accounts</span> Usuários</button>
+      <button class="dev-tab" id="tabPecas" onclick="switchDevTab('pecas',this)"><span class="msi msi-sm">calculate</span> Custos</button>
       <button class="dev-tab" id="tabMacroEngenharia" onclick="switchDevTab('macro-engenharia',this)"><span class="msi msi-sm">architecture</span> Macro Engenharia</button>
       <button class="dev-tab" id="tabCompras" onclick="switchDevTab('compras',this)"><span class="msi msi-sm">shopping_cart</span> Pedidos de compra</button>
       <span class="dev-nav-separator" aria-hidden="true"></span>
-      <button class="dev-tab" id="tabCustos" onclick="switchDevTab('custos',this)"><span class="msi msi-sm">payments</span> Custos</button>
+      <button class="dev-tab" id="tabCustos" onclick="switchDevTab('custos',this)"><span class="msi msi-sm">compare_arrows</span> Comparação de valores</button>
       <button class="dev-tab" id="tabFinanceiro" onclick="switchDevTab('financeiro',this)"><span class="msi msi-sm">account_balance</span> Financeiro/Fiscal</button>
       <button class="dev-tab" id="tabComercial" onclick="switchDevTab('comercial',this)"><span class="msi msi-sm">storefront</span> Comercial</button>
       <button class="dev-tab" id="tabContabilidade" onclick="switchDevTab('contabilidade',this)"><span class="msi msi-sm">request_quote</span> Contabilidade</button>
@@ -1794,8 +1822,11 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
     </div>
   </header>
 
+  <!-- TELA INICIAL -->
+  <div class="page active" id="page-home"><div id="systemHomeContent"></div></div>
+
   <!-- CRONOGRAMA -->
-  <div class="page active" id="page-cronograma">
+  <div class="page" id="page-cronograma">
     <div class="cronograma-subtabs">
       <button class="cronograma-subtab active" data-cron-subtab="cronograma" onclick="switchCronogramaSubtab('cronograma')"><span class="msi msi-sm">list_alt</span> Cronograma</button>
       <button class="cronograma-subtab" data-cron-subtab="atrasos" onclick="switchCronogramaSubtab('atrasos')"><span class="msi msi-sm">query_stats</span> Atrasos por setor</button>
@@ -2103,6 +2134,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 
   <!-- CLIENTES -->
   <div class="page" id="page-clientes">
+    <div class="users-area-tabs"><button type="button" class="users-area-tab active" data-users-view="clientes" onclick="openUsersArea('clientes')"><span class="msi">group</span> Clientes</button><button type="button" class="users-area-tab" data-users-view="admins" onclick="openUsersArea('admins')"><span class="msi">shield_person</span> Administradores</button></div>
     <div class="admin-grid">
       <div class="panel">
         <div class="panel-head">Clientes <button class="btn btn-sm btn-gold" id="btnNewClient" onclick="openAddUserModal()">+ Novo</button></div>
@@ -2116,6 +2148,7 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 
   <!-- ADMINISTRADORES -->
   <div class="page" id="page-admins">
+    <div class="users-area-tabs"><button type="button" class="users-area-tab" data-users-view="clientes" onclick="openUsersArea('clientes')"><span class="msi">group</span> Clientes</button><button type="button" class="users-area-tab active" data-users-view="admins" onclick="openUsersArea('admins')"><span class="msi">shield_person</span> Administradores</button></div>
     <div class="admin-grid">
       <div class="panel">
         <div class="panel-head">Administradores <button class="btn btn-sm btn-gold" id="btnNewAdmin" onclick="openAddAdminModal()">+ Novo Admin</button></div>
@@ -2764,11 +2797,11 @@ const isMaster = u => u && (u.type==='master' || MASTER_EMAILS.includes(u.ref?.e
 const isEngineering = u => u && ['engineering','engenharia'].includes(String(u.type||'').toLowerCase());
 const ADMIN_ACCESS_GROUPS=[
   {id:'cronograma',label:'Cronograma',icon:'list_alt',items:[['cronograma.cronograma','Cronograma'],['cronograma.atrasos','Atrasos por setor'],['simulador','Simular Cronograma'],['cronograma.importar','Importar e históricos']]},
-  {id:'cadastros',label:'Cadastros',icon:'group',items:[['clientes','Clientes'],['admins','Administradores']]},
-  {id:'pecas',label:'Custos',icon:'storefront',items:[['pecas.catalog','Tabela de peças'],['pecas.return','Retorno equipamentos'],['pecas.price','Formação de preço'],['pecas.bndes','Cadastro BNDES']]},
+  {id:'cadastros',label:'Usuários',icon:'manage_accounts',items:[['clientes','Clientes'],['admins','Administradores']]},
+  {id:'pecas',label:'Custos',icon:'calculate',items:[['pecas.catalog','Tabela de peças'],['pecas.return','Retorno equipamentos'],['pecas.price','Formação de preço'],['pecas.bndes','Cadastro BNDES']]},
   {id:'macro',label:'Macro Engenharia',icon:'architecture',items:[['macro-engenharia.active','OPs abertas'],['macro-engenharia.completed','Finalizadas'],['macro-engenharia.people','Responsáveis']]},
   {id:'compras',label:'Compras',icon:'shopping_cart',items:[['compras','Pedidos de compra']]},
-  {id:'custos',label:'Custos',icon:'payments',items:[['custos.orders','Custos dos pedidos'],['custos.structure','Estrutura multinível']]},
+  {id:'custos',label:'Comparação de valores',icon:'compare_arrows',items:[['custos.orders','Custos dos pedidos'],['custos.structure','Estrutura multinível']]},
   {id:'financeiro',label:'Financeiro / Fiscal',icon:'account_balance',items:[['financeiro.fluxoCaixa','Fluxo de caixa mensal'],['financeiro.receber','Contas a receber'],['financeiro.pagar','Contas a pagar'],['financeiro.materiaPrima','Estoque']]},
   {id:'comercial',label:'Comercial',icon:'storefront',items:[['financeiro.vendas','Vendas'],['financeiro.comissoes','Comissões']]},
   {id:'contabilidade',label:'Contabilidade',icon:'request_quote',items:[['contabilidade.receber','A receber · Pedidos de venda'],['contabilidade.pagar','A pagar · Pedidos de compra']]}
@@ -2807,6 +2840,8 @@ function accessEditorHTML(prefix,permissions,disabled=false){
 function setAccessEditor(prefix,value){if(!isMaster(loggedUser)){showToast('Somente administradores mestres podem alterar acessos.','err');return;}document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>input.checked=value);}
 function readAccessEditor(prefix){const result={};ADMIN_ACCESS_KEYS.forEach(key=>result[key]=false);document.querySelectorAll(`input[data-access-prefix="${prefix}"]`).forEach(input=>result[input.dataset.accessKey]=input.checked);return result;}
 function devTabAllowed(id){
+  if(id==='home')return true;
+  if(id==='usuarios')return hasAccess('clientes')||hasAccess('admins');
   if(['cronograma','atrasos','importar'].includes(id))return hasAccess(`cronograma.${id}`);
   if(id==='financeiro')return hasFinanceAreaAccess();
   if(id==='comercial')return hasCommercialAreaAccess();
@@ -2814,21 +2849,51 @@ function devTabAllowed(id){
   return hasAccess(id);
 }
 function showAccessDenied(){showToast('Você não possui permissão para acessar esta área.','err');}
+const SYSTEM_HOME_LANES=[
+  {label:'Comercial e custos',items:[
+    {target:'usuarios',title:'Usuários',description:'Clientes, equipe e permissões',icon:'manage_accounts',color:'blue'},
+    {target:'comercial',title:'Comercial',description:'Vendas e comissões',icon:'storefront',color:'blue'},
+    {target:'pecas',title:'Custos e formação de preço',description:'Peças, retornos, preços e BNDES',icon:'calculate',color:'green'}
+  ]},
+  {label:'Engenharia e operação',items:[
+    {target:'macro-engenharia',title:'Macro Engenharia',description:'OPs, etapas e responsáveis',icon:'architecture',color:'green'},
+    {target:'cronograma',title:'Cronograma',description:'Prazos, tarefas e atrasos',icon:'list_alt',color:'green'},
+    {target:'compras',title:'Pedidos de compra',description:'Pedidos, fornecedores e entregas',icon:'shopping_cart',color:'red'},
+    {target:'custos',title:'Comparação de valores',description:'Análise de lucro, prejuízo e estrutura multinível',icon:'compare_arrows',color:'gold'}
+  ]},
+  {label:'Gestão e apoio',items:[
+    {target:'financeiro',title:'Financeiro / Fiscal',description:'Fluxo de caixa, contas e estoque',icon:'account_balance',color:'gold'},
+    {target:'contabilidade',title:'Contabilidade',description:'Documentos de venda e compra',icon:'request_quote',color:'gold'},
+    {target:'controle-horas',title:'RH',description:'Horas, almoços e pagamentos',icon:'schedule',color:'purple'}
+  ]}
+];
+let systemHomeDeniedTimer=null;
+function renderSystemHome(){
+  const host=document.getElementById('systemHomeContent');if(!host)return;const name=loggedUser?.ref?.name||'Usuário',sector=sectorLabel(loggedUser?.ref||{});
+  const lanes=SYSTEM_HOME_LANES.map(lane=>`<section class="system-home-lane"><div class="system-home-lane-label">${escapeHTML(lane.label)}</div><div class="system-home-lane-cards" style="--home-columns:${lane.items.length}">${lane.items.map(item=>{const allowed=devTabAllowed(item.target);return `<button type="button" class="system-home-card ${item.color}${allowed?'':' locked'}" onclick="openSystemHomeArea('${item.target}','${escapeHTML(item.title)}')"><span class="system-home-card-head"><span class="system-home-card-icon"><span class="msi">${item.icon}</span></span><span class="system-home-card-state">${allowed?'Acessar':'<span class="msi msi-sm">lock</span> Sem acesso'}</span></span><h3>${escapeHTML(item.title)}</h3><p>${escapeHTML(item.description)}</p></button>`;}).join('')}</div></section>`).join('');
+  host.innerHTML=`<main class="system-home"><div class="system-home-hero"><div><span class="system-home-eyebrow">Visão integrada CARTAMAC</span><h1>Olá, ${escapeHTML(name)}.</h1><p>Escolha uma área para continuar. Os setores estão organizados conforme o fluxo das informações dentro da empresa.</p></div><div class="system-home-user"><span class="msi">badge</span><span><small>Setor / perfil</small><b>${escapeHTML(sector)}</b></span></div></div><div class="system-home-denied" id="systemHomeDenied" role="alert"><span class="msi">lock</span><div><strong>Acesso não autorizado</strong><span id="systemHomeDeniedText"></span></div></div><div class="system-home-map">${lanes}</div><div class="system-home-foot">Os blocos com cadeado permanecem visíveis para mostrar o fluxo, mas só podem ser abertos após a liberação de acesso.</div><div class="system-home-motto">Seu sucesso, <strong>nosso papel</strong></div></main>`;
+}
+function showSystemHomeAccessDenied(title){const box=document.getElementById('systemHomeDenied'),text=document.getElementById('systemHomeDeniedText');if(!box||!text){showAccessDenied();return;}text.textContent=`Você não possui permissão para acessar ${title}. Solicite a liberação ao administrador mestre.`;box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'});clearTimeout(systemHomeDeniedTimer);systemHomeDeniedTimer=setTimeout(()=>box.classList.remove('show'),6000);}
+function openSystemHomeArea(target,title){if(!devTabAllowed(target)){showSystemHomeAccessDenied(title);return;}openAllowedDestination(target);}
+function configureSystemHomeLogo(){const logo=document.querySelector('#screen-dev .brand-icon-header');if(!logo)return;logo.setAttribute('role','button');logo.setAttribute('tabindex','0');logo.setAttribute('title','Voltar para a tela inicial');logo.setAttribute('aria-label','Voltar para a tela inicial');logo.onclick=openSystemHome;logo.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openSystemHome();}};}
+function openSystemHome(){configureSystemHomeLogo();document.body.classList.add('system-home-active');document.querySelectorAll('.page').forEach(page=>page.classList.remove('active'));document.querySelectorAll('.dev-tab').forEach(tab=>tab.classList.remove('active'));document.getElementById('page-home')?.classList.add('active');renderSystemHome();window.scrollTo(0,0);}
 function applyNavigationPermissions(){
-  const map={tabCronograma:'cronograma',tabClientes:'clientes',tabAdmins:'admins',tabPecas:'pecas',tabMacroEngenharia:'macro-engenharia',tabCompras:'compras',tabCustos:'custos',tabFinanceiro:'financeiro',tabComercial:'comercial',tabContabilidade:'contabilidade',tabControleHoras:'controle-horas'};
-  Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=(key==='financeiro'?hasFinanceAreaAccess():key==='comercial'?hasCommercialAreaAccess():hasAnyAccess(key))?'flex':'none';});
+  const map={tabCronograma:'cronograma',tabUsuarios:'usuarios',tabPecas:'pecas',tabMacroEngenharia:'macro-engenharia',tabCompras:'compras',tabCustos:'custos',tabFinanceiro:'financeiro',tabComercial:'comercial',tabContabilidade:'contabilidade',tabControleHoras:'controle-horas'};
+  Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=(key==='usuarios'?devTabAllowed('usuarios'):key==='financeiro'?hasFinanceAreaAccess():key==='comercial'?hasCommercialAreaAccess():hasAnyAccess(key))?'flex':'none';});
   const cronHeader=document.getElementById('tabCronograma');if(cronHeader)cronHeader.style.display=(hasAnyAccess('cronograma')||hasAccess('simulador'))?'flex':'none';
   document.querySelectorAll('.cronograma-subtab').forEach(tab=>{const id=tab.dataset.cronSubtab,key=id==='simulador'?'simulador':`cronograma.${id}`;tab.style.display=hasAccess(key)?'flex':'none';});
   [['partsCatalogTab','pecas.catalog'],['partsReturnTab','pecas.return'],['partsPriceTab','pecas.price'],['partsBndesTab','pecas.bndes'],['macroTabActive','macro-engenharia.active'],['macroTabCompleted','macro-engenharia.completed'],['macroTabPeople','macro-engenharia.people']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.style.display=hasAccess(key)?'':'none';});
 }
 function firstAllowedDestination(){
-  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['simulador','simulador'],['importar','cronograma.importar'],['clientes','clientes'],['admins','admins'],['pecas','pecas'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['comercial','comercial'],['contabilidade','contabilidade'],['controle-horas','controle-horas']];
+  const order=[['cronograma','cronograma.cronograma'],['atrasos','cronograma.atrasos'],['simulador','simulador'],['importar','cronograma.importar'],['usuarios','usuarios'],['pecas','pecas'],['macro-engenharia','macro-engenharia'],['compras','compras'],['custos','custos'],['financeiro','financeiro'],['comercial','comercial'],['contabilidade','contabilidade'],['controle-horas','controle-horas']];
   return order.find(([id])=>devTabAllowed(id))?.[0]||null;
 }
 function openAllowedDestination(id){
   if(!id)return false;
+  if(id==='home'){openSystemHome();return true;}
+  if(id==='usuarios'){openUsersArea();return true;}
   if(['cronograma','atrasos','simulador','importar'].includes(id))switchCronogramaSubtab(id);
-  else switchDevTab(id,document.getElementById({clientes:'tabClientes',admins:'tabAdmins',pecas:'tabPecas','macro-engenharia':'tabMacroEngenharia',compras:'tabCompras',custos:'tabCustos',financeiro:'tabFinanceiro',comercial:'tabComercial',contabilidade:'tabContabilidade','controle-horas':'tabControleHoras'}[id]));
+  else switchDevTab(id,document.getElementById({clientes:'tabUsuarios',admins:'tabUsuarios',pecas:'tabPecas','macro-engenharia':'tabMacroEngenharia',compras:'tabCompras',custos:'tabCustos',financeiro:'tabFinanceiro',comercial:'tabComercial',contabilidade:'tabContabilidade','controle-horas':'tabControleHoras'}[id]));
   return true;
 }
 function syncLoggedUserAccess(){
@@ -2984,12 +3049,12 @@ function showScreen(id){
   window.scrollTo(0,0);
   document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
   const el=document.getElementById('screen-'+id);
-  el.style.display='block';
-  requestAnimationFrame(()=>el.classList.add('active'));
+  el.style.display=id==='login'?'flex':'block';
+  requestAnimationFrame(()=>{el.classList.add('active');window.scrollTo(0,0);document.documentElement.scrollLeft=0;document.body.scrollLeft=0;});
 }
 function backToLogin(){
   loggedUser=null;
-  document.body.classList.remove('master-session');
+  document.body.classList.remove('master-session','system-home-active');
   document.getElementById('loginUser').value='';
   document.getElementById('loginPass').value='';
   document.getElementById('loginError').style.display='none';
@@ -3188,11 +3253,7 @@ function openAdminLogin(){
 function closeAdminLogin(){document.getElementById('adminLoginOverlay').classList.remove('open');}
 document.getElementById('adminLoginOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('adminLoginOverlay'))closeAdminLogin();});
 
-function doAdminLogin(){
-  const email=document.getElementById('adminEmail').value.trim();
-  const pass=document.getElementById('adminPass').value;
-  const admin=DB.admins.find(a=>a.email===email&&a.pass===pass);
-  if(!admin){document.getElementById('adminLoginError').style.display='block';return;}
+function startAdminSession(admin){
   closeAdminLogin();
   loggedUser={type:(MASTER_EMAILS.includes(admin.email)||admin.role==='master')?'master':'custom',ref:admin};
   costsUnlocked=true;
@@ -3203,16 +3264,23 @@ function doAdminLogin(){
   document.getElementById('btnNewClient').style.display=master?'':'none';
   showScreen('dev');
   applyNavigationPermissions();
-  const first=firstAllowedDestination();
-  if(first)openAllowedDestination(first);
-  else showToast('Este usuário ainda não possui nenhuma aba liberada.','err');
+  openSystemHome();
   showToast(`Bem-vindo, ${admin.name}!`);
   notificationSessionStart();
 }
+function doAdminLogin(){
+  const email=document.getElementById('adminEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('adminPass').value;
+  const admin=DB.admins.find(a=>String(a.email||'').trim().toLowerCase()===email&&a.pass===pass);
+  if(!admin){document.getElementById('adminLoginError').style.display='block';return;}
+  startAdminSession(admin);
+}
 function doLogin(){
-  const u=document.getElementById('loginUser').value.trim();
+  const u=document.getElementById('loginUser').value.trim().toLowerCase();
   const p=document.getElementById('loginPass').value;
-  const c=DB.clients.find(x=>x.email===u&&x.pass===p);
+  const admin=DB.admins.find(a=>String(a.email||'').trim().toLowerCase()===u&&a.pass===p);
+  if(admin){document.getElementById('loginError').style.display='none';startAdminSession(admin);return;}
+  const c=DB.clients.find(x=>String(x.email||'').trim().toLowerCase()===u&&x.pass===p);
   if(!c){document.getElementById('loginError').style.display='block';return;}
   document.getElementById('loginError').style.display='none';
   loggedUser={type:'client',ref:c};
@@ -3222,8 +3290,18 @@ function doLogin(){
 }
 
 // ─────────── DEV TABS ───────────
+function syncUsersAreaTabs(view){document.querySelectorAll('[data-users-view]').forEach(button=>{const target=button.dataset.usersView;button.classList.toggle('active',target===view);button.style.display=hasAccess(target)?'inline-flex':'none';});}
+function openUsersArea(preferred=''){
+  const candidates=preferred?[preferred,preferred==='clientes'?'admins':'clientes']:['clientes','admins'];
+  const target=candidates.find(view=>hasAccess(view));
+  if(!target){showAccessDenied();return false;}
+  switchDevTab(target,document.getElementById('tabUsuarios'));
+  syncUsersAreaTabs(target);
+  return true;
+}
 function switchDevTab(id,btn){
   if(!devTabAllowed(id)){showAccessDenied();return;}
+  document.body.classList.remove('system-home-active');
   if(document.getElementById('page-simulador')?.classList.contains('active'))saveSimulatorDraft(true);
   if(id!=='pecas'&&document.getElementById('page-pecas')?.classList.contains('active')&&partsView==='bndes'){
     DB.bndesDraft=bndesLiveDraft();persist();
@@ -3232,6 +3310,7 @@ function switchDevTab(id,btn){
   document.querySelectorAll('.dev-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if(btn)btn.classList.add('active');
+  if(id==='home')renderSystemHome();
   if(id==='cronograma')renderDevAll();
   if(id==='atrasos')renderCronDelayPage();
   if(id==='gantt')     renderGantt();
@@ -3244,8 +3323,8 @@ function switchDevTab(id,btn){
   if(id==='pecas'){switchPartsView(['catalog','return','price','bndes'].find(view=>hasAccess(`pecas.${view}`))||'catalog');renderPartsPage();}
   if(id==='simulador') renderSimulator();
   if(id==='macro-engenharia'){if(!hasAccess(`macro-engenharia.${macroView}`))macroView=['active','completed','people'].find(view=>hasAccess(`macro-engenharia.${view}`))||'active';renderMacroEngineering();}
-  if(id==='clientes')  renderClientsPanel();
-  if(id==='admins')    renderAdminsPanel();
+  if(id==='clientes'){renderClientsPanel();syncUsersAreaTabs('clientes');}
+  if(id==='admins'){renderAdminsPanel();syncUsersAreaTabs('admins');}
   if(id==='importar')  renderImportHistory();
 }
 function syncCronogramaSubtabs(id){
@@ -11047,6 +11126,7 @@ function refreshUIFromDB(){
   syncLoggedUserAccess();
   if(enforceCurrentAccess())return;
   renderStats();renderOrders();populateGanttFilter();
+  if(document.getElementById('page-home')?.classList.contains('active')&&typeof renderSystemHome==='function')renderSystemHome();
   if(typeof renderImportHistory==='function')renderImportHistory();
   if(document.getElementById('page-pecas')?.classList.contains('active')&&typeof renderPartsPage==='function')renderPartsPage();
   if(document.getElementById('page-pecas')?.classList.contains('active')&&partsView==='bndes'&&typeof renderBndesDraft==='function')renderBndesDraft();
@@ -12253,7 +12333,7 @@ function renderHoursDiscountProfilesPage(){
 
 // ─────────── EXPORTS GLOBAIS ───────────
 Object.assign(window,{
-  doLogin,openAdminLogin,doAdminLogin,backToLogin,closeAdminLogin,
+  doLogin,openAdminLogin,doAdminLogin,backToLogin,closeAdminLogin,openSystemHome,openSystemHomeArea,openUsersArea,
   switchDevTab,switchCronogramaSubtab,switchClientTab,filterOrders,setCronogramaSectorFilter,setCronDelayFilter,toggleOfficialOrderCard,parseProjectXML,cronPrepareOrderSchedule,buildOrderCard,collapseAll,expandAll,toggleChip,togglePassword,
   renderGantt,openAddUserModal,saveNewUser,selectUser,saveUserChanges,
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,
