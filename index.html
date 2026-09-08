@@ -2430,6 +2430,7 @@ let costMonthRolloverTimer=null;
 let receberAnoSelecionado=null;
 let receberModo='anos'; // anos | meses | geral | calendario | mes
 let receberMesSelecionado=(new Date()).getMonth();
+let receberAnosAtualizados=new Set([new Date().getFullYear()]);
 let receberFiltros={vencimentoDe:'',vencimentoAte:'',descricao:'',cliente:'',valorMin:'',valorMax:''};
 let receberSomenteAtrasados=false;
 let receberSomenteHoje=false;
@@ -4565,7 +4566,7 @@ async function atualizarContasReceberAno(year){
     FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
     const otherYears=(FINANCE_CACHE.datasets.contaAReceber?.items||[]).filter(item=>payableRawYear(item)!==year);
     FINANCE_CACHE.datasets.contaAReceber={items:[...otherYears,...items],available:true};
-    const loaded=receivableLoadedYears();loaded.add(year);
+    const loaded=receivableLoadedYears();loaded.add(year);receberAnosAtualizados.add(year);
     FINANCE_CACHE.receivableLoadedYears=[...loaded].sort((a,b)=>b-a);
     FINANCE_CACHE.updatedAt=updatedAt;
     saveFinanceCacheLocal();
@@ -4591,7 +4592,7 @@ function limparContasReceberAno(year){
     items:(FINANCE_CACHE.datasets.contaAReceber?.items||[]).filter(item=>payableRawYear(item)!==year),
     available:true
   };
-  FINANCE_CACHE.receivableLoadedYears=[...receivableLoadedYears()].filter(value=>value!==year).sort((a,b)=>b-a);
+  FINANCE_CACHE.receivableLoadedYears=[...receivableLoadedYears()].filter(value=>value!==year).sort((a,b)=>b-a);receberAnosAtualizados.delete(year);
   saveFinanceCacheLocal();
   showToast(`Dados de Contas a receber de ${year} removidos deste navegador.`);
   renderFinanceiroFiscal();
@@ -4599,7 +4600,7 @@ function limparContasReceberAno(year){
 function receberAcoesAnoHtml(year){
   const currentYear=(new Date()).getFullYear();
   if(year>=currentYear)return '';
-  const loaded=receivableLoadedYears().has(Number(year));
+  const loaded=receberAnosAtualizados.has(Number(year));
   return `<div class="payable-year-actions"><span class="payable-year-state">${loaded?'Ano carregado neste navegador':'Ano ainda não carregado'}</span><button class="btn btn-gold" type="button" onclick="atualizarContasReceberAno(${year})" ${receivableYearRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> Atualizar MaxiProd ${year}</button>${loaded?`<button class="btn btn-danger" type="button" onclick="limparContasReceberAno(${year})"><span class="msi msi-sm">delete_sweep</span> Limpar dados de ${year}</button>`:''}</div>`;
 }
 function receberResumoAtual(rows){
@@ -4620,7 +4621,7 @@ function receberResumoAtual(rows){
 }
 function receberCabecalhoFinanceiro(data,rows=null){
   const resumo=receberResumoAtual(rows||receberRegistros());
-  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Contas a receber do ano atual são atualizadas automaticamente. Anos anteriores são carregados somente quando solicitados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshFinanceiroFiscal()"><span class="msi msi-sm">sync</span> Atualizar MaxiProd</button></div></div>
+  return `<div class="finance-head"><div><h2><span class="msi">account_balance</span> Financeiro / Fiscal</h2><p>Contas a receber do ano atual são atualizadas automaticamente. Anos anteriores permanecem zerados até serem consultados.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="atualizarContasReceberAno(${new Date().getFullYear()})"><span class="msi msi-sm">sync</span> Atualizar ano vigente</button></div></div>
   <div class="finance-card-grid receber-resumo-grid"><div class="finance-card"><b>${fmtBRL(resumo.total)}</b><span>Valor total do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.recebido)}</b><span>Total recebido no ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.atrasado)}</b><span>Valor atrasado do ${resumo.unidade}</span></div><div class="finance-card"><b>${fmtBRL(resumo.aVencer)}</b><span>Falta receber · a vencer</span></div></div>
   ${financeTabsHtml()}`;
 }
@@ -4648,11 +4649,10 @@ function receberEstaAtrasado(row){
   return row.aberto>0&&row.vencimento&&row.vencimento<hoje;
 }
 function renderContasAReceber(target){
-  const data=FINANCE_CACHE?.datasets||{},rows=receberRegistros();
-  const currentYear=(new Date()).getFullYear();
+  const data=FINANCE_CACHE?.datasets||{},allRows=receberRegistros(),currentYear=(new Date()).getFullYear(),selectedYear=Number(receberAnoSelecionado)||currentYear,rows=(receberModo==='anos'||receberAnosAtualizados.has(selectedYear))?allRows:allRows.filter(row=>row.vencimento?.getFullYear()===currentYear||row.recebimento?.getFullYear()===currentYear);
   const years=Array.from({length:Math.max(1,currentYear-RECEIVABLE_FIRST_YEAR+1)},(_,index)=>currentYear-index);
   let content='';
-  if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>O ano atual é atualizado pelo botão principal. Entre em um ano anterior para carregá-lo somente quando precisar.</p><div class="receber-year-grid">${years.map(year=>{const list=rows.filter(row=>row.vencimento?.getFullYear()===year),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
+  if(receberModo==='anos')content=`<section class="receber-navegacao"><h3>Contas a receber por ano</h3><p>O ano atual é atualizado pelo botão principal. Os demais anos permanecem zerados até serem atualizados individualmente.</p><div class="receber-year-grid">${years.map(year=>{const vigente=year===currentYear,list=vigente?rows.filter(row=>row.vencimento?.getFullYear()===year||row.recebimento?.getFullYear()===year):[],total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-year-card" onclick="abrirReceberAno(${year})"><b>${year}</b><span>${list.length} parcela(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
   else {const year=receberAnoSelecionado||currentYear;const yearRows=rows.filter(row=>row.vencimento?.getFullYear()===year||row.recebimento?.getFullYear()===year);if(receberModo==='meses')content=`<section class="receber-navegacao"><button class="btn btn-ghost" onclick="voltarReceberAnos()">← Todos os anos</button>${receberAcoesAnoHtml(year)}<h3>${year}</h3><p>${yearRows.length?'Escolha uma visão para Contas a receber. Os meses consideram o recebimento efetivo das parcelas pagas.':year<currentYear?'Este ano está zerado. Use “Atualizar MaxiProd '+year+'” para carregá-lo.':'Clique em “Atualizar MaxiProd” para carregar o ano atual.'}</p><div class="receber-feature-grid"><button class="receber-period-card general" onclick="abrirReceberGeral()"><b>Geral</b><span>Vencimentos e recebimentos</span><strong>${yearRows.length} parcela(s)</strong></button><button class="receber-period-card calendar" onclick="abrirReceberCalendario()"><b>Calendário</b><span>Vencimentos por dia</span><strong>${yearRows.length} parcela(s)</strong></button></div><div class="receber-month-grid">${Array.from({length:12},(_,month)=>{const list=receberRegistrosDoMes(rows,year,month),total=list.reduce((sum,row)=>sum+row.valorParcela,0);return `<button class="receber-period-card" onclick="abrirReceberMes(${month})"><b>${receberMesNome(month)}</b><span>${list.length} lançamento(s)</span><strong>${fmtBRL(total)}</strong></button>`;}).join('')}</div></section>`;
     else if(receberModo==='calendario')content=`<section class="receber-detalhe"><div class="finance-calendar-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="stock-group-actions" style="padding:0"><button class="btn btn-ghost" onclick="exportFinanceCalendarPDF('receber','curto')"><span class="msi msi-sm">picture_as_pdf</span> PDF curto</button></div></div><h3>Calendário de vencimentos — ${receberMesNome(receberMesSelecionado)} de ${year}</h3>${receberCalendario(yearRows,year,receberMesSelecionado)}</section>`;
     else {const list=receberModo==='mes'?receberRegistrosDoMes(rows,year,receberMesSelecionado):yearRows;const title=receberModo==='mes'?`${receberMesNome(receberMesSelecionado)} de ${year}`:`Visão geral — ${year}`;const listFiltrada=receberListaFiltrada(list);content=`<section class="receber-detalhe"><div class="pagar-detalhe-top"><button class="btn btn-ghost" onclick="voltarReceberParaMeses()">← Voltar para ${year}</button><div class="pagar-detalhe-actions"><button class="btn btn-ghost btn-hoje ${receberSomenteHoje?'active':''}" onclick="alternarFiltroHojeReceber()"><span class="msi msi-sm">today</span> ${receberSomenteHoje?'Exibindo hoje':`Hoje · ${rotuloHoje()}`}</button><button class="btn btn-danger pagar-atrasados-btn ${receberSomenteAtrasados?'active':''}" onclick="alternarFiltroAtrasadosReceber()">${receberSomenteAtrasados?'Exibindo atrasados':'Somente atrasados'}</button><button class="btn btn-ghost" onclick="exportFinancePeriodPDF('receber')"><span class="msi msi-sm">picture_as_pdf</span> PDF</button></div></div><h3>${title}</h3><p>${listFiltrada.length} lançamento(s) por vencimento ou recebimento efetivo.</p>${receberTabela(list)}</section>`;}}
