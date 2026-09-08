@@ -4366,8 +4366,8 @@ const COMMISSION_ORDER_135_AUDIT=[
   {due:'14/11/26',value:'423.361,10',description:'TPK ref. adiantamento pedido de venda nº 135'},
   {due:'14/11/26',value:'1.493.617,91',description:'TPK ref. adiantamento pedido de venda nº 135'}
 ];
-function commissionOrder135AuditedItems(mapaPedidos){
-  return COMMISSION_ORDER_135_AUDIT.map((row,index)=>receberRegistro({
+function commissionOrder135AuditedItems(mapaPedidos,liveItems=[]){
+  const audited=COMMISSION_ORDER_135_AUDIT.map((row,index)=>receberRegistro({
     tipo:'TITULO',estado:row.received?'Recebido':'A receber',pedidoDeVendaNumero:'135',numeroPedido:'135',
     vencimentoData:commissionAuditIsoDate(row.due),vencimentoOriginalData:commissionAuditIsoDate(row.due),
     dataLiquidacao:row.received?commissionAuditIsoDate(row.receivedAt||row.due):'',
@@ -4376,6 +4376,17 @@ function commissionOrder135AuditedItems(mapaPedidos){
     valorRecebido:row.received?row.value:'0,00',valorAReceber:row.received?'0,00':row.value,referencia:'PROJETO RBN II - NORDESTE',referenciaDetalhe:'PROJETO RBN II - NORDESTE',
     _commissionAudit:true
   },mapaPedidos));
+  // A agenda corrigida garante que as quatro parcelas existam. Quando o
+  // MaxiProd retornar uma delas, ele se torna a fonte da situação financeira:
+  // recebimento, data de baixa e valor recebido nunca ficam congelados aqui.
+  return audited.map((fallback,index)=>{
+    const dueKey=fallback.vencimento instanceof Date?fallback.vencimento.toISOString().slice(0,10):'';
+    const live=(liveItems||[]).find(item=>{
+      const itemDue=item?.vencimento instanceof Date?item.vencimento.toISOString().slice(0,10):'';
+      return !item?.raw?._commissionAudit&&itemDue===dueKey&&Math.abs(commissionMoneyValue(item?.valorParcela)-commissionMoneyValue(fallback.valorParcela))<=.05;
+    });
+    return live?{...live,parcela:{...(live.parcela||{}),numero:String(index+1),total:'4'}}:fallback;
+  });
 }
 function commissionAuditedReceivableRows(){
   return Object.entries(COMMISSION_MAXIPROD_RECEIVABLE_AUDIT).flatMap(([invoice,rows])=>rows.map(row=>({
@@ -4951,10 +4962,10 @@ function commissionGroups(){
     // Última barreira de unicidade: depois de todos os vínculos e fusões, uma
     // NF pode ter somente uma ocorrência de cada número de parcela.
     group.items=commissionDeduplicateGroupItems(group.items,meta);
-    // O MaxiProd foi conferido diretamente para o pedido 135: dois títulos
-    // antigos estavam substituindo as quatro parcelas reais. Mantemos a
-    // composição auditada até que a API passe a retorná-la integralmente.
-    if(String(group.number)==='135')group.items=commissionOrder135AuditedItems(mapaPedidos);
+    // O MaxiProd foi conferido diretamente para o pedido 135. A agenda local
+    // completa apenas parcelas ausentes; qualquer parcela que vier da API
+    // prevalece, inclusive após novas baixas de recebimento.
+    if(String(group.number)==='135')group.items=commissionOrder135AuditedItems(mapaPedidos,group.items);
     const invoiceTotal=Math.max(0,...group.items.map(item=>commissionInvoiceTotal(item.raw||{})));
     const installmentTotal=group.items.reduce((sum,item)=>sum+commissionMoneyValue(item.valorParcela),0),catalogTotal=commissionMoneyValue(group.orderValue);
     group.reference=String(meta?.reference||'').trim();
