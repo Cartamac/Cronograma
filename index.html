@@ -2457,6 +2457,7 @@ let SALES_CACHE=(()=>{
 })();
 if(SALES_CACHE?.version!==8||!Array.isArray(SALES_CACHE?.items))SALES_CACHE={version:8,updatedAt:null,items:[]};
 let salesRefreshInProgress=false;
+let salesRefreshLastError='';
 let salesSearch='';
 const salesExpandedYears=new Set();
 let salesCommercialSummaryOpen=true;
@@ -4356,6 +4357,26 @@ function commissionAuditIsoDate(value){
   const year=match[3].length===2?`20${match[3]}`:match[3];
   return `${year}-${match[2]}-${match[1]}`;
 }
+// Conferência manual no MaxiProd do pedido 135. As quatro parcelas abaixo
+// substituem títulos antigos e incompletos que vinham sendo retornados para
+// este pedido pela consulta financeira.
+const COMMISSION_ORDER_135_AUDIT=[
+  {due:'16/04/26',receivedAt:'16/04/26',value:'1.158.315,93',received:true,description:'TPK ref. adiantamento pedido de venda nº 135'},
+  {due:'15/09/26',value:'1.158.315,93',description:'TPK ref. adiantamento pedido de venda nº 135'},
+  {due:'14/11/26',value:'423.361,10',description:'TPK ref. adiantamento pedido de venda nº 135'},
+  {due:'14/11/26',value:'1.493.617,91',description:'TPK ref. adiantamento pedido de venda nº 135'}
+];
+function commissionOrder135AuditedItems(mapaPedidos){
+  return COMMISSION_ORDER_135_AUDIT.map((row,index)=>receberRegistro({
+    tipo:'TITULO',estado:row.received?'Recebido':'A receber',pedidoDeVendaNumero:'135',numeroPedido:'135',
+    vencimentoData:commissionAuditIsoDate(row.due),vencimentoOriginalData:commissionAuditIsoDate(row.due),
+    dataLiquidacao:row.received?commissionAuditIsoDate(row.receivedAt||row.due):'',
+    descricao:row.description,clienteNome:'TPK - TETRA PAK LT',clienteRazaoSocial:'TPK - TETRA PAK LT',
+    numeroParcela:String(index+1),numeroTotalParcelas:'4',valorOriginal:row.value,valorLiquido:row.value,
+    valorRecebido:row.received?row.value:'0,00',valorAReceber:row.received?'0,00':row.value,referencia:'PROJETO RBN II - NORDESTE',referenciaDetalhe:'PROJETO RBN II - NORDESTE',
+    _commissionAudit:true
+  },mapaPedidos));
+}
 function commissionAuditedReceivableRows(){
   return Object.entries(COMMISSION_MAXIPROD_RECEIVABLE_AUDIT).flatMap(([invoice,rows])=>rows.map(row=>({
     tipo:'TITULO',
@@ -4930,6 +4951,10 @@ function commissionGroups(){
     // Última barreira de unicidade: depois de todos os vínculos e fusões, uma
     // NF pode ter somente uma ocorrência de cada número de parcela.
     group.items=commissionDeduplicateGroupItems(group.items,meta);
+    // O MaxiProd foi conferido diretamente para o pedido 135: dois títulos
+    // antigos estavam substituindo as quatro parcelas reais. Mantemos a
+    // composição auditada até que a API passe a retorná-la integralmente.
+    if(String(group.number)==='135')group.items=commissionOrder135AuditedItems(mapaPedidos);
     const invoiceTotal=Math.max(0,...group.items.map(item=>commissionInvoiceTotal(item.raw||{})));
     const installmentTotal=group.items.reduce((sum,item)=>sum+commissionMoneyValue(item.valorParcela),0),catalogTotal=commissionMoneyValue(group.orderValue);
     group.reference=String(meta?.reference||'').trim();
@@ -5073,7 +5098,7 @@ function commissionScheduledPaymentDate(receivedAt){
 }
 async function ensureCommissionHistory(force=false){
   if(!isMaster(loggedUser)||commissionHistoryRefreshInProgress||financeRefreshInProgress)return;
-  const current=(new Date()).getFullYear(),wanted=[commissionYear,commissionYear-1].filter(year=>year>=RECEIVABLE_FIRST_YEAR&&year<=current),loaded=receivableLoadedYears();
+  const current=(new Date()).getFullYear(),wanted=[commissionYear,commissionYear-1,current].filter((year,index,list)=>year>=RECEIVABLE_FIRST_YEAR&&year<=current&&list.indexOf(year)===index),loaded=receivableLoadedYears();
   const years=force?wanted:wanted.filter(year=>!loaded.has(year));if(!years.length)return;
   commissionHistoryRefreshInProgress=true;let total=0,updatedAt=new Date().toISOString();
   try{
@@ -5099,7 +5124,7 @@ async function refreshCommissionSources(){
   commissionSourcesRefreshInProgress=true;
   try{
     const salesUpdated=await refreshSalesMaxiprod({integrated:true,percent:20});
-    if(!salesUpdated)throw new Error('Não foi possível consultar os pedidos de venda e suas notas fiscais.');
+    if(!salesUpdated)throw new Error(salesRefreshLastError||'Não foi possível consultar os pedidos de venda e suas notas fiscais.');
     await ensureCommissionHistory(true);
   }catch(error){
     console.error('Comissões: falha ao conciliar pedidos, notas e recebimentos',error);
@@ -10115,6 +10140,7 @@ async function refreshSalesMaxiprod(options={}){
   if(salesRefreshInProgress)return false;
   if(!isMaster(loggedUser)){showToast('Somente administradores mestres podem atualizar o MaxiProd.','err');return false;}
   salesRefreshInProgress=true;
+  salesRefreshLastError='';
   if(!integrated)renderSalesPage();
   const items=[];
   const seenIds=new Set();
@@ -10124,7 +10150,9 @@ async function refreshSalesMaxiprod(options={}){
     for(let page=0;page<250;page++){
       const progress=integrated?(Number(options.percent)||75):Math.min(95,Math.max(5,(page+1)*5));
       showLoading(`Carregando MaxiProd — ${progress}% · página ${page+1}`);
-      const result=await consultarPedidosVendaMaxiprodRemoto({take:200,skip,includeDetails:true,includeItems:true,includeInvoices:true});
+      // As parcelas e NFs são consultadas pelo financeiro. Não carregar os
+      // itens de cada pedido reduz bastante a resposta e evita timeout.
+      const result=await consultarPedidosVendaMaxiprodRemoto({take:200,skip,includeDetails:true,includeItems:false,includeInvoices:true});
       const pageItems=Array.isArray(result.data?.items)?result.data.items:[];
       for(const item of pageItems){
         if(salesOrderIsCancelled(item))continue;
@@ -10137,7 +10165,7 @@ async function refreshSalesMaxiprod(options={}){
         items.push(item);
       }
       updatedAt=result.data?.updatedAt||updatedAt;
-      if(result.data?.done===true)break;
+      if(result.data?.done===true||pageItems.length<200)break;
       skip+=200;
     }
     SALES_CACHE={version:8,updatedAt,items};
@@ -10148,7 +10176,16 @@ async function refreshSalesMaxiprod(options={}){
     if(!integrated)showToast(`${items.length} pedido(s) de venda atualizado(s) pelo MaxiProd.`);
   }catch(error){
     console.error('Vendas: falha ao consultar pedidos de venda',error);
-    if(!integrated)showToast(error?.message||'Não foi possível atualizar os pedidos de venda.','err');
+    salesRefreshLastError=String(error?.message||'Não foi possível atualizar os pedidos de venda.');
+    // Quando a consulta direta estiver instável, usa a última fotografia
+    // compartilhada entre os computadores. Assim a atualização de comissões
+    // não fica bloqueada por uma falha pontual do MaxiProd.
+    const loadedShared=await loadSharedMaxiprodCache(null,{force:true,silent:true});
+    if(loadedShared&&Array.isArray(SALES_CACHE?.items)&&SALES_CACHE.items.length){
+      success=true;
+      salesRefreshLastError='';
+      if(!integrated)showToast('Consulta direta indisponível; foram usados os dados compartilhados mais recentes.');
+    }else if(!integrated)showToast(salesRefreshLastError,'err');
   }finally{
     salesRefreshInProgress=false;
     if(!integrated){hideLoading();renderSalesPage();}
