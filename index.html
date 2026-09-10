@@ -2359,6 +2359,7 @@ const NOTIFICATIONS_REF = doc(db, "cartamac", "notifications");
 const PUSH_DEVICES_REF = doc(db, "cartamac", "push-devices");
 const PUSH_DIAGNOSTICS_REF = doc(db, "cartamac", "push-diagnostics");
 const SHARED_MAXIPROD_CACHE_ID = 'maxiprod-shared-cache';
+const SHARED_MAXIPROD_VERSION_KEY = 'cartamac_maxiprod_shared_version_v1';
 
 const MASTER_EMAILS = [];
 const DIRECTOR_EMAILS = ['vendas@cartamac.com.br'];
@@ -2651,7 +2652,7 @@ function trimFinanceItems(items){
   return (Array.isArray(items)?items:[]).sort((a,b)=>financeCacheDate(b)-financeCacheDate(a)).slice(0,FINANCE_FAST_LIMIT);
 }
 
-let sharedMaxiprodCacheUpdatedAt=null;
+let sharedMaxiprodCacheUpdatedAt=(()=>{try{return localStorage.getItem(SHARED_MAXIPROD_VERSION_KEY)||null;}catch(_){return null;}})();
 let sharedMaxiprodCacheLoadInProgress=null;
 
 function mergeSharedFinanceYear(previousItems,incomingItems,currentYear){
@@ -2701,7 +2702,13 @@ function applySharedMaxiprodCache(payload){
 
   if(payload.sales?.version===8&&Array.isArray(payload.sales.items))SALES_CACHE=payload.sales;
   if(payload.purchaseOrders?.version===1&&Array.isArray(payload.purchaseOrders.items))PURCHASE_ORDERS_CACHE=payload.purchaseOrders;
-  if(payload.accounting?.version===1){
+  const incomingAccountingUpdatedAt=payload.accounting?.updatedAt||payload.updatedAt||null;
+  const incomingAccountingTime=Date.parse(incomingAccountingUpdatedAt||'')||0;
+  const localAccountingTime=Date.parse(ACCOUNTING_CACHE?.updatedAt||'')||0;
+  // A consulta completa feita neste navegador contém mais títulos que o
+  // resumo compartilhado. Um F5 não pode substituí-la por uma fotografia mais
+  // antiga; somente uma atualização realmente mais nova pode fazê-lo.
+  if(payload.accounting?.version===1&&incomingAccountingTime>=localAccountingTime){
     ACCOUNTING_CACHE={
       version:1,
       updatedAt:payload.accounting.updatedAt||payload.updatedAt||null,
@@ -2723,6 +2730,7 @@ function applySharedMaxiprodCache(payload){
   try{localStorage.setItem(USAGE_STOCK_CACHE_KEY,JSON.stringify(USAGE_STOCK_CACHE));}catch(_){ }
   try{localStorage.setItem(RAW_MATERIAL_CACHE_KEY,JSON.stringify(RAW_MATERIAL_CACHE));}catch(_){ }
   sharedMaxiprodCacheUpdatedAt=String(payload.updatedAt||'');
+  try{localStorage.setItem(SHARED_MAXIPROD_VERSION_KEY,sharedMaxiprodCacheUpdatedAt);}catch(_){ }
   DB.financeiroFiscalMeta={...(DB.financeiroFiscalMeta||{}),updatedAt:payload.updatedAt||null};
   refreshUIFromDB();
 }
@@ -4185,6 +4193,29 @@ function renderCommercialRoutes(target){
   const stopCards=selected.map((row,index)=>{const expanded=commercialRouteExpandedKey===row.key,proposalRows=[...row.proposals].sort(commercialBudgetSort).map(item=>{const proposal=commercialBudgetProposalParts(item.proposalNumber);return `<tr><td><strong>${esc(item.proposalNumber||'—')}</strong><small>${esc(proposal.displayDate||'Data não identificada')}</small></td><td class="route-proposal-equipment">${esc(item.equipment||'—')}</td><td class="quantity">${Number(item.quantity||1).toLocaleString('pt-BR',{maximumFractionDigits:2})}</td><td class="money">${esc(commercialBudgetMoney(item))}</td></tr>`;}).join('');return `<div class="route-stop-wrap ${expanded?'expanded':''}"><div class="route-stop"><span class="route-stop-index">${index+1}</span><button class="route-stop-main" title="${expanded?'Ocultar':'Ver'} propostas em aberto" aria-expanded="${expanded?'true':'false'}" onclick="commercialRouteToggleProposals('${row.key}')"><span><strong>${esc(row.name)}</strong><small>${esc(row.address)} · ${row.proposals.length} ${row.proposals.length===1?'proposta em aberto':'propostas em aberto'}</small></span><span class="msi">expand_more</span></button><div class="route-stop-actions"><button title="Subir" onclick="commercialRouteMove('${row.key}',-1)" ${index===0?'disabled':''}><span class="msi msi-sm">arrow_upward</span></button><button title="Descer" onclick="commercialRouteMove('${row.key}',1)" ${index===selected.length-1?'disabled':''}><span class="msi msi-sm">arrow_downward</span></button><button title="Remover" onclick="commercialRouteRemove('${row.key}')"><span class="msi msi-sm">close</span></button></div></div>${expanded?`<div class="route-proposals"><table class="route-proposal-table"><thead><tr><th>Proposta / data</th><th>Equipamento</th><th>Quantidade</th><th>Valor</th></tr></thead><tbody>${proposalRows}</tbody></table></div>`:''}</div>`;}).join('');
   target.innerHTML=`${commercialTabsHtml()}<div class="route-page"><div class="budget-head"><div><h2><span class="msi">route</span> Planejamento de rotas <span class="route-pilot-badge"><span class="msi msi-sm">experiment</span> Piloto Google Maps</span></h2><p>Monte uma viagem a partir dos clientes com propostas em aberto e endereços cadastrados.</p></div></div><div class="route-help"><strong>Como funciona:</strong> selecione os clientes, coloque-os na ordem desejada e abra o trajeto no Google Maps. O mapa calcula as estradas, distâncias e tempos; nesta fase a ordem das visitas é definida por você.</div><div class="route-summary"><div class="budget-summary-card"><span>Clientes com propostas abertas</span><strong>${allRows.length}</strong></div><div class="budget-summary-card"><span>Com endereço no filtro</span><strong>${withAddress}</strong></div><div class="budget-summary-card"><span>Endereços pendentes no filtro</span><strong>${missing}</strong></div></div><div class="route-config"><label class="route-field">Endereço de saída<input id="commercialRouteOrigin" value="${esc(commercialRouteOrigin)}" placeholder="Ex.: CARTAMAC, Pomerode - SC" oninput="commercialRouteOriginChanged(this.value)"></label><label class="route-field">Final da viagem<span class="route-return"><input type="checkbox" ${commercialRouteReturn?'checked':''} onchange="commercialRouteReturnChanged(this.checked)"> Retornar ao ponto de saída</span></label><button class="btn btn-gold route-map-button" onclick="commercialRouteOpenMaps()"><span class="msi msi-sm">map</span> Abrir rota no Google Maps</button></div><div class="route-workspace"><section class="route-panel"><div class="route-panel-head"><h3><span class="msi">corporate_fare</span> Clientes disponíveis</h3><span>${rows.length} encontrado(s)</span></div><div class="route-search"><input id="commercialRouteSearch" value="${esc(commercialRouteSearch)}" placeholder="Buscar cliente, proposta, cidade ou vendedor..." oninput="commercialRouteSetSearch(this.value)"><select onchange="commercialRouteSetRegion(this.value)"><option value="">Todas as regiões</option>${regionOptions}</select></div><div class="route-client-list">${clientCards||'<div class="route-empty">Nenhum cliente corresponde à busca e à região selecionadas.</div>'}</div></section><section class="route-panel"><div class="route-panel-head"><h3><span class="msi">signpost</span> Ordem das visitas</h3><span>${selected.length}/10 cliente(s)</span></div><div class="route-selected">${stopCards||'<div class="route-empty">Adicione clientes para montar a viagem.<br>A ordem escolhida aqui será enviada ao Google Maps.</div>'}</div><div class="route-footer"><p>${commercialRouteReturn?'Com retorno à origem, o Google Maps aceita até 9 clientes intermediários.':'Sem retorno à origem, o último cliente será o destino final e é possível incluir até 10 clientes.'}</p><button class="btn btn-ghost btn-sm" onclick="commercialRouteClear()" ${selected.length?'':'disabled'}>Limpar rota</button></div></section></div></div>`;
 }
+async function refreshAccountingReceivableHistory(){
+  const firstYear=2020,lastYear=(new Date()).getFullYear()+1,items=[],seen=new Set();
+  for(let year=firstYear;year<=lastYear;year++){
+    const bounds=payableYearBounds(year);
+    for(let page=0,skip=0;page<250;page++,skip+=FINANCE_PAGE_SIZE){
+      showLoading(`Conferindo títulos das notas fiscais — ${year} · página ${page+1}`);
+      const result=await consultarFinanceiroFiscalMaxiprodRemoto({source:'contaAReceber',take:FINANCE_PAGE_SIZE,skip,dateFrom:bounds.dateFrom,dateTo:bounds.dateTo,includeDetails:true});
+      const dataset=result.data?.datasets?.contaAReceber||{items:[]};
+      if(dataset.available===false)throw new Error(dataset.error||`Contas a receber de ${year} indisponível.`);
+      const pageItems=Array.isArray(dataset.items)?dataset.items:[];
+      pageItems.forEach(raw=>{const key=commissionReceivableAuditKey(raw);if(!seen.has(key)){seen.add(key);items.push(raw);}});
+      if(result.data?.done===true||pageItems.length<FINANCE_PAGE_SIZE)break;
+    }
+  }
+  ACCOUNTING_CACHE={...(ACCOUNTING_CACHE||{}),version:1,updatedAt:new Date().toISOString(),dateFrom:`${firstYear}-01-01`,dateTo:`${lastYear+1}-01-01`,receivable:{items},payable:{items:Array.isArray(ACCOUNTING_CACHE?.payable?.items)?ACCOUNTING_CACHE.payable.items:[]}};
+  FINANCE_CACHE.datasets=FINANCE_CACHE.datasets||{};
+  FINANCE_CACHE.datasets.contaAReceber={items,available:true};
+  FINANCE_CACHE.receivableLoadedYears=Array.from({length:lastYear-firstYear+1},(_,index)=>lastYear-index);
+  FINANCE_CACHE.updatedAt=ACCOUNTING_CACHE.updatedAt;
+  try{localStorage.setItem(ACCOUNTING_CACHE_KEY,JSON.stringify(ACCOUNTING_CACHE));}catch(_){ }
+  saveFinanceCacheLocal();
+  return items.length;
+}
 async function refreshFinanceiroFiscalAbaAtual(){
   // Compatibilidade com botões antigos: atualizar uma aba agora atualiza todas.
   return refreshFinanceiroFiscal();
@@ -4219,6 +4250,14 @@ async function refreshFinanceiroFiscal(){
     showLoading('Distribuindo os dados atualizados...');
     const loaded=await loadSharedMaxiprodCache(result.data||null,{force:true,silent:true});
     if(!loaded)throw new Error('O servidor concluiu a atualização, mas o cache não pôde ser carregado.');
+    // Complementa o cache compartilhado com o detalhamento dos itens de cada
+    // pedido. É nesse nível que o MaxiProd frequentemente informa as NFs.
+    showLoading('Conferindo as notas fiscais de cada pedido de venda...');
+    await refreshSalesMaxiprod({integrated:true,percent:90});
+    // A parcela do pedido é apenas uma previsão. Para substituí-la pela NF e
+    // pela baixa real, carregamos todos os títulos (abertos e recebidos) desde
+    // 2020 e cruzamos pelo número fiscal encontrado no pedido.
+    await refreshAccountingReceivableHistory();
     const stats=result.data?.stats||{};
     const total=Object.values(stats).reduce((sum,value)=>sum+(Number(value)||0),0);
     showToast(`MaxiProd atualizado para todos: ${total} registro(s)`);
@@ -4781,7 +4820,9 @@ const COMMISSION_CORE_SELLERS=['EVANDRO','MOHR'];
 // Os vínculos abaixo são uma memória local das conferências feitas na tela e
 // complementam (não substituem) os dados carregados das APIs do MaxiProd.
 const COMMISSION_VERIFIED_ORDER_INVOICES={
-  '131':['1295','1320','1329','1411']
+  '131':['1295','1320','1329','1411'],
+  '165':['1686'],
+  '10':['110']
 };
 const COMMISSION_VERIFIED_INVOICE_LINKS={
   '1670':{orderNumber:'148',reference:'REVISÃO E REFORMA DO MECANISMO DO DEPURADOR DVA 800',client:'COLLEY PAPEIS'},
@@ -4884,6 +4925,30 @@ function commissionSalesCatalog(){
     if(link.reference)meta.reference=link.reference;if(!meta.client&&link.client)meta.client=link.client;
     meta.invoiceNumbers=[...new Set([...(meta.invoiceNumbers||[]),String(invoice)])];byNumber.set(orderNumber,meta);
     if(!byInvoice.has(String(invoice)))byInvoice.set(String(invoice),[]);const list=byInvoice.get(String(invoice));if(!list.includes(meta))list.push(meta);
+  });
+  // Conciliação de segurança para pedidos antigos cuja API resumida não
+  // devolveu a lista de NFs. Agrupamos os títulos pelo número da nota e somente
+  // criamos o vínculo quando cliente e valor total identificam um único pedido.
+  // Nenhuma associação ambígua é aceita.
+  const receivableRaw=[...(ACCOUNTING_CACHE?.receivable?.items||[]),...(FINANCE_CACHE?.datasets?.contaAReceber?.items||[])];
+  const invoiceGroups=new Map(),seenReceivables=new Set(),orderMetas=[...new Set(byNumber.values())],orderNumberMap=receberMapaPedidos();
+  receivableRaw.forEach(raw=>{
+    const rowKey=commissionReceivableAuditKey(raw);if(seenReceivables.has(rowKey))return;seenReceivables.add(rowKey);
+    const item=receberRegistro(raw,orderNumberMap);
+    if(commissionIsSalesOrderForecast(raw))return;
+    const invoices=commissionInvoiceNumbers(raw);if(invoices.length!==1)return;
+    const invoice=String(invoices[0]);
+    if(!invoiceGroups.has(invoice))invoiceGroups.set(invoice,{invoice,client:item.cliente,total:0});
+    const group=invoiceGroups.get(invoice);group.total+=Math.max(0,commissionMoneyValue(item.valorParcela));
+    if((!group.client||group.client==='—')&&item.cliente)group.client=item.cliente;
+  });
+  invoiceGroups.forEach(group=>{
+    if((byInvoice.get(group.invoice)||[]).length||group.total<=0)return;
+    const tolerance=Math.max(.05,group.total*.0005);
+    const candidates=orderMetas.filter(meta=>meta?.number&&meta.total>0&&commissionSameClient(meta.client,group.client)&&Math.abs(meta.total-group.total)<=tolerance);
+    if(candidates.length!==1)return;
+    const meta=candidates[0];meta.invoiceNumbers=[...new Set([...(meta.invoiceNumbers||[]),group.invoice])];
+    byInvoice.set(group.invoice,[meta]);
   });
   return {byNumber,byId,byInvoice};
 }
@@ -5216,6 +5281,19 @@ function commissionInstallmentKey(group,item,index=0){
   return `${group.key}|${id!==null&&id!==undefined?id:[item?.parcela?.numero,item?.parcela?.total,due,item?.valorParcela,financeNormalize(item?.descricao||'')].join('|')}`;
 }
 function commissionPaymentRecord(key){return DB.commissionPayments&&typeof DB.commissionPayments==='object'?DB.commissionPayments[key]||null:null;}
+function commissionPaidEntriesInMonth(group,year,month){
+  const selectedYear=Number(year),selectedMonth=Number(month),entries=[];
+  group.items.forEach((item,index)=>{
+    if(!commissionDateInPeriod(item.recebimento,selectedYear,selectedMonth))return;
+    const rateYear=item.recebimento?.getFullYear?.()||item.vencimento?.getFullYear?.()||selectedYear,baseKey=commissionInstallmentKey(group,item,index);
+    commissionRecipients(group,item,rateYear).filter(recipient=>recipient.amount>0).forEach(recipient=>{
+      const key=`${baseKey}|${recipient.person}|${recipient.role}`,payment=commissionPaymentRecord(key),paidAt=payment?.paidAt?new Date(payment.paidAt):null;
+      if(payment)entries.push({group,item,index,recipient,key,payment,paidAt});
+    });
+  });
+  return entries;
+}
+function commissionPaidEntriesInYear(group,year){return Array.from({length:12},(_,month)=>commissionPaidEntriesInMonth(group,year,month)).flat();}
 function commissionInstallmentPaymentState(group,item,index,year,selectedSeller=''){
   const selected=canonicalCommissionSellerName(selectedSeller),recipients=commissionRecipients(group,item,year).filter(recipient=>!selected||recipient.person===selected);
   if(!recipients.length)return {label:'—',className:''};
@@ -5403,7 +5481,7 @@ function exportCommissionFilteredOrdersPDF(){
   cartamacPdfSave(report.doc,`Pedidos_Comissoes_${commissionYear}${sellerFile}.pdf`,{sector:'FINANCEIRO / FISCAL',footerText:'Documento gerado pelo aplicativo CARTAMAC · Pedidos filtrados por vendedor'});showToast('PDF dos pedidos filtrados gerado com sucesso.','ok');
 }
 function commissionMonthlyTableV2(groups,year,month){
-  const records=[];groups.forEach(group=>group.periodItems.forEach((item,index)=>{const receivedInPeriod=item.recebido>0&&commissionDateInPeriod(item.recebimento,year,month),recipients=commissionRecipients(group,item,year).map(recipient=>({...recipient,amount:receivedInPeriod?recipient.amount:0}));if(!recipients.length)recipients.push({person:'SEM VENDEDOR',role:'Verificação',rate:null,amount:0});recipients.forEach(recipient=>{const paymentDate=commissionScheduledPaymentDate(item.recebimento),key=`${commissionInstallmentKey(group,item,index)}|${recipient.person}|${recipient.role}`,payment=commissionPaymentRecord(key);records.push({group,item,recipient,paymentDate,key,payment});});}));
+  const records=[];groups.forEach(group=>group.periodItems.forEach(item=>{const originalIndex=group.items.indexOf(item),receivedInPeriod=item.recebido>0&&commissionDateInPeriod(item.recebimento,year,month),recipients=commissionRecipients(group,item,year).map(recipient=>({...recipient,amount:receivedInPeriod?recipient.amount:0}));if(!recipients.length)recipients.push({person:'SEM VENDEDOR',role:'Verificação',rate:null,amount:0});recipients.forEach(recipient=>{const paymentDate=commissionScheduledPaymentDate(item.recebimento),key=`${commissionInstallmentKey(group,item,originalIndex>=0?originalIndex:0)}|${recipient.person}|${recipient.role}`,payment=commissionPaymentRecord(key);records.push({group,item,recipient,paymentDate,key,payment});});}));
   const sellers=[...new Set(records.map(record=>record.recipient.person))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
   return `<div class="commission-month-view"><div class="commission-month-title"><div><h3>Comissões de ${receberMesNome(month)} de ${year}</h3><p>Uma linha para cada pessoa que recebe comissão. As baixas de vendedor e gerência são independentes.</p></div><b id="commissionMonthCount">${records.length} item(ns)</b></div><div class="commission-month-filters"><label>Vendedor<select id="commissionMonthSeller" onchange="commissionApplyMonthFilters()"><option value="">Todos</option>${sellers.map(name=>`<option>${esc(name)}</option>`).join('')}</select></label><label>Cliente<input id="commissionMonthClient" placeholder="Filtrar cliente" oninput="commissionApplyMonthFilters()"></label><label>Pedido<input id="commissionMonthOrder" placeholder="Filtrar pedido" oninput="commissionApplyMonthFilters()"></label><label>Recebimento de<input id="commissionMonthFrom" type="date" oninput="commissionApplyMonthFilters()"></label><label>Até<input id="commissionMonthTo" type="date" oninput="commissionApplyMonthFilters()"></label><label>Situação<select id="commissionMonthStatus" onchange="commissionApplyMonthFilters()"><option value="">Todas</option><option value="pending">A pagar</option><option value="paid">Pago</option><option value="waiting">Sem recebimento</option></select></label></div><div class="finance-table-wrap"><table class="commission-month-table"><thead><tr><th>Pedido / notas</th><th>Cliente</th><th class="center">Parcela</th><th>Vencimento</th><th>Recebimento</th><th>Pagamento previsto</th><th class="money">Valor do pedido</th><th class="money">Valor da parcela</th><th class="money">Valor recebido</th><th>Vendedor</th><th>Função</th><th class="money">Percentual</th><th class="money">Comissão</th><th class="center">Baixa</th></tr></thead><tbody>${records.map(({group,item,recipient,paymentDate,key,payment})=>{const receivedKey=item.recebimento instanceof Date&&!Number.isNaN(item.recebimento)?item.recebimento.toISOString().slice(0,10):'',status=payment?'paid':recipient.amount>0?'pending':'waiting',invoices=accountingInvoiceNumbers(item.raw||{}),condition=accountingConditionKind(item.raw||{});return `<tr data-seller="${esc(financeNormalize(recipient.person))}" data-client="${esc(financeNormalize(group.client))}" data-order="${esc(financeNormalize([group.label,...invoices].join(' ')))}" data-received="${receivedKey}" data-status="${status}"><td><b>${esc(group.label)}</b><br><small>NF ${esc(invoices.join(' · ')||'—')} · ${esc(condition.label)}</small></td><td>${esc(group.client)}</td><td class="center">${esc(item.parcela.numero)}/${esc(item.parcela.total)}</td><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.recebimento)}</td><td>${receberDataFormat(paymentDate)}</td><td class="money">${fmtBRL(group.orderValue)}</td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money ${item.recebido>0?'paid-value':''}">${fmtBRL(item.recebido)}</td><td><b>${esc(recipient.person)}</b></td><td>${esc(recipient.role)}</td><td class="money">${recipient.rate===null?'—':(recipient.rate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'}</td><td class="money ${recipient.amount>0?'paid-value':''}">${fmtBRL(recipient.amount)}</td><td class="center"><button class="commission-pay-toggle ${payment?'paid':''}" onclick="toggleCommissionPayment('${encodeURIComponent(key)}')" ${recipient.amount<=0?'disabled':''}>${payment?'Pago':'Dar baixa'}</button></td></tr>`;}).join('')}</tbody></table></div></div>`;
 }
@@ -5412,12 +5490,12 @@ function renderCommissionsPage(target){
   const availableYears=[...new Set([2026,2027,(new Date()).getFullYear(),...allGroups.flatMap(group=>[group.orderDate?.getFullYear?.(),...group.items.flatMap(item=>[item.vencimento?.getFullYear(),item.recebimento?.getFullYear()])].filter(Boolean))])].sort((a,b)=>b-a);
   if(!availableYears.includes(commissionYear))commissionYear=availableYears[0]||2026;
   const query=financeNormalize(commissionSearch),paidView=commissionMonth===-2;
-  const groups=allGroups.map(group=>({...group,settlement:commissionGroupSettlement(group),periodItems:group.items.filter(item=>commissionItemInPeriod(item,commissionYear,commissionMonth))}))
-    .filter(group=>(group.periodItems.length||commissionOrderInPeriod(group,commissionYear,commissionMonth))&&(!query||financeNormalize([group.label,group.client,...(group.invoiceNumbers||[]),...commissionAssignmentSellers(group.assignment).map(entry=>entry.name),...group.items.map(item=>item.descricao)].join(' ')).includes(query)))
-    .filter(group=>paidView?group.settlement.complete:!group.settlement.complete)
+  const groups=allGroups.map(group=>{const paidEntries=paidView?commissionPaidEntriesInYear(group,commissionYear):[],periodItems=paidView?[...new Set(paidEntries.map(entry=>entry.item))]:group.items.filter(item=>commissionItemInPeriod(item,commissionYear,commissionMonth));return {...group,settlement:commissionGroupSettlement(group),paidEntries,periodItems};})
+    .filter(group=>(paidView?(group.settlement.complete&&group.paidEntries.length):(group.periodItems.length||commissionOrderInPeriod(group,commissionYear,commissionMonth)))&&(!query||financeNormalize([group.label,group.client,...(group.invoiceNumbers||[]),...commissionAssignmentSellers(group.assignment).map(entry=>entry.name),...group.items.map(item=>item.descricao)].join(' ')).includes(query)))
+    .filter(group=>commissionMonth>=0|| (paidView?(group.settlement.complete&&group.paidEntries.length>0):!group.settlement.complete))
     .filter(group=>commissionMonth>=0||commissionGroupMatchesGeneralSeller(group));
   const installments=groups.flatMap(group=>group.periodItems.map(item=>{const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente=group.assignment?.gerente||(vendedor==='EVANDO'?'MOHR':'');return {group,item,sellerRate:commissionSellerRate(group,commissionYear),managerRate:commissionManagerRate(vendedor,gerente,commissionYear)};}));
-  const paid=installments.filter(entry=>entry.item.recebido>0&&commissionDateInPeriod(entry.item.recebimento,commissionYear,commissionMonth));
+  const paid=paidView?installments:installments.filter(entry=>entry.item.recebido>0&&commissionDateInPeriod(entry.item.recebimento,commissionYear,commissionMonth));
   const receivedBase=paid.reduce((sum,entry)=>sum+entry.item.recebido,0);
   const sellerCommissionTotal=paid.reduce((sum,entry)=>sum+(entry.sellerRate===null?0:entry.item.recebido*entry.sellerRate),0);
   const managerCommissionTotal=paid.reduce((sum,entry)=>sum+entry.item.recebido*entry.managerRate,0);
@@ -5439,13 +5517,25 @@ function renderCommissionsPage(target){
     const invoiceLabel=group.invoiceNumbers?.length?`NF${group.invoiceNumbers.length>1?'s':''} ${group.invoiceNumbers.join(' · ')}`:'NF ainda não identificada';
     return `<details class="commission-order"><summary><div class="commission-order-title"><b>${esc(group.label)}</b><span>${esc(group.client)} · ${esc(invoiceLabel)} · ${group.items.length} parcela(s) no total · ${group.periodItems.length} no período</span></div><div class="commission-order-owner" onclick="event.stopPropagation()"><span>Vendedor</span><select class="commission-owner-select ${vendedor?'':'unassigned'}" onchange="setCommissionVendedor('${encoded}',this.value)"><option value="" ${!vendedor?'selected':''}>Selecionar</option><option value="EVANDO" ${vendedor==='EVANDO'?'selected':''}>EVANDO</option><option value="MOHR" ${vendedor==='MOHR'?'selected':''}>MOHR</option></select></div><div class="commission-order-owner" onclick="event.stopPropagation()"><span>Gerente comercial</span><select class="commission-owner-select" onchange="setCommissionGerente('${encoded}',this.value)"><option value="" ${!gerente?'selected':''}>Sem gerente</option><option value="MOHR" ${gerente==='MOHR'?'selected':''}>MOHR</option></select></div><div class="commission-order-metric"><span>Valor total da nota</span><strong>${fmtBRL(group.orderValue)}</strong></div><div class="commission-order-metric"><span>Comissão vendedor</span><strong style="color:var(--green)">${sellerRate===null?'—':(sellerRate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'% · '+fmtBRL(sellerCommission)}</strong></div><div class="commission-order-metric"><span>Comissão gerente</span><strong style="color:var(--green)">${managerRate?(managerRate*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'% · '+fmtBRL(managerCommission):'—'}</strong></div></summary><div class="commission-detail"><div class="finance-table-wrap"><table class="commission-table"><thead><tr><th>Parcela</th><th>Descrição</th><th>Vencimento</th><th>Recebimento</th><th>Situação</th><th>Valor da parcela</th><th>Valor recebido</th><th>${esc(vendedor||'Vendedor')}</th><th>${esc(gerente||'Gerente')}</th><th>Total comissão</th></tr></thead><tbody>${group.items.map(item=>{const status=commissionStatus(item),inPaymentPeriod=item.recebido>0&&commissionDateInPeriod(item.recebimento,commissionYear,commissionMonth),sellerValue=inPaymentPeriod&&sellerRate!==null?item.recebido*sellerRate:0,managerValue=inPaymentPeriod?item.recebido*managerRate:0,total=sellerValue+managerValue;return `<tr><td>${esc(item.parcela.numero)}/${esc(item.parcela.total)}</td><td>${esc(item.descricao)}</td><td>${receberDataFormat(item.vencimento)}</td><td>${receberDataFormat(item.recebimento)}</td><td><span class="commission-status ${status.className}">${esc(status.label)}</span></td><td class="money">${fmtBRL(item.valorParcela)}</td><td class="money ${item.recebido>0?'commission-value':''}">${fmtBRL(item.recebido)}</td><td class="money ${sellerValue>0?'commission-value':''}">${sellerRate===null?'—':fmtBRL(sellerValue)}</td><td class="money ${managerValue>0?'commission-value':''}">${managerRate?fmtBRL(managerValue):'—'}</td><td class="money ${total>0?'commission-value':''}">${sellerRate===null?'—':fmtBRL(total)}</td></tr>`;}).join('')}</tbody></table></div><small class="muted">Base da faixa: ${fmtBRL(group.orderValue)} · fonte: ${esc(group.orderValueSource)}. Todas as notas e parcelas vinculadas ao pedido são exibidas, mesmo quando pertencem a outro ano.</small></div></details>`;
   }).join('');
-  target.innerHTML=`${commissionHeader()}<section class="commission-shell"><div class="commission-toolbar"><label>Ano<select onchange="commissionSetYear(this.value)">${availableYears.map(year=>`<option value="${year}" ${year===commissionYear?'selected':''}>${year}</option>`).join('')}</select></label><label>Período<select onchange="commissionSetMonth(this.value)">${monthOptions}</select></label><label>Pesquisar nota, pedido ou cliente<input id="commissionSearch" value="${esc(commissionSearch)}" oninput="commissionSetSearch(this.value)" placeholder="Nota, pedido, cliente ou vendedor"></label></div><div class="commission-summary"><div class="commission-summary-card"><span>Notas/pedidos no período</span><strong>${groups.length}</strong></div><div class="commission-summary-card received"><span>Base recebida</span><strong>${fmtBRL(receivedBase)}</strong></div><div class="commission-summary-card received"><span>Comissão vendedores</span><strong>${fmtBRL(sellerCommissionTotal)}</strong></div><div class="commission-summary-card received"><span>Comissão gerência</span><strong>${fmtBRL(managerCommissionTotal)}</strong></div><div class="commission-summary-card received"><span>Total de comissões</span><strong>${fmtBRL(commissionTotal)}</strong></div><div class="commission-summary-card ${unassigned?'pending':''}"><span>Pendências</span><strong>${unassigned} sem vendedor · ${delayed} atraso(s)</strong></div></div><div class="commission-rules"><b>Regras da planilha:</b> o valor total da nota define a faixa do vendedor e a comissão é aplicada a cada parcela efetivamente recebida. Quando EVANDRO é o vendedor, MOHR recebe 0,50% adicional como gerência comercial. Pagamentos atrasados entram no mês do recebimento real.</div><div class="commission-order-list">${ordersHtml||`<div class="commission-empty">Nenhuma nota ou parcela encontrada neste período. Atualize as parcelas e notas ou altere os filtros.</div>`}</div></section>`;
+  target.innerHTML=`${commissionHeader()}<section class="commission-shell"><div class="commission-toolbar"><label>Ano<select onchange="commissionSetYear(this.value)">${availableYears.map(year=>`<option value="${year}" ${year===commissionYear?'selected':''}>${year}</option>`).join('')}</select></label><label>Período<select onchange="commissionSetMonth(this.value)">${monthOptions}</select></label><label>Pesquisar nota, pedido ou cliente<input id="commissionSearch" value="${esc(commissionSearch)}" oninput="commissionSetSearch(this.value)" placeholder="Nota, pedido, cliente ou vendedor"></label></div><div class="commission-summary"><div class="commission-summary-card"><span>${paidView?'Pedidos com comissões 100% pagas':'Notas/pedidos no período'}</span><strong>${groups.length}</strong></div><div class="commission-summary-card received"><span>${paidView?'Base anual das parcelas com baixa':'Base recebida'}</span><strong>${fmtBRL(receivedBase)}</strong></div><div class="commission-summary-card received"><span>Comissão vendedores</span><strong>${fmtBRL(sellerCommissionTotal)}</strong></div><div class="commission-summary-card received"><span>Comissão gerência</span><strong>${fmtBRL(managerCommissionTotal)}</strong></div><div class="commission-summary-card received"><span>Total de comissões</span><strong>${fmtBRL(commissionTotal)}</strong></div><div class="commission-summary-card ${unassigned?'pending':''}"><span>Pendências</span><strong>${unassigned} sem vendedor · ${delayed} atraso(s)</strong></div></div><div class="commission-rules"><b>Regras da planilha:</b> o valor total da nota define a faixa do vendedor e a comissão é aplicada a cada parcela efetivamente recebida. Quando EVANDRO é o vendedor, MOHR recebe 0,50% adicional como gerência comercial. Pagamentos atrasados entram no mês do recebimento real.</div><div class="commission-order-list">${ordersHtml||`<div class="commission-empty">Nenhuma nota ou parcela encontrada neste período. Atualize as parcelas e notas ou altere os filtros.</div>`}</div></section>`;
   const summaryCards=target.querySelectorAll('.commission-summary-card');
-  const periodRecipients=groups.flatMap(group=>group.periodItems.filter(item=>item.recebido>0&&commissionDateInPeriod(item.recebimento,commissionYear,commissionMonth)).flatMap(item=>commissionRecipients(group,item,commissionYear))),periodEvando=periodRecipients.filter(row=>row.person==='EVANDRO').reduce((sum,row)=>sum+row.amount,0),periodMohrSeller=periodRecipients.filter(row=>row.person==='MOHR'&&row.role==='Vendedor').reduce((sum,row)=>sum+row.amount,0),periodMohrManager=periodRecipients.filter(row=>row.person==='MOHR'&&row.role==='Gerência').reduce((sum,row)=>sum+row.amount,0),periodAll=periodRecipients.reduce((sum,row)=>sum+row.amount,0);
-  if(summaryCards[2])summaryCards[2].innerHTML=`<span>Comissão Evandro</span><strong>${fmtBRL(periodEvando)}</strong><small>Como vendedor no período: <b>${fmtBRL(periodEvando)}</b></small>`;
-  if(summaryCards[3])summaryCards[3].innerHTML=`<span>Comissão Mohr</span><strong>${fmtBRL(periodMohrSeller+periodMohrManager)}</strong><small>Como vendedor: <b>${fmtBRL(periodMohrSeller)}</b><br>Como gerente: <b>${fmtBRL(periodMohrManager)}</b></small>`;
-  if(summaryCards[4])summaryCards[4].innerHTML=`<span>Total de comissões</span><strong>${fmtBRL(periodAll)}</strong>`;
+  const annualSummaryGroups=paidView?allGroups.filter(group=>(!query||financeNormalize([group.label,group.client,...(group.invoiceNumbers||[]),...commissionAssignmentSellers(group.assignment).map(entry=>entry.name),...group.items.map(item=>item.descricao)].join(' ')).includes(query))&&commissionGroupMatchesGeneralSeller(group)):groups;
+  const periodRecipients=paidView?annualSummaryGroups.flatMap(group=>commissionPaidEntriesInYear(group,commissionYear).map(entry=>entry.recipient)):groups.flatMap(group=>group.periodItems.filter(item=>item.recebido>0&&commissionDateInPeriod(item.recebimento,commissionYear,commissionMonth)).flatMap(item=>commissionRecipients(group,item,commissionYear))),periodEvando=periodRecipients.filter(row=>row.person==='EVANDRO').reduce((sum,row)=>sum+row.amount,0),periodMohrSeller=periodRecipients.filter(row=>row.person==='MOHR'&&row.role==='Vendedor').reduce((sum,row)=>sum+row.amount,0),periodMohrManager=periodRecipients.filter(row=>row.person==='MOHR'&&row.role==='Gerência').reduce((sum,row)=>sum+row.amount,0),periodAll=periodRecipients.reduce((sum,row)=>sum+row.amount,0);
+  if(summaryCards[2])summaryCards[2].innerHTML=`<span>Comissão Evandro</span><strong>${fmtBRL(periodEvando)}</strong><small>Como vendedor ${paidView?'de janeiro a dezembro':'no período'}: <b>${fmtBRL(periodEvando)}</b></small>`;
+  if(summaryCards[3])summaryCards[3].innerHTML=`<span>Comissão Mohr</span><strong>${fmtBRL(periodMohrSeller+periodMohrManager)}</strong><small>Como vendedor: <b>${fmtBRL(periodMohrSeller)}</b><br>Como gerente: <b>${fmtBRL(periodMohrManager)}</b>${paidView?'<br>Somente parcelas marcadas como Pago, de janeiro a dezembro':''}</small>`;
+  if(summaryCards[4])summaryCards[4].innerHTML=`<span>${paidView?'Total efetivamente pago nos 12 meses':'Total de comissões'}</span><strong>${fmtBRL(periodAll)}</strong>`;
+  if(commissionMonth===-1){
+    const annualRows=groups.flatMap(group=>commissionGroupGenericTotals(group,commissionYear).rows),aggregate=rows=>rows.reduce((total,row)=>({total:total.total+row.earned+row.future,received:total.received+row.earned,remaining:total.remaining+row.future}),{total:0,received:0,remaining:0}),evandoAnnual=aggregate(annualRows.filter(row=>row.person==='EVANDRO'&&row.role==='Vendedor')),mohrAnnual=aggregate(annualRows.filter(row=>row.person==='MOHR')),allAnnual=aggregate(annualRows);
+    if(summaryCards[2])summaryCards[2].innerHTML=`<span>Comissão Evandro</span><strong>${fmtBRL(evandoAnnual.total)}</strong><small>Recebido: <b>${fmtBRL(evandoAnnual.received)}</b><br>Falta pagar: <b>${fmtBRL(evandoAnnual.remaining)}</b></small>`;
+    if(summaryCards[3])summaryCards[3].innerHTML=`<span>Comissão Mohr</span><strong>${fmtBRL(mohrAnnual.total)}</strong><small>Recebido: <b>${fmtBRL(mohrAnnual.received)}</b><br>Falta pagar: <b>${fmtBRL(mohrAnnual.remaining)}</b></small>`;
+    if(summaryCards[4])summaryCards[4].innerHTML=`<span>Total das comissões dos pedidos exibidos</span><strong>${fmtBRL(allAnnual.total)}</strong><small>Recebido: <b>${fmtBRL(allAnnual.received)}</b><br>Falta pagar: <b>${fmtBRL(allAnnual.remaining)}</b></small>`;
+  }
+  if(commissionMonth>=0){
+    const monthPaidRecipients=groups.flatMap(group=>commissionPaidEntriesInMonth(group,commissionYear,commissionMonth).map(entry=>entry.recipient)),mohrPaidSeller=monthPaidRecipients.filter(row=>row.person==='MOHR'&&row.role==='Vendedor').reduce((sum,row)=>sum+row.amount,0),mohrPaidManager=monthPaidRecipients.filter(row=>row.person==='MOHR'&&row.role==='Gerência').reduce((sum,row)=>sum+row.amount,0),mohrMonthTotal=periodMohrSeller+periodMohrManager,mohrMonthPaid=mohrPaidSeller+mohrPaidManager,mohrMonthPending=Math.max(0,mohrMonthTotal-mohrMonthPaid);
+    if(summaryCards[3])summaryCards[3].innerHTML=`<span>Comissão Mohr no mês</span><strong>${fmtBRL(mohrMonthTotal)}</strong><small>Já pago: <b style="color:var(--green)">${fmtBRL(mohrMonthPaid)}</b><br>A receber: <b style="color:${mohrMonthPending>0?'var(--yellow)':'var(--green)'}">${fmtBRL(mohrMonthPending)}</b><br><span style="color:var(--text2)">Vendedor: ${fmtBRL(periodMohrSeller)} · Gerente: ${fmtBRL(periodMohrManager)}</span></small>`;
+  }
   if(summaryCards[5])summaryCards[5].remove();
+  if(paidView&&summaryCards[1])summaryCards[1].remove();
   if(commissionMonth<0){const rules=target.querySelector('.commission-rules');rules?.insertAdjacentHTML('beforebegin',commissionSellerManagerHtml());const toolbar=target.querySelector('.commission-toolbar'),searchLabel=toolbar?.lastElementChild,selectedSeller=financeNormalize(commissionGeneralSellerSelection);toolbar?.classList.add('has-seller-filter');searchLabel?.insertAdjacentHTML('beforebegin',`<label>Filtrar vendedor<select id="commissionGeneralSeller" onchange="commissionApplyGeneralSellerFilter(this.value)"><option value="" ${!commissionGeneralSellerSelection?'selected':''}>Todos</option><option value="__none__" ${commissionGeneralSellerSelection==='__none__'?'selected':''}>Sem vendedor</option>${commissionSellerRegistry().map(name=>`<option value="${esc(name)}" ${selectedSeller===financeNormalize(name)?'selected':''}>${esc(name)}</option>`).join('')}</select></label>`);toolbar?.insertAdjacentHTML('afterend',`<div class="commission-filter-report"><span>${groups.length} pedido(s) no relatório</span><button class="btn btn-ghost" type="button" onclick="exportCommissionFilteredOrdersPDF()"><span class="msi msi-sm">picture_as_pdf</span> PDF dos pedidos filtrados</button></div>`);}
   const orderCards=target.querySelectorAll('.commission-order');
   groups.forEach((group,index)=>{
@@ -10296,9 +10386,9 @@ async function refreshSalesMaxiprod(options={}){
     for(let page=0;page<250;page++){
       const progress=integrated?(Number(options.percent)||75):Math.min(95,Math.max(5,(page+1)*5));
       showLoading(`Carregando MaxiProd — ${progress}% · página ${page+1}`);
-      // As parcelas e NFs são consultadas pelo financeiro. Não carregar os
-      // itens de cada pedido reduz bastante a resposta e evita timeout.
-      const result=await consultarPedidosVendaMaxiprodRemoto({take:200,skip,includeDetails:true,includeItems:false,includeInvoices:true});
+      // As NFs podem estar vinculadas aos itens do pedido, inclusive em pedidos
+      // antigos. Por isso a consulta precisa trazer detalhes, itens e notas.
+      const result=await consultarPedidosVendaMaxiprodRemoto({take:200,skip,includeDetails:true,includeItems:true,includeInvoices:true});
       const pageItems=Array.isArray(result.data?.items)?result.data.items:[];
       for(const item of pageItems){
         if(salesOrderIsCancelled(item))continue;
@@ -10603,6 +10693,7 @@ function accountingOrderCatalog(side){
       numero:String(record.numero||'').trim(),
       party:side==='receber'?record.cliente:record.fornecedor,
       total:Number(record.valorTotal)||0,
+      reference:receberTexto(salesValue(record.raw||{},['referenciaDetalhe','referencia','descricaoReferencia'])),
       invoiceNumbers,
       deliveryDates:Array.isArray(record.entregas)&&record.entregas.length?record.entregas:(side==='receber'?(record.entrega?[record.entrega]:[]):(record.previsaoEntrega?[record.previsaoEntrega]:[])),
       raw:record.raw||{}
@@ -10614,6 +10705,41 @@ function accountingOrderCatalog(side){
       byInvoice.get(invoice).push(entry);
     });
   });
+  // A Contabilidade usa o mesmo caminho já validado em Comissões:
+  // pedido de venda -> notas fiscais do pedido -> títulos no Contas a Receber.
+  // Isso também preserva vínculos conferidos manualmente (por exemplo, o
+  // pedido 131 com as NFs 1295, 1320, 1329 e 1411).
+  if(side==='receber'){
+    const commissionCatalog=commissionSalesCatalog();
+    [...new Set(commissionCatalog.byNumber.values())].forEach(meta=>{
+      const normalizedNumber=financeNormalize(meta?.number||'');
+      if(!normalizedNumber)return;
+      let entry=byNumber.get(normalizedNumber);
+      if(!entry){
+        entry={
+          id:meta?.id||'',
+          numero:String(meta?.number||'').trim(),
+          party:meta?.client||'—',
+          total:Number(meta?.total)||0,
+          reference:String(meta?.reference||''),
+          invoiceNumbers:[],
+          deliveryDates:[],
+          raw:meta?.row||{}
+        };
+        byNumber.set(normalizedNumber,entry);
+        if(entry.id!==null&&entry.id!==undefined&&entry.id!=='')byId.set(String(entry.id),entry);
+      }else{
+        if((!entry.party||entry.party==='—')&&meta?.client)entry.party=meta.client;
+        if(!(entry.total>0)&&Number(meta?.total)>0)entry.total=Number(meta.total);
+        if((!entry.reference||entry.reference==='—')&&meta?.reference)entry.reference=String(meta.reference);
+      }
+      entry.invoiceNumbers=[...new Set([...(entry.invoiceNumbers||[]),...(meta?.invoiceNumbers||[]).map(String)])];
+      entry.invoiceNumbers.forEach(invoice=>{
+        if(!byInvoice.has(invoice))byInvoice.set(invoice,[]);
+        const matches=byInvoice.get(invoice);if(!matches.includes(entry))matches.push(entry);
+      });
+    });
+  }
   return {byId,byNumber,byInvoice};
 }
 function accountingRelation(raw,side){
@@ -10639,8 +10765,26 @@ function accountingOrderLink(item,side,catalog){
   if(!order&&side==='receber'){
     const invoiceMatches=accountingInvoiceNumbers(raw).flatMap(invoice=>catalog.byInvoice.get(invoice)||[]);
     const unique=[...new Set(invoiceMatches)];
-    // Uma nota só é usada como vínculo quando identifica um único pedido.
+    // Primeiro usamos o vínculo direto quando a NF pertence a um único pedido.
     if(unique.length===1){order=unique[0];numero=order.numero;}
+    // Uma mesma NF pode reunir itens de pedidos diferentes. Nessa situação o
+    // campo Referente a do título indica a qual pedido pertence o financeiro.
+    // Só aceitamos o melhor resultado quando sua referência é inequivocamente
+    // mais aderente que a dos demais candidatos.
+    else if(unique.length>1){
+      const titleReference=financeNormalize(receberChave(raw,['referenciaDetalhe','referencia','referenteA'])||item?.referenteA||'');
+      const scored=unique.map(candidate=>{
+        const candidateReference=financeNormalize(candidate?.reference||salesValue(candidate?.raw||{},['referenciaDetalhe','referencia','descricaoReferencia'])||'');
+        let score=0;
+        if(titleReference&&candidateReference){
+          if(titleReference===candidateReference)score=1000;
+          else if(titleReference.includes(candidateReference)||candidateReference.includes(titleReference))score=500+Math.min(titleReference.length,candidateReference.length);
+          else score=[...new Set(candidateReference.split(/[^a-z0-9]+/).filter(token=>token.length>=5))].filter(token=>titleReference.includes(token)).length;
+        }
+        return {candidate,score};
+      }).sort((a,b)=>b.score-a.score);
+      if(scored[0]?.score>0&&(!scored[1]||scored[0].score>scored[1].score)){order=scored[0].candidate;numero=order.numero;}
+    }
   }
   if(order&&!numero)numero=order.numero;
   if(!numero){
@@ -10716,10 +10860,43 @@ function accountingSettlementDate(raw,due){
   visit(raw);return found;
 }
 const ACCOUNTING_ACTIVE_SALES_BASELINE=new Set([124,128,135,141,144,146,147,149,150,152,153,156,157,158,159,160,161,162,163,165,166,167,168]);
+const ACCOUNTING_EXCLUDED_SALES_ORDERS=new Set(['13','27','56','65','69','112','115']);
+const ACCOUNTING_VERIFIED_ORDER_SCHEDULES={
+  '164':[
+    {due:'2026-07-23',value:407721.36,received:407721.36,settledAt:'2026-07-23'},
+    {due:'2026-08-23',value:70000},{due:'2026-09-23',value:70000},{due:'2026-10-23',value:70000},
+    {due:'2026-11-23',value:70000},{due:'2026-12-23',value:70000},{due:'2027-01-30',value:70000},
+    {due:'2027-02-28',value:70000},{due:'2027-03-30',value:70000},{due:'2027-04-23',value:70000}
+  ]
+};
 function accountingSalesOrderInScope(value){
   const number=Number(String(value||'').match(/\d+/)?.[0]);
   if(!Number.isFinite(number))return true;
   return number>168||ACCOUNTING_ACTIVE_SALES_BASELINE.has(number);
+}
+function accountingEmbeddedScheduleItems(catalog){
+  const rows=[],keys=new Set(),mapaPedidos=receberMapaPedidos();
+  const append=(order,raw)=>{
+    const due=receberData(raw,['vencimentoData','vencimento','dataVencimento','vencimentoOriginalData','vencimentoOriginal']);
+    const value=Math.abs(receberNumero(receberChave(raw,['valorLiquido','valorOriginal','valorParcela','valorDaParcela','valor'])));
+    if(!due||value<=.004)return;
+    const key=[financeNormalize(order.numero),due.toISOString().slice(0,10),value.toFixed(2)].join('|');if(keys.has(key))return;keys.add(key);
+    const received=Math.min(value,Math.max(0,receberNumero(receberChave(raw,['valorRecebidoLiquido','valorRecebido','valorBaixado','valorLiquidado','valorPago']))));
+    rows.push(receberRegistro({...raw,tipo:'ADIANTAMENTO',pedidoDeVendaNumero:order.numero,numeroPedido:order.numero,vencimentoData:due.toISOString().slice(0,10),valorOriginal:value,valorLiquido:value,valorRecebido:received,estado:received>=value-.004?'Recebido':'A receber'},mapaPedidos));
+  };
+  [...new Set(catalog.byNumber.values())].forEach(order=>{
+    const visited=new WeakSet();
+    const visit=(value,path='',depth=0)=>{
+      if(!value||typeof value!=='object'||depth>8||visited.has(value))return;visited.add(value);
+      if(Array.isArray(value)){value.forEach(item=>visit(item,path,depth+1));return;}
+      const context=financeNormalize(path);
+      if(/adiant|cobranc|condica.*pagament|parcel.*pagament|cronogram.*pagament/.test(context))append(order,value);
+      Object.entries(value).forEach(([key,field])=>{if(field&&typeof field==='object')visit(field,`${path} ${key}`,depth+1);});
+    };
+    visit(order.raw||{});
+    (ACCOUNTING_VERIFIED_ORDER_SCHEDULES[String(order.numero)]||[]).forEach(item=>append(order,{vencimentoData:item.due,valorOriginal:item.value,valorLiquido:item.value,valorRecebido:item.received||0,dataLiquidacao:item.settledAt||'',estado:item.received?'Recebido':'A receber'}));
+  });
+  return rows;
 }
 function accountingRows(side){
   const catalog=accountingOrderCatalog(side);
@@ -10728,22 +10905,28 @@ function accountingRows(side){
   if(Array.isArray(historicalRaw)&&historicalRaw.length){
     if(side==='receber'){
       const mapaPedidos=receberMapaPedidos();
-      source=historicalRaw.map(row=>receberRegistro(row,mapaPedidos))
+      const historical=historicalRaw.map(row=>receberRegistro(row,mapaPedidos))
         .filter(item=>!item.vencimento||item.vencimento>=new Date(2020,0,1));
+      // O histórico contábil contém as parcelas previstas do pedido, mas as
+      // baixas reais vivem no Contas a Receber. Unimos as duas fontes e
+      // deixamos a consulta atual/auditada do Contas a Receber prevalecer em
+      // títulos repetidos.
+      const authoritative=receberRegistros(),realKeys=new Set(authoritative.map(item=>commissionReceivableAuditKey(item.raw||{})));
+      source=[...historical.filter(item=>{
+        const kind=accountingConditionKind(item.raw||{});
+        return kind.key==='delivery'||kind.key==='advance'||!realKeys.has(commissionReceivableAuditKey(item.raw||{}));
+      }),...authoritative];
     }else{
       source=historicalRaw.map(pagarRegistro)
         .filter(item=>item.vencimento&&item.valorTitulo>0.004);
     }
   }else source=side==='receber'?receberRegistros():pagarRegistros();
-  return source.map((item,index)=>{
+  if(side==='receber')source=[...source,...accountingEmbeddedScheduleItems(catalog)];
+  const rows=source.map((item,index)=>{
     const raw=item.raw||{},kind=accountingConditionKind(raw),link=accountingOrderLink(item,side,catalog);
-    // Base ativa validada antes da regressão do histórico: mantém os pedidos
-    // pendentes conhecidos e aceita automaticamente todos os pedidos novos.
-    // Os demais números até 168 pertencem ao legado já encerrado.
-    if(side==='receber'&&!accountingSalesOrderInScope(link.numero||link.order?.numero))return null;
-    // Remoção solicitada exclusivamente para o pedido 128 (Araucária).
-    if(side==='receber'&&financeNormalize(link.numero||link.order?.numero)==='128')return null;
-    // Somente parcelas vinculadas a pedidos ainda ativos aparecem aqui.
+    // Todas as parcelas vinculadas a pedidos são consideradas. A exclusão dos
+    // pedidos totalmente recebidos acontece somente após o agrupamento, quando
+    // já conhecemos o saldo consolidado de cada pedido.
     if(!link.order)return null;
     const value=Math.abs(Number(side==='receber'?item.valorParcela:item.valorTitulo)||0);
     if(value<=0.004)return null;
@@ -10760,9 +10943,26 @@ function accountingRows(side){
     const today=new Date();today.setHours(0,0,0,0);
     const overdue=balance>0.004&&due&&due<today;
     const status=balance<=0.004?{key:'done',label:side==='receber'?'Recebido':'Pago'}:settled>0.004?{key:'partial',label:'Parcial'}:overdue?{key:'overdue',label:'Vencido'}:{key:'open',label:'Em aberto'};
-    const invoiceNumbers=[...new Set([...accountingInvoiceNumbers(raw),...(link.order?.invoiceNumbers||[])])];
-    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoiceNumbers,invoice:invoiceNumbers.join(' · ')||'—',settledAt:balance<=0.004?accountingSettlementDate(raw,due):null};
-  }).filter(Boolean).sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
+    const titleInvoiceNumbers=accountingInvoiceNumbers(raw);
+    // Em um título real mostramos somente a NF daquele título. A relação
+    // completa de NFs do pedido é usada apenas para vincular previsões que
+    // ainda não possuem documento fiscal próprio.
+    const invoiceNumbers=titleInvoiceNumbers.length?titleInvoiceNumbers:[...new Set(link.order?.invoiceNumbers||[])];
+    const installment=item?.parcela||{},installmentNumber=installment.numero??receberChave(raw,['parcelaNumero','numeroParcela','parcela']),installmentTotal=installment.total??receberChave(raw,['numeroParcelas','totalParcelas','quantidadeParcelas']),description=receberTexto(item?.descricao||item?.referenteA||receberChave(raw,['descricao','descricaoDetalhe','historico','referenteA','referencia']))||kind.label;
+    return {id:index,raw,kind,order:link.order,numero:link.numero||'Não identificado',party,value,settled,balance,percent,due,status,invoiceNumbers,invoice:invoiceNumbers.join(' · ')||'—',settledAt:settled>0.004?accountingSettlementDate(raw,due):null,installmentNumber,installmentTotal,description};
+  }).filter(Boolean);
+  // A mesma condição pode chegar pelo histórico contábil e novamente pela
+  // consulta do Contas a Receber. Consolidamos por pedido, tipo, parcela,
+  // vencimento e valor antes de calcular adiantamentos, recebido e saldo.
+  const unique=new Map();
+  rows.forEach(row=>{
+    const due=row.due instanceof Date&&!Number.isNaN(row.due)?row.due.toISOString().slice(0,10):'';
+    const descriptionKey=row.kind.key==='document'?financeNormalize(row.description):'';
+    const key=[financeNormalize(row.numero),row.kind.key,String(row.installmentNumber??''),String(row.installmentTotal??''),due,Number(row.value).toFixed(2),descriptionKey,[...(row.invoiceNumbers||[])].sort().join(',')].join('|');
+    const existing=unique.get(key);
+    if(!existing||row.settled>existing.settled||(row.settled===existing.settled&&row.settledAt&&!existing.settledAt))unique.set(key,row);
+  });
+  return [...unique.values()].sort((a,b)=>(a.due?.getTime()||0)-(b.due?.getTime()||0)||String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
 }
 function accountingFilteredRows(rows){
   const term=financeNormalize(accountingSearch);
@@ -10774,6 +10974,19 @@ function accountingFilteredRows(rows){
 }
 function accountingPercentText(value){
   return value===null||value===undefined||!Number.isFinite(Number(value))?'—':`${Number(value).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+}
+function accountingInstallmentText(row){
+  const number=String(row?.installmentNumber??'').trim(),total=String(row?.installmentTotal??'').trim();
+  if(number&&total)return `${number}/${total}`;
+  return number||'—';
+}
+function accountingTimingInfo(row,side){
+  const movement=side==='receber'?'Recebida':'Paga',due=row?.due instanceof Date&&!Number.isNaN(row.due)?new Date(row.due):null,settledAt=row?.settledAt instanceof Date&&!Number.isNaN(row.settledAt)?new Date(row.settledAt):null;
+  if(due)due.setHours(0,0,0,0);if(settledAt)settledAt.setHours(0,0,0,0);
+  if(settledAt&&due){const days=Math.round((settledAt-due)/86400000),prefix=row.balance>0.004?'Baixa parcial':'Pagamento';if(days>0)return {key:'overdue',label:`${prefix} ${days} dia(s) após o vencimento`};if(days<0)return {key:'done',label:`${prefix} ${Math.abs(days)} dia(s) antes do vencimento`};return {key:'done',label:`${prefix} no vencimento`};}
+  if(row.balance<=0.004)return {key:'done',label:`${movement} · data não informada`};
+  if(due){const today=new Date();today.setHours(0,0,0,0);const days=Math.round((due-today)/86400000);if(days<0)return {key:'overdue',label:`Vencida há ${Math.abs(days)} dia(s)`};if(days===0)return {key:'overdue',label:'Vence hoje'};return {key:'open',label:`Vence em ${days} dia(s)`};}
+  return {key:row.status?.key||'open',label:'Vencimento não informado'};
 }
 function accountingRowsMarkup(rows,side){
   if(!rows.length)return `<tr><td colspan="10"><div class="accounting-empty">Nenhuma condição de pagamento corresponde aos filtros atuais.</div></td></tr>`;
@@ -10805,19 +11018,21 @@ function accountingGroupRows(rows,side='receber'){
     const deliveryRows=group.rows.filter(row=>row.kind.key==='delivery');
     const advanceRows=group.rows.filter(row=>row.kind.key==='advance');
     const documentRows=group.rows.filter(row=>row.kind.key==='document');
-    const usedDocuments=new Set();
+    const usedDocuments=new Set(),usedDeliveries=new Set();
     const sharesInvoice=(left,right)=>left.some(value=>right.includes(value));
     // Liga a parcela do pedido ao título da NF. O estado da parcela deixa de
     // decidir pagamento; ele é substituído pelo valor efetivamente baixado no
     // título correspondente do Contas a Receber.
-    deliveryRows.forEach(delivery=>{
+    deliveryRows.forEach((delivery,deliveryIndex)=>{
       const matches=documentRows.map((document,index)=>({document,index})).filter(({document,index})=>
         !usedDocuments.has(index)&&sharesInvoice(delivery.invoiceNumbers||[],document.invoiceNumbers||[])
       );
       let selected=matches.filter(({document})=>Math.abs(document.value-delivery.value)<=.01);
-      if(selected.length!==1&&matches.length===1&&deliveryRows.length===1)selected=matches;
-      if(selected.length!==1)return;
+      if(selected.length>1)selected.sort((left,right)=>Math.abs((left.document.due?.getTime?.()||0)-(delivery.due?.getTime?.()||0))-Math.abs((right.document.due?.getTime?.()||0)-(delivery.due?.getTime?.()||0)));
+      if(!selected.length&&matches.length===1&&deliveryRows.length===1)selected=matches;
+      if(!selected.length)return;
       const {document,index}=selected[0];usedDocuments.add(index);
+      usedDeliveries.add(deliveryIndex);
       delivery.settled=Math.min(delivery.value,document.settled);
       delivery.balance=Math.max(delivery.value-delivery.settled,0);
       delivery.settledAt=document.settledAt;
@@ -10841,11 +11056,24 @@ function accountingGroupRows(rows,side='receber'){
     group.retentionExpired=side==='receber'
       ?Boolean(group.removalDate&&Date.now()>=group.removalDate.getTime())
       :Boolean(group.isFullyReceived&&group.settledAt&&((Date.now()-group.settledAt.getTime())/(86400000)>45));
-    // Quando a parcela do pedido existe, o título da NF é usado como prova de
-    // pagamento, mas não aparece como uma segunda cobrança duplicada.
-    if(deliveryRows.length)group.rows=group.rows.filter(row=>row.kind.key!=='document');
+    // O título real da nota fiscal prevalece sobre a previsão do pedido. A
+    // previsão só continua visível quando ainda não possui título correspondente.
+    // Assim preservamos parcelas futuras sem esconder recebimentos já baixados.
+    if(side==='receber'&&documentRows.length){
+      // Havendo NF/título real para o pedido, não exibimos as condições
+      // previstas como se fossem novas contas. O estado exibido passa a ser
+      // exclusivamente o encontrado no Contas a Receber para essas notas.
+      const orderHasKnownInvoices=Boolean(group.order?.invoiceNumbers?.length);
+      group.rows=group.rows.filter(row=>row.kind.key!=='delivery'||(!orderHasKnownInvoices&&!usedDeliveries.has(deliveryRows.indexOf(row))));
+    }
+    const documentInvoices=[...new Set(documentRows.flatMap(row=>accountingInvoiceNumbers(row.raw||{})))];
+    group.displayNumber=documentInvoices.length===1?`NF ${documentInvoices[0]}`:documentInvoices.length>1?`NFs ${documentInvoices.join(' · ')}`:group.numero;
+    group.hasFiscalTitles=documentInvoices.length>0;
     return group;
-  }).filter(group=>!group.retentionExpired).sort((a,b)=>{
+  }).filter(group=>{
+    if(side==='receber'&&ACCOUNTING_EXCLUDED_SALES_ORDERS.has(String(group.numero||'').trim()))return false;
+    return side==='receber'?!group.isFullyReceived:!group.retentionExpired;
+  }).sort((a,b)=>{
     if(a.numero==='Não identificado'&&b.numero!=='Não identificado')return 1;
     if(b.numero==='Não identificado'&&a.numero!=='Não identificado')return -1;
     return String(b.numero).localeCompare(String(a.numero),'pt-BR',{numeric:true});
@@ -10860,23 +11088,26 @@ function accountingDeliveryInfo(group){
   return {short:`Entregas: ${labels[0]} → ${labels[labels.length-1]} (${labels.length})`,full:`Entregas dos itens: ${labels.join(', ')}`,missing:false};
 }
 function accountingConditionRowsMarkup(rows,side){
-  return rows.map(row=>`<tr>
+  return rows.map(row=>{const timing=accountingTimingInfo(row,side);return `<tr>
+    <td class="order-number">${escapeHTML(accountingInstallmentText(row))}</td>
+    <td>${escapeHTML(row.description||row.kind.label)}</td>
     <td><span class="accounting-kind ${row.kind.key}">${escapeHTML(row.kind.label)}</span></td>
     <td>${receberDataFormat(row.due)}</td>
-    <td class="percent">${accountingPercentText(row.percent)}</td>
+    <td>${row.settledAt?receberDataFormat(row.settledAt):'<span class="muted">—</span>'}</td>
+    <td><span class="accounting-status ${timing.key}">${escapeHTML(timing.label)}</span></td>
     <td class="money">${fmtBRL(row.value)}</td>
     <td class="money">${fmtBRL(row.settled)}</td>
     <td class="money">${fmtBRL(row.balance)}</td>
     <td>${escapeHTML(row.invoice||'—')}</td>
     <td><span class="accounting-status ${row.status.key}">${escapeHTML(row.status.label)}</span></td>
-  </tr>`).join('');
+  </tr>`;}).join('');
 }
 function accountingOrderBlocksMarkup(groups,side){
   if(!groups.length)return '<div class="accounting-empty accounting-order-card">Nenhum pedido corresponde aos filtros atuais.</div>';
   const settledLabel=side==='receber'?'Recebido':'Pago';
   return groups.map(group=>{const delivery=accountingDeliveryInfo(group);return `<details class="accounting-order-card"${uiCollapseAttributes(`contabilidade-${side}-${group.key||group.numero}`,false)}>
     <summary class="accounting-order-summary">
-      <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} condição(ões) de pagamento</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span>${side==='receber'&&group.isFullyReceived?(group.removalDate?`<span class="accounting-removal-chip" title="Contagem de 30 dias após o último pagamento"><span class="msi msi-sm">hourglass_top</span>Remoção em: ${group.removalDaysLeft} dia(s)</span>`:`<span class="accounting-removal-chip missing" title="O MaxiProd não informou a data da última baixa"><span class="msi msi-sm">schedule</span>100% recebido · sem data da última baixa</span>`):''}</div></div>
+      <div class="accounting-order-main"><div class="accounting-order-title"><strong>${escapeHTML(group.numero)}</strong><span>${escapeHTML(group.party)}</span></div><small>${group.rows.length} ${side==='receber'?'título(s)/parcela(s)':'condição(ões) de pagamento'}</small><div class="accounting-order-highlights"><span class="accounting-delivery-chip ${delivery.missing?'missing':''}" title="${escapeHTML(delivery.full)}"><span class="msi msi-sm">event</span>${escapeHTML(delivery.short)}</span><span class="accounting-paid-chip"><span class="msi msi-sm">percent</span>${side==='receber'?'Recebido':'Pago'}: ${accountingPercentText(group.paidPercent)}</span></div></div>
       <div class="accounting-order-metric optional"><span>Valor total do pedido</span><b>${fmtBRL(group.total)}</b></div>
       <div class="accounting-order-metric advance optional"><span>Adiantamentos</span><b>${fmtBRL(group.advances)}</b></div>
       <div class="accounting-order-metric settled"><span>${settledLabel}</span><b>${fmtBRL(group.settled)}</b></div>
@@ -10886,7 +11117,7 @@ function accountingOrderBlocksMarkup(groups,side){
     </summary>
     <div class="accounting-order-body">
       ${group.order?'':`<div class="accounting-order-warning"><span class="msi msi-sm">warning</span> O MaxiProd não devolveu um vínculo de pedido para este lançamento.</div>`}
-      <div class="accounting-table-wrap"><table class="accounting-table"><thead><tr><th>Tipo</th><th>Vencimento</th><th style="text-align:right">Percentual</th><th style="text-align:right">Valor</th><th style="text-align:right">${side==='receber'?'Valor recebido':'Valor pago'}</th><th style="text-align:right">Saldo</th><th>Nota fiscal</th><th>Situação</th></tr></thead><tbody>${accountingConditionRowsMarkup(group.rows,side)}</tbody></table></div>
+      <div class="accounting-table-wrap"><table class="accounting-table"><thead><tr><th>Parcela</th><th>Descrição</th><th>Tipo</th><th>Vencimento</th><th>${side==='receber'?'Recebimento':'Pagamento'}</th><th>Prazo / atraso</th><th style="text-align:right">Valor da parcela</th><th style="text-align:right">${side==='receber'?'Valor recebido':'Valor pago'}</th><th style="text-align:right">Saldo</th><th>Nota fiscal</th><th>Situação</th></tr></thead><tbody>${accountingConditionRowsMarkup(group.rows,side)}</tbody></table></div>
     </div>
   </details>`;}).join('');
 }
@@ -11041,7 +11272,7 @@ function renderAccountingPage(container=document.getElementById('contabilidadeCo
   const updated=FINANCE_CACHE?.updatedAt||SALES_CACHE?.updatedAt||PURCHASE_ORDERS_CACHE?.updatedAt;
   const updatedText=updated?new Date(updated).toLocaleString('pt-BR'):'Ainda não atualizado';
   const settledLabel=side==='receber'?'Valor recebido':'Valor pago';
-  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">request_quote</span> Contabilidade</h2><p>Condições de pagamento dos pedidos, separando adiantamentos e parcelas vinculadas à entrega.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${escapeHTML(updatedText)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${financeRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> ${financeRefreshInProgress?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
+  container.innerHTML=`<div class="finance-head"><div><h2><span class="msi">request_quote</span> Contabilidade</h2><p>${side==='receber'?'Todas as parcelas dos pedidos de venda que ainda possuem saldo em aberto.':'Condições de pagamento dos pedidos de compra.'}</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${escapeHTML(updatedText)}</span><button class="btn btn-gold" type="button" onclick="refreshFinanceiroFiscal()" ${financeRefreshInProgress?'disabled':''}><span class="msi msi-sm">sync</span> ${financeRefreshInProgress?'Atualizando...':'Atualizar MaxiProd'}</button></div></div>
     <div class="accounting-shell">
       <div class="accounting-tabs"><button class="accounting-tab ${side==='receber'?'active':''} ${hasAccess('contabilidade.receber')?'':'access-locked'}" onclick="switchAccountingView('receber')"><span class="msi msi-sm">south_west</span> A receber · Pedidos de venda</button><button class="accounting-tab ${side==='pagar'?'active':''} ${hasAccess('contabilidade.pagar')?'':'access-locked'}" onclick="switchAccountingView('pagar')"><span class="msi msi-sm">north_east</span> A pagar · Pedidos de compra</button></div>
       <div class="accounting-summary">
@@ -11050,8 +11281,8 @@ function renderAccountingPage(container=document.getElementById('contabilidadeCo
         <div class="accounting-summary-card settled"><span>${settledLabel}</span><b>${fmtBRL(settled)}</b></div>
         <div class="accounting-summary-card open"><span>Saldo em aberto</span><b>${fmtBRL(balance)}</b></div>
       </div>
-      <div class="accounting-note"><b>Leitura sem alterações:</b> o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. “Entrega / parcela” representa o valor não adiantado previsto na condição de pagamento. ${side==='receber'?'Pedidos 100% recebidos permanecem por 30 dias após a última baixa; o cabeçalho mostra quantos dias faltam para a remoção.':'Pedidos 100% pagos permanecem por 45 dias após a baixa.'}${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
-      <div class="accounting-toolbar"><input id="accountingSearch" class="search-input" value="${escapeHTML(accountingSearch)}" oninput="applyAccountingSearch(this.value)" placeholder="Filtrar pedido, cliente, fornecedor, vencimento ou situação..."><button class="accounting-filter ${accountingOnlyAdvances?'active':''}" type="button" onclick="toggleAccountingAdvances()">Somente adiantamentos</button><span class="muted" style="font-size:12px;white-space:nowrap;">${groups.length} bloco(s) · ${filtered.length} de ${rows.length} condição(ões)</span><div class="accounting-general-reports"><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('pdf','${side}')" title="Gerar relatório geral em PDF"><span class="msi msi-sm">picture_as_pdf</span> PDF geral</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('excel','${side}')" title="Gerar relatório geral em Excel"><span class="msi msi-sm">table_view</span> Excel geral</button></div><div class="accounting-block-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(true)">Expandir todos</button><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(false)">Recolher todos</button></div></div>
+      <div class="accounting-note"><b>Leitura sem alterações:</b> ${side==='receber'?'são exibidos somente pedidos ainda não recebidos por completo, mantendo dentro deles todas as parcelas já pagas e em aberto. As datas indicam se cada recebimento ocorreu antes, no vencimento ou com atraso.':'o percentual usa o valor da condição dividido pelo valor total do pedido quando o MaxiProd não informa o percentual diretamente. Pedidos 100% pagos permanecem por 45 dias após a baixa.'}${unidentified?` <b>${unidentified} registro(s)</b> ainda não possuem vínculo de pedido identificável no retorno do MaxiProd.`:''}</div>
+      <div class="accounting-toolbar"><input id="accountingSearch" class="search-input" value="${escapeHTML(accountingSearch)}" oninput="applyAccountingSearch(this.value)" placeholder="Filtrar pedido, cliente, fornecedor, vencimento ou situação..."><button class="accounting-filter ${accountingOnlyAdvances?'active':''}" type="button" onclick="toggleAccountingAdvances()">Somente adiantamentos</button><span class="muted" style="font-size:12px;white-space:nowrap;">${groups.length} pedido(s) · ${filtered.length} de ${rows.length} parcela(s)</span><div class="accounting-general-reports"><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('pdf','${side}')" title="Gerar relatório geral em PDF"><span class="msi msi-sm">picture_as_pdf</span> PDF geral</button><button class="btn btn-ghost btn-sm" type="button" onclick="exportAccountingReport('excel','${side}')" title="Gerar relatório geral em Excel"><span class="msi msi-sm">table_view</span> Excel geral</button></div><div class="accounting-block-actions"><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(true)">Expandir todos</button><button class="btn btn-ghost btn-sm" type="button" onclick="setAccountingBlocks(false)">Recolher todos</button></div></div>
       <div class="accounting-orders">${accountingOrderBlocksMarkup(groups,side)}</div>
     </div>`;
 }
@@ -11762,8 +11993,14 @@ function startRealtimeSync(){
 
   onSnapshot(SHARED_MAXIPROD_CACHE_REF,(snap)=>{
     if(!snap.exists())return;
-    loadSharedMaxiprodCache(snap.data(),{silent:true}).then((changed)=>{
-      if(changed)showToast('Dados do MaxiProd sincronizados automaticamente');
+    loadSharedMaxiprodCache(snap.data(),{silent:true}).then(async(changed)=>{
+      if(changed){
+        // Cada nova fotografia automática recebe a mesma complementação da
+        // atualização manual: histórico completo dos títulos por NF.
+        try{await refreshAccountingReceivableHistory();}catch(error){console.error('Contabilidade: complementação automática dos títulos',error);}
+        if(document.getElementById('page-contabilidade')?.classList.contains('active'))renderAccountingPage();
+        showToast('Dados do MaxiProd sincronizados automaticamente');
+      }
     });
   },err=>{
     console.error('Shared MaxiProd cache sync error:',err);
