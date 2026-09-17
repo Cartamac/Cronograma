@@ -4699,10 +4699,97 @@ async function commercialFollowUpSave(id){if(commercialFollowUpSaving)return;con
 function renderCommercialFollowUps(target){const base=commercialFollowUpBaseRows(),rows=commercialFollowUpRows(),today=base.filter(item=>commercialFollowUpTiming(item)==='today'),overdue=base.filter(item=>commercialFollowUpTiming(item)==='overdue'),week=base.filter(item=>commercialFollowUpTiming(item)==='week'),unscheduled=base.filter(item=>commercialFollowUpTiming(item)==='unscheduled'),active=base.filter(item=>!commercialFollowUpTerminal(item)),activeBRL=active.filter(item=>item.currency!=='USD'&&item.value!==null).reduce((sum,item)=>sum+Number(item.value||0),0),sellers=[...new Set(COMMERCIAL_BUDGETS.filter(item=>item.status==='aguardando_aprovacao').map(item=>item.seller).filter(Boolean))].sort();const tableRows=rows.map(item=>{const timing=commercialFollowUpTiming(item),last=commercialFollowUpLast(item),status=COMMERCIAL_BUDGET_STATUS[item.status]||COMMERCIAL_BUDGET_STATUS.outro,timingLabel={overdue:'Atrasado',today:'Hoje',week:'Próximos 7 dias',future:'Futuro',unscheduled:'Sem agendamento',closed:'Encerrado'}[timing];return `<tr class="followup-row ${timing}"><td><span class="followup-due ${timing}">${timingLabel}</span><strong>${item.followUpNextDate?esc(commercialBudgetDateText(item.followUpNextDate)):'—'}</strong></td><td><strong>${esc(item.proposalNumber||'—')}</strong><small>${esc(item.client||'—')}</small></td><td><strong>${esc(item.equipment||'—')}</strong><small>${esc(item.seller||'—')}</small></td><td class="money">${esc(commercialBudgetMoney(item))}</td><td><strong>${last?esc(COMMERCIAL_FOLLOW_UP_RESULTS[last.result]||last.result):'Nenhum evento'}</strong><small>${last?esc(commercialBudgetDateText(String(last.contactAt||last.createdAt).slice(0,10))):'—'}</small></td><td><strong>${esc(item.followUpNextAction||'—')}</strong><small>${esc(item.followUpUpdatedBy||'')}</small></td><td><span class="budget-status ${status.className}">${esc(status.short)}</span></td><td><div class="budget-actions"><button type="button" class="btn btn-ghost btn-sm" onclick="commercialFollowUpOpen('${esc(item.id)}')"><span class="msi msi-sm">history</span> Contato / histórico</button><button type="button" class="btn btn-ghost btn-icon" title="Abrir orçamento" onclick="commercialFollowUpOpenBudget('${esc(item.id)}')"><span class="msi msi-sm">open_in_new</span></button></div></td></tr>`;}).join('');target.innerHTML=`<div class="followup-page"><div class="budget-head"><div><h2><span class="msi">event_repeat</span> Follow-up de propostas</h2><p>Somente propostas aguardando aprovação, na mesma ordem do Cadastro de orçamentos.</p></div></div><div class="followup-summary"><div class="budget-summary-card status-lost"><span>Atrasados</span><strong>${overdue.length}</strong><small>Precisam de contato</small></div><div class="budget-summary-card status-approval"><span>Para hoje</span><strong>${today.length}</strong><small>Follow-ups do dia</small></div><div class="budget-summary-card status-budget"><span>Próximos 7 dias</span><strong>${week.length}</strong><small>Agenda próxima</small></div><div class="budget-summary-card"><span>Sem agendamento</span><strong>${unscheduled.length}</strong><small>Definir próxima ação</small></div><div class="budget-summary-card value"><span>Valor em acompanhamento</span><strong>${fmtBRL(activeBRL)}</strong><small>${active.length} ${active.length===1?'item':'itens'} em aberto</small></div></div><div class="followup-toolbar"><input id="commercialFollowUpSearch" value="${esc(commercialFollowUpSearch)}" placeholder="Buscar proposta, solicitante, cliente, equipamento ou ação..." onchange="commercialFollowUpFilterChanged()"><select id="commercialFollowUpSellerFilter" onchange="commercialFollowUpFilterChanged()"><option value="">Todos os vendedores</option>${sellers.map(seller=>`<option value="${esc(seller)}" ${seller===commercialFollowUpSellerFilter?'selected':''}>${esc(seller)}</option>`).join('')}</select><select id="commercialFollowUpDueFilter" onchange="commercialFollowUpFilterChanged()"><option value="open" ${commercialFollowUpDueFilter==='open'?'selected':''}>Em acompanhamento</option><option value="all" ${commercialFollowUpDueFilter==='all'?'selected':''}>Todos</option><option value="overdue" ${commercialFollowUpDueFilter==='overdue'?'selected':''}>Atrasados</option><option value="today" ${commercialFollowUpDueFilter==='today'?'selected':''}>Hoje</option><option value="week" ${commercialFollowUpDueFilter==='week'?'selected':''}>Próximos 7 dias</option><option value="unscheduled" ${commercialFollowUpDueFilter==='unscheduled'?'selected':''}>Sem agendamento</option></select></div><div class="finance-table-wrap"><table class="finance-table followup-table"><thead><tr><th>Próximo contato</th><th>Proposta / cliente</th><th>Equipamento / vendedor</th><th>Valor</th><th>Último evento</th><th>Próxima ação</th><th>Status</th><th>Ações</th></tr></thead><tbody>${tableRows||'<tr><td colspan="8"><div class="empty-state">Nenhuma proposta aguardando aprovação corresponde aos filtros selecionados.</div></td></tr>'}</tbody></table></div></div>${commercialFollowUpModalMarkup()}`;}
 window.commercialFollowUpFilterChanged=commercialFollowUpFilterChanged;window.commercialFollowUpOpen=commercialFollowUpOpen;window.commercialFollowUpClose=commercialFollowUpClose;window.commercialFollowUpResultChanged=commercialFollowUpResultChanged;window.commercialFollowUpSave=commercialFollowUpSave;window.commercialFollowUpOpenBudget=commercialFollowUpOpenBudget;window.commercialFollowUpVoiceToggle=commercialFollowUpVoiceToggle;window.commercialFollowUpVoiceStop=commercialFollowUpVoiceStop;
 const renderCommercialFollowUpsTable=renderCommercialFollowUps;
+function commercialFollowUpExactDeadlineLabel(item){
+  if(commercialFollowUpTerminal(item))return'Encerrado';
+  const target=String(item?.followUpNextDate||'');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(target))return'Sem agendamento';
+  const parseDateKey=value=>{const [year,month,day]=String(value).split('-').map(Number);return Date.UTC(year,month-1,day)};
+  const distance=Math.round((parseDateKey(target)-parseDateKey(commercialFollowUpDateKey()))/86400000);
+  if(distance===0)return'Hoje';
+  if(distance===1)return'Amanhã';
+  if(distance>1)return`Em ${distance} dias`;
+  const overdue=Math.abs(distance);
+  return overdue===1?'Atrasado 1 dia':`Atrasado ${overdue} dias`;
+}
+function commercialFollowUpApplyExactDeadlineBadges(target=document){
+  const visibleRows=commercialFollowUpRows();
+  target.querySelectorAll('.followup-table tbody .followup-row').forEach((row,index)=>{
+    const item=visibleRows[index],badge=row.querySelector('.followup-due');
+    if(!item||!badge)return;
+    const exactLabel=commercialFollowUpExactDeadlineLabel(item);
+    if(badge.textContent!==exactLabel)badge.textContent=exactLabel;
+    badge.title=item.followUpNextDate?`Próximo contato em ${commercialBudgetDateText(item.followUpNextDate)}`:exactLabel;
+  });
+}
+let commercialFollowUpBadgeObserver=null,commercialFollowUpBadgeRefreshPending=false;
+function commercialFollowUpInstallDeadlineObserver(){
+  const workspace=document.getElementById('partsCommercialWorkspace');
+  if(!workspace){setTimeout(commercialFollowUpInstallDeadlineObserver,250);return;}
+  commercialFollowUpBadgeObserver?.disconnect();
+  commercialFollowUpBadgeObserver=new MutationObserver(()=>{
+    if(commercialFollowUpBadgeRefreshPending)return;
+    commercialFollowUpBadgeRefreshPending=true;
+    requestAnimationFrame(()=>{
+      commercialFollowUpBadgeRefreshPending=false;
+      commercialFollowUpApplyExactDeadlineBadges(workspace);
+    });
+  });
+  commercialFollowUpBadgeObserver.observe(workspace,{childList:true,subtree:true});
+  commercialFollowUpApplyExactDeadlineBadges(workspace);
+}
+setTimeout(commercialFollowUpInstallDeadlineObserver,0);
+let commercialFollowUpResetBusy=false;
+function commercialFollowUpHasResettableData(item){return Boolean(item?.followUpActive||item?.followUpProposalSentAt||item?.followUpNextDate||item?.followUpNextAction||item?.followUpLastContactAt||item?.followUpUpdatedAt||item?.followUpUpdatedBy||(Array.isArray(item?.followUpEntries)&&item.followUpEntries.length));}
+async function commercialFollowUpResetAwaitingApproval(){
+  if(commercialFollowUpResetBusy)return;
+  if(!isMaster(loggedUser)){showToast('Somente o usuário mestre pode executar esta limpeza.','err');return;}
+  const affected=COMMERCIAL_BUDGETS.filter(item=>item.status==='aguardando_aprovacao'&&commercialFollowUpHasResettableData(item));
+  if(!affected.length){showToast('Nenhuma proposta aguardando aprovação possui dados para limpar.');return;}
+  const confirmation=prompt(`Esta limpeza removerá histórico, dias agendados e próxima ação de ${affected.length} proposta(s) em Aguardando aprovação.\n\nOrçamentos, valores, anexos e status serão preservados.\n\nDigite LIMPAR para confirmar:`,'');
+  if(commercialBudgetPlainText(confirmation)!=='LIMPAR'){if(confirmation!==null)showToast('Limpeza cancelada: confirmação não reconhecida.','err');return;}
+  commercialFollowUpResetBusy=true;
+  renderCommercialWorkspace();
+  try{
+    const now=new Date().toISOString(),user=loggedUser?.ref?.name||loggedUser?.name||loggedUser?.ref?.email||'Usuário mestre';
+    const saved=await runTransaction(db,async transaction=>{
+      const snapshot=await transaction.get(COMMERCIAL_BUDGETS_REF),current=snapshot.exists()?(snapshot.data()||{}):{},source=Array.isArray(current.items)?current.items:COMMERCIAL_BUDGETS;
+      let cleared=0;
+      const items=source.map(raw=>{
+        const status=String(raw?.status||'')==='aguardando_aprovacao'?'aguardando_aprovacao':commercialBudgetStatusKey(raw?.status||raw?.statusOriginal,raw?.sourceColor);
+        if(status!=='aguardando_aprovacao'||!commercialFollowUpHasResettableData(raw))return raw;
+        cleared++;
+        return {...raw,followUpActive:false,followUpProposalSentAt:'',followUpNextDate:'',followUpNextAction:'',followUpLastContactAt:'',followUpUpdatedAt:'',followUpUpdatedBy:'',followUpEntries:[],followUpResetAt:now,followUpResetBy:user,updatedAt:now};
+      });
+      const payload={...current,schemaVersion:2,items,updatedAt:now,updatedBy:user,followUpResetAt:now,followUpResetBy:user,followUpResetCount:cleared};
+      transaction.set(COMMERCIAL_BUDGETS_REF,payload);
+      return payload;
+    });
+    applyCommercialBudgets(saved);
+    commercialFollowUpEditorId=null;
+    showToast(`${Number(saved?.followUpResetCount)||affected.length} follow-up(s) de teste foram limpos.`);
+  }catch(error){
+    console.error('Limpeza de follow-ups:',error);
+    showToast('Não foi possível limpar os follow-ups. Nenhuma limpeza parcial foi mantida.','err');
+  }finally{
+    commercialFollowUpResetBusy=false;
+    renderCommercialWorkspace();
+  }
+}
+window.commercialFollowUpResetAwaitingApproval=commercialFollowUpResetAwaitingApproval;
 renderCommercialFollowUps=function(target){
   renderCommercialFollowUpsTable(target);
   const visibleRows=commercialFollowUpRows();
   const table=target.querySelector('.followup-table');
+  const followUpHead=target.querySelector('.followup-page>.budget-head');
+  if(followUpHead&&isMaster(loggedUser)){
+    const resetButton=document.createElement('button');
+    resetButton.type='button';
+    resetButton.className='btn btn-ghost';
+    resetButton.disabled=commercialFollowUpResetBusy;
+    resetButton.innerHTML=`<span class="msi msi-sm">delete_sweep</span> ${commercialFollowUpResetBusy?'Limpando...':'Limpar testes do follow-up'}`;
+    resetButton.onclick=commercialFollowUpResetAwaitingApproval;
+    followUpHead.append(resetButton);
+  }
   if(table){
     const actionHead=table.querySelector('thead th:last-child');
     if(actionHead)actionHead.textContent='Abrir';
@@ -4730,6 +4817,7 @@ renderCommercialFollowUps=function(target){
         commercialFollowUpOpen(item.id);
       };
     });
+    commercialFollowUpApplyExactDeadlineBadges(target);
   }
 };
 function renderCommercialBudgets(target){
@@ -8140,7 +8228,7 @@ function commercialBudgetBackupCollect(reason='manual'){
   const createdAt=new Date().toISOString(),createdBy=loggedUser?.ref?.name||loggedUser?.ref?.email||'Usuário mestre',formationStore=formationLoad(),commercialBudgets={schemaVersion:2,sourceVersion:'controle-orcamentos-backup-completo',items:COMMERCIAL_BUDGETS,customers:COMMERCIAL_CUSTOMERS,updatedAt:createdAt,updatedBy:createdBy};let routeDraft=null;
   try{routeDraft=JSON.parse(localStorage.getItem('cartamac_commercial_route_draft')||'null');}catch(_){routeDraft=null;}
   const attachments=COMMERCIAL_BUDGETS.reduce((total,item)=>total+(Array.isArray(item.requestAttachments)?item.requestAttachments.length:0)+(Array.isArray(item.proposalAttachments)?item.proposalAttachments.length:0),0);
-return {format:COMMERCIAL_BUDGET_BACKUP_FORMAT,schemaVersion:COMMERCIAL_BUDGET_BACKUP_SCHEMA,applicationRevision:'rev490',reason,createdAt,createdBy,manifest:{budgets:COMMERCIAL_BUDGETS.length,customers:Object.keys(COMMERCIAL_CUSTOMERS).length,formations:Object.keys(formationStore).length,attachmentReferences:attachments,physicalAttachmentsIncluded:false},commercialBudgets,formationStore,routeDraft};
+return {format:COMMERCIAL_BUDGET_BACKUP_FORMAT,schemaVersion:COMMERCIAL_BUDGET_BACKUP_SCHEMA,applicationRevision:'rev493',reason,createdAt,createdBy,manifest:{budgets:COMMERCIAL_BUDGETS.length,customers:Object.keys(COMMERCIAL_CUSTOMERS).length,formations:Object.keys(formationStore).length,attachmentReferences:attachments,physicalAttachmentsIncluded:false},commercialBudgets,formationStore,routeDraft};
 }
 function commercialBudgetBackupValidate(payload){if(!payload||payload.format!==COMMERCIAL_BUDGET_BACKUP_FORMAT)throw new Error('Este arquivo não é um backup completo de orçamentos do CARTAMAC.');if(Number(payload.schemaVersion)!==COMMERCIAL_BUDGET_BACKUP_SCHEMA)throw new Error(`Versão do backup de orçamentos incompatível: ${payload.schemaVersion||'não informada'}.`);if(!payload.commercialBudgets||!Array.isArray(payload.commercialBudgets.items))throw new Error('O arquivo não contém o cadastro completo de orçamentos.');if(payload.formationStore!==undefined&&(!payload.formationStore||typeof payload.formationStore!=='object'||Array.isArray(payload.formationStore)))throw new Error('A área de formações e revisões do arquivo é inválida.');return payload;}
 function commercialBudgetDocumentWithFormations(document,formationStore={}){const source=document&&typeof document==='object'?document:{},store=formationStore&&typeof formationStore==='object'&&!Array.isArray(formationStore)?formationStore:{};return{...source,items:(Array.isArray(source.items)?source.items:[]).map(item=>{const formation=store[item?.id]||item?.formationData;return formation&&typeof formation==='object'?{...item,formationData:formation}:item;})};}
