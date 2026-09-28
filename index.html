@@ -2795,6 +2795,10 @@ let commissionGeneralSellerSelection='';
 let commissionOrderSellerFilters={};
 let commissionHistoryRefreshInProgress=false;
 let commissionSourcesRefreshInProgress=false;
+const COMMISSION_AUTO_REFRESH_MS=6*60*60*1000;
+const COMMISSION_AUTO_RETRY_MS=5*60*1000;
+let commissionAutoRefreshTimer=null;
+let commissionAutoRefreshLastAttempt=0;
 // Estado exclusivo da visualização de Contas a pagar.
 let pagarAnoSelecionado=null;
 let pagarModo='anos'; // anos | meses | geral | calendario | mes
@@ -3742,6 +3746,8 @@ function startAdminSession(admin){
   showToast(`Bem-vindo, ${admin.name}!`);
   notificationSessionStart();
   commercialBudgetV2Initialize();
+  scheduleCommissionAutoRefresh();
+  setTimeout(()=>ensureCommissionSourcesFresh({reason:'login'}),1500);
 }
 function doAdminLogin(){
   const email=document.getElementById('adminEmail').value.trim().toLowerCase();
@@ -4266,7 +4272,7 @@ function switchCommercialView(key){
   if(!COMMERCIAL_AREA_VIEWS.includes(key)||!hasAccess(`financeiro.${commercialViewAccessKey(key)}`)){showAccessDenied(FINANCE_VIEWS[key]?.title||'Comercial',document.getElementById('tabComercial'));return;}
   comercialView=key;
   renderCommercialPage();
-  if(key==='comissoes')setTimeout(()=>ensureCommissionHistory(false),0);
+  if(key==='comissoes')setTimeout(()=>ensureCommissionSourcesFresh({reason:'open'}),0);
 }
 function renderCommercialPage(){
   const target=document.getElementById('comercialContent');if(!target)return;
@@ -6425,13 +6431,14 @@ async function ensureCommissionHistory(force=false){
   finally{commissionHistoryRefreshInProgress=false;hideLoading();renderFinanceiroFiscal();}
 }
 async function refreshCommissionSources(){
-  if(!canPerform('actions.maxiprod.update')){showToast('Você não possui permissão para atualizar o MaxiProd.','err');return;}
-  if(commissionSourcesRefreshInProgress||salesRefreshInProgress||commissionHistoryRefreshInProgress){showToast('A atualização de pedidos, notas e recebimentos já está em andamento.');return;}
-  commissionSourcesRefreshInProgress=true;
+  if(!canPerform('actions.maxiprod.update')){showToast('Você não possui permissão para atualizar o MaxiProd.','err');return false;}
+  if(commissionSourcesRefreshInProgress||salesRefreshInProgress||commissionHistoryRefreshInProgress){showToast('A atualização de pedidos, notas e recebimentos já está em andamento.');return false;}
+  commissionSourcesRefreshInProgress=true;let success=false;
   try{
     const salesUpdated=await refreshSalesMaxiprod({integrated:true,percent:20});
     if(!salesUpdated)throw new Error(salesRefreshLastError||'Não foi possível consultar os pedidos de venda e suas notas fiscais.');
     await ensureCommissionHistory(true);
+    success=true;
   }catch(error){
     console.error('Comissões: falha ao conciliar pedidos, notas e recebimentos',error);
     showToast(error?.message||'Não foi possível atualizar todos os dados de comissões.','err');
@@ -6440,10 +6447,37 @@ async function refreshCommissionSources(){
     hideLoading();
     renderFinanceiroFiscal();
   }
+  return success;
+}
+function commissionSourcesFreshness(){
+  const sales=Date.parse(SALES_CACHE?.updatedAt||'')||0,receivables=Date.parse(FINANCE_CACHE?.commissionReceivableUpdatedAt||'')||0;
+  return {sales,receivables,complete:sales>0&&receivables>0,oldest:sales&&receivables?Math.min(sales,receivables):0};
+}
+function commissionSourcesNeedRefresh(){const freshness=commissionSourcesFreshness();return !freshness.complete||Date.now()-freshness.oldest>=COMMISSION_AUTO_REFRESH_MS;}
+function commissionSourcesStatusText(){const freshness=commissionSourcesFreshness();return freshness.complete?`Última sincronização completa: ${new Date(freshness.oldest).toLocaleString('pt-BR')} · automática a cada 6h`:'Aguardando a primeira sincronização completa · automática a cada 6h';}
+async function ensureCommissionSourcesFresh({force=false,reason='timer'}={}){
+  if(!loggedUser||commissionSourcesRefreshInProgress||salesRefreshInProgress||commissionHistoryRefreshInProgress||financeRefreshInProgress)return false;
+  if(!force&&!commissionSourcesNeedRefresh()){await ensureCommissionHistory(false);return false;}
+  if(!force&&Date.now()-commissionAutoRefreshLastAttempt<COMMISSION_AUTO_RETRY_MS)return false;
+  commissionAutoRefreshLastAttempt=Date.now();
+  if(canPerform('actions.maxiprod.update')){
+    const updated=await refreshCommissionSources();
+    if(updated&&reason!=='open')console.info(`Comissões sincronizadas automaticamente (${reason}).`);
+    return updated;
+  }
+  try{
+    const changed=await loadSharedMaxiprodCache(null,{force:true,silent:true});
+    if(changed){renderFinanceiroFiscal();return true;}
+  }catch(error){console.error('Comissões: falha ao buscar a atualização compartilhada',error);}
+  return false;
+}
+function scheduleCommissionAutoRefresh(){
+  clearInterval(commissionAutoRefreshTimer);
+  commissionAutoRefreshTimer=setInterval(()=>{if(document.visibilityState==='visible')ensureCommissionSourcesFresh({reason:'timer'});},5*60*1000);
 }
 function commissionHeader(){
   const updating=commissionSourcesRefreshInProgress||salesRefreshInProgress||commissionHistoryRefreshInProgress;
-  return `<div class="finance-head"><div><h2><span class="msi">percent</span> Comissões</h2><p>Pedidos de venda, referências dos equipamentos, notas fiscais e situação real de cada recebimento.</p></div><div class="finance-actions"><span class="finance-status">Última consulta: ${esc(getFinanceDataStamp())}</span><button class="btn btn-gold" onclick="refreshCommissionSources()" ${updating?'disabled':''}><span class="msi msi-sm">sync</span> ${updating?'Consultando MaxiProd...':'Atualizar pedidos, NFs e recebimentos'}</button></div></div>${commercialTabsHtml()}`;
+  return `<div class="finance-head"><div><h2><span class="msi">percent</span> Comissões</h2><p>Pedidos de venda, referências dos equipamentos, notas fiscais e situação real de cada recebimento.</p></div><div class="finance-actions"><span class="finance-status">${esc(commissionSourcesStatusText())}</span><button class="btn btn-gold" onclick="refreshCommissionSources()" ${updating?'disabled':''}><span class="msi msi-sm">sync</span> ${updating?'Consultando MaxiProd...':'Atualizar pedidos, NFs e recebimentos'}</button></div></div>${commercialTabsHtml()}`;
 }
 function commissionPersonOrderTotals(group,year){
   const vendedor=group.assignment?.vendedor||group.assignment?.responsavel||'',gerente='';
@@ -8635,7 +8669,7 @@ function commercialBudgetBackupCollect(reason='manual',records=COMMERCIAL_BUDGET
   const sourceItems=Array.isArray(records)?records:[],createdAt=new Date().toISOString(),createdBy=loggedUser?.ref?.name||loggedUser?.ref?.email||'Usuário mestre',formationStore=formationLoad(),commercialBudgets={schemaVersion:3,sourceVersion:'controle-orcamentos-backup-completo-v2',items:sourceItems,customers:COMMERCIAL_CUSTOMERS,updatedAt:createdAt,updatedBy:createdBy};let routeDraft=null;
   try{routeDraft=JSON.parse(localStorage.getItem('cartamac_commercial_route_draft')||'null');}catch(_){routeDraft=null;}
   const attachments=sourceItems.reduce((total,item)=>total+(Array.isArray(item.requestAttachments)?item.requestAttachments.length:0)+(Array.isArray(item.proposalAttachments)?item.proposalAttachments.length:0),0);
-return {format:COMMERCIAL_BUDGET_BACKUP_FORMAT,schemaVersion:COMMERCIAL_BUDGET_BACKUP_SCHEMA,applicationRevision:'rev516',reason,createdAt,createdBy,manifest:{budgets:sourceItems.length,customers:Object.keys(COMMERCIAL_CUSTOMERS).length,formations:Object.keys(formationStore).length,attachmentReferences:attachments,physicalAttachmentsIncluded:false},commercialBudgets,formationStore,routeDraft};
+return {format:COMMERCIAL_BUDGET_BACKUP_FORMAT,schemaVersion:COMMERCIAL_BUDGET_BACKUP_SCHEMA,applicationRevision:'rev517',reason,createdAt,createdBy,manifest:{budgets:sourceItems.length,customers:Object.keys(COMMERCIAL_CUSTOMERS).length,formations:Object.keys(formationStore).length,attachmentReferences:attachments,physicalAttachmentsIncluded:false},commercialBudgets,formationStore,routeDraft};
 }
 function commercialBudgetBackupValidate(payload){if(!payload||payload.format!==COMMERCIAL_BUDGET_BACKUP_FORMAT)throw new Error('Este arquivo não é um backup completo de orçamentos do CARTAMAC.');if(Number(payload.schemaVersion)!==COMMERCIAL_BUDGET_BACKUP_SCHEMA)throw new Error(`Versão do backup de orçamentos incompatível: ${payload.schemaVersion||'não informada'}.`);if(!payload.commercialBudgets||!Array.isArray(payload.commercialBudgets.items))throw new Error('O arquivo não contém o cadastro completo de orçamentos.');if(payload.formationStore!==undefined&&(!payload.formationStore||typeof payload.formationStore!=='object'||Array.isArray(payload.formationStore)))throw new Error('A área de formações e revisões do arquivo é inválida.');return payload;}
 function commercialBudgetDocumentWithFormations(document,formationStore={}){const source=document&&typeof document==='object'?document:{},store=formationStore&&typeof formationStore==='object'&&!Array.isArray(formationStore)?formationStore:{};return{...source,items:(Array.isArray(source.items)?source.items:[]).map(item=>{const formation=store[item?.id]||item?.formationData;return formation&&typeof formation==='object'?{...item,formationData:formation}:item;})};}
