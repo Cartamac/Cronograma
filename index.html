@@ -2741,6 +2741,32 @@ let commercialBudgetRegionFilter='';
 let commercialBudgetPeriodFilter='';
 let commercialBudgetKindFilter='';
 let commercialBudgetEditorId=null;
+let realtimeUiRefreshPending=false;
+let commercialRealtimeRenderPending=false;
+function realtimeUiHasActiveEditor(){
+  const editableSelector='input:not([disabled]):not([readonly]),textarea:not([disabled]):not([readonly]),select:not([disabled]),[contenteditable="true"]';
+  const active=document.activeElement;
+  if(active?.matches?.(editableSelector))return true;
+  return [...document.querySelectorAll('.modal-overlay.open')].some(modal=>modal.getClientRects().length>0&&modal.querySelector(editableSelector));
+}
+function requestCommercialRealtimeRender(){
+  if(typeof commercialWorkspaceInParts!=='function'||!commercialWorkspaceInParts())return;
+  if(realtimeUiHasActiveEditor()){commercialRealtimeRenderPending=true;return;}
+  commercialRealtimeRenderPending=false;
+  renderCommercialWorkspace();
+}
+function flushDeferredRealtimeRenders(){
+  if(realtimeUiHasActiveEditor())return;
+  if(commercialRealtimeRenderPending&&typeof commercialWorkspaceInParts==='function'&&commercialWorkspaceInParts()){
+    commercialRealtimeRenderPending=false;
+    renderCommercialWorkspace();
+  }
+  if(realtimeUiRefreshPending&&typeof refreshUIFromDB==='function'){
+    realtimeUiRefreshPending=false;
+    refreshUIFromDB();
+  }
+}
+document.addEventListener('focusout',()=>setTimeout(flushDeferredRealtimeRenders,0),true);
 let commercialBudgetRequestQueuedFiles=[];
 let commercialBudgetRequestRemovedPaths=new Set();
 let commercialBudgetRequestUploadBusy=false;
@@ -4365,7 +4391,7 @@ function applyCommercialBudgets(payload){
   COMMERCIAL_CUSTOMERS={};Object.entries(payload?.customers&&typeof payload.customers==='object'?payload.customers:{}).forEach(([key,profile])=>{COMMERCIAL_CUSTOMERS[key]=normalizeCommercialCustomer(profile);});
   rawItems.forEach(item=>{if(Array.isArray(item))return;const key=commercialCustomerKey(item?.client);if(key&&!COMMERCIAL_CUSTOMERS[key]&&(item?.city||item?.address||item?.cep||item?.contact))COMMERCIAL_CUSTOMERS[key]=normalizeCommercialCustomer(item,item.client);});
   commercialBudgetsLoaded=true;
-  if(commercialWorkspaceInParts())renderCommercialWorkspace();
+  requestCommercialRealtimeRender();
 }
 function commercialBudgetDiffPatch(previous,next){
   const patch={};
@@ -4392,7 +4418,7 @@ function commercialBudgetV2DateKey(item){const proposal=commercialBudgetProposal
 function commercialBudgetV2Record(item){const normalized=normalizeCommercialBudget(item),dateKey=commercialBudgetV2DateKey(normalized),compact=commercialBudgetCompactFormationForStorage(normalized);return JSON.parse(JSON.stringify({...compact,_entity:'commercialBudgetV2',proposalDateKey:dateKey,proposalYear:dateKey.slice(0,4)}));}
 function commercialBudgetV2Public(record){if(!record||record._entity!=='commercialBudgetV2')return null;const {_entity,proposalDateKey,proposalYear,...item}=record;return normalizeCommercialBudget(item);}
 function commercialBudgetV2Cutoff(){const today=new Date(),cutoff=new Date(today.getFullYear()-1,today.getMonth(),today.getDate());return commercialBudgetLocalDateKey(cutoff);}
-function commercialBudgetV2Merge(items,{replace=false}={}){const map=new Map((replace?[]:COMMERCIAL_BUDGETS).map(item=>[String(item.id),item]));(items||[]).forEach(item=>{if(item?.id)map.set(String(item.id),normalizeCommercialBudget(item));});COMMERCIAL_BUDGETS=[...map.values()];commercialBudgetsLoaded=true;if(commercialWorkspaceInParts())renderCommercialWorkspace();}
+function commercialBudgetV2Merge(items,{replace=false}={}){const map=new Map((replace?[]:COMMERCIAL_BUDGETS).map(item=>[String(item.id),item]));(items||[]).forEach(item=>{if(item?.id)map.set(String(item.id),normalizeCommercialBudget(item));});COMMERCIAL_BUDGETS=[...map.values()];commercialBudgetsLoaded=true;requestCommercialRealtimeRender();}
 async function commercialBudgetV2LoadCustomers(){const snapshot=await getDocFromServer(COMMERCIAL_BUDGETS_V2_CUSTOMERS_REF);COMMERCIAL_CUSTOMERS={};const customers=snapshot.exists()?(snapshot.data()?.customers||{}):{};Object.entries(customers).forEach(([key,profile])=>{COMMERCIAL_CUSTOMERS[key]=normalizeCommercialCustomer(profile);});}
 async function commercialBudgetV2LoadYear(year){const value=String(year||'');if(!/^\d{4}$/.test(value)||commercialBudgetsLoadedYears.has(value))return;const rows=await getDocs(query(COMMERCIAL_BUDGETS_V2_COLLECTION,where('proposalDateKey','>=',`${value}-01-01`),where('proposalDateKey','<=',`${value}-12-31`),orderBy('proposalDateKey','desc'))),items=[];rows.forEach(snapshot=>{const item=commercialBudgetV2Public(snapshot.data());if(item)items.push(item);});commercialBudgetsLoadedYears.add(value);commercialBudgetV2Merge(items);}
 async function commercialBudgetV2FetchAll(){const rows=await getDocs(query(COMMERCIAL_BUDGETS_V2_COLLECTION,where('proposalDateKey','>=','1900-01-01'),orderBy('proposalDateKey','desc'))),items=[];rows.forEach(snapshot=>{const item=commercialBudgetV2Public(snapshot.data());if(item)items.push(item);});return items;}
@@ -4741,7 +4767,7 @@ function commercialBudgetEnableUppercaseFields(){
 function commercialBudgetKindSelectorMarkup(item){const selected=commercialBudgetKindValue(item);return `<fieldset class="budget-kind-field"><legend>Classificação *</legend><div class="budget-kind-options"><label class="budget-kind-option"><input type="radio" name="budgetKind" value="part" ${selected==='part'?'checked':''}><span class="msi">handyman</span> Peça</label><label class="budget-kind-option"><input type="radio" name="budgetKind" value="equipment" ${selected==='equipment'?'checked':''}><span class="msi">precision_manufacturing</span> Equipamento</label></div></fieldset>`;}
 function commercialBudgetMountKindSelector(){const equipment=document.getElementById('budgetEquipment'),label=equipment?.closest('label');if(!label||document.querySelector('.budget-kind-field'))return;const item=commercialBudgetEditorId==='new'?normalizeCommercialBudget({}):COMMERCIAL_BUDGETS.find(row=>row.id===commercialBudgetEditorId);if(!item)return;const row=document.createElement('div');row.className='span-2 budget-equipment-kind-row';label.before(row);label.classList.remove('span-2');row.appendChild(label);row.insertAdjacentHTML('beforeend',commercialBudgetKindSelectorMarkup(item));}
 function openCommercialBudgetEditor(id='new'){commercialBudgetEditorId=id;commercialBudgetRequestQueuedFiles=[];commercialBudgetRequestRemovedPaths=new Set();commercialBudgetRequestUploadBusy=false;renderCommercialWorkspace();setTimeout(()=>{commercialBudgetUpgradeSelectableFields();commercialBudgetMountKindSelector();commercialBudgetMountRequestSection();commercialBudgetEnableUppercaseFields();if(id==='new')document.querySelector('#commercialBudgetModal .budget-request-review-actions')?.remove();document.getElementById('budgetProposalNumber')?.focus();},0);}
-function closeCommercialBudgetEditor(){if(commercialBudgetRequestUploadBusy){showToast('Aguarde o envio dos arquivos terminar.','err');return;}commercialBudgetEditorId=null;commercialBudgetRequestQueuedFiles=[];commercialBudgetRequestRemovedPaths=new Set();document.getElementById('commercialBudgetModal')?.remove();}
+function closeCommercialBudgetEditor(){if(commercialBudgetRequestUploadBusy){showToast('Aguarde o envio dos arquivos terminar.','err');return;}commercialBudgetEditorId=null;commercialBudgetRequestQueuedFiles=[];commercialBudgetRequestRemovedPaths=new Set();commercialRealtimeRenderPending=false;renderCommercialWorkspace();setTimeout(flushDeferredRealtimeRenders,0);}
 async function saveCommercialBudget(){
   if(commercialBudgetRequestUploadBusy)return;const read=id=>document.getElementById(id)?.value?.trim()||'',upper=id=>commercialBudgetUppercaseValue(read(id)),proposalNumber=upper('budgetProposalNumber'),client=upper('budgetClient'),equipment=upper('budgetEquipment'),requestDescription=upper('budgetRequestDescription'),budgetKind=document.querySelector('input[name="budgetKind"]:checked')?.value||'';if(!proposalNumber||!client||!equipment){showToast('Informe o número da proposta, o cliente e o equipamento.','err');return;}if(!budgetKind){showToast('Selecione se o orçamento é uma peça de reposição ou um equipamento.','err');document.querySelector('input[name="budgetKind"]')?.focus();return;}
   const existing=commercialBudgetEditorId==='new'?null:COMMERCIAL_BUDGETS.find(item=>item.id===commercialBudgetEditorId),selectedSeller=read('budgetSeller').toUpperCase();if(!selectedSeller){showToast('Selecione o vendedor responsável: EVANDRO, MOHR ou EVANDRO/MOHR.','err');document.getElementById('budgetSeller')?.focus();return;}if(!existing&&!['EVANDRO','MOHR','EVANDRO/MOHR'].includes(selectedSeller)){showToast('Para um novo orçamento, selecione EVANDRO, MOHR ou EVANDRO/MOHR.','err');document.getElementById('budgetSeller')?.focus();return;}if(!existing&&!requestDescription){showToast('Descreva a solicitação técnica antes de enviar para análise.','err');document.getElementById('budgetRequestDescription')?.focus();return;}
@@ -8681,7 +8707,7 @@ function commercialBudgetBackupCollect(reason='manual',records=COMMERCIAL_BUDGET
   const sourceItems=Array.isArray(records)?records:[],createdAt=new Date().toISOString(),createdBy=loggedUser?.ref?.name||loggedUser?.ref?.email||'Usuário mestre',formationStore=formationLoad(),commercialBudgets={schemaVersion:3,sourceVersion:'controle-orcamentos-backup-completo-v2',items:sourceItems,customers:COMMERCIAL_CUSTOMERS,updatedAt:createdAt,updatedBy:createdBy};let routeDraft=null;
   try{routeDraft=JSON.parse(localStorage.getItem('cartamac_commercial_route_draft')||'null');}catch(_){routeDraft=null;}
   const attachments=sourceItems.reduce((total,item)=>total+(Array.isArray(item.requestAttachments)?item.requestAttachments.length:0)+(Array.isArray(item.proposalAttachments)?item.proposalAttachments.length:0),0);
-return {format:COMMERCIAL_BUDGET_BACKUP_FORMAT,schemaVersion:COMMERCIAL_BUDGET_BACKUP_SCHEMA,applicationRevision:'rev520',reason,createdAt,createdBy,manifest:{budgets:sourceItems.length,customers:Object.keys(COMMERCIAL_CUSTOMERS).length,formations:Object.keys(formationStore).length,attachmentReferences:attachments,physicalAttachmentsIncluded:false},commercialBudgets,formationStore,routeDraft};
+return {format:COMMERCIAL_BUDGET_BACKUP_FORMAT,schemaVersion:COMMERCIAL_BUDGET_BACKUP_SCHEMA,applicationRevision:'rev521',reason,createdAt,createdBy,manifest:{budgets:sourceItems.length,customers:Object.keys(COMMERCIAL_CUSTOMERS).length,formations:Object.keys(formationStore).length,attachmentReferences:attachments,physicalAttachmentsIncluded:false},commercialBudgets,formationStore,routeDraft};
 }
 function commercialBudgetBackupValidate(payload){if(!payload||payload.format!==COMMERCIAL_BUDGET_BACKUP_FORMAT)throw new Error('Este arquivo não é um backup completo de orçamentos do CARTAMAC.');if(Number(payload.schemaVersion)!==COMMERCIAL_BUDGET_BACKUP_SCHEMA)throw new Error(`Versão do backup de orçamentos incompatível: ${payload.schemaVersion||'não informada'}.`);if(!payload.commercialBudgets||!Array.isArray(payload.commercialBudgets.items))throw new Error('O arquivo não contém o cadastro completo de orçamentos.');if(payload.formationStore!==undefined&&(!payload.formationStore||typeof payload.formationStore!=='object'||Array.isArray(payload.formationStore)))throw new Error('A área de formações e revisões do arquivo é inválida.');return payload;}
 function commercialBudgetDocumentWithFormations(document,formationStore={}){const source=document&&typeof document==='object'?document:{},store=formationStore&&typeof formationStore==='object'&&!Array.isArray(formationStore)?formationStore:{};return{...source,items:(Array.isArray(source.items)?source.items:[]).map(item=>{const formation=store[item?.id]||item?.formationData;return formation&&typeof formation==='object'?{...item,formationData:formation}:item;})};}
@@ -10292,6 +10318,7 @@ function switchPartsView(view){
   if(view==='rotas')renderCommercialRoutes(workspace,'');
   if(view==='price')renderPartsPriceQuote();
   if(view==='bndes')renderBndesDraft();
+  setTimeout(flushDeferredRealtimeRenders,0);
 }
 function collectPartsPriceInputs(selector){
   return Array.from(document.querySelectorAll(selector)).map(input=>{
@@ -13091,8 +13118,8 @@ function exportStockReportExcel(report){
   XLSX.writeFile(workbook,`${report.filename}_${new Date().toISOString().slice(0,10)}.xlsx`,{compression:true});
 }
 
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+function closeModal(id){document.getElementById(id)?.classList.remove('open');setTimeout(flushDeferredRealtimeRenders,0);}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m){m.classList.remove('open');setTimeout(flushDeferredRealtimeRenders,0);}}));
 
 // ─────────── INIT ───────────
 document.querySelectorAll('.screen').forEach(s=>{if(!s.classList.contains('active'))s.style.display='none';});
@@ -13166,6 +13193,11 @@ function refreshUIFromDB(){
   document.getElementById('revBadge').textContent='';
   syncLoggedUserAccess();
   if(enforceCurrentAccess())return;
+  if(realtimeUiHasActiveEditor()){
+    realtimeUiRefreshPending=true;
+    return;
+  }
+  realtimeUiRefreshPending=false;
   renderStats();renderOrders();populateGanttFilter();
   if(document.getElementById('page-home')?.classList.contains('active')&&typeof renderSystemHome==='function')renderSystemHome();
   if(typeof renderImportHistory==='function')renderImportHistory();
