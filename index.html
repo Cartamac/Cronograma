@@ -6451,7 +6451,7 @@ function commissionStatus(item){
   return {label:'Em aberto',className:'open'};
 }
 function commissionSetYear(value){commissionYear=Number(value)||(new Date()).getFullYear();renderFinanceiroFiscal();setTimeout(()=>ensureCommissionHistory(false),0);}
-function commissionSetMonth(value){commissionMonth=Number(value);renderFinanceiroFiscal();}
+function commissionSetMonth(value){const previousMonth=commissionMonth;commissionMonth=Number(value);if(commissionMonth===-3&&previousMonth>=0&&previousMonth<12)commissionPlanPeriod=`${commissionYear}-${String(previousMonth+1).padStart(2,'0')}`;renderFinanceiroFiscal();}
 let commissionSearchTimer=null;
 function commissionSetSearch(value){commissionSearch=String(value||'');clearTimeout(commissionSearchTimer);commissionSearchTimer=setTimeout(()=>{renderFinanceiroFiscal();requestAnimationFrame(()=>restaurarFocoFiltroFinanceiro('commissionSearch'));},140);}
 async function setCommissionVendedor(encodedKey,value){
@@ -6826,7 +6826,12 @@ function commissionApplyPlanFilters(){
   const count=document.getElementById('commissionPlanCount');if(count)count.textContent=`${visible} item(ns) · ${selected} escolhido(s) · ${fmtBRL(total)}`;
 }
 function commissionPaymentPlanHtml(){
-  const rows=commissionPlanRows().filter(row=>!row.payment||row.plan?.period===commissionPlanPeriod);
+  const [planYear,planMonth]=commissionPlanPeriod.split('-').map(Number);
+  const rows=commissionPlanRows().filter(row=>{
+    const receivedThisMonth=commissionDateInPeriod(row.item.recebimento,planYear,planMonth-1);
+    const plannedThisMonth=row.plan?.period===commissionPlanPeriod;
+    return (receivedThisMonth||plannedThisMonth)&&(!row.payment||plannedThisMonth);
+  });
   const sellers=[...new Set(rows.map(row=>row.recipient.person))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
   const planned=rows.filter(row=>row.plan?.period===commissionPlanPeriod),pending=planned.filter(row=>!row.payment),paid=planned.filter(row=>row.payment),total=pending.reduce((sum,row)=>sum+row.recipient.amount,0);
   const monthLabel=new Date(`${commissionPlanPeriod}-02T12:00:00`).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
