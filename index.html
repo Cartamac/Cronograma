@@ -3180,6 +3180,21 @@ function mergeSharedFinanceYear(previousItems,incomingItems,currentYear){
   return [...historical,...(Array.isArray(incomingItems)?incomingItems:[])];
 }
 
+// A fotografia compartilhada ja contem o historico integral de recebiveis.
+// So a utilizamos para Comissoes quando o intervalo e a disponibilidade
+// estiverem explicitos; fotografias antigas continuam no fluxo de consulta.
+function sharedAccountingHistoryIsComplete(cache=ACCOUNTING_CACHE){
+  const year=(new Date()).getFullYear();
+  return cache?.version===1&&
+    /^\d{4}-\d{2}-\d{2}$/.test(String(cache.dateFrom||''))&&
+    /^\d{4}-\d{2}-\d{2}$/.test(String(cache.dateTo||''))&&
+    String(cache.dateFrom||'')<='2020-01-01'&&
+    String(cache.dateTo||'')>=`${year+2}-01-01`&&
+    cache.receivable?.available!==false&&
+    Array.isArray(cache.receivable?.items)&&
+    Boolean(Date.parse(cache.updatedAt||''));
+}
+
 function applySharedMaxiprodCache(payload){
   if(!payload||typeof payload!=='object')throw new Error('Cache compartilhado inválido.');
   const currentYear=Number(payload.currentYear)||(new Date()).getFullYear();
@@ -3233,9 +3248,14 @@ function applySharedMaxiprodCache(payload){
       updatedAt:payload.accounting.updatedAt||payload.updatedAt||null,
       dateFrom:payload.accounting.dateFrom||null,
       dateTo:payload.accounting.dateTo||null,
-      receivable:{items:Array.isArray(payload.accounting.receivable?.items)?payload.accounting.receivable.items:[]},
+      receivable:{items:Array.isArray(payload.accounting.receivable?.items)?payload.accounting.receivable.items:[],available:payload.accounting.receivable?.available!==false},
       payable:{items:Array.isArray(payload.accounting.payable?.items)?payload.accounting.payable.items:[]}
     };
+    if(payload.accounting.receivable?.available===true&&sharedAccountingHistoryIsComplete(ACCOUNTING_CACHE)){
+      FINANCE_CACHE.datasets.contaAReceber={items:ACCOUNTING_CACHE.receivable.items,available:true};
+      FINANCE_CACHE.receivableLoadedYears=Array.from({length:currentYear-2018},(_,index)=>currentYear+1-index);
+      FINANCE_CACHE.commissionReceivableUpdatedAt=ACCOUNTING_CACHE.updatedAt;
+    }
   }
   if(payload.fixedAssets?.version===9&&Array.isArray(payload.fixedAssets.items))FIXED_ASSETS_CACHE=payload.fixedAssets;
   if(payload.usageStock?.version===2&&Array.isArray(payload.usageStock.items))USAGE_STOCK_CACHE=payload.usageStock;
@@ -3952,8 +3972,10 @@ function startAdminSession(admin){
   commercialBudgetV2Initialize();
   scheduleCommissionAutoRefresh();
   scheduleMaxiprodAutoRefresh();
-  setTimeout(()=>ensureCommissionSourcesFresh({reason:'login'}),1500);
-  setTimeout(()=>ensureMaxiprodCacheFresh({reason:'login'}),2200);
+  // A fotografia compartilhada tambem alimenta Comissoes. Carrega-la antes
+  // evita iniciar duas consultas completas ao ERP ao mesmo tempo no login.
+  setTimeout(()=>ensureMaxiprodCacheFresh({reason:'login'}),1500);
+  setTimeout(()=>ensureCommissionSourcesFresh({reason:'login'}),2200);
 }
 function doAdminLogin(){
   const email=document.getElementById('adminEmail').value.trim().toLowerCase();
@@ -5522,7 +5544,7 @@ async function refreshFinanceiroFiscal({automatic=false,silent=false}={}){
   }finally{
     financeRefreshInProgress=false;
     if(!silent)hideLoading();
-    renderFinanceiroFiscal();
+    if(document.getElementById('page-financeiro')?.classList.contains('active'))renderFinanceiroFiscal();
     if(document.getElementById('page-contabilidade')?.classList.contains('active'))renderAccountingPage();
   }
 }
@@ -6695,7 +6717,7 @@ async function ensureCommissionHistory(force=false,{silent=false}={}){
     if(!silent)showToast(`Comissões atualizadas: ${allItems.length} parcela(s) no cache${usedFallback?' · consulta sem filtro de data':''}.`,'ok');
     return true;
   }catch(error){console.error('Histórico de comissões:',error);if(!silent)showToast(error?.message||'Não foi possível atualizar as parcelas; o cache anterior foi mantido.','err');return false;}
-  finally{commissionHistoryRefreshInProgress=false;if(!silent)hideLoading();renderFinanceiroFiscal();}
+  finally{commissionHistoryRefreshInProgress=false;if(!silent)hideLoading();if(document.getElementById('page-financeiro')?.classList.contains('active'))renderFinanceiroFiscal();}
 }
 async function refreshCommissionSources(options={}){
   const silent=options?.silent===true;
@@ -6714,7 +6736,7 @@ async function refreshCommissionSources(options={}){
   }finally{
     commissionSourcesRefreshInProgress=false;
     if(!silent)hideLoading();
-    renderFinanceiroFiscal();
+    if(document.getElementById('page-financeiro')?.classList.contains('active'))renderFinanceiroFiscal();
   }
   return success;
 }
@@ -14305,10 +14327,12 @@ function refreshUIFromDB(){
     return;
   }
   realtimeUiRefreshPending=false;
-  renderStats();renderOrders();populateGanttFilter();
+  // O cronograma monta muitos cards e tabelas. Nao reconstruir essa arvore
+  // enquanto outra aba esta aberta: switchDevTab a monta quando necessario.
+  if(document.getElementById('page-cronograma')?.classList.contains('active')){renderStats();renderOrders();populateGanttFilter();}
   if(document.getElementById('page-macro-engenharia')?.classList.contains('active'))renderMacroEngineering();
   if(document.getElementById('page-home')?.classList.contains('active')&&typeof renderSystemHome==='function')renderSystemHome();
-  if(typeof renderImportHistory==='function')renderImportHistory();
+  if(document.getElementById('page-importar')?.classList.contains('active')&&typeof renderImportHistory==='function')renderImportHistory();
   if(document.getElementById('page-pecas')?.classList.contains('active')&&typeof renderPartsPage==='function')renderPartsPage();
   if(document.getElementById('page-pecas')?.classList.contains('active')&&partsView==='companies'&&typeof renderCompanyDirectory==='function')renderCompanyDirectory();
   if(document.getElementById('page-pecas')?.classList.contains('active')&&partsView==='bndes'&&typeof renderBndesDraft==='function')renderBndesDraft();
@@ -14446,9 +14470,11 @@ function startRealtimeSync(){
     if(!snap.exists())return;
     loadSharedMaxiprodCache(snap.data(),{silent:true}).then(async(changed)=>{
       if(changed){
-        // Cada nova fotografia automática recebe a mesma complementação da
-        // atualização manual: histórico completo dos títulos por NF.
-        try{await refreshAccountingReceivableHistory({silent:true});}catch(error){console.error('Contabilidade: complementação automática dos títulos',error);}
+        // O manifesto atual ja traz o historico completo. Evita consultar
+        // todas as paginas novamente em cada navegador conectado.
+        if(!sharedAccountingHistoryIsComplete()){
+          try{await refreshAccountingReceivableHistory({silent:true});}catch(error){console.error('Contabilidade: complementação automática dos títulos',error);}
+        }
         if(document.getElementById('page-contabilidade')?.classList.contains('active'))renderAccountingPage();
         showToast('Dados do MaxiProd sincronizados automaticamente');
       }
