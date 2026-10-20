@@ -2174,6 +2174,8 @@ body.system-home-active #page-home{padding:0!important}
 .purchase-multilevel-history-row .import-count{font-weight:850;color:var(--gold)}
 .purchase-multilevel-history-row .import-dates small{display:block;margin-top:3px;color:var(--text3)}
 @media(max-width:720px){.purchase-multilevel-history-row{grid-template-columns:1fr}}
+/* Comparação de compras: valores e títulos alinhados ao centro das respectivas colunas. */
+.purchase-price-table th:nth-child(7),.purchase-price-table th:nth-child(8),.purchase-price-table th:nth-child(9),.purchase-price-table th:nth-child(10),.purchase-price-table td.purchase-price-money{text-align:center}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -9096,14 +9098,19 @@ function backupPilotOrderIds(){const ids=new Set();(ORDERS||[]).forEach(order=>{
 async function backupPilotCollectPurchaseMultilevel(){
   const snapshot=await getDocs(query(PURCHASE_MULTILEVEL_COLLECTION,where('_entity','==','purchaseMultilevelList'))),records=[];
   snapshot.forEach(entry=>{const data=entry.data()||{};records.push({...data,id:data.id||entry.id});});
+  const archivedSnapshot=await getDocs(query(PURCHASE_MULTILEVEL_COLLECTION,where('_entity','==','purchaseMultilevelPriceComparisonArchive'))),archivedComparisons=[];
+  archivedSnapshot.forEach(entry=>archivedComparisons.push({...entry.data(),_backupDocumentId:entry.id}));
   const statusDocument=await backupPilotRead(PURCHASE_MULTILEVEL_STATUS_REF);
-  return {schemaVersion:1,sourceVersion:'purchase-multilevel-processed-data-v1',records,statusDocument:statusDocument&&typeof statusDocument==='object'?statusDocument:{_entity:'purchaseMultilevelStatus',statuses:{},projectCompletions:{}},originalSpreadsheetsIncluded:false,createdAt:new Date().toISOString()};
+  return {schemaVersion:1,sourceVersion:'purchase-multilevel-processed-data-v1',records,archivedComparisons,statusDocument:statusDocument&&typeof statusDocument==='object'?statusDocument:{_entity:'purchaseMultilevelStatus',statuses:{},projectCompletions:{}},originalSpreadsheetsIncluded:false,createdAt:new Date().toISOString()};
 }
 async function backupPilotRestorePurchaseMultilevel(module){
   if(!module||!Array.isArray(module.records))throw new Error('Os dados multinível do backup estão inválidos.');
   const current=await getDocs(query(PURCHASE_MULTILEVEL_COLLECTION,where('_entity','==','purchaseMultilevelList'))),operations=[];
   current.forEach(entry=>operations.push({type:'delete',ref:entry.ref}));
   module.records.forEach(record=>{const id=String(record?.id||'');if(!id.startsWith(PURCHASE_MULTILEVEL_PREFIX)||record?._entity!=='purchaseMultilevelList'||!Array.isArray(record?.items))throw new Error('Um registro multinível do backup está inválido.');operations.push({type:'set',ref:doc(db,'cartamac',id),data:record});});
+  const currentArchived=await getDocs(query(PURCHASE_MULTILEVEL_COLLECTION,where('_entity','==','purchaseMultilevelPriceComparisonArchive')));
+  currentArchived.forEach(entry=>operations.push({type:'delete',ref:entry.ref}));
+  (module.archivedComparisons||[]).forEach(record=>{const id=String(record?._backupDocumentId||'');if(!/^purchase-comparison-archive-[^/]+$/.test(id)||record?._entity!=='purchaseMultilevelPriceComparisonArchive'||!Array.isArray(record?.items))throw new Error('Uma comparação arquivada do backup está inválida.');const {_backupDocumentId,...data}=record;operations.push({type:'set',ref:doc(db,'cartamac',id),data});});
   for(let index=0;index<operations.length;index+=400){const batch=writeBatch(db);operations.slice(index,index+400).forEach(operation=>operation.type==='delete'?batch.delete(operation.ref):batch.set(operation.ref,operation.data));await batch.commit();}
   const status=module.statusDocument&&typeof module.statusDocument==='object'?module.statusDocument:null;
   if(status)await setDoc(PURCHASE_MULTILEVEL_STATUS_REF,{...status,_entity:'purchaseMultilevelStatus'});else await deleteDoc(PURCHASE_MULTILEVEL_STATUS_REF).catch(()=>{});
@@ -12895,7 +12902,9 @@ function purchaseMultilevelNormalizePriceComparison(value){
 }
 function purchaseMultilevelNormalizePriceComparisonRecord(value,index=0){
   const source=value&&typeof value==='object'?value:{},normalized=purchaseMultilevelNormalizePriceComparison(source),fallbackDate=new Date().toISOString();
-  return {...normalized,id:String(source.id||purchaseMultilevelComparisonId('comparacao')),name:String(source.name||`Comparação ${String(index+1).padStart(2,'0')}`).trim().slice(0,140)||`Comparação ${String(index+1).padStart(2,'0')}`,createdAt:String(source.createdAt||source.updatedAt||fallbackDate),updatedAt:String(source.updatedAt||source.createdAt||fallbackDate),updatedBy:String(source.updatedBy||'')};
+  const complete=normalized.items.length>0&&normalized.items.every(item=>normalized.approvals[item.key]?.supplierId);
+  const completedAt=complete?(Number.isFinite(Date.parse(source.completedAt||''))?String(source.completedAt):fallbackDate):'';
+  return {...normalized,id:String(source.id||purchaseMultilevelComparisonId('comparacao')),name:String(source.name||`Comparação ${String(index+1).padStart(2,'0')}`).trim().slice(0,140)||`Comparação ${String(index+1).padStart(2,'0')}`,createdAt:String(source.createdAt||source.updatedAt||fallbackDate),updatedAt:String(source.updatedAt||source.createdAt||fallbackDate),updatedBy:String(source.updatedBy||''),completedAt};
 }
 function purchaseMultilevelNormalizePriceComparisons(value,legacyValue=null){
   const source=Array.isArray(value)?value:[],normalized=source.map((comparison,index)=>purchaseMultilevelNormalizePriceComparisonRecord(comparison,index)).filter(comparison=>comparison.items.length);
@@ -13042,7 +13051,7 @@ async function purchaseMultilevelUpdateComparisonItem(encodedComparisonId,encode
 }
 async function purchaseMultilevelApproveComparisonItem(encodedComparisonId,encodedSupplierId,encodedKey){
   const comparisonId=decodeURIComponent(encodedComparisonId||''),supplierId=decodeURIComponent(encodedSupplierId||''),key=decodeURIComponent(encodedKey||''),index=purchaseMultilevelComparisonIndex(comparisonId);if(index<0)return;const comparison=purchaseMultilevelPriceComparisons[index],supplier=comparison.suppliers.find(item=>item.id===supplierId),definition=comparison.items.find(item=>item.key===key);if(!supplier||!definition)return;const supplierName=String(supplier.name||'').trim();if(!supplierName){showToast('Informe o nome do fornecedor antes de aprovar a compra.','err');return;}const previous=comparison.approvals?.[key],question=previous&&previous.supplierId!==supplierId?`Este item já estava aprovado com ${previous.supplierName}. Alterar para ${supplierName}?`:`Aprovar a compra de ${definition.code||definition.description} — PEDIDO ${definition.project||'consolidado'} com ${supplierName}?`;if(!confirm(question))return;
-  const group=purchaseMultilevelAggregate().find(item=>item.key===(definition.groupKey||definition.key));if(!definition.sourceKey&&group?.sources?.length>1){showToast('Esta linha veio de uma comparação antiga consolidada. Crie uma nova comparação selecionando o pedido específico antes de aprovar.','err');return;}const approvedAt=new Date().toISOString(),approvedBy=loggedUser?.ref?.name||loggedUser?.name||loggedUser?.ref?.email||'Usuário';comparison.approvals={...(comparison.approvals||{}),[key]:{supplierId,supplierName,approvedAt,approvedBy}};comparison.updatedAt=approvedAt;comparison.updatedBy=approvedBy;const groupKeys=new Set();
+  const group=purchaseMultilevelAggregate().find(item=>item.key===(definition.groupKey||definition.key));if(!definition.sourceKey&&group?.sources?.length>1){showToast('Esta linha veio de uma comparação antiga consolidada. Crie uma nova comparação selecionando o pedido específico antes de aprovar.','err');return;}const approvedAt=new Date().toISOString(),approvedBy=loggedUser?.ref?.name||loggedUser?.name||loggedUser?.ref?.email||'Usuário';comparison.approvals={...(comparison.approvals||{}),[key]:{supplierId,supplierName,approvedAt,approvedBy}};if(purchaseMultilevelComparisonIsComplete(comparison)&&!comparison.completedAt)comparison.completedAt=approvedAt;comparison.updatedAt=approvedAt;comparison.updatedBy=approvedBy;const groupKeys=new Set();
   if(definition.sourceKey){purchaseMultilevelStatuses[definition.sourceKey]='bought';purchaseMultilevelAwardedSuppliers[definition.sourceKey]=supplierName;groupKeys.add(definition.groupKey||definition.key);}else if(group?.sources?.length===1){const sourceKey=purchaseMultilevelSourceStatusKey(group.key,group.sources[0].project);purchaseMultilevelStatuses[sourceKey]='bought';purchaseMultilevelAwardedSuppliers[sourceKey]=supplierName;groupKeys.add(group.key);}else{purchaseMultilevelStatuses[definition.groupKey||definition.key]='bought';purchaseMultilevelAwardedSuppliers[definition.groupKey||definition.key]=supplierName;groupKeys.add(definition.groupKey||definition.key);}
   purchaseMultilevelRefreshGroupStatuses(purchaseMultilevelStatuses,groupKeys);purchaseMultilevelProjectCompletions=purchaseMultilevelReconcileCompletions(purchaseMultilevelStatuses,purchaseMultilevelProjectCompletions,purchaseMultilevelLists,approvedAt);renderPurchaseOrdersPage();await purchaseMultilevelSavePriceComparisons(`Compra aprovada com ${supplierName}.`,{statuses:true,awardedSuppliers:true,projectCompletions:true});purchaseMultilevelScheduleExpiry();
 }
@@ -13074,6 +13083,127 @@ purchaseMultilevelComparisonsMarkup=function(){
   }).join('');
   return `<section class="purchase-comparison-workspace"><div class="purchase-comparison-overview"><div class="purchase-comparison-overview-intro"><h3><span class="msi msi-sm">compare_arrows</span> Comparação de valores</h3><p>Compare o custo com créditos por item e acompanhe o menor total possível entre os fornecedores.</p></div><div class="purchase-comparison-overview-stat"><small>Comparações</small><strong>${comparisons.length}</strong></div><div class="purchase-comparison-overview-stat"><small>Itens comparados</small><strong>${totalItems}</strong></div><div class="purchase-comparison-overview-stat"><small>Fornecedores</small><strong>${totalSuppliers}</strong></div></div>${cards?`<div class="purchase-price-comparison-list">${cards}</div>`:'<div class="purchase-price-comparison-empty-list"><span class="msi msi-lg">compare_arrows</span><strong>Nenhuma comparação criada</strong><p>Volte à Visão geral, selecione os itens e crie uma comparação.</p><button class="btn btn-gold" type="button" onclick="purchaseMultilevelSelectWorkspace(\'general\')">Ir para a Visão geral</button></div>'}</section>`;
 };
+const PURCHASE_COMPARISON_RETENTION_MS=5*24*60*60*1000;
+let purchaseComparisonExpiryTimer=null,purchaseComparisonArchiveBusy=false,purchaseComparisonBackfillBusy=false,purchaseComparisonArchiveRetryAt=0;
+function purchaseMultilevelComparisonIsComplete(comparison){
+  return Array.isArray(comparison?.items)&&comparison.items.length>0&&comparison.items.every(item=>comparison.approvals?.[item.key]?.supplierId);
+}
+function purchaseMultilevelComparisonExpiry(comparison){
+  if(!purchaseMultilevelComparisonIsComplete(comparison))return null;
+  const completed=Date.parse(comparison.completedAt||'');
+  return Number.isFinite(completed)?completed+PURCHASE_COMPARISON_RETENTION_MS:null;
+}
+function purchaseMultilevelScheduleComparisonExpiry(){
+  if(purchaseComparisonExpiryTimer)clearTimeout(purchaseComparisonExpiryTimer);
+  const expiries=purchaseMultilevelPriceComparisons.map(purchaseMultilevelComparisonExpiry).filter(Number.isFinite);
+  if(!expiries.length){purchaseComparisonExpiryTimer=null;return;}
+  const delay=Math.max(1000,Math.min(3600000,Math.max(Math.min(...expiries),purchaseComparisonArchiveRetryAt)-Date.now()));
+  purchaseComparisonExpiryTimer=setTimeout(async()=>{await purchaseMultilevelArchiveExpiredComparisons();purchaseMultilevelScheduleComparisonExpiry();},delay);
+}
+async function purchaseMultilevelBackfillComparisonCompletionDates(rawComparisons){
+  if(purchaseComparisonBackfillBusy||!Array.isArray(rawComparisons)||!rawComparisons.some(comparison=>purchaseMultilevelComparisonIsComplete(comparison)&&!Number.isFinite(Date.parse(comparison.completedAt||''))))return;
+  purchaseComparisonBackfillBusy=true;
+  try{
+    await runTransaction(db,async transaction=>{
+      const snapshot=await transaction.get(PURCHASE_MULTILEVEL_STATUS_REF),current=snapshot.exists()?(snapshot.data()||{}):{};
+      const comparisons=Array.isArray(current.priceComparisons)?current.priceComparisons:[];
+      const now=new Date().toISOString();let changed=false;
+      const updated=comparisons.map(comparison=>{
+        if(!purchaseMultilevelComparisonIsComplete(comparison)||Number.isFinite(Date.parse(comparison.completedAt||'')))return comparison;
+        changed=true;return {...comparison,completedAt:now};
+      });
+      if(changed)transaction.set(PURCHASE_MULTILEVEL_STATUS_REF,{...current,priceComparisons:updated,updatedAt:now,updatedBy:'Início do prazo das comparações já concluídas'});
+    });
+  }catch(error){console.error('Data de conclusão das comparações:',error);}
+  finally{purchaseComparisonBackfillBusy=false;}
+}
+async function purchaseMultilevelArchiveExpiredComparisons(){
+  if(purchaseComparisonArchiveBusy)return;
+  if(!purchaseMultilevelPriceComparisons.some(comparison=>(purchaseMultilevelComparisonExpiry(comparison)||Infinity)<=Date.now()))return;
+  purchaseComparisonArchiveBusy=true;
+  try{
+    await runTransaction(db,async transaction=>{
+      const snapshot=await transaction.get(PURCHASE_MULTILEVEL_STATUS_REF),current=snapshot.exists()?(snapshot.data()||{}):{};
+      const comparisons=purchaseMultilevelNormalizePriceComparisons(current.priceComparisons,current.priceComparison),now=Date.now();
+      const expired=comparisons.filter(comparison=>(purchaseMultilevelComparisonExpiry(comparison)||Infinity)<=now);
+      if(!expired.length)return;
+      const active=comparisons.filter(comparison=>!expired.includes(comparison));
+      expired.forEach(comparison=>transaction.set(doc(db,'cartamac',`purchase-comparison-archive-${encodeURIComponent(comparison.id)}`),{...comparison,_entity:'purchaseMultilevelPriceComparisonArchive',archivedAt:new Date(now).toISOString()}));
+      transaction.set(PURCHASE_MULTILEVEL_STATUS_REF,{...current,_entity:'purchaseMultilevelStatus',priceComparisons:active,priceComparison:null,updatedAt:new Date(now).toISOString(),updatedBy:'Arquivamento automático após 5 dias'});
+    });
+    purchaseComparisonArchiveRetryAt=0;
+  }catch(error){purchaseComparisonArchiveRetryAt=Date.now()+60000;console.error('Arquivamento automático das comparações:',error);}
+  finally{purchaseComparisonArchiveBusy=false;}
+}
+function purchaseMultilevelExportComparisonSummary(encodedId){
+  const id=decodeURIComponent(encodedId||''),comparison=purchaseMultilevelPriceComparisons.find(item=>item.id===id);
+  if(!comparison){showToast('Comparação não encontrada.','err');return;}
+  if(!purchaseMultilevelComparisonIsComplete(comparison)){showToast('O resumo será liberado quando todos os itens estiverem comprados.','err');return;}
+  if(!window.XLSX){showToast('Gerador de Excel indisponível. Verifique a conexão e tente novamente.','err');return;}
+  const purchased=comparison.items.map(definition=>{
+    const approval=comparison.approvals[definition.key],supplier=comparison.suppliers.find(item=>item.id===approval.supplierId);
+    const entry=supplier?.items.find(item=>item.key===definition.key);
+    const calc=purchaseMultilevelComparisonCalc(entry||{quantity:definition.quantity});
+    return {definition,approval,supplier,entry,calc};
+  });
+  const columns=['CÓDIGO','DESCRIÇÃO','TIPO','PEDIDO / OP','FORNECEDOR COMPRADO','Nº PEDIDO DE COMPRA','QUANTIDADE','UNIDADE','VALOR UNITÁRIO','ICMS %','IPI %','VALOR DOS ITENS','CRÉDITO ICMS','CRÉDITO IPI','CUSTO COM CRÉDITOS','TOTAL DO PEDIDO','COMPRADO EM','COMPRADO POR'];
+  const rowFor=({definition,approval,supplier,entry,calc})=>[definition.code||'',definition.description||'',definition.type||'',definition.project||'',supplier?.name||approval?.supplierName||'',supplier?.purchaseOrderNumber||'',calc.quantity,entry?.unit||definition.unit||'',entry&&String(entry.unitValue??'').trim()?calc.unitValue:null,entry&&String(entry.icms??'').trim()?calc.icms:null,entry&&String(entry.ipi??'').trim()?calc.ipi:null,entry&&String(entry.unitValue??'').trim()?calc.subtotal:null,entry&&String(entry.unitValue??'').trim()?calc.icmsCredit:null,entry&&String(entry.unitValue??'').trim()?calc.ipiCredit:null,entry&&String(entry.unitValue??'').trim()?calc.net:null,entry&&String(entry.unitValue??'').trim()?calc.orderTotal:null,approval?.approvedAt?new Date(approval.approvedAt).toLocaleString('pt-BR'):'',approval?.approvedBy||''];
+  const purchasedRows=purchased.map(rowFor),sum=column=>purchasedRows.reduce((total,row)=>total+(Number(row[column])||0),0);
+  const data=[[comparison.name],['RESUMO DE COMPRAS · todos os itens comprados'],['Itens',purchasedRows.length,'Concluída em',comparison.completedAt?new Date(comparison.completedAt).toLocaleString('pt-BR'):''],[],columns,...purchasedRows,['TOTAL','','','','','',null,'',null,null,null,sum(11),sum(12),sum(13),sum(14),sum(15),'','']];
+  const sheet=XLSX.utils.aoa_to_sheet(data),money='"R$" #,##0.00';
+  sheet['!cols']=[{wch:18},{wch:60},{wch:18},{wch:25},{wch:30},{wch:23},{wch:14},{wch:12},{wch:18},{wch:11},{wch:11},{wch:19},{wch:19},{wch:19},{wch:22},{wch:21},{wch:21},{wch:24}];
+  sheet['!autofilter']={ref:`A5:R${5+purchasedRows.length}`};sheet['!freeze']={xSplit:0,ySplit:5,topLeftCell:'A6',activePane:'bottomLeft',state:'frozen'};
+  for(let row=5;row<data.length;row++){for(const column of [8,11,12,13,14,15]){const cell=sheet[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=money;}for(const column of [9,10]){const cell=sheet[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z='0.00"%"';}}
+  const offerColumns=[...columns];offerColumns[16]='SITUAÇÃO';offerColumns[17]='';
+  const offers=[offerColumns,...comparison.items.flatMap(definition=>comparison.suppliers.map(supplier=>{
+    const entry=supplier.items.find(item=>item.key===definition.key),approval=comparison.approvals?.[definition.key],calc=purchaseMultilevelComparisonCalc(entry||{quantity:definition.quantity});
+    const row=rowFor({definition,approval,supplier,entry,calc});row[4]=supplier.name||'';row[5]=supplier.purchaseOrderNumber||'';row[16]=approval?.supplierId===supplier.id?'COMPRADO':'COTAÇÃO';row[17]='';return row;
+  }))];
+  const offerSheet=XLSX.utils.aoa_to_sheet(offers);offerSheet['!cols']=sheet['!cols'];offerSheet['!autofilter']={ref:`A1:R${offers.length}`};
+  for(let row=1;row<offers.length;row++){for(const column of [8,11,12,13,14,15]){const cell=offerSheet[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z=money;}for(const column of [9,10]){const cell=offerSheet[XLSX.utils.encode_cell({r:row,c:column})];if(cell)cell.z='0.00"%"';}}
+  const workbook=XLSX.utils.book_new();workbook.Props={Title:`Resumo de compras - ${comparison.name}`,Subject:'Compras concluídas e cotações de todos os fornecedores',Author:'CARTAMAC',CreatedDate:new Date()};
+  XLSX.utils.book_append_sheet(workbook,sheet,'Resumo comprado');XLSX.utils.book_append_sheet(workbook,offerSheet,'Todas as cotações');
+  XLSX.writeFile(workbook,`${safeReportFileName(`Resumo de compras - ${comparison.name}`)}.xlsx`,{compression:true});
+  showToast(`Excel único gerado com ${purchasedRows.length} item(ns) e todas as cotações.`,'ok');
+}
+window.purchaseMultilevelExportComparisonSummary=purchaseMultilevelExportComparisonSummary;
+function purchaseMultilevelComparisonCountdownText(expiresAt,now=Date.now()){
+  const remaining=Math.max(0,expiresAt-now);
+  if(!remaining)return'Prazo encerrado · arquivando comparação…';
+  const minutes=Math.ceil(remaining/60000),days=Math.floor(minutes/1440),hours=Math.floor(minutes%1440/60),mins=minutes%60;
+  return `Comprado · sai da lista em ${days}d ${hours}h ${mins}min`;
+}
+function purchaseMultilevelRefreshComparisonCountdowns(){
+  document.querySelectorAll('.purchase-comparison-countdown[data-expires-at]').forEach(label=>{
+    const expiresAt=Number(label.dataset.expiresAt);
+    if(Number.isFinite(expiresAt))label.textContent=purchaseMultilevelComparisonCountdownText(expiresAt);
+  });
+}
+setInterval(purchaseMultilevelRefreshComparisonCountdowns,60000);
+const purchaseMultilevelComparisonsMarkupRev573=purchaseMultilevelComparisonsMarkup;
+purchaseMultilevelComparisonsMarkup=function(){
+  const container=document.createElement('div');container.innerHTML=purchaseMultilevelComparisonsMarkupRev573();
+  purchaseMultilevelPriceComparisons.forEach(comparison=>{
+    const card=container.querySelector(`[id="purchaseComparison-${CSS.escape(comparison.id)}"]`),actions=card?.querySelector('.purchase-price-comparison-card-actions');
+    if(!actions)return;
+    const button=document.createElement('button'),complete=purchaseMultilevelComparisonIsComplete(comparison),id=encodeURIComponent(comparison.id);
+    button.className='btn btn-ghost btn-sm';button.type='button';button.disabled=!complete;
+    button.innerHTML='<span class="msi msi-sm">download</span> Baixar resumo';
+    button.title=complete?'Baixar um arquivo com os itens comprados e todas as cotações':'Disponível quando todos os itens forem comprados';
+    button.setAttribute('onclick',`purchaseMultilevelExportComparisonSummary('${id}')`);actions.prepend(button);
+    if(complete){
+      const expiresAt=purchaseMultilevelComparisonExpiry(comparison),title=card.querySelector('.purchase-price-comparison-title');
+      if(expiresAt&&title){
+        const countdown=document.createElement('small');countdown.className='purchase-comparison-countdown';
+        countdown.dataset.expiresAt=String(expiresAt);countdown.style.color='var(--gold)';
+        countdown.textContent=purchaseMultilevelComparisonCountdownText(expiresAt);
+        countdown.title=`Arquivamento automático em ${new Date(expiresAt).toLocaleString('pt-BR')}`;
+        title.append(countdown);
+      }
+    }
+  });
+  return container.innerHTML;
+};
 function purchaseMultilevelHistoryDate(value){const date=new Date(value||'');return Number.isNaN(date.getTime())?'—':date.toLocaleString('pt-BR');}
 purchaseMultilevelMarkup=function(){
   const groups=purchaseMultilevelVisibleAggregate(),latestBatchKey=purchaseMultilevelLatestBatchKey(),term=purchaseMultilevelPlain(purchaseMultilevelSearch);
@@ -13102,7 +13232,7 @@ purchaseMultilevelMarkup=function(){
   return `<div class="purchase-multilevel"><section class="purchase-multilevel-import"><div class="purchase-multilevel-import-head"><div><h3>Importar listas multinível da engenharia</h3><p>Selecione várias planilhas de uma vez. PERFIL é consolidado em milímetros; FIXADORES, COMERCIAL, FUNDIDOS, PNEUMATICO, REVESTIMENTO, MOTORES/MOTOR, MANCALIZAÇÃO e FLANGES são consolidados por quantidade. A coluna NECESSIDADE identifica somente itens marcados como ESTOQUE; fornecedores como JTC e PHE são ignorados. CHAPA e DESENHO são ignorados.</p><small class="purchase-multilevel-batch-note">Todos os arquivos importados juntos pertencem ao mesmo lote e não são marcados como acréscimos entre si.</small></div><button class="btn btn-danger" type="button" onclick="purchaseMultilevelClearAll()" ${purchaseMultilevelBusy||!purchaseMultilevelLists.length?'disabled':''}><span class="msi msi-sm">delete_sweep</span> Limpar todos os itens</button></div><label class="purchase-multilevel-drop" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handlePurchaseMultilevelDrop(event)"><input type="file" accept=".xlsx,.xls" multiple hidden onchange="handlePurchaseMultilevelFiles(event)"><span><span class="msi msi-lg">upload_file</span><strong>Selecionar ou arrastar listas Excel</strong><small>É possível importar listas de vários pedidos ao mesmo tempo.</small></span></label>${purchaseMultilevelQueueMarkup()}</section><div class="purchase-multilevel-summary"><div><span>Listas importadas</span><strong>${purchaseMultilevelLists.length}</strong></div><div><span>Itens consolidados</span><strong>${groups.length}</strong></div><div><span>Novos / revisar</span><strong>${statusCount('new')}</strong></div><div><span>Comprados</span><strong>${statusCount('bought')}</strong></div></div><div class="purchase-multilevel-toolbar"><input id="purchaseMultilevelSearch" value="${escapeHTML(purchaseMultilevelSearch)}" placeholder="Buscar código, descrição ou pedido" onchange="purchaseMultilevelFilterChanged()"><select id="purchaseMultilevelType" onchange="purchaseMultilevelFilterChanged()"><option value="">Todos os tipos</option>${types.map(type=>`<option ${type===purchaseMultilevelTypeFilter?'selected':''}>${escapeHTML(type)}</option>`).join('')}</select><select id="purchaseMultilevelStatus" onchange="purchaseMultilevelFilterChanged()"><option value="">Todos os status</option>${Object.entries(PURCHASE_MULTILEVEL_STATUSES).map(([key,label])=>`<option value="${key}" ${key===purchaseMultilevelStatusFilter?'selected':''}>${label}</option>`).join('')}</select></div>${generalReportBar}${projectTabs}${workspace}</div>`;
 };
 function schedulePurchaseMultilevelRender(){if(!document.getElementById('page-compras')?.classList.contains('active')||purchaseOrdersView!=='multilevel'||realtimeUiHasActiveEditor()||purchaseMultilevelFiles.length)return;if(purchaseMultilevelRenderFrame)return;purchaseMultilevelRenderFrame=requestAnimationFrame(()=>{purchaseMultilevelRenderFrame=0;renderPurchaseOrdersPage();});}
-function startPurchaseMultilevelSync(){if(!purchaseMultilevelUnsubscribe){purchaseMultilevelUnsubscribe=onSnapshot(query(PURCHASE_MULTILEVEL_COLLECTION,where('_entity','==','purchaseMultilevelList')),snapshot=>{purchaseMultilevelLists=[];snapshot.forEach(entry=>{const data=entry.data()||{};purchaseMultilevelLists.push({...data,id:data.id||entry.id});});purchaseMultilevelListsLoaded=true;purchaseMultilevelEnsureCompletionState();purchaseMultilevelCleanupExpired();purchaseMultilevelScheduleExpiry();schedulePurchaseMultilevelRender();},error=>{console.error('Listas multinível:',error);showToast('Não foi possível sincronizar as listas multinível.','err');});}if(!purchaseMultilevelStatusUnsubscribe){purchaseMultilevelStatusUnsubscribe=onSnapshot(PURCHASE_MULTILEVEL_STATUS_REF,snapshot=>{const data=snapshot.exists()?(snapshot.data()||{}):{};purchaseMultilevelStatuses=data.statuses||{};purchaseMultilevelPurchaseOrders=data.purchaseOrders||{};purchaseMultilevelAwardedSuppliers=data.awardedSuppliers||{};purchaseMultilevelPriceComparison=purchaseMultilevelNormalizePriceComparison(data.priceComparison);purchaseMultilevelPriceComparisons=purchaseMultilevelNormalizePriceComparisons(data.priceComparisons,data.priceComparison);purchaseMultilevelProjectCompletions=data.projectCompletions||{};purchaseMultilevelStatusesLoaded=true;purchaseMultilevelEnsureCompletionState();purchaseMultilevelCleanupExpired();purchaseMultilevelScheduleExpiry();schedulePurchaseMultilevelRender();},error=>console.error('Status das listas multinível:',error));}}
+function startPurchaseMultilevelSync(){if(!purchaseMultilevelUnsubscribe){purchaseMultilevelUnsubscribe=onSnapshot(query(PURCHASE_MULTILEVEL_COLLECTION,where('_entity','==','purchaseMultilevelList')),snapshot=>{purchaseMultilevelLists=[];snapshot.forEach(entry=>{const data=entry.data()||{};purchaseMultilevelLists.push({...data,id:data.id||entry.id});});purchaseMultilevelListsLoaded=true;purchaseMultilevelEnsureCompletionState();purchaseMultilevelCleanupExpired();purchaseMultilevelScheduleExpiry();schedulePurchaseMultilevelRender();},error=>{console.error('Listas multinível:',error);showToast('Não foi possível sincronizar as listas multinível.','err');});}if(!purchaseMultilevelStatusUnsubscribe){purchaseMultilevelStatusUnsubscribe=onSnapshot(PURCHASE_MULTILEVEL_STATUS_REF,snapshot=>{const data=snapshot.exists()?(snapshot.data()||{}):{};purchaseMultilevelStatuses=data.statuses||{};purchaseMultilevelPurchaseOrders=data.purchaseOrders||{};purchaseMultilevelAwardedSuppliers=data.awardedSuppliers||{};purchaseMultilevelPriceComparison=purchaseMultilevelNormalizePriceComparison(data.priceComparison);purchaseMultilevelPriceComparisons=purchaseMultilevelNormalizePriceComparisons(data.priceComparisons,data.priceComparison);purchaseMultilevelBackfillComparisonCompletionDates(data.priceComparisons);purchaseMultilevelScheduleComparisonExpiry();purchaseMultilevelArchiveExpiredComparisons();purchaseMultilevelProjectCompletions=data.projectCompletions||{};purchaseMultilevelStatusesLoaded=true;purchaseMultilevelEnsureCompletionState();purchaseMultilevelCleanupExpired();purchaseMultilevelScheduleExpiry();schedulePurchaseMultilevelRender();},error=>console.error('Status das listas multinível:',error));}}
 function renderPurchaseOrdersPage(container=document.getElementById('pedidosCompraContent')){
   if(!container)return;
   const updated=PURCHASE_ORDERS_CACHE?.updatedAt?new Date(PURCHASE_ORDERS_CACHE.updatedAt).toLocaleString('pt-BR'):'Ainda não atualizado';
