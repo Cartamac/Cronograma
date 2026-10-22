@@ -1478,7 +1478,22 @@ details.access-editor[open] .access-chevron{transform:rotate(180deg);}
 .price-breakdown-note{display:block;margin-top:4px;color:var(--text3);font-size:9px;font-family:Inter,sans-serif;font-weight:500;}
 @media(max-width:1050px){.price-cost-row{grid-template-columns:repeat(2,minmax(0,1fr));}.price-breakdown-grid{grid-template-columns:1fr;}#partsPriceCalculator .price-grid{grid-template-columns:1fr;}}
 @media(max-width:640px){.price-cost-row{grid-template-columns:1fr;}.price-breakdown-table{min-width:520px;}.price-breakdown-card{overflow-x:auto;}.price-tax-group h3,.price-equipment-group h3,.price-tax-row,.price-equipment-row{grid-template-columns:minmax(90px,1fr) 82px minmax(110px,1fr);}.price-tax-row input,.price-equipment-row input{width:82px;}.price-tax-value,.price-equipment-value{font-size:12px;}}
-.price-quote-controls{display:grid;grid-template-columns:minmax(260px,1fr) minmax(240px,auto) auto auto auto;gap:12px;align-items:end;margin-bottom:16px;}.price-quote-controls .form-group{margin:0;}.price-manual-item-form{display:none;grid-template-columns:minmax(120px,.65fr) minmax(260px,2fr) minmax(145px,.75fr) minmax(110px,.55fr) auto auto;gap:10px;align-items:end;margin:-4px 0 16px;padding:14px;border:1px solid rgba(211,176,70,.42);border-radius:var(--radius2);background:rgba(211,176,70,.055);}.price-manual-item-form.active{display:grid;}.price-manual-item-form .form-group{margin:0;}.price-manual-item-form .btn{white-space:nowrap;}.price-quote-list{border:1px solid var(--border);border-radius:var(--radius2);overflow:auto;background:var(--bg2);}.price-quote-table{width:100%;min-width:1260px;border-collapse:collapse;table-layout:fixed;}.price-quote-table th{padding:10px 9px;background:#191919;color:var(--text3);font-size:9px;letter-spacing:.35px;text-align:left;text-transform:uppercase;line-height:1.25;}.price-quote-table th:nth-child(n+3),.price-quote-table td:nth-child(n+3){text-align:right;}.price-quote-table td{padding:10px 9px;border-top:1px solid var(--border);color:var(--text2);font-size:12px;vertical-align:middle;}.price-quote-table td:first-child{font-family:'JetBrains Mono',monospace;color:var(--accent2);font-weight:800;}.price-quote-table td:nth-child(3),.price-quote-table td:nth-child(n+5):nth-child(-n+7){font-family:'JetBrains Mono',monospace;font-weight:800;white-space:nowrap;}.price-quote-table td:nth-child(6){color:var(--accent2);}.price-quote-table td:nth-child(7){color:var(--green);}.price-quote-table input{width:72px;padding:7px 8px;border:1px solid var(--border2);border-radius:5px;background:var(--bg4);color:var(--text);font:800 13px 'JetBrains Mono',monospace;text-align:center;}.price-quote-table tfoot td{background:rgba(211,176,70,.08);color:var(--accent2);font-size:12px;font-weight:900;}.price-quote-table tfoot td:nth-child(7){color:var(--green);}.price-quote-empty{padding:24px;text-align:center;color:var(--text3);}.parts-quote-action{text-align:center!important;}.parts-quote-action .btn{white-space:nowrap;}.price-quote-count{display:inline-flex;margin-left:8px;padding:3px 8px;border:1px solid rgba(211,176,70,.45);border-radius:999px;color:var(--accent2);font-size:10px;font-weight:800;vertical-align:middle;}
+.price-quote-controls{display:grid;grid-template-columns:minmax(260px,1fr) minmax(180px,auto) repeat(4,auto);gap:12px;align-items:end;margin-bottom:16px;}.price-quote-controls .form-group{margin:0;}.price-manual-item-form{display:none;grid-template-columns:minmax(120px,.65fr) minmax(260px,2fr) minmax(145px,.75fr) minmax(110px,.55fr) auto auto;gap:10px;align-items:end;margin:-4px 0 16px;padding:14px;border:1px solid rgba(211,176,70,.42);border-radius:var(--radius2);background:rgba(211,176,70,.055);}.price-manual-item-form.active{display:grid;}.price-manual-item-form .form-group{margin:0;}.price-manual-item-form .btn{white-space:nowrap;}.price-quote-list{border:1px solid var(--border);border-radius:var(--radius2);overflow:auto;background:var(--bg2);}.price-quote-table{width:100%;min-width:1260px;border-collapse:collapse;table-layout:fixed;}.price-quote-table th{padding:10px 9px;background:#191919;color:var(--text3);font-size:9px;letter-spacing:.35px;text-align:left;text-transform:uppercase;line-height:1.25;}.price-quote-table th:nth-child(n+3),.price-quote-table td:nth-child(n+3){text-align:right;}.price-quote-table td{padding:10px 9px;border-top:1px solid var(--border);color:var(--text2);font-size:12px;vertical-align:middle;}.price-quote-table td:first-child{font-family:'JetBrains Mono',monospace;color:var(--accent2);font-weight:800;}.price-quote-table td:nth-child(3),.price-quote-table td:nth-child(n+5):nth-child(-n+7){font-family:'JetBrains Mono',monospace;font-weight:800;white-space:nowrap;}.price-quote-table td:nth-child(6){color:var(--accent2);}.price-quote-table td:nth-child(7){color:var(--green);}.price-quote-table input{width:72px;padding:7px 8px;border:1px solid var(--border2);border-radius:5px;background:var(--bg4);color:var(--text);font:800 13px 'JetBrains Mono',monospace;text-align:center;}.price-quote-table tfoot td{background:rgba(211,176,70,.08);color:var(--accent2);font-size:12px;font-weight:900;}.price-quote-table tfoot td:nth-child(7){color:var(--green);}.price-quote-empty{padding:24px;text-align:center;color:var(--text3);}.parts-quote-action{text-align:center!important;}.parts-quote-action .btn{white-space:nowrap;}.price-quote-count{display:inline-flex;margin-left:8px;padding:3px 8px;border:1px solid rgba(211,176,70,.45);border-radius:999px;color:var(--accent2);font-size:10px;font-weight:800;vertical-align:middle;}
+.commercial-proposal-preview{margin-top:24px;padding:26px;background:#fff;color:#151515;border:1px solid #d9d9d9;border-radius:8px;font:13px Arial,sans-serif;line-height:1.4;}
+.commercial-proposal-preview[hidden]{display:none;}
+.commercial-proposal-preview h3{margin:0 0 6px;color:#111;font-size:18px;}
+.commercial-proposal-preview .proposal-preview-warning{margin:0 0 20px;color:#805600;font-size:12px;}
+.commercial-proposal-preview h4{margin:18px 0 6px;color:#111;font-size:13px;text-transform:uppercase;}
+.commercial-proposal-preview .proposal-table-wrap{width:100%;overflow-x:auto;}
+.commercial-proposal-preview table{width:100%;min-width:680px;border-collapse:collapse;}
+.commercial-proposal-preview th{background:#ababab;color:#fff!important;font-size:11px;text-align:left;}
+.commercial-proposal-preview td,.commercial-proposal-preview th{padding:7px 9px;border-bottom:1px solid #c9c9c9;vertical-align:top;}
+.commercial-proposal-preview td{color:#151515!important;background:#fff;}
+.commercial-proposal-preview .num{text-align:right;white-space:nowrap;}
+.commercial-proposal-preview .proposal-total td{font-weight:700;}
+.commercial-proposal-preview .proposal-final td{background:#efefef;font-weight:800;}
+.commercial-proposal-preview .proposal-tax-note{margin:12px 0 0;color:#555;font-size:11px;}
+@media(max-width:1300px){.price-quote-controls{grid-template-columns:repeat(3,minmax(0,1fr));}}
 .price-quote-file-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:-4px 0 16px;}.price-quote-file-actions .btn{white-space:nowrap;}
 .price-quote-table .price-quote-group td{padding:8px 12px;background:rgba(142,169,219,.14);color:#eef3ff!important;font-family:Inter,sans-serif!important;font-size:15px!important;font-weight:800!important;letter-spacing:.35px;text-align:center!important;text-transform:uppercase;border-top:2px solid rgba(142,169,219,.42);}
 @media(max-width:1100px){.price-manual-item-form{grid-template-columns:1fr 2fr 1fr 1fr;}.price-manual-item-form .btn{width:100%;}}
@@ -2176,6 +2191,70 @@ body.system-home-active #page-home{padding:0!important}
 @media(max-width:720px){.purchase-multilevel-history-row{grid-template-columns:1fr}}
 /* Comparação de compras: valores e títulos alinhados ao centro das respectivas colunas. */
 .purchase-price-table th:nth-child(7),.purchase-price-table th:nth-child(8),.purchase-price-table th:nth-child(9),.purchase-price-table th:nth-child(10),.purchase-price-table td.purchase-price-money{text-align:center}
+/* Catálogo interno com a mesma navegação visual do portal do cliente. */
+#partsTableContainer .parts-catalog-sections{display:grid;gap:36px}
+#partsTableContainer .parts-catalog-stage-head{display:flex;align-items:center;gap:13px;margin:0 0 15px;padding-bottom:11px;border-bottom:1px solid var(--border2)}
+#partsTableContainer .parts-catalog-stage-head button{border:0;background:none;color:var(--text);font:800 20px Inter,sans-serif;cursor:pointer;text-align:left}
+#partsTableContainer .parts-catalog-stage-head button:hover{color:var(--accent2)}
+#partsTableContainer .parts-catalog-stage-head small{font-size:11px;color:var(--text3);background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:4px 9px}
+#partsTableContainer .parts-catalog-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+#partsTableContainer .parts-catalog-card{display:flex;flex-direction:column;min-width:0;width:100%;padding:0;overflow:hidden;text-align:left;color:var(--text);background:var(--bg2);border:1px solid var(--border2);border-radius:9px;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s}
+#partsTableContainer .parts-catalog-card:hover,#partsTableContainer .parts-catalog-card:focus-visible{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 10px 28px #0005;outline:none}
+#partsTableContainer .parts-catalog-card-media{display:grid;place-items:center;width:100%;height:225px;background:#1b1b1b}
+#partsTableContainer .parts-catalog-card-media svg{width:165px;height:140px;fill:none;stroke:#aeb5b5;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#partsTableContainer .parts-catalog-card-info{display:grid;align-content:start;gap:6px;flex:1;min-height:102px;padding:15px 17px;background:#1b1b1b}
+#partsTableContainer .parts-catalog-card-info strong{font-size:15px;line-height:1.32}
+#partsTableContainer .parts-catalog-card-info small{color:var(--text3);font-size:11px}
+#partsTableContainer .parts-catalog-card-cue{margin-top:3px;color:var(--gold);font-size:11px;font-weight:800}
+.parts-catalog-viewer{width:98vw;max-width:1760px;max-height:94vh;margin:auto;padding:0;overflow:auto;border:1px solid var(--border2);border-radius:12px;background:#141414;color:var(--text);box-shadow:0 25px 90px #000c}
+.parts-catalog-viewer::backdrop{background:#000c}
+.parts-catalog-modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:20px 26px;border-bottom:1px solid var(--border);background:#191919}
+.parts-catalog-modal-head small{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
+.parts-catalog-modal-head h2{margin:5px 0 6px;font-size:22px;color:var(--text)}
+.parts-catalog-modal-head p{margin:0;color:var(--text3);font-size:12px}
+.parts-catalog-modal-close{flex:none;width:36px;height:36px;border:1px solid var(--border2);border-radius:50%;background:#242424;color:var(--text);font-size:22px;cursor:pointer}
+.parts-catalog-modal-tools{display:flex;align-items:center;gap:16px;padding:12px 26px;border-bottom:1px solid var(--border);background:#171717}
+.parts-catalog-modal-tools input{flex:1;min-width:0;max-width:430px;height:38px;padding:0 12px;border:1px solid var(--border2);border-radius:6px;background:#222;color:var(--text);font:12px Inter,sans-serif}
+.parts-catalog-modal-tools span{margin-left:auto;color:var(--text3);font-size:11px}
+.parts-catalog-modal-body{padding:0 26px 20px}
+.parts-catalog-part{border-bottom:1px solid #252525}
+.parts-catalog-part-main{display:flex;align-items:center;gap:14px;min-height:62px;padding:12px 0}
+.parts-catalog-part-open{flex:1;min-width:0;text-align:left;border:0;background:none;color:var(--text);font:700 13px/1.4 Inter,sans-serif;cursor:pointer}
+.parts-catalog-part-open .msi{color:var(--gold);vertical-align:middle}
+.parts-catalog-part-open small{display:block;margin:3px 0 0 22px;color:var(--text3);font-size:10px;font-weight:500}
+.parts-catalog-part-meta{flex:none;text-align:right;color:var(--text);font-size:12px;font-weight:800}
+.parts-catalog-part-meta small{display:block;color:var(--text3);font-size:10px;font-weight:500}
+.parts-catalog-part .btn{flex:none}
+.parts-catalog-part-detail{padding:0 0 15px;color:var(--text3);font-size:11px}
+.parts-catalog-part-detail .parts-table-wrap{margin-top:10px}
+.parts-catalog-modal-foot{position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 26px;border-top:1px solid var(--border);background:#1a1a1a;color:var(--text3);font-size:11px}
+.parts-catalog-viewer .parts-table-wrap{overflow:visible}
+.parts-catalog-viewer .parts-table{width:100%;min-width:0}
+.parts-catalog-viewer .structure-tree{width:100%;overflow:visible}
+.parts-catalog-viewer .structure-tree-head,.parts-catalog-viewer .structure-node{width:100%;min-width:0;grid-template-columns:minmax(58px,.55fr) minmax(190px,2.5fr) minmax(46px,.45fr) minmax(65px,.6fr) minmax(108px,1fr) minmax(100px,.95fr) minmax(100px,1fr);gap:8px;padding:10px 12px}
+.parts-catalog-viewer .structure-node-desc b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+.parts-catalog-viewer .structure-category{white-space:normal;text-align:right}
+#partsCatalog.parts-catalog-choosing>.parts-catalog-actions,#partsCatalog.parts-catalog-choosing>.import-box,#partsCatalog.parts-catalog-choosing>.parts-toolbar,#partsCatalog.parts-catalog-choosing>#partsTableContainer,#partsCatalog.parts-catalog-choosing>.parts-catalog-back{display:none}
+#partsCatalog:not(.parts-catalog-choosing)>#partsCatalogStageChooser{display:none}
+.parts-catalog-stage-intro{margin:10px 0 24px}.parts-catalog-stage-intro small{display:block;color:var(--gold);font-size:11px;font-weight:800;letter-spacing:1px}.parts-catalog-stage-intro h2{margin:6px 0;font-size:30px;color:var(--text)}.parts-catalog-stage-intro p{margin:0;color:var(--text3);font-size:14px}
+.parts-catalog-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:1360px}
+.parts-catalog-choice{min-height:100px;padding:22px 24px;text-align:left;border:1px solid var(--border2);border-radius:9px;background:var(--bg2);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s}
+.parts-catalog-choice:hover,.parts-catalog-choice:focus-visible{border-color:var(--gold);background:#1d1b15;outline:none}
+.parts-catalog-choice strong{display:block;font-size:18px}.parts-catalog-choice small{display:block;margin-top:8px;color:var(--text3);font-size:12px}
+.parts-catalog-choice-import{grid-column:1/-1;border-color:rgba(212,175,73,.6)}
+.parts-portal-review{max-width:1360px;margin:16px 0 26px;border:1px solid var(--border2);border-radius:10px;background:var(--bg2);overflow:hidden}
+.parts-portal-review[hidden],#partsCatalog:not(.parts-catalog-choosing)>.parts-portal-review{display:none}
+.parts-portal-review-head,.parts-portal-review-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px}
+.parts-portal-review-head{border-bottom:1px solid var(--border2)}.parts-portal-review-head small{color:var(--gold);font-weight:800;letter-spacing:.8px}.parts-portal-review-head h3{margin:5px 0;color:var(--text)}.parts-portal-review-head p{margin:0;color:var(--text3);font-size:12px}
+.parts-portal-review-stage{padding:10px 22px;background:#28230f;color:var(--gold);font-weight:800;font-size:12px}
+.parts-portal-review-group{padding:11px 22px;background:var(--bg3);color:var(--text);font-weight:700;border-top:1px solid var(--border2)}
+.parts-portal-review-item{border-top:1px solid var(--border2);padding:10px 22px}.parts-portal-review-row{display:flex;align-items:center;gap:16px}.parts-portal-review-name{flex:1;min-width:0;color:var(--text);font-weight:700}.parts-portal-review-name small{display:block;margin-top:4px;color:var(--text3);font-weight:400;font-size:11px}.parts-portal-review-cost{min-width:140px}.parts-portal-review-detail{margin-top:12px}.parts-portal-review-detail .parts-table{width:100%}.parts-portal-review-foot{border-top:1px solid var(--border2)}.parts-portal-review-foot span{color:var(--text3);font-size:12px}
+@media(max-width:700px){.parts-portal-review-row,.parts-portal-review-head,.parts-portal-review-foot{flex-wrap:wrap}.parts-portal-review-cost{width:100%}}
+.parts-catalog-back{margin:8px 0 20px}
+@media(max-width:1000px){.parts-catalog-viewer .structure-tree-head{display:none}.parts-catalog-viewer .structure-node{grid-template-columns:repeat(2,minmax(0,1fr))}.parts-catalog-viewer .structure-node-desc{grid-column:1/-1}}
+@media(max-width:1100px){#partsTableContainer .parts-catalog-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:800px){#partsTableContainer .parts-catalog-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){#partsTableContainer .parts-catalog-cards,.parts-catalog-choice-grid{grid-template-columns:1fr}.parts-catalog-viewer{width:96vw;max-height:94vh}.parts-catalog-modal-head,.parts-catalog-modal-tools,.parts-catalog-modal-body,.parts-catalog-modal-foot{padding-left:16px;padding-right:16px}.parts-catalog-part-main{flex-wrap:wrap}.parts-catalog-part-open{flex-basis:100%}.parts-catalog-part-meta{text-align:left}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -2357,7 +2436,7 @@ window.CONTROLADORIA_SEED_META={"source":"RG 023 - Programa de manutenção prev
       <button class="parts-subtab" id="partsBndesTab" onclick="switchPartsView('bndes')"><span class="msi msi-sm">account_balance</span> Cadastro BNDES</button>
     </div>
     <div id="partsCommercialWorkspace" style="display:none"></div>
-    <div id="partsCatalog">
+    <div id="partsCatalog" class="parts-catalog-choosing">
     <div class="parts-catalog-actions">
       <button class="btn btn-gold btn-sm" id="partsRefreshAllBtn" type="button" onclick="refreshAllPartsStructures()"><span class="msi msi-sm">sync</span> Atualizar estruturas vencidas</button>
       <button class="btn btn-ghost btn-sm" type="button" onclick="exportAllPartsStructuresExcel()"><span class="msi msi-sm">table_view</span> Excel de todas as estruturas</button>
@@ -2383,6 +2462,9 @@ window.CONTROLADORIA_SEED_META={"source":"RG 023 - Programa de manutenção prev
         <button class="btn btn-ghost" type="button" onclick="deletePartItemByCode()"><span class="msi msi-sm">delete</span> Excluir DS</button>
       </div>
     </div>
+    <div id="partsCatalogStageChooser"></div>
+    <input id="partsPortalRequestInput" type="file" accept=".json,application/json" hidden onchange="importPartsPortalRequest(event)">
+    <div id="partsPortalRequestReview" class="parts-portal-review" hidden></div>
     <div class="import-box" id="partsImportBox">
       <h3><span class="msi msi-sm">folder_open</span> Importar tabela de peças (.xlsx)</h3>
       <div class="upload-zone" onclick="document.getElementById('partsInput').click()" ondrop="handlePartsDrop(event)" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor=''">
@@ -2398,7 +2480,9 @@ window.CONTROLADORIA_SEED_META={"source":"RG 023 - Programa de manutenção prev
       <span class="parts-batch-status" id="partsBatchStatus"></span>
       <span id="partsCount" style="font-size:13px;color:var(--text3);"></span>
     </div>
+    <button class="btn btn-ghost parts-catalog-back" type="button" onclick="resetPartsCatalogStage()">← Voltar às opções</button>
     <div id="partsTableContainer"></div>
+    <dialog id="partsCatalogViewer" class="parts-catalog-viewer" aria-label="Peças do equipamento"><div id="partsCatalogViewerContent"></div></dialog>
     </div>
     <div class="price-calc" id="partsEquipmentReturn"></div>
     <div class="price-calc" id="partsPriceCalculator">
@@ -2410,6 +2494,7 @@ window.CONTROLADORIA_SEED_META={"source":"RG 023 - Programa de manutenção prev
         <button class="btn btn-ghost btn-sm" type="button" onclick="togglePartsPriceManualForm()"><span class="msi msi-sm">add_box</span> Criar item manual</button>
         <button class="btn btn-ghost btn-sm" type="button" onclick="clearPartsPriceQuote()"><span class="msi msi-sm">delete_sweep</span> Limpar orçamento</button>
         <button class="btn btn-gold btn-sm" type="button" onclick="exportPartsPriceReport()"><span class="msi msi-sm">picture_as_pdf</span> Gerar relatório</button>
+        <button class="btn btn-ghost btn-sm" type="button" onclick="openPartsCommercialProposal()"><span class="msi msi-sm">request_quote</span> Prévia da proposta comercial</button>
       </div>
       <div class="price-quote-file-actions">
         <button class="btn btn-ghost btn-sm" type="button" onclick="exportPartsPriceQuoteFile()"><span class="msi msi-sm">save</span> Salvar orçamento editável</button>
@@ -2456,6 +2541,7 @@ window.CONTROLADORIA_SEED_META={"source":"RG 023 - Programa de manutenção prev
       <div class="price-section-title">DETALHAMENTO DA FORMAÇÃO DO PREÇO</div>
       <div id="priceDetailedBreakdown"></div>
       <div id="priceCalcNote" style="font-size:12px;color:var(--text3);margin-top:14px;"></div>
+      <section id="partsCommercialProposalPreview" class="commercial-proposal-preview" hidden aria-live="polite"></section>
     </div>
     <div class="bndes-workspace" id="partsBndesRegistration" oninput="markBndesDraftDirty()" onchange="markBndesDraftDirty()">
       <div class="bndes-portal-head">
@@ -10673,6 +10759,64 @@ function partsPriceQuoteLinePricing(item,report){
   const sale=(cost/report.equipmentFactor)*(1+report.ipi/100),withDiscount=sale/(1-report.discount/100),withoutTax=withDiscount*Math.max(0,1-report.markupTaxSum/100);
   return {cost,sale,withDiscount,withoutTax};
 }
+function buildPartsCommercialProposal(report,items){
+  if(!report?.valid||!Array.isArray(items)||!items.length)throw new Error('Adicione peças e confira os índices antes de montar a proposta.');
+  const rates=Array.isArray(report.taxes)?report.taxes:[];
+  if(!Number.isFinite(report.ipi)||report.ipi<0||report.ipi>=100||!Number.isFinite(report.discount)||report.discount<0||report.discount>=100||rates.some(tax=>!Number.isFinite(tax.valor)||tax.valor<0||tax.valor>=100))throw new Error('Há alíquotas ou margem de desconto inválidas.');
+  const lines=items.map((item,index)=>{
+    const quantity=Number(item.quantity),unitCost=Number(item.unitCost);
+    if(!Number.isInteger(quantity)||quantity<1||!Number.isFinite(unitCost)||unitCost<0)throw new Error(`Confira a quantidade e o custo do item ${index+1}.`);
+    const rawUnit=partsPriceQuoteLinePricing({...item,quantity:1},report).withDiscount;
+    if(!Number.isFinite(rawUnit)||rawUnit<0)throw new Error(`Não foi possível calcular o preço do item ${index+1}.`);
+    const unitCents=Math.round(rawUnit*100);
+    return {code:String(item.code||''),description:String(item.equipment||''),quantity,unitCents,totalCents:unitCents*quantity};
+  });
+  const sourceTotalCents=Math.round(Number(report.finalPrice)*100);
+  if(!Number.isFinite(sourceTotalCents)||sourceTotalCents<0)throw new Error('O total calculado para a proposta é inválido.');
+  let grossCents=lines.reduce((sum,line)=>sum+line.totalCents,0);
+  const roundingAdjustmentCents=sourceTotalCents-grossCents;
+  let separateAdjustmentCents=0;
+  if(roundingAdjustmentCents){
+    const single=lines.find(line=>line.quantity===1&&line.unitCents+roundingAdjustmentCents>=0);
+    if(single){single.unitCents+=roundingAdjustmentCents;single.totalCents+=roundingAdjustmentCents;}
+    else separateAdjustmentCents=roundingAdjustmentCents;
+    grossCents+=roundingAdjustmentCents;
+  }
+  const beforeIpiCents=Math.round(grossCents/(1+report.ipi/100));
+  const ipiCents=grossCents-beforeIpiCents;
+  const taxes=rates.map(tax=>({name:String(tax.nome||''),rate:tax.valor,amountCents:Math.round(beforeIpiCents*tax.valor/100)}));
+  const estimatedTaxCents=taxes.reduce((sum,tax)=>sum+tax.amountCents,0);
+  const beforeTaxCents=beforeIpiCents-estimatedTaxCents;
+  if(beforeTaxCents<0)throw new Error('A soma dos impostos não permite calcular a base sem tributos.');
+  return {lines,taxes,beforeTaxCents,beforeIpiCents,ipiCents,grossCents,sourceTotalCents,roundingAdjustmentCents,separateAdjustmentCents};
+}
+function renderPartsCommercialProposal(){
+  const panel=document.getElementById('partsCommercialProposalPreview');if(!panel||panel.hidden)return;
+  const money=cents=>(cents/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const pct=value=>Number(value).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+  try{
+    const report=getPartsPriceCalculation(),proposal=buildPartsCommercialProposal(report,partsPriceQuoteItems);
+    panel.innerHTML=`<h3>Prévia da proposta comercial</h3><p class="proposal-preview-warning">Rascunho para conferência comercial e fiscal. Esta etapa contém somente as tabelas; não é uma proposta pronta para enviar.</p>
+      <h4>Valores</h4><div class="proposal-table-wrap"><table><thead><tr><th>Item</th><th>Descrição</th><th class="num">QTD</th><th class="num">Valor unitário</th><th class="num">Valor total</th></tr></thead><tbody>
+      ${proposal.lines.map((line,index)=>`<tr><td>${escapeHTML(line.code||String(index+1))}</td><td>${escapeHTML(line.description)}</td><td class="num">${line.quantity}</td><td class="num">${money(line.unitCents)}</td><td class="num">${money(line.totalCents)}</td></tr>`).join('')}
+      ${proposal.separateAdjustmentCents?`<tr><td></td><td>Ajuste de arredondamento</td><td></td><td></td><td class="num">${money(proposal.separateAdjustmentCents)}</td></tr>`:''}
+      <tr class="proposal-total"><td colspan="4">(A) Base estimada sem os tributos informados</td><td class="num">${money(proposal.beforeTaxCents)}</td></tr>
+      <tr class="proposal-total"><td colspan="4">(B) Produtos com tributos, sem IPI</td><td class="num">${money(proposal.beforeIpiCents)}</td></tr>
+      <tr class="proposal-total"><td colspan="4">(C) IPI destacado</td><td class="num">${money(proposal.ipiCents)}</td></tr>
+      <tr class="proposal-final"><td colspan="4">(D) Valor total da proposta, com todos os tributos</td><td class="num">${money(proposal.grossCents)}</td></tr>
+      </tbody></table></div>
+      <h4>Impostos informados no orçamento</h4><div class="proposal-table-wrap"><table><thead><tr><th>Tributo</th><th class="num">Alíquota</th><th class="num">Valor estimado sobre (B)</th></tr></thead><tbody>
+      ${proposal.taxes.map(tax=>`<tr><td>${escapeHTML(tax.name)}</td><td class="num">${pct(tax.rate)}</td><td class="num">${money(tax.amountCents)}</td></tr>`).join('')}
+      <tr class="proposal-total"><td>Total dos tributos informados, sem IPI</td><td class="num">${pct(proposal.taxes.reduce((sum,tax)=>sum+tax.rate,0))}</td><td class="num">${money(proposal.taxes.reduce((sum,tax)=>sum+tax.amountCents,0))}</td></tr>
+      <tr><td>IPI</td><td class="num">${pct(report.ipi)}</td><td class="num">${money(proposal.ipiCents)}</td></tr>
+      </tbody></table></div>
+      <p class="proposal-tax-note">Preços unitários incluem a margem de desconto de ${pct(report.discount)} escolhida para a proposta. Ajuste de arredondamento para conciliar com o total do sistema: ${money(proposal.roundingAdjustmentCents)}. A base (A) e os valores por tributo são estimativas da regra atual do sistema, não substituem conferência fiscal.</p>`;
+  }catch(error){panel.innerHTML=`<h3>Prévia da proposta comercial</h3><p class="proposal-preview-warning">${escapeHTML(error?.message||'Não foi possível montar as tabelas.')}</p>`;}
+}
+function openPartsCommercialProposal(){
+  const panel=document.getElementById('partsCommercialProposalPreview');if(!panel)return;
+  panel.hidden=false;renderPartsCommercialProposal();panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function updatePartsPriceQuotePrices(report){
   let discountTotal=0,withoutTaxTotal=0;
   partsPriceQuoteItems.forEach((item,index)=>{const values=partsPriceQuoteLinePricing(item,report);discountTotal+=values.withDiscount;withoutTaxTotal+=values.withoutTax;const discountCell=document.querySelector(`[data-quote-discount="${index}"]`),withoutTaxCell=document.querySelector(`[data-quote-without-tax="${index}"]`);if(discountCell)discountCell.textContent=report.valid?fmtPartsCost(values.withDiscount):'—';if(withoutTaxCell)withoutTaxCell.textContent=report.valid?fmtPartsCost(values.withoutTax):'—';});
@@ -10697,7 +10841,41 @@ function addPartToPriceQuote(code){
   const meta=partsStructureCacheMeta(key),unitCost=Math.max(0,Number(meta?.custoTotal??catalog.cost)||0),group=partsCatalogContextByCode(key)?.group||'OUTROS EQUIPAMENTOS',existing=partsPriceQuoteItems.find(item=>item.code===key);
   if(existing){existing.quantity=Math.max(1,Math.floor(Number(existing.quantity)||1))+1;existing.unitCost=unitCost;existing.equipment=catalog.equipment||existing.equipment;existing.group=group;}
   else partsPriceQuoteItems.push({code:key,equipment:catalog.equipment||'Peça sem descrição',group,unitCost,quantity:1,addedAt:new Date().toISOString()});
-  savePartsPriceQuote();switchPartsView('price');showToast(`${key} adicionada ao orçamento${existing?' · quantidade atualizada':''}.`);
+  savePartsPriceQuote();switchPartsView('price');requestAnimationFrame(()=>document.getElementById('priceQuoteItems')?.scrollIntoView({block:'start'}));showToast(`${key} adicionada ao orçamento${existing?' · quantidade atualizada':''}.`);
+}
+let partsPortalRequestDraft=null;
+function partsPortalRequestCost(entry){
+  const catalog=entry.drawingCode?partsCatalogRowByCode(entry.drawingCode):null,meta=catalog?partsStructureCacheMeta(entry.drawingCode):null;
+  return catalog?Math.max(0,Number(meta?.custoTotal??catalog.cost)||0):0;
+}
+function renderPartsPortalRequestReview(){
+  const target=document.getElementById('partsPortalRequestReview');if(!target)return;
+  const draft=partsPortalRequestDraft;target.hidden=!draft;if(!draft){target.innerHTML='';return;}
+  const stages=new Map();
+  draft.items.forEach((entry,index)=>{const stage=entry.stage||'OUTROS',equipment=entry.equipmentGroup||'PEÇAS SEM EQUIPAMENTO';if(!stages.has(stage))stages.set(stage,new Map());const groups=stages.get(stage);if(!groups.has(equipment))groups.set(equipment,[]);groups.get(equipment).push({entry,index});});
+  const missing=draft.items.filter(entry=>!(partsPortalRequestCost(entry)>0)).length;
+  target.innerHTML=`<div class="parts-portal-review-head"><div><small>SOLICITAÇÃO ${escapeHTML(draft.id||'DO PORTAL')} · ${draft.items.length} PEÇA(S)</small><h3>${escapeHTML(draft.company||'Cliente não informado')}</h3><p>Confira os custos. Abra uma peça para consultar ou atualizar sua estrutura; o valor total é calculado pela estrutura.</p></div><button class="btn btn-ghost btn-sm" type="button" onclick="document.getElementById('partsPortalRequestInput').click()">Trocar arquivo</button></div>${[...stages].map(([stage,groups])=>`<div class="parts-portal-review-stage">${escapeHTML(stage)}</div>${[...groups].map(([group,rows])=>`<div class="parts-portal-review-group">${escapeHTML(group)} · ${rows.length} peça(s)</div>${rows.map(({entry,index})=>{const catalog=entry.drawingCode?partsCatalogRowByCode(entry.drawingCode):null,open=catalog&&partsStructureOpen.has(entry.drawingCode),cost=partsPortalRequestCost(entry),meta=catalog?partsStructureCacheMeta(entry.drawingCode):null,historyCost=meta&&(Number(meta.ultimoPreco)>0?Number(meta.ultimoPreco):(Number(catalog.cost)>0&&Number(catalog.cost)!==cost?Number(catalog.cost):null));return `<div class="parts-portal-review-item"><div class="parts-portal-review-row"><button class="parts-catalog-part-open parts-portal-review-name" type="button" ${catalog?`data-parts-code="${escapeHTML(entry.drawingCode)}" onclick="togglePartsStructure(this.dataset.partsCode)"`:'disabled'} aria-expanded="${Boolean(open)}"><span class="msi msi-sm">${open?'expand_more':'chevron_right'}</span> ${escapeHTML(entry.description)}<small>Desenho ${escapeHTML(entry.drawingCode||'não informado')} · Qtd. ${entry.quantity}${entry.specification?` · ${escapeHTML(entry.specification)}`:''}${!catalog?' · Não encontrada na tabela de peças':''}</small></button><span class="parts-catalog-part-meta parts-portal-review-cost">${escapeHTML(fmtPartsCost(cost))}<small>${historyCost!==null?`Último preço: ${escapeHTML(fmtPartsCost(historyCost))}`:''}</small></span></div>${open?`<div class="parts-portal-review-detail"><table class="parts-table"><tbody>${renderPartsStructureDetail(catalog,entry.drawingCode)}</tbody></table></div>`:''}</div>`;}).join('')}`).join('')}`).join('')}<div class="parts-portal-review-foot"><span>${missing?`${missing} peça(s) com custo zerado — confira antes de formar o preço.`:'Custos prontos para conferência final.'}</span><button class="btn btn-gold" type="button" onclick="transferPartsPortalRequestToQuote()"><span class="msi msi-sm">playlist_add</span> Adicionar todas à Formação de preço</button></div>`;
+}
+function transferPartsPortalRequestToQuote(){
+  if(!hasAccess('pecas.price')){showAccessDenied();return;}
+  const draft=partsPortalRequestDraft;if(!draft?.items.length)return;
+  const missing=draft.items.filter(entry=>!(partsPortalRequestCost(entry)>0)).length;
+  if(missing&&!confirm(`${missing} peça(s) estão com custo zerado. Deseja continuar mesmo assim?`))return;
+  if(partsPriceQuoteItems.length&&!confirm(`Substituir as ${partsPriceQuoteItems.length} peça(s) do orçamento atual pelas ${draft.items.length} peça(s) desta solicitação?`))return;
+  const used=new Set();partsPriceQuoteItems=draft.items.map((entry,index)=>{const base=entry.drawingCode.replace(/[^A-Z0-9._+-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')||`SOLIC-${index+1}`;let code=base,suffix=2;while(used.has(code))code=`${base}-${suffix++}`;used.add(code);return {code,equipment:entry.description+(entry.specification?` - ${entry.specification}`:''),group:entry.group,unitCost:partsPortalRequestCost(entry),quantity:entry.quantity,addedAt:new Date().toISOString(),sourceRequestId:draft.id};});
+  savePartsPriceQuote();const nameInput=document.getElementById('priceItemName');if(nameInput)nameInput.value=`Peças ${draft.company||'cliente'} — Solicitação ${draft.id}`;
+  partsPortalRequestDraft=null;renderPartsPortalRequestReview();switchPartsView('price');requestAnimationFrame(()=>document.getElementById('priceQuoteItems')?.scrollIntoView({block:'start'}));showToast(`${partsPriceQuoteItems.length} peça(s) enviadas à Formação de preço.`,'ok');
+}
+async function importPartsPortalRequest(event){
+  const input=event?.target,file=input?.files?.[0];if(!file)return;
+  try{
+    if(!hasAccess('pecas.price')){showAccessDenied();return;}
+    const data=JSON.parse(await file.text()),request=data?.request;
+    if(data?.schema!=='cartamac.portal.quote'||data?.version!==1||!Array.isArray(request?.items)||!request.items.length)throw new Error('Selecione um JSON de solicitação válido do Portal de Clientes.');
+    const items=request.items.map((raw,index)=>{const drawingCode=partsStructureCode(raw?.drawingCode),description=String(raw?.part||'').trim(),specification=String(raw?.specification||'').trim(),quantity=Number(raw?.quantity);if(!description||!Number.isInteger(quantity)||quantity<1)throw new Error(`Confira a descrição e a quantidade da peça ${index+1} no arquivo.`);const context=drawingCode?partsCatalogContextByCode(drawingCode):null;return {drawingCode,description,specification,quantity,stage:String(raw?.stage||context?.section||'OUTROS').trim(),equipmentGroup:String(raw?.equipment||context?.group||'PEÇAS SEM EQUIPAMENTO').trim(),group:context?.row?context.group:String(raw?.equipment||raw?.stage||'PEÇAS DA SOLICITAÇÃO').trim()};});
+    partsPortalRequestDraft={id:String(request.id||'').trim(),company:String(request.company||request.clientName||'').trim(),items};partsCatalogStageSelection='';renderPartsPage();requestAnimationFrame(()=>document.getElementById('partsPortalRequestReview')?.scrollIntoView({block:'start'}));showToast(`${items.length} peça(s) carregadas. Confira os custos e use o botão único para formar o preço.`,'ok');
+  }catch(error){showToast(error?.message||'Não foi possível importar a solicitação.','err');}
+  finally{if(input)input.value='';}
 }
 function updatePartsPriceQuoteQuantity(code,value){const key=partsStructureCode(code),item=partsPriceQuoteItems.find(entry=>entry.code===key);if(!item)return;item.quantity=Math.max(1,Math.floor(Number(value)||1));savePartsPriceQuote();renderPartsPriceQuote();}
 function removePartFromPriceQuote(code){const key=partsStructureCode(code);partsPriceQuoteItems=partsPriceQuoteItems.filter(item=>item.code!==key);savePartsPriceQuote();renderPartsPriceQuote();}
@@ -10711,6 +10889,8 @@ function switchPartsView(view){
     DB.bndesDraft=bndesLiveDraft();persist();
   }
   if(partsView==='orcamentos'&&view!=='orcamentos')commercialBudgetEditorId=null;if(partsView==='followup'&&view!=='followup')commercialFollowUpEditorId=null;
+  if(partsView==='catalog'&&view!=='catalog')closePartsCatalogGroup();
+  if(view==='catalog'){partsCatalogStageSelection='';closePartsCatalogGroup();const search=document.getElementById('partsSearch');if(search)search.value='';}
   partsView=view;
   workspace.style.display=['orcamentos','followup','companies'].includes(view)?'':'none';
   catalog.style.display=view==='catalog'?'':'none';
@@ -10819,6 +10999,7 @@ function calculatePartsPrice(){
   renderPartsPriceBreakdown(report);
   const note=document.getElementById('priceCalcNote');
   if(note)note.textContent=`Markup do equipamento: ${(report.equipmentFactor*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% · Impostos usados no markup: ${report.markupTaxSum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% (IRPJ informado na coluna) · Divisor tributário: ${(report.taxDivisor*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% · Impostos usados no divisor: ${report.taxSum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}% (IRPJ fixo em 1,20%; IPI excluído).`;
+  renderPartsCommercialProposal();
 }
 function getPartsPriceReportData(){
   const report=getPartsPriceCalculation();
@@ -11101,6 +11282,50 @@ function renderPartsStructureDetail(row,code){
     <div class="parts-structure-panel-actions"><button class="btn btn-ghost btn-sm" type="button" data-parts-code="${escapeHTML(key)}" onclick="event.stopPropagation();exportPartStructureExcel(this.dataset.partsCode)"><span class="msi msi-sm">table_view</span> Excel</button>${canPerform('actions.maxiprod.update')?`<button class="btn btn-ghost btn-sm" type="button" data-parts-code="${escapeHTML(key)}" title="Recarrega o MaxiProd e remove os ajustes manuais desta peça" onclick="event.stopPropagation();manualRefreshPartStructure(this.dataset.partsCode)"><span class="msi msi-sm">sync</span> Atualizar esta peça</button>`:''}</div></div>${content}
   </div></td></tr>`;
 }
+let partsCatalogGroups=[],partsCatalogSelectedGroup=null,partsCatalogModalSearch='',partsCatalogStageSelection='';
+const partsCatalogStageOrder=['DESAGREGAÇÃO','DEPURAÇÃO','ENGROSSAMENTO','OUTROS'];
+function selectPartsCatalogStage(section){
+  const key=normalisePartSearch(section);
+  if(!partsCatalogStageOrder.some(stage=>normalisePartSearch(stage)===key))return;
+  partsCatalogStageSelection=key;renderPartsPage();
+}
+function resetPartsCatalogStage(){partsCatalogStageSelection='';closePartsCatalogGroup();const search=document.getElementById('partsSearch');if(search)search.value='';renderPartsPage();}
+function partsCatalogBuildGroups(source){
+  const groups=[];let section='OUTROS',current=null;
+  source.forEach((row,index)=>{
+    if(row.group&&(row.section||isPartsSection(row.tag))){section=String(row.tag||'OUTROS').trim();current=null;return;}
+    if(row.group){current={index,section,name:String(row.tag||'Equipamento').trim(),items:[]};groups.push(current);return;}
+    if(!current){current={index,section,name:'PEÇAS SEM EQUIPAMENTO',items:[]};groups.push(current);}
+    current.items.push(row);
+  });
+  return groups;
+}
+function openPartsCatalogGroup(index){
+  const group=partsCatalogGroups.find(item=>item.index===Number(index));if(!group)return;
+  partsCatalogSelectedGroup=group.index;partsCatalogModalSearch='';renderPartsCatalogModal();
+  const viewer=document.getElementById('partsCatalogViewer');if(!viewer.open)viewer.showModal();
+}
+function closePartsCatalogGroup(){const viewer=document.getElementById('partsCatalogViewer');if(viewer?.open)viewer.close();partsCatalogSelectedGroup=null;partsCatalogModalSearch='';}
+function filterPartsCatalogModal(value){
+  partsCatalogModalSearch=String(value||'');const query=normalisePartSearch(partsCatalogModalSearch.trim()),viewer=document.getElementById('partsCatalogViewerContent');
+  let visible=0;viewer.querySelectorAll('.parts-catalog-part').forEach(part=>{const matches=!query||normalisePartSearch(part.dataset.search||'').includes(query);part.hidden=!matches;if(matches)visible++;});
+  const count=viewer.querySelector('[data-parts-modal-count]');if(count)count.textContent=`${visible} ${visible===1?'peça':'peças'}`;
+}
+function renderPartsCatalogModal(){
+  const viewer=document.getElementById('partsCatalogViewer'),content=document.getElementById('partsCatalogViewerContent');if(!viewer||!content)return;
+  const group=partsCatalogGroups.find(item=>item.index===partsCatalogSelectedGroup);if(!group){closePartsCatalogGroup();return;}
+  const scrollTop=viewer.scrollTop;
+  const rows=group.items.map(row=>{
+    const code=partsStructureCode(row.code),validCode=/^[A-Z0-9._+\-]+$/.test(code),meta=validCode?partsStructureCacheMeta(code):null;
+    const open=validCode&&partsStructureOpen.has(code),loading=validCode&&partsStructureLoading.has(code);
+    const liveCost=meta?Number(meta.custoTotal):null,costText=meta?fmtPartsCost(liveCost):fmtPartsCost(row.cost);
+    const historyCost=meta&&(Number(meta.ultimoPreco)>0?Number(meta.ultimoPreco):(Number(row.cost)>0&&Number(row.cost)!==liveCost?Number(row.cost):null));
+    const statusText=partsStructureErrors[code]||partsStructureAgeLabel(meta);
+    return `<div class="parts-catalog-part" data-search="${escapeHTML([row.tag,row.code,row.equipment].join(' '))}"><div class="parts-catalog-part-main"><button type="button" class="parts-catalog-part-open" ${validCode?`data-parts-code="${escapeHTML(code)}" onclick="togglePartsStructure(this.dataset.partsCode)"`:'disabled'} aria-expanded="${open}"><span class="msi msi-sm">${open?'expand_more':'chevron_right'}</span> ${escapeHTML(row.equipment||'Peça sem descrição')}<small>TAG ${escapeHTML(row.tag||'—')} · Desenho ${escapeHTML(row.code||'—')}${loading?' · Consultando MaxiProd...':''}</small></button><span class="parts-catalog-part-meta">${escapeHTML(costText)}<small>${historyCost!==null?`Último preço: ${escapeHTML(fmtPartsCost(historyCost))}`:''}</small></span>${validCode&&hasAccess('pecas.price')?`<button class="btn btn-gold btn-sm" type="button" data-parts-code="${escapeHTML(code)}" onclick="addPartToPriceQuote(this.dataset.partsCode)"><span class="msi msi-sm">playlist_add</span> Adicionar</button>`:''}</div>${open?`<div class="parts-catalog-part-detail">Atualizado: ${escapeHTML(fmtPartsDate(meta?.calculadoEm||row.updatedAt))} · ${escapeHTML(statusText)}<div class="parts-table-wrap"><table class="parts-table"><tbody>${renderPartsStructureDetail(row,code)}</tbody></table></div></div>`:''}</div>`;
+  }).join('');
+  content.innerHTML=`<div class="parts-catalog-modal-head"><div><small>${escapeHTML(group.section)} · ${group.items.length} ${group.items.length===1?'peça':'peças'}</small><h2>${escapeHTML(group.name)}</h2><p>Selecione uma peça para consultar custo e estrutura no MaxiProd.</p></div><button type="button" class="parts-catalog-modal-close" onclick="closePartsCatalogGroup()" aria-label="Fechar peças">×</button></div><div class="parts-catalog-modal-tools"><input type="search" aria-label="Buscar peça neste equipamento" placeholder="Buscar peça neste equipamento..." value="${escapeHTML(partsCatalogModalSearch)}" oninput="filterPartsCatalogModal(this.value)"><span data-parts-modal-count></span></div><div class="parts-catalog-modal-body">${rows||'<p class="parts-structure-message">Nenhuma peça cadastrada neste equipamento.</p>'}</div><div class="parts-catalog-modal-foot"><span>${group.items.length} ${group.items.length===1?'peça disponível':'peças disponíveis'}</span><button class="btn btn-ghost btn-sm" type="button" onclick="closePartsCatalogGroup()">Voltar aos equipamentos</button></div>`;
+  filterPartsCatalogModal(partsCatalogModalSearch);viewer.scrollTop=scrollTop;
+}
 function renderPartsPage(){
   const isAllowed=hasAnyAccess('pecas');
   if(!isAllowed)return;
@@ -11111,37 +11336,29 @@ function renderPartsPage(){
   if(isMaster(loggedUser))populatePartsManualGroupOptions();
   const query=normalisePartSearch((document.getElementById('partsSearch')?.value||'').trim());
   const source=Array.isArray(DB.partsData)?DB.partsData:[];
-  const rows=source.filter(row=>row.group||!query||normalisePartSearch([row.tag,row.code,row.equipment].join(' ')).includes(query));
   const partCount=source.filter(row=>!row.group).length;
   document.getElementById('partsCount').textContent=`${partCount} peça(s) cadastrada(s)`;
   const container=document.getElementById('partsTableContainer');
+  partsCatalogGroups=partsCatalogBuildGroups(source);
+  const catalog=document.getElementById('partsCatalog'),chooser=document.getElementById('partsCatalogStageChooser');
+  catalog?.classList.toggle('parts-catalog-choosing',!partsCatalogStageSelection);
+  if(chooser)chooser.innerHTML=`<div class="parts-catalog-stage-intro"><small>EQUIPAMENTOS CARTAMAC</small><h2>Encontre sua peça</h2><p>Escolha a etapa do processo, depois abra o equipamento para ver somente as peças dele.</p></div><div class="parts-catalog-choice-grid">${partsCatalogStageOrder.map(stage=>{const count=partsCatalogGroups.filter(group=>normalisePartSearch(group.section)===normalisePartSearch(stage)).length;return `<button type="button" class="parts-catalog-choice" data-section="${escapeHTML(stage)}" onclick="selectPartsCatalogStage(this.dataset.section)"><strong>${escapeHTML(stage)}</strong><small>${count} equipamento(s) · Ver opções →</small></button>`}).join('')}${hasAccess('pecas.price')?'<button type="button" class="parts-catalog-choice parts-catalog-choice-import" onclick="document.getElementById(\'partsPortalRequestInput\').click()"><strong>IMPORTAR SOLICITAÇÃO DO PORTAL</strong><small>Selecione o JSON exportado pelo Portal de Clientes para conferir os custos antes da Formação de preço →</small></button>':''}</div>`;
+  renderPartsPortalRequestReview();
   if(!source.length){setPartsBatchStatus('',partsStructureBatchMessageType);container.innerHTML='<div class="empty-state"><div class="ei"><span class="msi msi-xl">settings</span></div><h3>Nenhuma tabela de peças carregada</h3><p>Um administrador mestre deve importar a planilha padrão.</p></div>';return;}
-  let activeSection=null,body='';
-  rows.forEach(row=>{
-    const section=row.group&&(row.section||isPartsSection(row.tag));
-    if(section){
-      activeSection=normalisePartSearch(row.tag);
-      const collapsed=collapsedPartsSections.has(activeSection);
-      const icon=collapsed?'expand_more':'expand_less';
-      body+=`<tr class="parts-section" onclick="togglePartsSection('${activeSection}')"><td colspan="6"><div class="parts-section-title"><span class="msi msi-sm">${icon}</span>${escapeHTML(row.tag)}</div></td></tr>`;
-      return;
-    }
-    if(activeSection&&collapsedPartsSections.has(activeSection)&&!query)return;
-    if(row.group){body+=`<tr class="parts-group"><td colspan="6">${escapeHTML(row.tag)}</td></tr>`;return;}
-    const code=partsStructureCode(row.code),validCode=/^[A-Z0-9._+\-]+$/.test(code),meta=validCode?partsStructureCacheMeta(code):null;
-    const open=validCode&&partsStructureOpen.has(code),loading=validCode&&partsStructureLoading.has(code),stale=meta&&partsStructureIsStale(meta);
-    const liveCost=meta?Number(meta.custoTotal):null,costText=meta?fmtPartsCost(liveCost):fmtPartsCost(row.cost),historyCost=meta&&(Number(meta.ultimoPreco)>0?Number(meta.ultimoPreco):(Number(row.cost)>0&&Number(row.cost)!==liveCost?Number(row.cost):null));
-    const statusClass=partsStructureErrors[code]?'error':stale?'stale':meta?'fresh':'';
-    const statusText=partsStructureErrors[code]||partsStructureAgeLabel(meta);
-    body+=`<tr class="parts-data-row ${open?'is-open':''} ${loading?'is-loading':''}" ${validCode?`data-parts-code="${escapeHTML(code)}" onclick="togglePartsStructure(this.dataset.partsCode)"`:''}>
-      <td data-label="TAG">${escapeHTML(row.tag)}</td><td class="parts-code" data-label="CÓD. DS">${escapeHTML(row.code)}</td>
-      <td data-label="EQUIPAMENTO"><div class="parts-row-name">${validCode?`<span class="msi">chevron_right</span>`:''}<span>${escapeHTML(row.equipment)}</span></div></td>
-      <td class="parts-cost" data-label="CUSTO"><span class="parts-cost-main">${escapeHTML(costText)}</span>${historyCost!==null?`<small class="parts-cost-source">Último preço: ${escapeHTML(fmtPartsCost(historyCost))}</small>`:''}</td>
-      <td class="parts-date" data-label="DATA DE ATUALIZAÇÃO">${meta?escapeHTML(fmtPartsDate(meta.calculadoEm)):escapeHTML(fmtPartsDate(row.updatedAt))}<small class="parts-refresh-state ${statusClass}">${escapeHTML(statusText)}</small></td>
-      <td class="parts-quote-action" data-label="ORÇAMENTO">${validCode&&hasAccess('pecas.price')?`<button class="btn btn-gold btn-sm" type="button" data-parts-code="${escapeHTML(code)}" onclick="event.stopPropagation();addPartToPriceQuote(this.dataset.partsCode)"><span class="msi msi-sm">playlist_add</span> Adicionar</button>`:'—'}</td></tr>`;
-    if(open)body+=renderPartsStructureDetail(row,code);
-  });
-  container.innerHTML=`<div class="parts-table-wrap"><table class="parts-table"><thead><tr><th>TAG</th><th>CÓD. DS</th><th>EQUIPAMENTO (DESENHO REF.)</th><th>CUSTO</th><th>DATA DE ATUALIZAÇÃO</th><th>ORÇAMENTO</th></tr></thead><tbody>${body||'<tr><td colspan="6" style="text-align:center;color:var(--text3);">Nenhuma peça encontrada.</td></tr>'}</tbody></table></div>`;
+  const stages=new Map();
+  for(const group of partsCatalogGroups){
+    if(partsCatalogStageSelection&&normalisePartSearch(group.section)!==partsCatalogStageSelection)continue;
+    const matches=!query||normalisePartSearch([group.section,group.name].join(' ')).includes(query)||group.items.some(row=>normalisePartSearch([row.tag,row.code,row.equipment].join(' ')).includes(query));
+    if(!matches)continue;
+    if(!stages.has(group.section))stages.set(group.section,[]);
+    stages.get(group.section).push(group);
+  }
+  const illustration='<svg viewBox="0 0 165 140" aria-hidden="true"><ellipse cx="82" cy="34" rx="46" ry="14"/><path d="M36 34v69c0 19 92 19 92 0V34M36 68c18 15 74 15 92 0M36 101c18 15 74 15 92 0M58 22v-9h49v9M63 111v14h39v-14"/><path d="M53 45h58M53 53h58M53 83h58M53 91h58"/></svg>';
+  container.innerHTML=stages.size?`<div class="parts-catalog-sections">${[...stages].map(([section,groups])=>{
+    const key=normalisePartSearch(section),collapsed=collapsedPartsSections.has(key)&&!partsCatalogStageSelection;
+    return `<section class="parts-catalog-stage"><div class="parts-catalog-stage-head"><button type="button" data-section="${escapeHTML(key)}" onclick="togglePartsSection(this.dataset.section)">${collapsed?'›':'⌄'} ${escapeHTML(section)}</button><small>${groups.length} ${groups.length===1?'equipamento':'equipamentos'}</small></div>${collapsed&&!query?'':`<div class="parts-catalog-cards">${groups.map(group=>`<button type="button" class="parts-catalog-card" data-group-index="${group.index}" onclick="openPartsCatalogGroup(this.dataset.groupIndex)" aria-label="Ver peças de ${escapeHTML(group.name)}"><span class="parts-catalog-card-media">${illustration}</span><span class="parts-catalog-card-info"><strong>${escapeHTML(group.name)}</strong><small>${group.items.length} ${group.items.length===1?'peça disponível':'peças disponíveis'}</small><span class="parts-catalog-card-cue">Ver peças →</span></span></button>`).join('')}</div>`}</section>`;
+  }).join('')}</div>`:'<div class="empty-state"><h3>Nenhuma peça encontrada</h3><p>Experimente outro termo na busca.</p></div>';
+  if(document.getElementById('partsCatalogViewer')?.open)renderPartsCatalogModal();
   const allCodes=uniquePartsStructureCodes(),staleCount=allCodes.filter(code=>partsStructureIsStale(partsStructureCacheMeta(code))).length;
   if(!partsStructureBatchMessage)setPartsBatchStatus(`${allCodes.length-staleCount} atualizada(s) · ${staleCount} aguardando ou vencida(s)`,'');
   else setPartsBatchStatus(partsStructureBatchMessage,partsStructureBatchMessageType);
@@ -15947,6 +16164,7 @@ function companyDirectoryOpenFromMap(id){companyDirectoryOpenId=id;const company
 
 // ─────────── EXPORTS GLOBAIS ───────────
 window.importPortalQuoteJson=importPortalQuoteJson;
+Object.assign(window,{openPartsCatalogGroup,closePartsCatalogGroup,filterPartsCatalogModal,selectPartsCatalogStage,resetPartsCatalogStage});
 Object.assign(window,{
   doLogin,openAdminLogin,doAdminLogin,backToLogin,closeAdminLogin,openSystemHome,openSystemHomeArea,openConfigurationPage,openUsersArea,
   switchDevTab,switchCronogramaSubtab,switchClientTab,filterOrders,setCronogramaSectorFilter,setCronDelayFilter,toggleOfficialOrderCard,parseProjectXML,cronPrepareOrderSchedule,buildOrderCard,collapseAll,expandAll,toggleChip,togglePassword,
@@ -15955,7 +16173,7 @@ Object.assign(window,{
   updateUser,addOrderToUser,removeOrderFromUser,deleteUser,removeArchivedOrder,exportSystemBackupPilot,importSystemBackupPilot,exportCommercialBudgetsJson,importCommercialBudgetsJson,exportRhBackup,importRhBackup,
   triggerFileUpload,handleFileAdmin,handleDropAdmin,removeOrderFile,downloadOrderFile,
   openAddAdminModal,saveNewAdmin,selectAdmin,saveAdminChanges,deleteAdmin,toggleAdminSalesRegion,adminSalesRegionChanged,openOwnPasswordModal,saveOwnPassword,setAccessEditor,toggleNotificationCenter,markAllNotificationsRead,openNotification,saveNotificationSettings,sendTestNotification,sendGmailTestEmail,runNotificationEngine,enableMobilePush,disableMobilePush,
-  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartGroup,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,renderCompanyDirectory,companyDirectorySetSearch,companyDirectorySetCountry,companyDirectoryToggleCountry,companyDirectoryToggleBrazilRegion,companyDirectoryZoomCountry,companyDirectoryZoomBrazilRegion,companyDirectoryToggle,companyDirectoryOpenFromMap,companyDirectoryAddCompany,companyDirectorySetActive,addPartToPriceQuote,togglePartsPriceManualForm,addManualPartToPriceQuote,updatePartsPriceQuoteQuantity,removePartFromPriceQuote,clearPartsPriceQuote,renderPartsPriceQuote,exportPartsPriceQuoteFile,importPartsPriceQuoteFile,renderBndesDraft,markBndesDraftDirty,saveBndesDraft,clearBndesRegistration,switchBndesPortalTab,validateBndesDraft,exportBndesXml,loadBndesGeneralInfoFromMaxiprod,loadBndesMasterData,loadBndesComponentsFromMaxiprod,refreshBndesServicesFromMaxiprod,filterBndesComponents,filterBndesServices,updateBndesComponentField,toggleAllBndesComponents,addBndesService,updateBndesServiceField,removeBndesService,addBndesLabor,updateBndesLaborField,removeBndesLabor,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
+  importXML,handleXMLDrop,deleteImport,closeModal,importParts,handlePartsDrop,renderPartsPage,togglePartsSection,togglePartsStructure,createManualPartGroup,createManualPartItem,deletePartItemByCode,manualRefreshPartStructure,refreshAllPartsStructures,cancelPartsStructureBatch,exportPartStructureExcel,exportAllPartsStructuresExcel,beginPartsStructureEdit,savePartsStructureField,switchPartsView,renderCompanyDirectory,companyDirectorySetSearch,companyDirectorySetCountry,companyDirectoryToggleCountry,companyDirectoryToggleBrazilRegion,companyDirectoryZoomCountry,companyDirectoryZoomBrazilRegion,companyDirectoryToggle,companyDirectoryOpenFromMap,companyDirectoryAddCompany,companyDirectorySetActive,addPartToPriceQuote,importPartsPortalRequest,togglePartsPriceManualForm,addManualPartToPriceQuote,updatePartsPriceQuoteQuantity,removePartFromPriceQuote,clearPartsPriceQuote,renderPartsPriceQuote,exportPartsPriceQuoteFile,importPartsPriceQuoteFile,renderBndesDraft,markBndesDraftDirty,saveBndesDraft,clearBndesRegistration,switchBndesPortalTab,validateBndesDraft,exportBndesXml,loadBndesGeneralInfoFromMaxiprod,loadBndesMasterData,loadBndesComponentsFromMaxiprod,refreshBndesServicesFromMaxiprod,filterBndesComponents,filterBndesServices,updateBndesComponentField,toggleAllBndesComponents,addBndesService,updateBndesServiceField,removeBndesService,addBndesLabor,updateBndesLaborField,removeBndesLabor,calculatePartsPrice,exportPartsPriceReport,runSimulation,exportSimulationPDF,saveSimulatorDraft,clearSimulatorDraft,
   renderMacroEngineering,switchMacroView,toggleMacroCard,macroSaveField,macroSavePhase,setMacroResponsibleFilter,addEngineeringPerson,removeEngineeringPerson,saveMacroRevision,showMacroRevision,removeMacroRevision,finalizeMacro,reopenMacro,exportEngineeringMacroPDF,
   unlockCosts,relockCosts,toggleCostCard,updateCostField,updateMaxiprodCode,consultMaxiprodCost,updateCostMonth,switchCostsView,openCostStructure,closeCostStructure,exportCostStructurePDF,exportCostStructureExcel,filterStructureRows,filterProductionRows,toggleProductionBlock,clearCostStructure,updateOperationRate,beginCommercialStructurePriceEdit,
   filterCostCards,saveCostsPassword,
@@ -15978,6 +16196,7 @@ mascararDataFiltroFinanceiro,abrirReceberAno,voltarReceberAnos,voltarReceberPara
   renderHoursControlPage,importHoursControlPdf,beginHoursCalendarImport,clearHoursCalendarMonth,selectHoursCalendarMonth,exportHoursBalancePDF,exportHoursBankPDF,exportHoursPaymentPDF,exportHoursPaymentGroupPDF,exportHoursIndividualPaymentPDF,openHoursPaymentEmployeeSelector,closeHoursPaymentEmployeeSelector,updateHoursPaymentEmployeeSelectionCount,setAllHoursPaymentEmployees,exportHoursSelectedPaymentPDF,filterHoursEmployees,filterHoursConfigEmployees,filterHoursConfigEmployment,selectHoursBankEmployee,removeHoursBankRecord,saveHoursBankAdjustment,toggleHoursBankSettlement,saveHoursBankSettlementField,switchHoursView,selectHoursPaymentEmployee,toggleHoursConfigSection,saveHoursPaymentField,enableHoursMealCountEdit,saveHoursMonthlyBenefitRate,setHoursEmploymentType,setHoursEmployeePaymentField,setHoursEmployeeProfileById,saveHoursDiscountProfileField,setHoursEmployeeDiscountProfile,addHoursProfileItem,saveHoursProfileItem,removeHoursProfileItem,addHoursMonthlyItem,saveHoursMonthlyItem,removeHoursMonthlyItem,saveHoursInssField,setHoursInssPreviewSalary,selectHoursMealMonth,filterHoursMealEmployees,toggleHoursMeal,resetHoursMealMonth,saveHoursWorkLog,editHoursWorkLog,cancelHoursWorkLogEdit,deleteHoursWorkLog,filterHoursWorkLogs,clearHoursWorkLogFilters
 });
 Object.assign(window,{purchaseMultilevelToggleBestList,purchaseMultilevelCloseBestList,purchaseMultilevelExportBestListExcel});
+Object.assign(window,{transferPartsPortalRequestToQuote});
 document.documentElement.dataset.theme='dark';
 let _cronAutomaticDay=cronTodayISO();setInterval(()=>{const day=cronTodayISO();if(day!==_cronAutomaticDay){_cronAutomaticDay=day;if(document.getElementById('page-cronograma')?.classList.contains('active'))renderDevAll();if(document.getElementById('page-atrasos')?.classList.contains('active'))renderCronDelayPage();}},15*60*1000);
 </script>
