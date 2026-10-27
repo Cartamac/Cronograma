@@ -3875,10 +3875,38 @@ async function filesLoad(){
   catch(e){console.warn('Files load:',e);}
   return {};
 }
+let lastSavedMainDocument=null;
+let mainDocumentWrite=null;
+function mainDocumentPayload(source){
+  const payload={...source};
+  delete payload.projectOrders;
+  delete payload.importHistory;
+  delete payload.lastImport;
+  delete payload.archivedOrdersData;
+  if(salesTravelSyncLoaded)delete payload.salesTravelCalendars;
+  return payload;
+}
 async function persist(){
   if(!_initialLoadDone){console.error('Gravação bloqueada: o banco principal ainda não terminou de carregar.');return false;}
   if(!Array.isArray(DB.admins)||DB.admins.length===0){console.error('Gravação bloqueada: a lista de administradores está vazia.');showToast('Proteção ativada: os dados não foram gravados porque a lista de administradores está vazia.','err');return false;}
-  try{if(typeof hoursCalendarSyncActiveMonth==='function')hoursCalendarSyncActiveMonth();const payload={...DB};delete payload.projectOrders;delete payload.importHistory;delete payload.lastImport;delete payload.archivedOrdersData;if(salesTravelSyncLoaded)delete payload.salesTravelCalendars;await setDoc(DB_REF,payload);return true;}
+  try{
+    if(typeof hoursCalendarSyncActiveMonth==='function')hoursCalendarSyncActiveMonth();
+    const payload=mainDocumentPayload(DB),serialized=JSON.stringify(payload);
+    if(serialized===lastSavedMainDocument)return true;
+    // Captura cada edição antes de aguardar a gravação anterior. Assim, uma
+    // atualização recebida durante a espera não apaga a próxima edição local.
+    const previous=mainDocumentWrite;
+    const write=(async()=>{
+      if(previous)try{await previous;}catch(_error){}
+      if(serialized===lastSavedMainDocument)return true;
+      await setDoc(DB_REF,payload);
+      lastSavedMainDocument=serialized;
+      return true;
+    })();
+    mainDocumentWrite=write;
+    try{return await write;}
+    finally{if(mainDocumentWrite===write)mainDocumentWrite=null;}
+  }
   catch(e){console.warn('DB save:',e);showToast('Erro ao salvar dados','err');return false;}
 }
 async function persistSalesTravelCalendars(){if(!_initialLoadDone){showToast('Aguarde o carregamento do sistema antes de salvar a agenda.','err');return false;}try{const payload={version:2,...(DB.salesTravelCalendars||{}),sellers:DB.salesTravelCalendars?.sellers||{},customCompanies:Array.isArray(DB.salesTravelCalendars?.customCompanies)?DB.salesTravelCalendars.customCompanies:[],companyStatuses:DB.salesTravelCalendars?.companyStatuses||{},updatedAt:new Date().toISOString(),updatedBy:loggedUser?.ref?.name||loggedUser?.ref?.email||'Usuário'};await setDoc(SALES_TRAVEL_CALENDARS_REF,payload);DB.salesTravelCalendars=payload;salesTravelSyncLoaded=true;return true;}catch(error){console.warn('Calendários comerciais:',error);showToast('Erro ao salvar os dados comerciais de agendas e empresas.','err');return false;}}
@@ -4123,6 +4151,12 @@ function openUsersArea(preferred=''){
 }
 function switchDevTab(id,btn){
   if(!devTabAllowed(id)){showAccessDenied(ACCESS_AREA_LABELS[id]||id,btn);return;}
+  if(id==='compras'){
+    if(purchaseOrdersView==='multilevel')startPurchaseMultilevelSync();
+    if(purchaseOrdersView==='drawings')startEngineeringDrawingSync();
+  }else if(document.getElementById('page-compras')?.classList.contains('active')){
+    stopPurchaseDetailListeners();
+  }
   document.body.classList.remove('system-home-active');
   document.getElementById('configurationButton')?.classList.remove('active');
   if(document.getElementById('page-simulador')?.classList.contains('active'))saveSimulatorDraft(true);
@@ -12657,7 +12691,14 @@ function exportPurchaseOrdersPDF(){
 }
 const PURCHASE_AI_ENDPOINT='http://127.0.0.1:31998';
 function purchaseAiFetch(path,options={}){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),300000);return fetch(`${PURCHASE_AI_ENDPOINT}${path}`,{...options,signal:controller.signal}).finally(()=>clearTimeout(timeout));}
-function switchPurchaseOrdersView(view){purchaseOrdersView=['orders','multilevel','drawings'].includes(view)?view:'orders';renderPurchaseOrdersPage();}
+function switchPurchaseOrdersView(view){
+  const next=['orders','multilevel','drawings'].includes(view)?view:'orders';
+  if(next!==purchaseOrdersView)stopPurchaseDetailListeners();
+  purchaseOrdersView=next;
+  if(next==='multilevel')startPurchaseMultilevelSync();
+  if(next==='drawings')startEngineeringDrawingSync();
+  renderPurchaseOrdersPage();
+}
 function purchaseAiSetStatus(text,state=''){const el=document.getElementById('purchaseProposalAiStatus');if(!el)return;el.textContent=text;el.classList.remove('online','error');if(state)el.classList.add(state);}
 async function checkPurchaseProposalAiHealth(){purchaseAiSetStatus('Verificando...');try{const response=await purchaseAiFetch('/health'),data=await response.json();if(data.ready){purchaseAiSetStatus('Qwen3 4B conectado','online');return true;}purchaseAiSetStatus(data.ollama?'Modelo não instalado':'Ollama desconectado','error');return false;}catch{purchaseAiSetStatus('Serviço local parado','error');return false;}}
 function purchaseAiNumber(value){if(typeof value==='number')return Number.isFinite(value)?value:0;let text=String(value??'').trim().replace(/[^\d,.-]/g,'');if(!text)return 0;if(text.includes(',')&&text.includes('.'))text=text.lastIndexOf(',')>text.lastIndexOf('.')?text.replace(/\./g,'').replace(',','.'):text.replace(/,/g,'');else if(text.includes(','))text=text.replace(',','.');const number=Number(text);return Number.isFinite(number)?number:0;}
@@ -14758,6 +14799,61 @@ function refreshUIFromDB(){
 let _initialLoadDone=false;
 let _realtimeStarted=false;
 let salesTravelSyncLoaded=false;
+let mainDocumentUnsubscribe=null;
+let filesDocumentUnsubscribe=null;
+function pauseLargeDocumentListeners(){
+  if(document.visibilityState!=='hidden'||!_initialLoadDone)return;
+  if(mainDocumentUnsubscribe){mainDocumentUnsubscribe();mainDocumentUnsubscribe=null;}
+  if(filesDocumentUnsubscribe){filesDocumentUnsubscribe();filesDocumentUnsubscribe=null;}
+  stopPurchaseDetailListeners();
+}
+function resumeLargeDocumentListeners(){
+  if(document.visibilityState==='hidden')return;
+  if(!mainDocumentUnsubscribe)listenMainDocument();
+  if(!filesDocumentUnsubscribe)listenFilesDocument();
+  if(document.getElementById('page-compras')?.classList.contains('active')){
+    if(purchaseOrdersView==='multilevel')startPurchaseMultilevelSync();
+    if(purchaseOrdersView==='drawings')startEngineeringDrawingSync();
+  }
+}
+function listenMainDocument(){
+  mainDocumentUnsubscribe=onSnapshot(DB_REF,(snap)=>{
+    if(!snap.exists()){
+      if(!_initialLoadDone){persist();}
+      return;
+    }
+    if(!snap.metadata.hasPendingWrites)lastSavedMainDocument=JSON.stringify(mainDocumentPayload(snap.data()));
+    const needsPersist=normalizeDB(snap.data());
+    hydrateMaxiprodStructures();
+    refreshUIFromDB();
+    if(!_initialLoadDone){
+      _initialLoadDone=true;
+      hideLoading();
+      pauseLargeDocumentListeners();
+    }
+    if(needsPersist)persist();
+  },err=>{
+    console.error('DB sync error:',err);
+    if(!_initialLoadDone){hideLoading();showToast('Erro ao conectar. Verifique sua conexão.','err');}
+  });
+}
+function listenFilesDocument(){
+  filesDocumentUnsubscribe=onSnapshot(FILE_REF,(snap)=>{
+    FILE_STORE=snap.exists()?(snap.data().files||{}):{};
+    if(migrateOrderFileKeys())persistFiles();
+    if(document.getElementById('page-clientes')?.classList.contains('active')&&selectedUserId!=null&&typeof selectUser==='function')selectUser(selectedUserId);
+  },err=>{console.error('Files sync error:',err);});
+}
+function stopPurchaseDetailListeners(){
+  for(const key of ['purchaseMultilevelUnsubscribe','purchaseMultilevelStatusUnsubscribe','engineeringDrawingLotsUnsubscribe','engineeringDrawingWorkflowUnsubscribe']){
+    const unsubscribe=({purchaseMultilevelUnsubscribe,purchaseMultilevelStatusUnsubscribe,engineeringDrawingLotsUnsubscribe,engineeringDrawingWorkflowUnsubscribe})[key];
+    if(unsubscribe)unsubscribe();
+  }
+  purchaseMultilevelUnsubscribe=null;
+  purchaseMultilevelStatusUnsubscribe=null;
+  engineeringDrawingLotsUnsubscribe=null;
+  engineeringDrawingWorkflowUnsubscribe=null;
+}
 
 // Inicia a sincronização com o Firestore. Só é chamada depois que o Firebase
 // confirma que existe uma sessão autenticada (mesmo que anônima), pois as
@@ -14769,22 +14865,10 @@ function startRealtimeSync(){
   // Listener em tempo real: qualquer alteração feita por QUALQUER administrador
   // (ex: Murilo importando um novo arquivo Project) é recebida automaticamente
   // por todos os outros administradores conectados, sem precisar recarregar a página.
-  onSnapshot(DB_REF,(snap)=>{
-    if(!snap.exists()){
-      if(!_initialLoadDone){persist();}
-      return;
-    }
-    const needsPersist=normalizeDB(snap.data());
-    hydrateMaxiprodStructures();
-    refreshUIFromDB();
-    if(!_initialLoadDone){
-      _initialLoadDone=true;
-      hideLoading();
-    }
-    if(needsPersist)persist();
-  },err=>{
-    console.error('DB sync error:',err);
-    if(!_initialLoadDone){hideLoading();showToast('Erro ao conectar. Verifique sua conexão.','err');}
+  listenMainDocument();
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='hidden')pauseLargeDocumentListeners();
+    else resumeLargeDocumentListeners();
   });
 
   // As agendas anuais ficam separadas do banco principal para poderem crescer
@@ -14822,13 +14906,7 @@ function startRealtimeSync(){
   },error=>{console.error('Schedule sync error:',error);showToast('Cronograma sem sincronização. Verifique a conexão.','err');});
 
   // Listener em tempo real dos arquivos anexados aos pedidos (mesmo princípio acima).
-  onSnapshot(FILE_REF,(snap)=>{
-    FILE_STORE=snap.exists()?(snap.data().files||{}):{};
-    if(migrateOrderFileKeys())persistFiles();
-    if(document.getElementById('page-clientes')?.classList.contains('active')&&selectedUserId!=null&&typeof selectUser==='function')selectUser(selectedUserId);
-  },err=>{
-    console.error('Files sync error:',err);
-  });
+  if(document.visibilityState!=='hidden')listenFilesDocument();
 
   // Cada orçamento passa a ocupar um documento independente. Na primeira
   // execução, um usuário mestre copia a base antiga sem apagá-la. Depois disso,
@@ -14838,8 +14916,7 @@ function startRealtimeSync(){
   // autenticação. A migração individual é iniciada depois que o papel do
   // usuário CARTAMAC foi identificado em startAdminSession().
   commercialBudgetStartLegacySync();
-  startPurchaseMultilevelSync();
-  startEngineeringDrawingSync();
+  // As coleções de compras e desenhos são abertas apenas na própria aba.
   startControladoriaSync();
 
   // Valores e estruturas vinculadas de Custos
