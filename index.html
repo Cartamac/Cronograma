@@ -13153,8 +13153,77 @@ function purchaseMultilevelEnsureCompletionState(){
   // documento que acabou de receber, pois isso pode alimentar um ciclo.
   purchaseMultilevelProjectCompletions=purchaseMultilevelReconcileCompletions(purchaseMultilevelStatuses,purchaseMultilevelProjectCompletions);
 }
-function purchaseMultilevelScheduleExpiry(){if(purchaseMultilevelExpiryTimer)clearTimeout(purchaseMultilevelExpiryTimer);const remaining=purchaseMultilevelLists.map(list=>purchaseMultilevelCompletionInfo(list.project)?.remaining).filter(value=>Number.isFinite(value));if(!remaining.length){purchaseMultilevelExpiryTimer=null;return;}const delay=Math.max(1000,Math.min(60000,Math.min(...remaining)));purchaseMultilevelExpiryTimer=setTimeout(async()=>{const changed=await purchaseMultilevelCleanupExpired();if(changed)schedulePurchaseMultilevelRender();purchaseMultilevelScheduleExpiry();},delay);}
-async function purchaseMultilevelCleanupExpired(){if(purchaseMultilevelCleanupBusy)return false;const now=Date.now(),expired=purchaseMultilevelLists.filter(list=>{const info=purchaseMultilevelCompletionInfo(list.project);return info&&info.expiresAt<=now;});if(!expired.length)return false;purchaseMultilevelCleanupBusy=true;let changed=false;try{const ids=expired.map(list=>list.id).filter(Boolean);for(let index=0;index<ids.length;index+=450){const batch=writeBatch(db);ids.slice(index,index+450).forEach(id=>batch.delete(doc(db,'cartamac',id)));await batch.commit();}const expiredIds=new Set(ids),remainingLists=purchaseMultilevelLists.filter(list=>!expiredIds.has(list.id)),remainingGroupKeys=new Set(remainingLists.flatMap(list=>(list.items||[]).map(item=>item.key)));await runTransaction(db,async transaction=>{const snapshot=await transaction.get(PURCHASE_MULTILEVEL_STATUS_REF),current=snapshot.exists()?(snapshot.data()||{}):{},statuses={...(current.statuses||{})},projectCompletions={...(current.projectCompletions||{})};expired.forEach(list=>{delete projectCompletions[purchaseMultilevelProjectKey(list.project)];(list.items||[]).forEach(item=>{delete statuses[purchaseMultilevelSourceStatusKey(item.key,list.project)];if(!remainingGroupKeys.has(item.key))delete statuses[item.key];});});transaction.set(PURCHASE_MULTILEVEL_STATUS_REF,{...current,statuses,projectCompletions,updatedAt:new Date().toISOString(),updatedBy:'Limpeza automática após 7 dias'});});purchaseMultilevelLists=remainingLists;if(expired.some(list=>String(list.project)===purchaseMultilevelProjectView))purchaseMultilevelProjectView='';changed=true;showToast(`${expired.length} pedido(s) concluído(s) foi(ram) removido(s) após o prazo de 7 dias.`,'ok');}catch(error){console.error('Limpeza automática multinível:',error);}finally{purchaseMultilevelCleanupBusy=false;}return changed;}
+let purchaseMultilevelPersistedProjectCompletions={};
+let purchaseMultilevelComparisonsNeedBackfill=false;
+async function purchaseMultilevelBackfillProjectCompletions(){
+  const missing=purchaseMultilevelLists.filter(list=>list.id&&!purchaseMultilevelPersistedProjectCompletions[purchaseMultilevelProjectKey(list.project)]&&(list.items||[]).length&&(list.items||[]).every(item=>(purchaseMultilevelStatuses[purchaseMultilevelSourceStatusKey(item.key,list.project)]||'new')==='bought'));
+  for(const list of missing){
+    const listRef=doc(db,'cartamac',list.id);
+    try{await runTransaction(db,async transaction=>{
+      const statusSnap=await transaction.get(PURCHASE_MULTILEVEL_STATUS_REF),listSnap=await transaction.get(listRef);
+      if(!statusSnap.exists()||!listSnap.exists())return;
+      const current=statusSnap.data()||{},saved=listSnap.data()||{},key=purchaseMultilevelProjectKey(saved.project);
+      if(saved.project!==list.project||saved.importedAt!==list.importedAt||current.projectCompletions?.[key])return;
+      const items=Array.isArray(saved.items)?saved.items:[];
+      if(!items.length||!items.every(item=>(current.statuses?.[purchaseMultilevelSourceStatusKey(item.key,saved.project)]||'new')==='bought'))return;
+      transaction.set(PURCHASE_MULTILEVEL_STATUS_REF,{...current,projectCompletions:{...(current.projectCompletions||{}),[key]:new Date().toISOString()},updatedAt:new Date().toISOString(),updatedBy:'Registro único de conclusão'});
+    });}catch(error){console.error('Registro de conclusão multinível:',error);}
+  }
+}
+// A verificação é independente dos snapshots. Nunca reagende uma gravação a
+// partir de uma alteração recebida do próprio documento de status.
+function purchaseMultilevelScheduleExpiry(){
+  if(purchaseMultilevelExpiryTimer)return;
+  purchaseMultilevelExpiryTimer=setTimeout(async()=>{
+    purchaseMultilevelExpiryTimer=null;
+    if(document.visibilityState==='visible'&&document.getElementById('page-compras')?.classList.contains('active')&&purchaseOrdersView==='multilevel'){
+      if(purchaseMultilevelListsLoaded&&purchaseMultilevelStatusesLoaded){
+        await purchaseMultilevelBackfillProjectCompletions();
+        const changed=await purchaseMultilevelCleanupExpired();
+        if(purchaseMultilevelComparisonsNeedBackfill)await purchaseMultilevelBackfillComparisonCompletionDates();
+        await purchaseMultilevelArchiveExpiredComparisons();
+        if(changed)schedulePurchaseMultilevelRender();
+      }
+      const nextDelay=purchaseMultilevelListsLoaded&&purchaseMultilevelStatusesLoaded?60*60*1000:60*1000;
+      purchaseMultilevelExpiryTimer=setTimeout(()=>{purchaseMultilevelExpiryTimer=null;purchaseMultilevelScheduleExpiry();},nextDelay);
+    }
+  },10000);
+}
+async function purchaseMultilevelCleanupExpired(){
+  if(purchaseMultilevelCleanupBusy)return false;
+  const now=Date.now(),expired=purchaseMultilevelLists.filter(list=>{
+    const completed=Date.parse(purchaseMultilevelProjectCompletions[purchaseMultilevelProjectKey(list.project)]||'');
+    return list.id&&Number.isFinite(completed)&&completed+PURCHASE_MULTILEVEL_RETENTION_MS<=now;
+  });
+  if(!expired.length)return false;
+  purchaseMultilevelCleanupBusy=true;let removed=0;
+  try{
+    for(const list of expired){
+      const listRef=doc(db,'cartamac',list.id);
+      const deleted=await runTransaction(db,async transaction=>{
+        const statusSnap=await transaction.get(PURCHASE_MULTILEVEL_STATUS_REF);
+        const listSnap=await transaction.get(listRef);
+        if(!statusSnap.exists()||!listSnap.exists())return false;
+        const current=statusSnap.data()||{},saved=listSnap.data()||{};
+        if(String(saved.project||'')!==String(list.project||'')||String(saved.importedAt||'')!==String(list.importedAt||''))return false;
+        const key=purchaseMultilevelProjectKey(saved.project),completed=Date.parse(current.projectCompletions?.[key]||'');
+        if(!Number.isFinite(completed)||completed+PURCHASE_MULTILEVEL_RETENTION_MS>Date.now())return false;
+        const items=Array.isArray(saved.items)?saved.items:[];
+        if(!items.length||!items.every(item=>(current.statuses?.[purchaseMultilevelSourceStatusKey(item.key,saved.project)]||'new')==='bought'))return false;
+        const statuses={...(current.statuses||{})},projectCompletions={...(current.projectCompletions||{})};
+        delete projectCompletions[key];
+        items.forEach(item=>delete statuses[purchaseMultilevelSourceStatusKey(item.key,saved.project)]);
+        transaction.delete(listRef);
+        transaction.set(PURCHASE_MULTILEVEL_STATUS_REF,{...current,statuses,projectCompletions,updatedAt:new Date().toISOString(),updatedBy:'Limpeza automática após 7 dias'});
+        return true;
+      });
+      if(deleted)removed++;
+    }
+    if(removed)showToast(`${removed} pedido(s) concluído(s) removido(s) após 7 dias.`,'ok');
+  }catch(error){console.error('Limpeza automática multinível:',error);}
+  finally{purchaseMultilevelCleanupBusy=false;}
+  return removed>0;
+}
 function purchaseMultilevelTreeDetail(group,source){if(group.type==='PERFIL'){const quantity=purchaseMultilevelFormat(source.quantity),length=purchaseMultilevelFormat(source.length);return source.length?`QTD ${quantity} × ${length} mm`:`QTD ${quantity} · comprimentos variados`;}return `QTD TOTAL: ${purchaseMultilevelFormat(source.quantity)}`;}
 function purchaseMultilevelComparisonId(prefix='fornecedor'){return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;}
 function purchaseMultilevelNormalizePriceComparison(value){
@@ -13363,8 +13432,8 @@ function purchaseMultilevelScheduleComparisonExpiry(){
   const delay=Math.max(1000,Math.min(3600000,Math.max(Math.min(...expiries),purchaseComparisonArchiveRetryAt)-Date.now()));
   purchaseComparisonExpiryTimer=setTimeout(async()=>{await purchaseMultilevelArchiveExpiredComparisons();purchaseMultilevelScheduleComparisonExpiry();},delay);
 }
-async function purchaseMultilevelBackfillComparisonCompletionDates(rawComparisons){
-  if(purchaseComparisonBackfillBusy||!Array.isArray(rawComparisons)||!rawComparisons.some(comparison=>purchaseMultilevelComparisonIsComplete(comparison)&&!Number.isFinite(Date.parse(comparison.completedAt||''))))return;
+async function purchaseMultilevelBackfillComparisonCompletionDates(){
+  if(purchaseComparisonBackfillBusy)return;
   purchaseComparisonBackfillBusy=true;
   try{
     await runTransaction(db,async transaction=>{
@@ -13496,6 +13565,7 @@ purchaseMultilevelMarkup=function(){
 };
 function schedulePurchaseMultilevelRender(){if(!document.getElementById('page-compras')?.classList.contains('active')||purchaseOrdersView!=='multilevel'||realtimeUiHasActiveEditor()||purchaseMultilevelFiles.length)return;if(purchaseMultilevelRenderFrame)return;purchaseMultilevelRenderFrame=requestAnimationFrame(()=>{purchaseMultilevelRenderFrame=0;renderPurchaseOrdersPage();});}
 function startPurchaseMultilevelSync(){
+  purchaseMultilevelScheduleExpiry();
   if(!purchaseMultilevelUnsubscribe){
     purchaseMultilevelUnsubscribe=onSnapshot(query(PURCHASE_MULTILEVEL_COLLECTION,where('_entity','==','purchaseMultilevelList')),snapshot=>{
       purchaseMultilevelLists=[];
@@ -13513,7 +13583,9 @@ function startPurchaseMultilevelSync(){
       purchaseMultilevelAwardedSuppliers=data.awardedSuppliers||{};
       purchaseMultilevelPriceComparison=purchaseMultilevelNormalizePriceComparison(data.priceComparison);
       purchaseMultilevelPriceComparisons=purchaseMultilevelNormalizePriceComparisons(data.priceComparisons,data.priceComparison);
+      purchaseMultilevelComparisonsNeedBackfill=Array.isArray(data.priceComparisons)&&data.priceComparisons.some(comparison=>purchaseMultilevelComparisonIsComplete(comparison)&&!Number.isFinite(Date.parse(comparison.completedAt||'')));
       purchaseMultilevelProjectCompletions=data.projectCompletions||{};
+      purchaseMultilevelPersistedProjectCompletions=data.projectCompletions||{};
       purchaseMultilevelStatusesLoaded=true;
       purchaseMultilevelEnsureCompletionState();
       schedulePurchaseMultilevelRender();
@@ -14874,6 +14946,8 @@ function listenFilesDocument(){
   },err=>{console.error('Files sync error:',err);});
 }
 function stopPurchaseDetailListeners(){
+  if(purchaseMultilevelExpiryTimer){clearTimeout(purchaseMultilevelExpiryTimer);purchaseMultilevelExpiryTimer=null;}
+  if(purchaseComparisonExpiryTimer){clearTimeout(purchaseComparisonExpiryTimer);purchaseComparisonExpiryTimer=null;}
   for(const key of ['purchaseMultilevelUnsubscribe','purchaseMultilevelStatusUnsubscribe','engineeringDrawingLotsUnsubscribe','engineeringDrawingWorkflowUnsubscribe']){
     const unsubscribe=({purchaseMultilevelUnsubscribe,purchaseMultilevelStatusUnsubscribe,engineeringDrawingLotsUnsubscribe,engineeringDrawingWorkflowUnsubscribe})[key];
     if(unsubscribe)unsubscribe();
