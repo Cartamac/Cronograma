@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./cartamac-favicon.png?v=161">
 <link rel="shortcut icon" href="./favicon.ico?v=161" sizes="any">
 <link rel="apple-touch-icon" href="./cartamac-favicon.png?v=161">
-<title>Cartamac — Sistema Cartamac · Rev.596</title>
+<title>Cartamac — Sistema Cartamac · Rev.597</title>
 <meta name="theme-color" content="#c8a84b">
 <script>document.documentElement.dataset.theme='dark';</script>
 <style>
@@ -7862,16 +7862,29 @@ async function receiptSave(){
   }catch(error){console.error('Salvar recibo:',error);showToast(`Não foi possível salvar o recibo: ${error.message}`,'err');}
   finally{receiptBusy=false;const current=document.getElementById('receipt-save');if(current)current.disabled=false;}
 }
-function receiptSearchSet(value){receiptsSearch=String(value||'');renderReceiptPage();document.getElementById('receipt-search')?.focus();}
+function receiptSearchSet(value){receiptsSearch=String(value||'');renderReceiptPage(true);}
 function receiptDetails(row){return `<div class="receipt-paper"><div class="receipt-paper-top"><div class="receipt-number">Nº <strong>${row.number}</strong></div><h3>R E C I B O</h3><div class="receipt-amount"><small>Valor</small><strong>${esc(receiptMoney(row.amountCents))}</strong></div></div><div class="receipt-extenso">(${esc(receiptWords(row.amountCents).toUpperCase())})</div><dl><div><dt>Nome</dt><dd>${esc(row.name||'—')}</dd></div><div><dt>Forma de pagamento</dt><dd>${esc(row.paymentMethod||'—')}</dd></div><div><dt>Chave</dt><dd>${esc(row.paymentKey||'—')}</dd></div><div><dt>Referente</dt><dd>${esc(row.reference||'—')}</dd></div></dl><p>Para maior clareza firmamos o presente.</p><p class="receipt-date">Rio do Sul - SC, ${esc(receiptDateBR(row.date))}</p><p><strong>Emitente</strong> &nbsp; CARTAMAC Ind. e Com. Maq. Ind. Ltda<br><span class="receipt-cnpj">CNPJ: 36.417.759/0001-11</span></p><div class="receipt-signature"><span>Assinatura</span><i></i></div></div>`;}
 function receiptFormHtml(){const d=receiptDraft||{};return `<section class="receipt-form-card"><div class="receipt-section-head"><div><h3>${receiptMode==='edit'?`Editar recibo nº ${receiptSelected}`:`Novo recibo nº ${receiptNextNumber()}`}</h3><p>Os dados serão vinculados ao número do recibo.</p></div><button type="button" class="btn btn-ghost" onclick="receiptCancel()">Cancelar</button></div><div class="receipt-fields"><label>Data <input type="date" id="receipt-date" value="${esc(d.date||receiptToday())}"></label><label>Valor (R$) <input id="receipt-amount" inputmode="decimal" value="${esc(d.amountCents?String((d.amountCents/100).toFixed(2)).replace('.',','):'')}" placeholder="0,00"></label><label class="wide">Nome / favorecido <input id="receipt-name" value="${esc(d.name||'')}" placeholder="Nome ou empresa"></label><label>Forma de pagamento <input id="receipt-payment" value="${esc(d.paymentMethod||'')}" placeholder="PIX, transferência, dinheiro..."></label><label>Chave / dados do pagamento <input id="receipt-key" value="${esc(d.paymentKey||'')}" placeholder="Chave PIX ou outros dados"></label><label class="wide">Referente a <textarea id="receipt-reference" rows="3" placeholder="Descreva o motivo do pagamento">${esc(d.reference||'')}</textarea></label></div><div class="receipt-form-actions"><button type="button" id="receipt-save" class="btn btn-gold" onclick="receiptSave()" ${receiptBusy?'disabled':''}>${receiptMode==='edit'?'Salvar alterações':'Registrar recibo'}</button></div></section>`;}
-function renderReceiptPage(){
+function renderReceiptPage(resetListScroll=false){
   const target=document.getElementById('recibosContent');if(!target||!document.getElementById('page-recibos')?.classList.contains('active'))return;
+  const activeSearch=document.activeElement?.id==='receipt-search'?document.activeElement:null;
+  const selectionStart=activeSearch?.selectionStart,selectionEnd=activeSearch?.selectionEnd;
+  const oldList=target.querySelector?.('.receipt-list');
+  const listScrollTop=resetListScroll?0:(oldList?.scrollTop||0);
   const rows=receiptItems(),term=receiptsSearch.toLocaleLowerCase('pt-BR'),filtered=rows.filter(row=>!term||`${row.number} ${row.name} ${row.reference}`.toLocaleLowerCase('pt-BR').includes(term)),selected=receiptsStore.items[receiptSelected];
   const emptyMessage=receiptsLoadFailed?'Não foi possível carregar os recibos. Clique em “Atualizar lista” para tentar novamente.':receiptsLoading?'Carregando recibos...':'Nenhum recibo encontrado.';
   const list=`<section class="receipt-list-card"><div class="receipt-section-head"><div><h3>Recibos registrados</h3><p>${rows.length} recibo(s) · próximo nº ${receiptNextNumber()}</p></div><button type="button" class="btn btn-ghost btn-sm" onclick="receiptLoad(true)">Atualizar lista</button></div><input id="receipt-search" class="search-input" value="${esc(receiptsSearch)}" oninput="receiptSearchSet(this.value)" placeholder="Buscar por nº, nome ou referência"><div class="receipt-list">${filtered.length?filtered.map(row=>`<button type="button" class="receipt-list-row ${receiptSelected===row.number?'selected':''}" onclick="receiptOpen(${row.number})"><strong>Nº ${row.number}</strong><span>${esc(row.name||'Sem nome')}<small>${esc(receiptDateBR(row.date))}</small></span><b>${esc(receiptMoney(row.amountCents))}</b></button>`).join(''):`<p class="receipt-empty">${emptyMessage}</p>`}</div></section>`;
   const content=receiptMode==='new'||receiptMode==='edit'?receiptFormHtml():selected?`<section class="receipt-view"><div class="receipt-section-head"><div><h3>Recibo nº ${selected.number}</h3><p>Registro de ${esc(receiptDateBR(selected.date))}${selected.updatedBy?` · última alteração por ${esc(selected.updatedBy)}`:''}</p></div><div class="receipt-buttons"><button type="button" class="btn btn-ghost" onclick="receiptNew(true)">Novo com este cliente</button><button type="button" class="btn btn-ghost" onclick="receiptEdit()">Editar</button><button type="button" class="btn btn-gold" onclick="receiptPDF(${selected.number},true)">Imprimir / PDF</button></div></div>${receiptDetails(selected)}</section>`:`<section class="receipt-empty-card"><span class="msi">receipt_long</span><h3>Selecione um recibo</h3><p>Consulte os dados completos pelo número ou crie um novo registro.</p></section>`;
   target.innerHTML=`<div class="finance-head"><div><h2><span class="msi">receipt_long</span> Recibos</h2><p>Emissão, consulta e histórico dos recibos Cartamac.</p></div><div class="finance-actions"><button type="button" class="btn btn-gold" onclick="receiptNew()">+ Novo recibo</button></div></div><div class="receipt-layout">${list}${content}</div><details class="receipt-import"><summary>Importar histórico da planilha Excel</summary><p>Selecione a planilha “Recibo-simples CARTAMAC.xlsm”. A aba Cadastro será lida. Números já registrados são preservados.</p><input type="file" accept=".xlsm,.xlsx" onchange="receiptReadWorkbook(this.files[0]);this.value=''">${receiptImportPreview?`<div class="receipt-import-preview"><strong>${receiptImportPreview.rows.length} recibo(s) válidos</strong> · nº ${receiptImportPreview.min} a ${receiptImportPreview.max} · arquivo ${esc(receiptImportPreview.name)}<br><small>${receiptImportPreview.duplicates} número(s) já cadastrados serão ignorados.</small><div><button type="button" class="btn btn-gold btn-sm" onclick="receiptCommitImport()" ${receiptBusy?'disabled':''}>Importar históricos</button></div></div>`:''}</details>`;
+  const newList=target.querySelector?.('.receipt-list');
+  if(newList)newList.scrollTop=listScrollTop;
+  if(activeSearch){
+    const newSearch=document.getElementById('receipt-search');
+    if(newSearch){
+      newSearch.focus({preventScroll:true});
+      if(typeof selectionStart==='number'&&typeof newSearch.setSelectionRange==='function')newSearch.setSelectionRange(selectionStart,typeof selectionEnd==='number'?selectionEnd:selectionStart);
+    }
+  }
   if(!receiptsLoaded&&!receiptsLoading&&!receiptsLoadFailed)receiptLoad();
 }
 async function receiptReadWorkbook(file){
