@@ -10593,7 +10593,7 @@ function eqpRender(){const host=document.getElementById('partsProposalsWorkspace
 function eqpCurrency(value){const n=Number(String(value||'').replace(/\./g,'').replace(',','.'));return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number.isFinite(n)?n:0);}
 function eqpPreview(){eqpCaptureForm();const selected=eqpModels.filter(x=>eqpSelected.has(x.id));if(!selected.length)return eqpStatus('Selecione pelo menos um equipamento na biblioteca.',true);if(!eqpForm.company?.trim())return eqpStatus('Informe a empresa destinatária.',true);const host=document.getElementById('eqpPreviewHost');host.innerHTML=`<div class="eqp-modal" role="dialog"><div class="eqp-modal-head"><b>Prévia da proposta</b><button class="btn btn-ghost" onclick="document.getElementById('eqpPreviewHost').innerHTML=''">Fechar</button><button class="btn btn-gold" onclick="eqpPrint()">Imprimir / salvar PDF</button></div><div id="eqpPrintable">${eqpDocument(selected)}</div></div>`;host.scrollIntoView({block:'start',behavior:'smooth'});}
 function eqpPage(content,number){return `<section class="eqp-page"><div class="eqp-topbar"></div><header><img src="${EQP_LOGO_DATA}" alt="Cartamac"></header><main>${content}</main><footer><div><b>FÁBRICA</b><p>JAISON BATISTI<br>Fone: 47 9 8806 8282<br>E-mail: vendas@cartamac.com.br</p></div><div class="eqp-foot-right"><b>CARTAMAC IND. E COM. DE MAQ. IND. LTDA</b><br>CNPJ: 36.417.759/0001-11<br>Fone: 47 3300 3200<br>Rua Paulo Alves do Nascimento, 3795, Galpão 2 e 3<br>Lontras/SC · CEP 89.182-000<br>Página ${number}</div></footer><div class="eqp-bottombar"></div></section>`;}
-function eqpPrint(){const root=document.getElementById('eqpPrintable');if(!root)return;eqpPaginateForPrintRev636(root);const overflowing=[...root.querySelectorAll('.eqp-page main')].some(node=>node.scrollHeight>node.clientHeight+3);if(overflowing){showToast('Há conteúdo fora da página. Revise o modelo antes de imprimir.','err');return;}const html=root.innerHTML;const frame=document.createElement('iframe');frame.style.cssText='position:fixed;width:0;height:0;opacity:0';document.body.appendChild(frame);frame.contentDocument.open();frame.contentDocument.write(`<!doctype html><html><head><meta charset="utf-8"><style>${EQP_PRINT_CSS}</style></head><body>${html}</body></html>`);frame.contentDocument.close();frame.contentDocument.title=eqpProposalBaseNameRev641();frame.onload=()=>{frame.contentWindow.focus();frame.contentWindow.print();setTimeout(()=>frame.remove(),30000);};}
+function eqpPrint(){const root=document.getElementById('eqpPrintable');if(!root)return;eqpPaginateForPrintRev636(root);const overflowing=[...root.querySelectorAll('.eqp-page main')].some(eqpPageOverflowsRev647);if(overflowing){showToast('Há conteúdo fora da página. Revise o modelo antes de imprimir.','err');return;}const html=root.innerHTML;const frame=document.createElement('iframe');frame.style.cssText='position:fixed;width:0;height:0;opacity:0';document.body.appendChild(frame);frame.contentDocument.open();frame.contentDocument.write(`<!doctype html><html><head><meta charset="utf-8"><style>${EQP_PRINT_CSS}</style></head><body>${html}</body></html>`);frame.contentDocument.close();frame.contentDocument.title=eqpProposalBaseNameRev641();frame.onload=()=>{frame.contentWindow.focus();frame.contentWindow.print();setTimeout(()=>frame.remove(),30000);};}
 // Rev.618: dados comerciais do orçamento, sem recalcular a formação de preço.
 function eqpBudgetCommercialDetailsRev618(){
   const source=eqpBudgetSourceRev617;
@@ -17777,7 +17777,7 @@ async function eqpDownloadWordRev631(button){
   try{
     await Promise.all([...root.querySelectorAll('img')].map(image=>image.decode?.().catch(()=>{})));
     const pages=[...root.querySelectorAll(':scope > .eqp-page')];if(!pages.length)throw Error('Nenhuma página disponível para exportação.');
-    const overflowing=pages.some(page=>{const main=page.querySelector('main');return main&&main.scrollHeight>main.clientHeight+3;});
+    const overflowing=pages.some(page=>{const main=page.querySelector('main');return main&&eqpPageOverflowsRev647(main);});
     const state={images:new Map(),documentRelations:[],headerRelations:[],drawingId:0};
     const body=pages.map((page,index)=>{
       const main=page.querySelector('main');
@@ -17824,10 +17824,16 @@ eqpPreview=function(){
 Object.assign(window,{eqpPreview,eqpDownloadWordRev631});
 
 // Pagina os blocos da cópia de impressão antes da checagem de transbordamento.
+function eqpPageOverflowsRev647(main){
+  if(main.scrollHeight<=main.clientHeight+3)return false;
+  const last=main.lastElementChild;
+  // scrollHeight inclui a margem final mesmo quando todo o conteúdo está visível.
+  return !!last&&last.getBoundingClientRect().bottom>main.getBoundingClientRect().bottom+2;
+}
 function eqpPaginateForPrintRev636(root){
   const pages=[...root.querySelectorAll(':scope > .eqp-page')];
   let nextNumber=pages.length;
-  const overflow=main=>main.scrollHeight>main.clientHeight+3;
+  const overflow=eqpPageOverflowsRev647;
   for(let index=0;index<pages.length;index++){
     const page=pages[index],main=page.querySelector('main');
     if(!main)continue;
@@ -17842,6 +17848,18 @@ function eqpPaginateForPrintRev636(root){
         pages.splice(index+1,0,next);
       }
       const target=next.querySelector('main');
+      const last=main.lastElementChild;
+      if(last?.matches('section,div')&&last.children.length>1){
+        let copy=target.firstElementChild;
+        if(!copy||copy.tagName!==last.tagName||copy.dataset.eqpPrintSplitContainerRev647!=='yes'){
+          copy=last.cloneNode(false);
+          copy.removeAttribute('id');
+          copy.dataset.eqpPrintSplitContainerRev647='yes';
+          target.prepend(copy);
+        }
+        copy.prepend(last.lastElementChild);
+        continue;
+      }
       if(main.children.length>1){target.prepend(main.lastElementChild);continue;}
       const table=main.lastElementChild;
       if(table?.matches('table')){
