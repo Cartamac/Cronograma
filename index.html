@@ -17023,6 +17023,39 @@ Object.assign(window,{eqpRender,eqpPreview});
 function eqpClientNameKeyRev623(value){
   return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleUpperCase('pt-BR').replace(/[^A-Z0-9]+/g,' ').trim().replace(/\s+/g,' ');
 }
+// Rev.646: reconhece o início do nome empresarial, sem escolher entre clientes ambíguos.
+function eqpClientNameTokensRev646(value){
+  const tokens=eqpClientNameKeyRev623(value).split(' ').filter(Boolean);
+  const suffixes=new Set(['LTDA','LIMITADA','EIRELI','ME','EPP','SPE','SA']);
+  while(tokens.length){
+    if(tokens.length>=2&&tokens[tokens.length-2]==='S'&&tokens[tokens.length-1]==='A')tokens.splice(-2);
+    else if(suffixes.has(tokens[tokens.length-1]))tokens.pop();
+    else break;
+  }
+  return tokens;
+}
+function eqpFindClientByNameRev646(name,clients){
+  const key=eqpClientNameKeyRev623(name);
+  if(!key)return {client:null,ambiguous:false};
+  const choose=matches=>({
+    client:matches.length===1?matches[0]:null,
+    ambiguous:matches.length>1
+  });
+  const exact=clients.filter(client=>eqpClientNameKeyRev623(client.company)===key);
+  if(exact.length)return choose(exact);
+  const tokens=eqpClientNameTokensRev646(name);
+  if(!tokens.length)return {client:null,ambiguous:false};
+  const canonical=clients.filter(client=>eqpClientNameTokensRev646(client.company).join(' ')===tokens.join(' '));
+  if(canonical.length)return choose(canonical);
+  const similar=clients.filter(client=>{
+    const other=eqpClientNameTokensRev646(client.company);
+    const shorter=tokens.length<=other.length?tokens:other;
+    const longer=tokens.length<=other.length?other:tokens;
+    if(shorter.length<2&&(shorter.length!==1||shorter[0].length<6))return false;
+    return shorter.every((part,index)=>part===longer[index]);
+  });
+  return choose(similar);
+}
 const eqpOpenBudgetBaseRev623=eqpOpenBudgetRev617;
 eqpOpenBudgetRev617=async function(id){
   const budget=COMMERCIAL_BUDGETS.find(item=>String(item.id)===String(id));
@@ -17036,14 +17069,16 @@ eqpOpenBudgetRev617=async function(id){
     const clients=await eqpClientStoreRev612('all');
     if(!eqpBudgetSourceRev617||String(eqpBudgetSourceRev617.budgetId)!==String(id))return result;
     eqpClientsRev612=clients.sort((a,b)=>String(a.company||'').localeCompare(String(b.company||''),'pt-BR'));
-    const matches=clients.filter(client=>eqpClientNameKeyRev623(client.company)===key);
-    const client=matches.sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')))[0];
+    const match=eqpFindClientByNameRev646(budget.client,clients);
+    const client=match.client;
     if(client){
       eqpClientIdRev612=client.id;
       eqpApplyClientRev612(client);
       eqpForm.extraContactsRev614=Array.isArray(client.extraContactsRev614)?client.extraContactsRev614.map(contact=>({...contact})):[];
       eqpRender();
       eqpStatus('Dados de '+client.company+' preenchidos da biblioteca de clientes.');
+    }else if(match.ambiguous){
+      eqpStatus('Há mais de um cliente com nome semelhante. Selecione o cadastro correto em Destinatário.');
     }
   }catch(error){console.error(error);eqpStatus('Não foi possível consultar a biblioteca de clientes: '+error.message,true);}
   return result;
