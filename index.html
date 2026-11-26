@@ -17647,7 +17647,32 @@ function eqpWordInlineRev631(node,state){
   if(node.matches('img'))return eqpWordImageRev631(node,state);
   return [...node.childNodes].map(child=>eqpWordInlineRev631(child,state)).join('');
 }
+
+// A prévia tem folhas fixas; o Word deve paginar livremente dentro da seção.
+function eqpWordSectionRev660(page,main,current){
+  if(page.classList.contains('eqp-toc-page-rev646'))return 'toc';
+  const heading=[...main?.children||[]].find(child=>child.matches?.('h2')&&/^\d+\./.test(child.textContent.trim()));
+  const match=heading?.textContent.trim().match(/^(\d+)\./);
+  return match?match[1]:current;
+}
+function eqpWordHeadingKeyRev660(text){
+  const match=String(text||'').replace(/\s+/g,' ').trim().match(/^(\d+(?:\.\d+)*)(?:\.)?\s+/);
+  return match?.[1]||'';
+}
+function eqpWordBookmarkRev660(key,state){
+  if(!state.bookmarksRev660)state.bookmarksRev660=new Map();
+  if(!state.bookmarksRev660.has(key))state.bookmarksRev660.set(key,{
+    id:state.bookmarksRev660.size+1,
+    name:'EQP_'+key.replace(/\./g,'_')
+  });
+  return state.bookmarksRev660.get(key);
+}
+
 function eqpWordParagraphRev631(node,state,options={}){
+  if(node.matches?.('h2')&&node.closest?.('.eqp-toc-page-rev646')){
+    if(state.tocTitleSeenRev660)return '';
+    state.tocTitleSeenRev660=true;
+  }
   const style=getComputedStyle(node),insideCover=!!node.closest?.('.eqp-cover-recipient-rev628');
   const commercialTitle=node.matches?.('h2')&&/^4\.\s*PROPOSTA COMERCIAL/i.test(node.textContent.trim());
   const requested=style.textAlign==='justify'&&node.querySelector?.('br')?'left':style.textAlign;
@@ -17663,7 +17688,11 @@ function eqpWordParagraphRev631(node,state,options={}){
   const outline=node.matches('h1,h2,h3,h4')?`<w:outlineLvl w:val="${Math.min(3,Number(node.tagName.slice(1))-1)}"/>`:'';
   const rule=node.matches('h4')&&node.closest('.eqp-budget-commercial-rev618')?'<w:pBdr><w:bottom w:val="single" w:sz="4" w:color="555555"/></w:pBdr>':'';
   const runs=options.prefix?eqpWordRunRev631(options.prefix,node):'';
-  return `<w:p><w:pPr><w:jc w:val="${align}"/><w:spacing w:before="${before}" w:after="${after}" w:line="${line}" w:lineRule="auto"/>${indentation}${shading}${rule}${keep}${outline}</w:pPr>${runs}${eqpWordInlineRev631(node,state)}</w:p>`;
+  const key=node.matches?.('h2,h3,h4')?eqpWordHeadingKeyRev660(node.textContent):'';
+  const bookmark=key?eqpWordBookmarkRev660(key,state):null;
+  const bookmarkStart=bookmark?`<w:bookmarkStart w:id="${bookmark.id}" w:name="${bookmark.name}"/>`:'';
+  const bookmarkEnd=bookmark?`<w:bookmarkEnd w:id="${bookmark.id}"/>`:'';
+  return `<w:p><w:pPr><w:jc w:val="${align}"/><w:spacing w:before="${before}" w:after="${after}" w:line="${line}" w:lineRule="auto"/>${indentation}${shading}${rule}${keep}${outline}</w:pPr>${bookmarkStart}${runs}${eqpWordInlineRev631(node,state)}${bookmarkEnd}</w:p>`;
 }
 function eqpWordSpacerRev631(twips){return `<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="${twips}" w:lineRule="exact"/></w:pPr></w:p>`;}
 function eqpWordCellRev631(cell,state,width,fill){
@@ -17760,13 +17789,14 @@ async function eqpDownloadWordRev631(button){
   try{
     await Promise.all([...root.querySelectorAll('img')].map(image=>image.decode?.().catch(()=>{})));
     const pages=[...root.querySelectorAll(':scope > .eqp-page')];if(!pages.length)throw Error('Nenhuma página disponível para exportação.');
-    const overflowing=pages.some(page=>{const main=page.querySelector('main');return main&&main.scrollHeight>main.clientHeight+3;});
-    const state={images:new Map(),documentRelations:[],headerRelations:[],drawingId:0};
+    const state={images:new Map(),documentRelations:[],headerRelations:[],drawingId:0,bookmarksRev660:new Map(),tocEntriesSeenRev660:new Set()};
+    let section='cover';
     const body=pages.map((page,index)=>{
       const main=page.querySelector('main');
+      const nextSection=eqpWordSectionRev660(page,main,section);
       const content=main?eqpWordBlocksRev631(main,state):'';
-      const sectionStart=!!main?.querySelector(':scope > h2');
-      const pageBreak=index&&(!overflowing||sectionStart)?'<w:p><w:r><w:br w:type="page"/></w:r></w:p>':'';
+      const pageBreak=index&&content&&nextSection!==section?'<w:p><w:r><w:br w:type="page"/></w:r></w:p>':'';
+      section=nextSection;
       return pageBreak+content;
     }).join('');
     const header=eqpWordHeaderRev631(pages[0].querySelector('header img'),state);
@@ -17780,10 +17810,10 @@ async function eqpDownloadWordRev631(button){
     const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="${EQP_WORD_NS_REV631.w}" xmlns:r="${EQP_WORD_NS_REV631.r}" xmlns:wp="${EQP_WORD_NS_REV631.wp}" xmlns:a="${EQP_WORD_NS_REV631.a}" xmlns:pic="${EQP_WORD_NS_REV631.pic}"><w:body>${body}<w:sectPr><w:headerReference w:type="default" r:id="rId2"/><w:footerReference w:type="default" r:id="rId3"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="2030" w:right="1134" w:bottom="1530" w:left="1134" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>`;
     const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="${EQP_WORD_NS_REV631.w}"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="100"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style></w:styles>`;
     const zip=new JSZip();
-    zip.file('[Content_Types].xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/><Default Extension="webp" ContentType="image/webp"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>`);
+    zip.file('[Content_Types].xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/><Default Extension="webp" ContentType="image/webp"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>`);
     zip.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
-    zip.file('word/document.xml',doc);zip.file('word/styles.xml',styles);zip.file('word/header1.xml',header);zip.file('word/footer1.xml',footer);
-    zip.file('word/_rels/document.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>${state.documentRelations.map(item=>`<Relationship Id="${item.id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${item.asset.name}"/>`).join('')}</Relationships>`);
+    zip.file('word/document.xml',doc);zip.file('word/styles.xml',styles);zip.file('word/settings.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:settings xmlns:w="${EQP_WORD_NS_REV631.w}"><w:updateFields w:val="true"/></w:settings>`);zip.file('word/header1.xml',header);zip.file('word/footer1.xml',footer);
+    zip.file('word/_rels/document.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/><Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>${state.documentRelations.map(item=>`<Relationship Id="${item.id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${item.asset.name}"/>`).join('')}</Relationships>`);
     zip.file('word/_rels/header1.xml.rels',eqpWordRelationshipsRev631(state.headerRelations));
     for(const image of state.images.values())zip.file('word/media/'+image.name,image.base64,{base64:true});
     const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
@@ -18392,8 +18422,14 @@ eqpWordTableRev631=function(table,state){
     const cells=[...row.cells];if(cells.length<2)return '';
     const level=Number(row.className.match(/eqp-toc-level-(\d+)-rev647/)?.[1]||1);
     const indent=level>=3?510:level===2?230:0;
-    const title=eqpWordRunRev631(cells[0].textContent.trim(),cells[0]);
-    const number=eqpWordRunRev631(cells[1].textContent.trim(),cells[1]);
+    const label=cells[0].textContent.trim();
+    const key=eqpWordHeadingKeyRev660(label);
+    if(key&&state.tocEntriesSeenRev660.has(key))return '';
+    if(key)state.tocEntriesSeenRev660.add(key);
+    const title=eqpWordRunRev631(label,cells[0]);
+    const fallback=eqpWordRunRev631(cells[1].textContent.trim(),cells[1]);
+    const bookmark=key?eqpWordBookmarkRev660(key,state):null;
+    const number=bookmark?`<w:fldSimple w:instr="PAGEREF ${bookmark.name} \\h" w:dirty="true">${fallback}</w:fldSimple>`:fallback;
     return `<w:p><w:pPr><w:ind w:left="${indent}"/><w:tabs><w:tab w:val="right" w:pos="9638"/></w:tabs><w:spacing w:before="0" w:after="105" w:line="300" w:lineRule="auto"/><w:pBdr><w:between w:val="dotted" w:sz="3" w:space="4" w:color="AAAAAA"/><w:bottom w:val="dotted" w:sz="3" w:space="4" w:color="AAAAAA"/></w:pBdr></w:pPr>${title}<w:r><w:tab/></w:r>${number}</w:p>`;
   }).join('');
 };
