@@ -10584,8 +10584,10 @@ async function eqpReadDocx(file) {
       const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' :
         ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : null;
       if (!mime) continue;
-      current.blocks.push({ kind: 'image', src: `data:${mime};base64,${await entry.async('base64')}`,
-        name: `Imagem técnica ${current.blocks.filter(block => block.kind === 'image').length + 1}` });
+      const originalSrc=`data:${mime};base64,${await entry.async('base64')}`;
+      const croppedSrc=await eqpWordImageCropRev659(originalSrc,image,mime);
+      current.blocks.push({ kind: 'image', src: croppedSrc,
+        name: `Imagem técnica ${current.blocks.filter(block => block.kind === 'image').length + 1}`, ...eqpWordImageSizeRev658(image) });
     }
   }
   if (!models.length) throw Error('Não encontrei títulos de equipamentos na seção técnica do Word.');
@@ -10654,7 +10656,7 @@ function eqpDocument(models){
   pages.push(eqpPage(`<h2>1. INFORMAÇÕES GERAIS</h2><h3>1.1. DADOS GERAIS DA PROPOSTA</h3><table>${rows(details)}</table><h3>1.2. NORMAS BÁSICAS DE ENGENHARIA</h3><table>${rows(standards)}</table><h3>1.3. VENDOR LIST</h3><table><thead><tr><th>Descrição</th><th>Marca</th></tr></thead><tbody>${rows(vendors)}</tbody></table>`,++number));
   let firstTechnical=true;
   for(let i=0;i<models.length;i++){
-    const model=models[i],blocks=model.blocks.map(b=>b.kind==='image'?`<figure><img src="${eqpEsc(b.src)}" alt="${eqpEsc(b.name||model.title)}"></figure>`:eqpCleanHtml(b.html));
+    const model=models[i],blocks=eqpTechnicalBlocksRev654(model);
     let chunk=[],estimate=0,firstEquipment=true;
     const flush=()=>{if(!chunk.length)return;const heading=`${firstTechnical?'<h2>2. PROPOSTA TÉCNICA</h2>':''}${firstEquipment?`<h3>2.${i+1}. ${eqpEsc(model.title)}</h3>`:''}`;pages.push(eqpPage(heading+chunk.join(''),++number));firstTechnical=false;firstEquipment=false;chunk=[];estimate=0;};
     for(const block of blocks){const text=block.replace(/<[^>]*>/g,''),height=block.startsWith('<figure')?370:block.startsWith('<table')?Math.max(95,(block.match(/<tr>/g)||[]).length*34):Math.max(28,Math.ceil(text.length/95)*18+16);if(chunk.length&&estimate+height>690)flush();chunk.push(block);estimate+=height;}flush();
@@ -10671,7 +10673,7 @@ let eqpSaving=false;
 function eqpOpenLocal(){return new Promise((resolve,reject)=>{const request=indexedDB.open(EQP_LOCAL_DB,1);request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('models'))request.result.createObjectStore('models',{keyPath:'id'});};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error||Error('Não foi possível abrir o armazenamento do navegador.'));});}
 async function eqpLocalAction(mode,value){const database=await eqpOpenLocal();return new Promise((resolve,reject)=>{const transaction=database.transaction('models',mode==='all'?'readonly':'readwrite'),store=transaction.objectStore('models');let request;if(mode==='all')request=store.getAll();else if(mode==='put')request=store.put(value);else request=store.delete(value);request.onerror=()=>reject(request.error||Error('Falha ao gravar no navegador.'));transaction.oncomplete=()=>{database.close();resolve(request.result);};transaction.onerror=()=>{database.close();reject(transaction.error||Error('Falha no armazenamento local.'));};});}
 async function eqpLoad(){if(eqpLoading)return;eqpLoading=true;eqpStatus('Carregando biblioteca deste navegador…');try{eqpModels=(await eqpLocalAction('all')).sort((a,b)=>a.title.localeCompare(b.title,'pt-BR'));eqpCaptureForm();eqpRender();eqpStatus(`${eqpModels.length} equipamento(s) salvo(s) neste navegador.`);}catch(error){console.error(error);eqpStatus(`Não foi possível abrir a biblioteca local: ${error.message}`,true);}finally{eqpLoading=false;}}
-async function eqpSave(){if(eqpSaving)return;if(!eqpDraft?.length)return eqpStatus('Importe um Word ou PDF antes de salvar.',true);eqpSaving=true;const button=document.querySelector('#eqp-review .btn-gold');if(button)button.disabled=true;eqpStatus('Salvando equipamentos neste navegador…');const saved=[];try{for(const model of eqpDraft){if(!String(model.title||'').trim())throw Error('Informe o nome de todos os equipamentos.');const record={id:model.id||eqpNewId(),cloudRevision:model.cloudRevision,title:model.title.trim(),source:model.source||'',format:model.format||'DOCX',blocks:model.blocks.map(block=>block.kind==='html'?{kind:'html',html:eqpCleanHtml(block.html)}:{kind:'image',src:block.src,assetPath:block.assetPath,name:block.name||'Imagem técnica'}),updatedAt:new Date().toISOString(),storage:'local'};await eqpLocalAction('put',record);saved.push(record);}for(const record of saved){const position=eqpModels.findIndex(x=>x.id===record.id);if(position<0)eqpModels.push(record);else eqpModels[position]=record;eqpSelected.add(record.id);}eqpDraft=null;eqpCaptureForm();eqpRender();eqpStatus(`${saved.length} equipamento(s) salvo(s) e selecionado(s) neste navegador.`);}catch(error){console.error(error);eqpStatus(`Não foi possível salvar: ${error.message}. A importação continua aberta.`,true);}finally{eqpSaving=false;const current=document.querySelector('#eqp-review .btn-gold');if(current)current.disabled=false;}}
+async function eqpSave(){if(eqpSaving)return;if(!eqpDraft?.length)return eqpStatus('Importe um Word ou PDF antes de salvar.',true);eqpSaving=true;const button=document.querySelector('#eqp-review .btn-gold');if(button)button.disabled=true;eqpStatus('Salvando equipamentos neste navegador…');const saved=[];try{for(const model of eqpDraft){if(!String(model.title||'').trim())throw Error('Informe o nome de todos os equipamentos.');const record={id:model.id||eqpNewId(),cloudRevision:model.cloudRevision,title:model.title.trim(),source:model.source||'',format:model.format||'DOCX',blocks:model.blocks.map(block=>block.kind==='html'?{kind:'html',html:eqpCleanHtml(block.html)}:{kind:'image',src:block.src,assetPath:block.assetPath,name:block.name||'Imagem técnica',widthMm:block.widthMm,heightMm:block.heightMm}),updatedAt:new Date().toISOString(),storage:'local'};await eqpLocalAction('put',record);saved.push(record);}for(const record of saved){const position=eqpModels.findIndex(x=>x.id===record.id);if(position<0)eqpModels.push(record);else eqpModels[position]=record;eqpSelected.add(record.id);}eqpDraft=null;eqpCaptureForm();eqpRender();eqpStatus(`${saved.length} equipamento(s) salvo(s) e selecionado(s) neste navegador.`);}catch(error){console.error(error);eqpStatus(`Não foi possível salvar: ${error.message}. A importação continua aberta.`,true);}finally{eqpSaving=false;const current=document.querySelector('#eqp-review .btn-gold');if(current)current.disabled=false;}}
 async function eqpDelete(id){const model=eqpModels.find(x=>x.id===id);if(!model||!confirm(`Excluir o modelo ${model.title} deste navegador?`))return;try{await eqpLocalAction('delete',id);eqpModels=eqpModels.filter(x=>x.id!==id);eqpSelected.delete(id);eqpCaptureForm();eqpRender();eqpStatus('Equipamento excluído deste navegador.');}catch(error){eqpStatus(`Não foi possível excluir: ${error.message}`,true);}}
 
 // The proposal is a disposable working copy. Changes here never update the saved model.
@@ -10830,6 +10832,8 @@ function eqpStandardNodesRev611(model){
       const img=document.createElement('img');
       img.src=block.src;
       img.alt=block.name||model.title;
+      if(block.widthMm)img.dataset.eqpImageWidthMm=String(block.widthMm);
+      if(block.heightMm)img.dataset.eqpImageHeightMm=String(block.heightMm);
       figure.append(img);
       result.push(figure);
       return;
@@ -10893,7 +10897,7 @@ async function eqpSaveStandardRev611(index){
   const button=document.querySelector('#eqpStandardPreviewHost [data-eqp-save]');
   if(button)button.disabled=true;
   try{
-    const record={id:model.id||eqpNewId(),cloudRevision:model.cloudRevision,title:model.title.trim(),source:model.source||'',format:model.format||'DOCX',blocks:model.blocks.map(block=>block.kind==='html'?{kind:'html',html:eqpCleanHtml(block.html)}:{kind:'image',src:block.src,assetPath:block.assetPath,name:block.name||'Imagem técnica'}),updatedAt:new Date().toISOString(),storage:'local'};
+    const record={id:model.id||eqpNewId(),cloudRevision:model.cloudRevision,title:model.title.trim(),source:model.source||'',format:model.format||'DOCX',blocks:model.blocks.map(block=>block.kind==='html'?{kind:'html',html:eqpCleanHtml(block.html)}:{kind:'image',src:block.src,assetPath:block.assetPath,name:block.name||'Imagem técnica',widthMm:block.widthMm,heightMm:block.heightMm}),updatedAt:new Date().toISOString(),storage:'local'};
     await eqpLocalAction('put',record);
     const position=eqpModels.findIndex(item=>item.id===record.id);
     if(position<0)eqpModels.push(record);else eqpModels[position]=record;
@@ -17271,8 +17275,9 @@ function eqpCollectStandardTechnicalRev627(index){
     if(node.nodeType!==Node.ELEMENT_NODE)continue;
     if(node.matches('h2')&&node.textContent.trim().startsWith('2. PROPOSTA TÉCNICA'))continue;
     if(node.hasAttribute('data-eqp-model-title'))continue;
-    if(node.matches('figure')&&node.querySelector('img')&&node.querySelectorAll('img').length===1){
-      const image=node.querySelector('img');blocks.push({kind:'image',src:image.getAttribute('src')||'',name:image.getAttribute('alt')||model.title});continue;
+    if(node.matches('figure')&&node.querySelector('img')){
+      for(const image of node.querySelectorAll('img'))blocks.push({kind:'image',src:image.getAttribute('src')||'',name:image.getAttribute('alt')||model.title,widthMm:Number(image.dataset.eqpImageWidthMm)||undefined,heightMm:Number(image.dataset.eqpImageHeightMm)||undefined});
+      continue;
     }
     let source=node.outerHTML;
     if(node.matches('div'))source='<p>'+node.innerHTML+'</p>';
@@ -17631,7 +17636,7 @@ function eqpWordImageRev631(image,state,header=false){
   const ratio=(image.naturalWidth&&image.naturalHeight)?image.naturalWidth/image.naturalHeight:1.5;
   const displayed=image.getBoundingClientRect();
   const widthPx=header?128:Math.min(640,Math.max(40,displayed.width||image.naturalWidth||180));
-  const heightPx=header?widthPx/ratio:Math.min(680,widthPx/ratio);
+  const heightPx=header?widthPx/ratio:Math.min(680,image.dataset.eqpImageWidthMm?(displayed.height||widthPx/ratio):widthPx/ratio);
   const width=Math.round(widthPx*9525),height=Math.round(heightPx*9525),id=++state.drawingId;
   return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${width}" cy="${height}"/><wp:docPr id="${id}" name="${eqpWordXmlRev631(image.alt||asset.name)}"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="0" name="${asset.name}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${relation.id}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${width}" cy="${height}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
 }
@@ -17929,7 +17934,7 @@ eqpLocalAction = async function(mode, value) {
       if (block.kind !== 'image') return block;
       const assetPath = await eqpImageAssetRev643(block, value.id);
       block.assetPath = assetPath;
-      return { kind: 'image', assetPath, name: block.name || 'Imagem técnica' };
+      return { kind: 'image', assetPath, name: block.name || 'Imagem técnica', widthMm:block.widthMm, heightMm:block.heightMm };
     }));
     const revision = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const contentPath = eqpStoragePathRev643(value.id, revision);
@@ -18413,6 +18418,255 @@ eqpDocument=function(models){
   return template.innerHTML;
 };
 Object.assign(window,{eqpDocument});
+
+
+// O importador antigo separava as fotos do mesmo trecho em blocos individuais.
+// Na cópia da proposta, fotos consecutivas compõem uma única linha; o modelo
+// compartilhado continua intacto. O mesmo <figure> segue para PDF e Word.
+function eqpTechnicalBlocksRev654(model){
+  const blocks=[];
+  const image=block=>`<img src="${eqpEsc(block.src)}" alt="${eqpEsc(block.name||model.title)}" style="width:calc(50% - 1.5mm);max-height:75mm;height:auto;object-fit:contain;min-width:0">`;
+  for(let index=0;index<model.blocks.length;index++){
+    const block=model.blocks[index];
+    if(block.kind!=='image'){blocks.push(eqpCleanHtml(block.html));continue;}
+    const next=model.blocks[index+1];
+    if(next?.kind==='image'){
+      blocks.push(`<figure class="eqp-image-pair-rev654" style="display:flex;justify-content:center;align-items:center;gap:3mm">${image(block)}${image(next)}</figure>`);
+      index++;
+    }else{
+      blocks.push(`<figure><img src="${eqpEsc(block.src)}" alt="${eqpEsc(block.name||model.title)}"></figure>`);
+    }
+  }
+  return blocks;
+}
+
+
+// Também corrige modelos já salvos em que o importador separou as duas fotos
+// em páginas diferentes. Só junta figuras seguidas, ignorando parágrafos vazios.
+function eqpJoinTechnicalFiguresRev655(root){
+  const pages=[...root.querySelectorAll('.eqp-page')].filter(page=>!page.classList.contains('eqp-toc-page-rev646'));
+  const start=pages.findIndex(page=>/^2\.\s*PROPOSTA T[ÉE]CNICA/i.test(page.querySelector('main h2')?.textContent?.trim()||''));
+  const end=pages.findIndex((page,index)=>index>start&&/^3\.\s*EXCLUS[ÕO]ES/i.test(page.querySelector('main h2')?.textContent?.trim()||''));
+  if(start<0)return;
+  let first=null,emptyBetween=[];
+  for(const page of pages.slice(start,end<0?pages.length:end)){
+    const main=page.querySelector('main');if(!main)continue;
+    for(const node of [...main.children]){
+      if(node.matches('p')&&!node.textContent.trim()&&!node.querySelector('img')){
+        if(first)emptyBetween.push(node);
+        continue;
+      }
+      if(!node.matches('figure')||node.querySelectorAll('img').length!==1){first=null;emptyBetween=[];continue;}
+      if(!first){first=node;emptyBetween=[];continue;}
+      const second=node.querySelector('img');
+      first.classList.add('eqp-image-pair-rev654');
+      first.style.cssText='display:flex;justify-content:center;align-items:center;gap:3mm';
+      for(const image of [first.querySelector('img'),second])image.style.cssText='width:calc(50% - 1.5mm);max-height:75mm;height:auto;object-fit:contain;min-width:0';
+      first.append(second);
+      node.remove();
+      emptyBetween.forEach(blank=>blank.remove());
+      first=null;emptyBetween=[];
+    }
+  }
+  for(const page of pages.slice(start,end<0?pages.length:end)){
+    if(page.querySelector('main')?.children.length===0)page.remove();
+  }
+}
+const eqpDocumentBeforeRejoinRev655=eqpDocument;
+eqpDocument=function(models){
+  const template=document.createElement('template');
+  template.innerHTML=eqpDocumentBeforeRejoinRev655(models);
+  eqpJoinTechnicalFiguresRev655(template.content);
+  return template.innerHTML;
+};
+Object.assign(window,{eqpDocument});
+
+
+// Imagens inseridas dentro do texto editável também precisam formar uma linha.
+// Percorre apenas o conteúdo técnico; texto entre fotos impede o agrupamento.
+function eqpTechnicalMainsForImagesRev656(root){
+  const pages=[...root.querySelectorAll('.eqp-page')].filter(page=>!page.classList.contains('eqp-toc-page-rev646'));
+  const start=pages.findIndex(page=>/^2\.\s*PROPOSTA T[ÉE]CNICA/i.test(page.querySelector('main h2')?.textContent?.trim()||''));
+  const end=pages.findIndex((page,index)=>index>start&&/^3\.\s*EXCLUS[ÕO]ES/i.test(page.querySelector('main h2')?.textContent?.trim()||''));
+  return start<0?[]:pages.slice(start,end<0?pages.length:end).map(page=>page.querySelector('main')).filter(Boolean);
+}
+function eqpPairImagesInsideTextRev656(root){
+  const mains=eqpTechnicalMainsForImagesRev656(root);
+  const tokens=[];
+  for(const main of mains){
+    const walker=document.createTreeWalker(main,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);
+    while(walker.nextNode()){
+      const node=walker.currentNode;
+      if(node.nodeType===Node.TEXT_NODE){if(node.textContent.trim())tokens.push({type:'text'});}
+      else if(node.tagName==='IMG')tokens.push({type:'image',node});
+    }
+  }
+  const pairs=[];
+  for(let index=0;index<tokens.length-1;index++){
+    if(tokens[index].type==='image'&&tokens[index+1].type==='image'){
+      const first=tokens[index].node,second=tokens[index+1].node;
+      const figure=first.closest('figure');
+      if(!figure||figure!==second.closest('figure'))pairs.push([first,second]);
+      index++;
+    }
+  }
+  for(const [first,second] of pairs){
+    if(!first.parentNode||!second.parentNode)continue;
+    const main=first.closest('main');if(!main)continue;
+    let holder=first;while(holder.parentElement!==main&&holder.parentElement)holder=holder.parentElement;
+    const holderHasText=!!holder.textContent.trim();
+    const figure=document.createElement('figure');
+    figure.className='eqp-image-pair-rev654';
+    figure.style.cssText='display:flex;justify-content:center;align-items:center;gap:3mm';
+    if(holderHasText)holder.after(figure);else holder.before(figure);
+    const oldParents=[first.parentElement,second.parentElement];
+    for(const image of [first,second]){
+      image.style.cssText='width:calc(50% - 1.5mm);max-height:75mm;height:auto;object-fit:contain;min-width:0';
+      figure.append(image);
+    }
+    for(const parent of oldParents){
+      if(parent!==figure&&parent?.parentNode&&parent.matches('p,figure')&&!parent.textContent.trim()&&!parent.querySelector('img'))parent.remove();
+    }
+  }
+  for(const main of mains){if(main.parentNode&&!main.children.length)main.closest('.eqp-page')?.remove();}
+}
+const eqpDocumentBeforeNestedImagePairRev656=eqpDocument;
+eqpDocument=function(models){
+  const template=document.createElement('template');
+  template.innerHTML=eqpDocumentBeforeNestedImagePairRev656(models);
+  eqpPairImagesInsideTextRev656(template.content);
+  return template.innerHTML;
+};
+Object.assign(window,{eqpDocument});
+
+
+// A prévia do modelo padrão monta as figuras por outro caminho que a proposta.
+// Conservar duas fotos no mesmo figure também nesse editor.
+function eqpStyleImageRowRev657(figure){
+  const images=[...figure.querySelectorAll('img')];
+  if(images.length<2)return;
+  figure.classList.add('eqp-image-pair-rev654');
+  figure.style.cssText='display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:3mm';
+  images.forEach(image=>image.style.cssText='width:calc(50% - 1.5mm);max-height:75mm;height:auto;object-fit:contain;min-width:0');
+}
+const eqpStandardNodesBeforePairsRev657=eqpStandardNodesRev611;
+eqpStandardNodesRev611=function(model){
+  const nodes=eqpStandardNodesBeforePairsRev657(model);
+  const output=[];
+  for(let index=0;index<nodes.length;index++){
+    const node=nodes[index];
+    if(node.matches('figure')&&node.querySelectorAll('img').length===1){
+      let next=index+1;
+      while(next<nodes.length&&nodes[next].matches('p')&&!nodes[next].textContent.trim()&&!nodes[next].querySelector('img'))next++;
+      if(next<nodes.length&&nodes[next].matches('figure')&&nodes[next].querySelectorAll('img').length===1){
+        node.append(nodes[next].querySelector('img'));
+        eqpStyleImageRowRev657(node);
+        output.push(node);
+        index=next;
+        continue;
+      }
+    }
+    if(node.matches('figure'))eqpStyleImageRowRev657(node);
+    output.push(node);
+  }
+  return output;
+};
+const eqpDocumentBeforeImageRowRev657=eqpDocument;
+eqpDocument=function(models){
+  const template=document.createElement('template');
+  template.innerHTML=eqpDocumentBeforeImageRowRev657(models);
+  for(const main of eqpTechnicalMainsForImagesRev656(template.content)){
+    main.querySelectorAll('figure').forEach(eqpStyleImageRowRev657);
+  }
+  return template.innerHTML;
+};
+Object.assign(window,{eqpDocument});
+
+
+// Medidas OOXML em EMU: 36.000 unidades por milímetro.
+function eqpWordImageSizeRev658(blip){
+  const ns='http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing';
+  let wrapper=blip.parentElement;
+  while(wrapper&&wrapper.localName!=='inline'&&wrapper.localName!=='anchor')wrapper=wrapper.parentElement;
+  const extent=wrapper?.getElementsByTagNameNS(ns,'extent')[0];
+  const width=Number(extent?.getAttribute('cx'))/36000;
+  const height=Number(extent?.getAttribute('cy'))/36000;
+  return Number.isFinite(width)&&Number.isFinite(height)&&width>0&&height>0
+    ?{widthMm:Math.round(width*100)/100,heightMm:Math.round(height*100)/100}:{};
+}
+function eqpImageTagRev658(block,title){
+  const width=Number(block.widthMm),height=Number(block.heightMm);
+  const valid=Number.isFinite(width)&&Number.isFinite(height)&&width>0&&height>0;
+  const attrs=valid?` data-eqp-image-width-mm="${width}" data-eqp-image-height-mm="${height}" style="width:${Math.min(width,167)}mm;height:${height*Math.min(1,167/width)}mm;max-width:100%;object-fit:contain"`:'';
+  return `<img src="${eqpEsc(block.src)}" alt="${eqpEsc(block.name||title)}"${attrs}>`;
+}
+eqpTechnicalBlocksRev654=function(model){
+  const blocks=[];
+  for(let index=0;index<model.blocks.length;index++){
+    const block=model.blocks[index];
+    if(block.kind!=='image'){blocks.push(eqpCleanHtml(block.html));continue;}
+    const next=model.blocks[index+1];
+    if(next?.kind==='image'){
+      blocks.push(`<figure class="eqp-image-pair-rev654" style="display:flex;justify-content:center;align-items:center;gap:3mm">${eqpImageTagRev658(block,model.title)}${eqpImageTagRev658(next,model.title)}</figure>`);
+      index++;
+    }else blocks.push(`<figure>${eqpImageTagRev658(block,model.title)}</figure>`);
+  }
+  return blocks;
+};
+eqpStyleImageRowRev657=function(figure){
+  const images=[...figure.querySelectorAll('img')];
+  if(images.length<2)return;
+  const available=167,space=3*(Math.ceil(images.length/2)-1);
+  figure.classList.add('eqp-image-pair-rev654');
+  figure.style.cssText='display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:3mm';
+  for(let index=0;index<images.length;index+=2){
+    const row=images.slice(index,index+2);
+    const widths=row.map(image=>Number(image.dataset.eqpImageWidthMm)||available/row.length);
+    const total=widths.reduce((sum,width)=>sum+width,0)+(row.length-1)*3;
+    const scale=Math.min(1,available/total);
+    row.forEach((image,position)=>{
+      const height=Number(image.dataset.eqpImageHeightMm);
+      image.style.cssText=`width:${(widths[position]*scale).toFixed(2)}mm;height:${height>0?(height*scale).toFixed(2)+'mm':'auto'};max-height:170mm;max-width:100%;object-fit:contain;min-width:0`;
+    });
+  }
+};
+
+
+// O Word armazena o recorte visual em a:srcRect; o arquivo em word/media
+// contém também as margens que não aparecem na página.
+function eqpWordCropRectRev659(blip){
+  const ns='http://schemas.openxmlformats.org/drawingml/2006/main';
+  let fill=blip.parentElement;
+  while(fill&&fill.localName!=='blipFill')fill=fill.parentElement;
+  const rect=fill?.getElementsByTagNameNS(ns,'srcRect')[0];
+  if(!rect)return null;
+  const result={};
+  for(const side of ['l','t','r','b']){
+    const value=Number(rect.getAttribute(side)||0);
+    if(!Number.isFinite(value)||value<0||value>=100000)return null;
+    result[side]=value/100000;
+  }
+  if(result.l+result.r>=.98||result.t+result.b>=.98)return null;
+  return result;
+}
+async function eqpWordImageCropRev659(src,blip,mime){
+  const crop=eqpWordCropRectRev659(blip);
+  if(!crop||!Object.values(crop).some(value=>value>0))return src;
+  const image=new Image();
+  image.src=src;
+  await image.decode();
+  const left=Math.round(image.naturalWidth*crop.l);
+  const top=Math.round(image.naturalHeight*crop.t);
+  const right=Math.round(image.naturalWidth*crop.r);
+  const bottom=Math.round(image.naturalHeight*crop.b);
+  const width=image.naturalWidth-left-right;
+  const height=image.naturalHeight-top-bottom;
+  if(width<1||height<1)return src;
+  const canvas=document.createElement('canvas');
+  canvas.width=width;canvas.height=height;
+  canvas.getContext('2d').drawImage(image,left,top,width,height,0,0,width,height);
+  return canvas.toDataURL(mime==='image/jpeg'?'image/jpeg':mime==='image/webp'?'image/webp':'image/png',.95);
+}
 
 </script>
 </body>
