@@ -2965,7 +2965,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, query, where, orderBy, getDocs, getDocsFromServer, doc, getDoc, getDocFromServer, setDoc, deleteDoc, onSnapshot, runTransaction, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getBlob, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-import { getAuth, signInWithEmailAndPassword, signOut, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { initializeAuth, inMemoryPersistence, signInWithEmailAndPassword, signOut, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 import { getMessaging, getToken, deleteToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
@@ -2981,7 +2981,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
+// A sessão dura apenas até esta página ser fechada ou recarregada.
+const auth = initializeAuth(app, { persistence: inMemoryPersistence });
 const functions = getFunctions(app, "southamerica-east1");
 const calcularCustoMaxiprodRemoto = httpsCallable(functions, "calcularCustoMaxiprod", {timeout:310000});
 const consultarComponentesBndesMaxiprodRemoto = httpsCallable(functions, "consultarComponentesBndesMaxiprod", {timeout:600000});
@@ -17040,6 +17041,25 @@ Object.assign(window,{eqpRender,eqpPreview});
 function eqpClientNameKeyRev623(value){
   return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleUpperCase('pt-BR').replace(/[^A-Z0-9]+/g,' ').trim().replace(/\s+/g,' ');
 }
+// Nomes curtos do orçamento podem ser o começo da razão social cadastrada.
+// Se houver mais de uma empresa possível, não escolhemos uma automaticamente.
+function eqpFindBudgetClientRev662(name,clients){
+  const key=eqpClientNameKeyRev623(name);
+  if(!key)return {client:null,ambiguous:[]};
+  const latest=rows=>rows.slice().sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')))[0];
+  const exact=clients.filter(client=>eqpClientNameKeyRev623(client.company)===key);
+  if(exact.length)return {client:latest(exact),ambiguous:[]};
+  if(key.length<6)return {client:null,ambiguous:[]};
+  const candidates=new Map();
+  for(const client of clients){
+    const candidateKey=eqpClientNameKeyRev623(client.company);
+    if(!candidateKey||!(candidateKey.startsWith(key+' ')||key.startsWith(candidateKey+' ')))continue;
+    const previous=candidates.get(candidateKey);
+    if(!previous||String(client.updatedAt||'')>String(previous.updatedAt||''))candidates.set(candidateKey,client);
+  }
+  const matches=[...candidates.values()];
+  return matches.length===1?{client:matches[0],ambiguous:[]}:{client:null,ambiguous:matches.map(client=>client.company)};
+}
 const eqpOpenBudgetBaseRev623=eqpOpenBudgetRev617;
 eqpOpenBudgetRev617=async function(id){
   const budget=COMMERCIAL_BUDGETS.find(item=>String(item.id)===String(id));
@@ -17053,14 +17073,18 @@ eqpOpenBudgetRev617=async function(id){
     const clients=await eqpClientStoreRev612('all');
     if(!eqpBudgetSourceRev617||String(eqpBudgetSourceRev617.budgetId)!==String(id))return result;
     eqpClientsRev612=clients.sort((a,b)=>String(a.company||'').localeCompare(String(b.company||''),'pt-BR'));
-    const matches=clients.filter(client=>eqpClientNameKeyRev623(client.company)===key);
-    const client=matches.sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')))[0];
+    const match=eqpFindBudgetClientRev662(budget.client,clients);
+    const client=match.client;
     if(client){
       eqpClientIdRev612=client.id;
       eqpApplyClientRev612(client);
       eqpForm.extraContactsRev614=Array.isArray(client.extraContactsRev614)?client.extraContactsRev614.map(contact=>({...contact})):[];
       eqpRender();
       eqpStatus('Dados de '+client.company+' preenchidos da biblioteca de clientes.');
+    }else{
+      eqpRender();
+      if(match.ambiguous.length)eqpStatus('Mais de um cliente corresponde ao nome do orçamento. Selecione o cliente correto em Montar proposta.',true);
+      else eqpStatus('Nenhum cliente correspondente encontrado. Selecione o cliente em Montar proposta.',true);
     }
   }catch(error){console.error(error);eqpStatus('Não foi possível consultar a biblioteca de clientes: '+error.message,true);}
   return result;
@@ -17668,6 +17692,13 @@ function eqpWordBookmarkRev660(key,state){
   return state.bookmarksRev660.get(key);
 }
 
+function eqpWordStylesRev664(){
+  const headings=[1,2,3,4].map(level=>`<w:style w:type="paragraph" w:styleId="Heading${level}"><w:name w:val="heading ${level}"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:outlineLvl w:val="${level-1}"/></w:pPr></w:style>`).join('');
+  const toc=[1,2,3].map(level=>`<w:style w:type="paragraph" w:styleId="TOC${level}"><w:name w:val="toc ${level}"/><w:basedOn w:val="Normal"/><w:pPr><w:ind w:left="${(level-1)*230}"/><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="9638"/></w:tabs><w:spacing w:after="105"/></w:pPr></w:style>`).join('');
+  return headings+toc;
+}
+function eqpWordTocStartRev664(){return '<w:sdt><w:sdtPr><w:docPartObj><w:docPartGallery w:val="Table of Contents"/><w:docPartUnique/></w:docPartObj></w:sdtPr><w:sdtContent><w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="1" w:lineRule="exact"/></w:pPr><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \\o "1-3" \\h \\z </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r></w:p>';}
+function eqpWordTocEndRev664(){return '<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="1" w:lineRule="exact"/></w:pPr><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p></w:sdtContent></w:sdt>';}
 function eqpWordParagraphRev631(node,state,options={}){
   if(node.matches?.('h2')&&node.closest?.('.eqp-toc-page-rev646')){
     if(state.tocTitleSeenRev660)return '';
@@ -17689,10 +17720,12 @@ function eqpWordParagraphRev631(node,state,options={}){
   const rule=node.matches('h4')&&node.closest('.eqp-budget-commercial-rev618')?'<w:pBdr><w:bottom w:val="single" w:sz="4" w:color="555555"/></w:pBdr>':'';
   const runs=options.prefix?eqpWordRunRev631(options.prefix,node):'';
   const key=node.matches?.('h2,h3,h4')?eqpWordHeadingKeyRev660(node.textContent):'';
+  const headingLevel=key?Math.min(4,key.split('.').length):0;
+  const paragraphStyle=headingLevel?`<w:pStyle w:val="Heading${headingLevel}"/>`:'';
   const bookmark=key?eqpWordBookmarkRev660(key,state):null;
   const bookmarkStart=bookmark?`<w:bookmarkStart w:id="${bookmark.id}" w:name="${bookmark.name}"/>`:'';
   const bookmarkEnd=bookmark?`<w:bookmarkEnd w:id="${bookmark.id}"/>`:'';
-  return `<w:p><w:pPr><w:jc w:val="${align}"/><w:spacing w:before="${before}" w:after="${after}" w:line="${line}" w:lineRule="auto"/>${indentation}${shading}${rule}${keep}${outline}</w:pPr>${bookmarkStart}${runs}${eqpWordInlineRev631(node,state)}${bookmarkEnd}</w:p>`;
+  return `<w:p><w:pPr>${paragraphStyle}<w:jc w:val="${align}"/><w:spacing w:before="${before}" w:after="${after}" w:line="${line}" w:lineRule="auto"/>${indentation}${shading}${rule}${keep}${outline}</w:pPr>${bookmarkStart}${runs}${eqpWordInlineRev631(node,state)}${bookmarkEnd}</w:p>`;
 }
 function eqpWordSpacerRev631(twips){return `<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="${twips}" w:lineRule="exact"/></w:pPr></w:p>`;}
 function eqpWordCellRev631(cell,state,width,fill){
@@ -17708,7 +17741,8 @@ function eqpWordCellRev631(cell,state,width,fill){
   else paragraphs.push(eqpWordParagraphRev631(cell,state));
   const vertical=cell.closest('.eqp-legend-rev618,.eqp-payment-rev618,.eqp-bank-rev618')?15:(cell.closest('.eqp-budget-commercial-rev618')||cell.closest('table')?.previousElementSibling?.matches?.('h2')&&/^4\.\s*PROPOSTA COMERCIAL/i.test(cell.closest('table').previousElementSibling.textContent.trim())?65:30);
   const borderless=!!cell.closest('.eqp-legend-rev618,.eqp-payment-rev618,.eqp-bank-rev618');
-  const border=borderless?'<w:tcBorders><w:top w:val="nil"/><w:bottom w:val="nil"/><w:left w:val="nil"/><w:right w:val="nil"/></w:tcBorders>':'<w:tcBorders><w:bottom w:val="single" w:sz="4" w:color="BBBBBB"/></w:tcBorders>';
+  const bankTop=!!cell.closest('.eqp-bank-rev618')&&cell.parentElement?.rowIndex===0;
+  const border=bankTop?'<w:tcBorders><w:top w:val="single" w:sz="5" w:color="AAAAAA"/><w:bottom w:val="nil"/><w:left w:val="nil"/><w:right w:val="nil"/></w:tcBorders>':borderless?'<w:tcBorders><w:top w:val="nil"/><w:bottom w:val="nil"/><w:left w:val="nil"/><w:right w:val="nil"/></w:tcBorders>':'<w:tcBorders><w:bottom w:val="single" w:sz="4" w:color="BBBBBB"/></w:tcBorders>';
   return `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>${grid}${shading}<w:tcMar><w:top w:w="${vertical}" w:type="dxa"/><w:left w:w="45" w:type="dxa"/><w:bottom w:w="${vertical}" w:type="dxa"/><w:right w:w="45" w:type="dxa"/></w:tcMar>${border}</w:tcPr>${paragraphs.join('')||'<w:p/>'}</w:tc>`;
 }
 function eqpWordTableRev631(table,state){
@@ -17791,10 +17825,17 @@ async function eqpDownloadWordRev631(button){
     const pages=[...root.querySelectorAll(':scope > .eqp-page')];if(!pages.length)throw Error('Nenhuma página disponível para exportação.');
     const state={images:new Map(),documentRelations:[],headerRelations:[],drawingId:0,bookmarksRev660:new Map(),tocEntriesSeenRev660:new Set()};
     let section='cover';
+    const firstToc=pages.findIndex(page=>page.classList.contains('eqp-toc-page-rev646'));
+    const lastToc=pages.findLastIndex(page=>page.classList.contains('eqp-toc-page-rev646'));
     const body=pages.map((page,index)=>{
       const main=page.querySelector('main');
       const nextSection=eqpWordSectionRev660(page,main,section);
-      const content=main?eqpWordBlocksRev631(main,state):'';
+      let content=main?eqpWordBlocksRev631(main,state):'';
+      if(index===firstToc){
+        const titleEnd=content.indexOf('</w:p>')+6;
+        content=titleEnd>=6?content.slice(0,titleEnd)+eqpWordTocStartRev664()+content.slice(titleEnd):eqpWordTocStartRev664()+content;
+      }
+      if(index===lastToc)content+=eqpWordTocEndRev664();
       const pageBreak=index&&content&&nextSection!==section?'<w:p><w:r><w:br w:type="page"/></w:r></w:p>':'';
       section=nextSection;
       return pageBreak+content;
@@ -17808,7 +17849,7 @@ async function eqpDownloadWordRev631(button){
       .replace('<w:fldSimple w:instr="NUMPAGES"/>',smallPageField('NUMPAGES'))
       .replace('<w:jc w:val="right"/><w:spacing w:before="0" w:after="0" w:line="165" w:lineRule="exact"/>','<w:jc w:val="right"/><w:spacing w:before="0" w:after="0" w:line="165" w:lineRule="exact"/><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="13"/></w:rPr>');
     const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="${EQP_WORD_NS_REV631.w}" xmlns:r="${EQP_WORD_NS_REV631.r}" xmlns:wp="${EQP_WORD_NS_REV631.wp}" xmlns:a="${EQP_WORD_NS_REV631.a}" xmlns:pic="${EQP_WORD_NS_REV631.pic}"><w:body>${body}<w:sectPr><w:headerReference w:type="default" r:id="rId2"/><w:footerReference w:type="default" r:id="rId3"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="2030" w:right="1134" w:bottom="1530" w:left="1134" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>`;
-    const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="${EQP_WORD_NS_REV631.w}"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="100"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style></w:styles>`;
+    const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="${EQP_WORD_NS_REV631.w}"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="100"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>${eqpWordStylesRev664()}</w:styles>`;
     const zip=new JSZip();
     zip.file('[Content_Types].xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/><Default Extension="webp" ContentType="image/webp"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>`);
     zip.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
@@ -18428,8 +18469,7 @@ eqpWordTableRev631=function(table,state){
     if(key)state.tocEntriesSeenRev660.add(key);
     const title=eqpWordRunRev631(label,cells[0]);
     const fallback=eqpWordRunRev631(cells[1].textContent.trim(),cells[1]);
-    const bookmark=key?eqpWordBookmarkRev660(key,state):null;
-    const number=bookmark?`<w:fldSimple w:instr="PAGEREF ${bookmark.name} \\h" w:dirty="true">${fallback}</w:fldSimple>`:fallback;
+    const number=fallback;
     return `<w:p><w:pPr><w:ind w:left="${indent}"/><w:tabs><w:tab w:val="right" w:pos="9638"/></w:tabs><w:spacing w:before="0" w:after="105" w:line="300" w:lineRule="auto"/><w:pBdr><w:between w:val="dotted" w:sz="3" w:space="4" w:color="AAAAAA"/><w:bottom w:val="dotted" w:sz="3" w:space="4" w:color="AAAAAA"/></w:pBdr></w:pPr>${title}<w:r><w:tab/></w:r>${number}</w:p>`;
   }).join('');
 };
@@ -18704,6 +18744,55 @@ async function eqpWordImageCropRev659(src,blip,mime){
   return canvas.toDataURL(mime==='image/jpeg'?'image/jpeg':mime==='image/webp'?'image/webp':'image/png',.95);
 }
 
+
+// Os campos de prazo e pagamento da prévia são a fonte desses dois trechos.
+// A edição manual da página comercial pode preservar o restante da tabela.
+let eqpTermsChangedRev661=false;
+function eqpSyncCommercialTermsRev661(){
+  const root=document.querySelector('#eqpPreviewHost #eqpPrintable');
+  if(!root)return;
+  const delivery=String(eqpForm.delivery||'').trim()||'A definir';
+  const payment=String(eqpForm.payment||'').trim()||'Condição não cadastrada no orçamento.';
+  root.querySelectorAll('.eqp-delivery-rev620').forEach(paragraph=>{
+    paragraph.innerHTML=`<b>Prazo de entrega:</b> ${eqpEsc(delivery)}`;
+  });
+  root.querySelectorAll('.eqp-payment-rev618 td').forEach(cell=>{
+    cell.innerHTML=eqpEsc(payment).replace(/\r?\n/g,'<br>');
+  });
+}
+const eqpPreviewApplyBeforeTermsRev661=eqpPreviewApplyRev622;
+eqpPreviewApplyRev622=function(){
+  const result=eqpPreviewApplyBeforeTermsRev661();
+  if(eqpTermsChangedRev661)eqpSyncCommercialTermsRev661();
+  return result;
+};
+const eqpPreviewBeforeTermsRev661=eqpPreview;
+eqpPreview=function(){
+  eqpTermsChangedRev661=false;
+  const result=eqpPreviewBeforeTermsRev661();
+  const modal=document.querySelector('#eqpPreviewHost .eqp-modal');
+  const terms=modal?.querySelector('.eqp-data-terms-rev622');
+  if(!terms)return result;
+  const update=event=>{
+    const field=event.target.closest('[data-eqp-preview-field-rev622]');
+    const key=field?.dataset.eqpPreviewFieldRev622;
+    if(key!=='delivery'&&key!=='payment')return;
+    eqpForm[key]=field.value;
+    const compose=document.getElementById('eqp-'+key);
+    if(compose)compose.value=field.value;
+    eqpTermsChangedRev661=true;
+    eqpSyncCommercialTermsRev661();
+  };
+  terms.addEventListener('input',update);
+  terms.addEventListener('change',update);
+  const root=modal.querySelector('#eqpPrintable');
+  root?.addEventListener('input',event=>{
+    if(event.target.closest('main[data-eqp-page-kind-rev630="commercial"]'))eqpTermsChangedRev661=false;
+  });
+  eqpSyncCommercialTermsRev661();
+  return result;
+};
+Object.assign(window,{eqpPreview,eqpPreviewApplyRev622});
 </script>
 </body>
 </html>
