@@ -10488,7 +10488,27 @@ let eqpStatus=(message,error=false)=>{const el=document.getElementById('eqpStatu
 const eqpNewId=()=>`equip-${Date.now()}-${Math.random().toString(36).slice(2,10)}`;
 function eqpXmlText(node){return [...node.getElementsByTagNameNS('http://schemas.openxmlformats.org/wordprocessingml/2006/main','t')].map(x=>x.textContent).join('');}
 function eqpCleanHtml(html){const root=document.createElement('div');root.innerHTML=html;for(const el of [...root.querySelectorAll('*')]){if(!['P','BR','B','STRONG','I','EM','U','H3','H4','UL','OL','LI','TABLE','THEAD','TBODY','TR','TH','TD','IMG','FIGURE','SPAN'].includes(el.tagName)){el.replaceWith(...el.childNodes);continue;}for(const attr of [...el.attributes])if(!(el.tagName==='IMG'&&attr.name==='src'&&/^(data:image\/(?:png|jpeg|webp|gif);base64,|https:\/\/)/i.test(attr.value)))el.removeAttribute(attr.name);}return root.innerHTML;}
-function eqpParagraphHtml(node,ns){const runs=[];for(const run of node.getElementsByTagNameNS(ns,'r')){let value=[...run.getElementsByTagNameNS(ns,'t')].map(x=>x.textContent).join('');if(!value)continue;value=eqpEsc(value);const prop=run.getElementsByTagNameNS(ns,'rPr')[0];if(prop?.getElementsByTagNameNS(ns,'b').length)value=`<b>${value}</b>`;if(prop?.getElementsByTagNameNS(ns,'i').length)value=`<i>${value}</i>`;if(prop?.getElementsByTagNameNS(ns,'u').length)value=`<u>${value}</u>`;runs.push(value);}return runs.join('');}
+function eqpParagraphHtml(node,ns){
+  const runs=[];
+  for(const run of node.getElementsByTagNameNS(ns,'r')){
+    let value='';
+    for(const part of run.children){
+      if(part.namespaceURI!==ns)continue;
+      if(part.localName==='t')value+=eqpEsc(part.textContent);
+      else if(part.localName==='br'||part.localName==='cr')value+='<br>';
+      else if(part.localName==='tab')value+='&emsp;';
+      else if(part.localName==='noBreakHyphen')value+='&#8209;';
+      else if(part.localName==='softHyphen')value+='&shy;';
+    }
+    if(!value)continue;
+    const prop=run.getElementsByTagNameNS(ns,'rPr')[0];
+    if(prop?.getElementsByTagNameNS(ns,'b').length)value=`<b>${value}</b>`;
+    if(prop?.getElementsByTagNameNS(ns,'i').length)value=`<i>${value}</i>`;
+    if(prop?.getElementsByTagNameNS(ns,'u').length)value=`<u>${value}</u>`;
+    runs.push(value);
+  }
+  return runs.join('');
+}
 async function eqpReadDocx(file) {
   const zip = await JSZip.loadAsync(await file.arrayBuffer());
   const raw = await zip.file('word/document.xml')?.async('string');
