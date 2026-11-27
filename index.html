@@ -2999,6 +2999,7 @@ const consultarMateriaPrimaMaxiprodRemoto = httpsCallable(functions, "consultarM
 const atualizarCacheCompartilhadoMaxiprodRemoto = httpsCallable(functions, "atualizarCacheCompartilhadoMaxiprod", {timeout:1810000});
 const testarEmailNotificacoesRemoto = httpsCallable(functions, "testarEmailNotificacoes", {timeout:70000});
 const DB_REF   = doc(db, "cartamac", "db");
+const COMMISSION_LEDGER_REF_REV667 = doc(db, "cartamac", "commission-payment-ledger-v1");
 const SCHEDULE_REF = doc(db, "cartamac", "schedule");
 const SHARED_COSTS_REF = doc(db, "cartamac", "costs-shared");
 const COMMERCIAL_BUDGETS_REF = doc(db, "cartamac", "commercial-budgets");
@@ -4174,6 +4175,7 @@ function startAdminSession(admin){
   showToast(`Bem-vindo, ${admin.name}!`);
   notificationSessionStart();
   commercialBudgetV2Initialize();
+  commissionSubscribeLedgerRev667();
   scheduleCommissionAutoRefresh();
   scheduleMaxiprodAutoRefresh();
   // A fotografia compartilhada tambem alimenta Comissoes. Carrega-la antes
@@ -6375,6 +6377,14 @@ function receberRegistros(){
     seenKeys.add(key);uniqueRows.push(row);
   });
   const rows=uniqueRows.map(row=>receberRegistro(row,mapaPedidos));
+  for(const payment of Object.values(commissionLedgerRev667.payments)){
+    const source=payment?.sourceRow;if(!payment?.paid||!source?.order||!Number(source.received))continue;
+    const sameOrder=rows.filter(item=>String(receberChave(item.raw||{},['numeroPedido','pedidoNumero','pedidoDeVendaNumero'])||'')===String(source.order)||commissionSameClient(item.cliente,source.client));
+    const sameId=sameOrder.some(item=>String(receberChave(item.raw||{},['id','tituloId','contaAReceberId','lancamentoId'])||'')===String(source.id));
+    const sameInvoice=source.invoice?sameOrder.filter(item=>commissionGroupItemInvoice(item,null)===String(source.invoice)&&(!source.installment||String(item.parcela?.numero||'')===String(source.installment))).length===1:false;
+    const sameDue=sameOrder.some(item=>item.vencimento?.toISOString?.().slice(0,10)===source.due&&Math.abs(Number(item.valorParcela)-Number(source.received))<=.05);
+    if(!sameId&&!sameInvoice&&!sameDue)rows.push(receberRegistro(commissionRecoveryRawRev667(source),mapaPedidos));
+  }
   return rows
     .filter(item=>!item.vencimento||item.vencimento>=new Date(2020,0,1))
     .sort((a,b)=>(b.vencimento?.getTime()||0)-(a.vencimento?.getTime()||0));
@@ -6905,6 +6915,7 @@ function commissionDeduplicateGroupItems(items,meta){
   return [...unique.values()];
 }
 function commissionGroups(){
+  commissionLegacyAliasesRev667=new Map();
   const mapaPedidos=receberMapaPedidos(),catalog=commissionSalesCatalog(),groups=new Map();
   // Fotografia do catálogo autoritativo antes de qualquer tentativa de
   // conciliação. Títulos financeiros não podem criar pedidos por inferência.
@@ -6945,6 +6956,7 @@ function commissionGroups(){
     // Última barreira de unicidade: depois de todos os vínculos e fusões, uma
     // NF pode ter somente uma ocorrência de cada número de parcela.
     group.items=commissionDeduplicateGroupItems(group.items,meta);
+    group.items=group.items.map((item,index)=>commissionApplyLedgerReceiptRev667(group,item,index));
     // O MaxiProd foi conferido diretamente para o pedido 135. A agenda local
     // completa apenas parcelas ausentes; qualquer parcela que vier da API
     // prevalece, inclusive após novas baixas de recebimento.
@@ -6968,6 +6980,10 @@ function commissionGroups(){
       group.orderValueSource='Soma de todas as parcelas da nota';
     }
     group.assignment=commissionGroupAssignment(group);
+    group.items.forEach((item,index)=>{
+      const base=commissionInstallmentKey(group,item,index),oldBase=commissionLegacyInstallmentKeyRev667(group,item);
+      commissionAssignmentSellers(group.assignment).forEach(seller=>commissionLegacyAliasesRev667.set(`${base}|${seller.name}|Vendedor`,`${oldBase}|${seller.name}|Vendedor`));
+    });
     return group;
   }).sort((a,b)=>{
     const aNumber=Number(String(a.number||'').match(/\d+/)?.[0]),bNumber=Number(String(b.number||'').match(/\d+/)?.[0]);
@@ -7058,12 +7074,63 @@ function commissionRecipients(group,item,year){
 function commissionGroupGenericTotals(group,year){
   const map=new Map(),all={total:0,received:0};group.items.forEach(item=>{const open=Math.max(0,(item.valorParcela||0)-(item.recebido||0));commissionAssignmentSellers(group.assignment).forEach(entry=>{const rate=commissionRateForSeller(group,entry.name,year),earned=rate===null?0:(item.recebido||0)*rate,future=rate===null?0:open*rate,key=`${entry.name}|Vendedor`,row=map.get(key)||{person:entry.name,role:'Vendedor',earned:0,future:0};row.earned+=earned;row.future+=future;map.set(key,row);all.received+=earned;all.total+=earned+future;});});return {rows:[...map.values()],...all};
 }
-function commissionInstallmentKey(group,item,index=0){
+let commissionLedgerRev667={payments:{}};
+let commissionLedgerUnsubscribeRev667=null;
+let commissionLegacyAliasesRev667=new Map();
+function commissionSubscribeLedgerRev667(){
+  commissionLedgerUnsubscribeRev667?.();
+  commissionLedgerUnsubscribeRev667=onSnapshot(COMMISSION_LEDGER_REF_REV667,snapshot=>{
+    const data=snapshot.exists()?snapshot.data():{};
+    commissionLedgerRev667={payments:data.payments&&typeof data.payments==='object'?data.payments:{}};
+    if(document.getElementById('page-financeiro')?.classList.contains('active'))renderFinanceiroFiscal();
+    if(document.getElementById('page-comercial')?.classList.contains('active')&&comercialView==='comissoes')renderCommercialPage();
+  },error=>console.error('Histórico de baixas das comissões:',error));
+}
+function commissionLegacyInstallmentKeyRev667(group,item){
   const raw=item?.raw||{},id=receberChave(raw,['id','tituloId','contaAReceberId','lancamentoId']);
   const due=item?.vencimento instanceof Date&&!Number.isNaN(item.vencimento)?item.vencimento.toISOString().slice(0,10):'';
   return `${group.key}|${id!==null&&id!==undefined?id:[item?.parcela?.numero,item?.parcela?.total,due,item?.valorParcela,financeNormalize(item?.descricao||'')].join('|')}`;
 }
-function commissionPaymentRecord(key){return DB.commissionPayments&&typeof DB.commissionPayments==='object'?DB.commissionPayments[key]||null:null;}
+function commissionInstallmentKey(group,item,index=0){
+  const invoice=commissionGroupItemInvoice(item,null);
+  const installment=String(item?.parcela?.numero||'').replace(/^0+/,'');
+  const total=String(item?.parcela?.total||'').replace(/^0+/,'');
+  const due=item?.vencimento instanceof Date&&!Number.isNaN(item.vencimento)?item.vencimento.toISOString().slice(0,10):'';
+  const amount=commissionMoneyValue(item?.valorParcela).toFixed(2);
+  const order=group.number?`pedido:${group.number}`:group.key;
+  if(invoice&&installment)return `${order}|nf:${invoice}|parcela:${installment}`;
+  if(invoice){
+    const same=(group.items||[]).filter(other=>commissionGroupItemInvoice(other,null)===invoice&&commissionMoneyValue(other?.valorParcela).toFixed(2)===amount);
+    return same.length>1?`${order}|nf:${invoice}|vencimento:${due}|valor:${amount}`:`${order}|nf:${invoice}|valor:${amount}`;
+  }
+  if(installment&&total)return `${order}|parcela:${installment}/${total}|vencimento:${due}|valor:${amount}`;
+  return `${order}|vencimento:${due}|valor:${amount}`;
+}
+function commissionPaymentRecord(key){
+  const ledger=commissionLedgerRev667.payments[key];
+  if(ledger)return ledger.paid===false?null:ledger;
+  const oldKey=commissionLegacyAliasesRev667.get(key)||key;
+  const byLegacy=Object.values(commissionLedgerRev667.payments).find(value=>value?.legacyKey===oldKey);
+  if(byLegacy)return byLegacy.paid===false?null:byLegacy;
+  return DB.commissionPayments&&typeof DB.commissionPayments==='object'?DB.commissionPayments[oldKey]||null:null;
+}
+function commissionRecoveryRawRev667(row){
+  return {tipo:'TITULO',estado:'Recebido',numeroPedido:row.order,numeroNotaFiscal:row.invoice||'',numeroParcela:row.installment||'',
+    vencimentoData:row.due,dataLiquidacao:row.receivedAt,valorOriginal:row.received,valorRecebido:row.received,
+    valorAReceber:0,clienteNome:row.client,descricao:'Parcela histórica confirmada por relatório de comissões',
+    id:row.id,_commissionHistorical:true};
+}
+function commissionApplyLedgerReceiptRev667(group,item,index){
+  if(Number(item?.recebido)>0)return item;
+  const base=commissionInstallmentKey(group,item,index),oldBase=commissionLegacyInstallmentKeyRev667(group,item),saved=Object.entries(commissionLedgerRev667.payments)
+    .filter(([key,value])=>(key.startsWith(base+'|')||String(value?.legacyKey||'').startsWith(oldBase+'|'))&&value?.paid&&Number(value.received)>0)
+    .map(([,value])=>value).sort((a,b)=>Number(b.received)-Number(a.received))[0];
+  if(!saved)return item;
+  const date=saved.receivedAt?new Date(saved.receivedAt+'T12:00:00'):null;
+  if(!date||Number.isNaN(date.getTime()))return item;
+  const received=Math.min(Number(item.valorParcela)||Number(saved.received),Number(saved.received));
+  return {...item,recebido:received,recebimento:date,aberto:Math.max(0,(Number(item.valorParcela)||received)-received),_commissionHistoricalReceipt:true};
+}
 function commissionPlanRecord(key){return DB.commissionPaymentPlans&&typeof DB.commissionPaymentPlans==='object'?DB.commissionPaymentPlans[key]||null:null;}
 function commissionPlanRows(groups=commissionGroups()){
   const rows=[];
@@ -7114,9 +7181,21 @@ function commissionInstallmentPaymentState(group,item,index,year,selectedSeller=
   return {label:'Não pago',className:'pending'};
 }
 async function toggleCommissionPayment(encodedKey){
-  const key=decodeURIComponent(encodedKey);DB.commissionPayments=DB.commissionPayments&&typeof DB.commissionPayments==='object'?DB.commissionPayments:{};
-  if(DB.commissionPayments[key])delete DB.commissionPayments[key];else DB.commissionPayments[key]={paid:true,paidAt:new Date().toISOString(),paidBy:loggedUser?.ref?.name||loggedUser?.name||''};
-  renderFinanceiroFiscal();const ok=await persist();showToast(ok?(DB.commissionPayments[key]?'Comissão marcada como paga.':'Baixa da comissão removida.'):'Não foi possível salvar a baixa.',ok?'ok':'err');
+  const key=decodeURIComponent(encodedKey),row=commissionPlanRows().find(entry=>entry.key===key);
+  if(!row){showToast('Parcela recebida não localizada. Atualize os dados antes de dar baixa.','err');return;}
+  try{
+    const oldKey=commissionLegacyAliasesRev667.get(key)||key,legacy=DB.commissionPayments?.[oldKey],actor=loggedUser?.ref?.name||loggedUser?.name||'';
+    const result=await runTransaction(db,async transaction=>{
+      const snapshot=await transaction.get(COMMISSION_LEDGER_REF_REV667),data=snapshot.exists()?snapshot.data():{},payments={...(data.payments||{})};
+      const current=payments[key]??Object.values(payments).find(value=>value?.legacyKey===oldKey)??legacy??null,paid=!(current&&current.paid!==false);
+      const now=new Date().toISOString(),raw=row.item.raw||{},receivedAt=row.item.recebimento?.toISOString?.().slice(0,10)||'';
+      const sourceRow={order:String(row.group.number||''),client:row.group.client||row.item.cliente||'',invoice:commissionGroupItemInvoice(row.item,{invoiceNumbers:row.group.invoiceNumbers||[]})||'',installment:String(row.item.parcela?.numero||''),due:row.item.vencimento?.toISOString?.().slice(0,10)||'',receivedAt,received:Number(row.item.recebido)||0,id:String(receberChave(raw,['id','tituloId','contaAReceberId','lancamentoId'])||''),seller:row.recipient.person,role:row.recipient.role,legacyKey:oldKey,paidAt:now,paidBy:actor};
+      payments[key]=paid?{paid:true,paidAt:now,paidBy:actor,received:sourceRow.received,receivedAt,legacyKey:oldKey,sourceRow}: {paid:false,removedAt:now,removedBy:actor,legacyKey:oldKey,previous:current};
+      transaction.set(COMMISSION_LEDGER_REF_REV667,{schemaVersion:1,payments,updatedAt:new Date().toISOString()});
+      return {payments,paid};
+    });
+    commissionLedgerRev667={payments:result.payments};renderFinanceiroFiscal();showToast(result.paid?'Comissão marcada como paga.':'Baixa da comissão removida.','ok');
+  }catch(error){console.error('Baixa de comissão:',error);showToast('Não foi possível salvar a baixa. Nenhum pagamento foi alterado.','err');}
 }
 function commissionGroupSettlement(group){
   if(!group?.items?.length||!group.items.every(item=>(Number(item.recebido)||0)>0&&Math.max(0,Number(item.aberto)||0)<=.01))return {complete:false,archived:false,remainingDays:null,paid:0,total:0};
@@ -7330,6 +7409,49 @@ function commissionApplyMonthFilters(){
 function commissionPdfSignature(report,sellerName='VENDEDOR / RESPONSÁVEL'){
   const {doc,left,contentW,bottom}=report,required=24;if(report.y+required>bottom){doc.addPage();report.y=24;}const y=Math.max(report.y+4,bottom-21),gap=18,lineW=(contentW-gap)/2,leftCenter=left+lineW/2,rightStart=left+lineW+gap,rightCenter=rightStart+lineW/2,name=String(sellerName||'VENDEDOR / RESPONSÁVEL').trim().toUpperCase();doc.setDrawColor(35,35,35);doc.setLineWidth(.4);doc.line(left,y,left+lineW,y);doc.line(rightStart,y,rightStart+lineW,y);doc.setFont('helvetica','bold');doc.setFontSize(6.7);doc.setTextColor(35,35,35);doc.text(hoursPdfClean(name),leftCenter,y+4,{align:'center',maxWidth:lineW});doc.text('CARTAMAC PAPER MACHINERY',rightCenter,y+4,{align:'center',maxWidth:lineW});doc.setFont('helvetica','normal');doc.setFontSize(5.7);doc.setTextColor(95,95,95);doc.text('Assinatura do vendedor',leftCenter,y+7,{align:'center'});doc.text('Assinatura da empresa',rightCenter,y+7,{align:'center'});doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(35,35,35);doc.text('RECEBIDO EM:  ____ / ____ / ________',left,y+15);report.y=y+18;
 }
+const COMMISSION_RECOVERY_REV667={"format":"cartamac-commission-reconciliation","schemaVersion":1,"report":"Comissoes_2026-09 (2).pdf","reportGeneratedAt":"2026-10-13T16:44:07-03:00","backupCreatedAt":"2026-10-13T20:00:01.690Z","rows":[{"order":"168","client":"HRG - HERGEN S A MAQUINAS E EQUIPAMENTOS","invoice":"1649","installment":"","due":"2026-09-10","receivedAt":"2026-09-10","received":2399.53,"commission":47.99,"id":"206010086187009","seller":"MOHR","role":"Vendedor","legacyKey":"pedido:168|206010086187009|MOHR|Vendedor","paidAt":"2026-10-13T19:42:34.652Z","paidBy":"Jaison Batisti"},{"order":"164","client":"RBN - RIO BONITO EMBALAGENS LTDA","invoice":"","installment":"","due":"2027-03-30","receivedAt":"2026-09-03","received":70000,"commission":3500,"id":"206010087533916","seller":"MOHR","role":"Vendedor","legacyKey":"pedido:164|206010087533916|MOHR|Vendedor","paidAt":"2026-10-13T19:42:43.210Z","paidBy":"Jaison Batisti"},{"order":"163","client":"RBN - RIO BONITO EMBALAGENS LTDA","invoice":"1659","installment":"","due":"2026-09-16","receivedAt":"2026-09-16","received":7030.83,"commission":351.54,"id":"206010086578829","seller":"MOHR","role":"Vendedor","legacyKey":"pedido:163|206010086578829|MOHR|Vendedor","paidAt":"2026-10-13T19:43:00.068Z","paidBy":"Jaison Batisti"},{"order":"162","client":"CDP - CIPEL DE PADUA - INDUSTRIA DE PAPEIS LTDA","invoice":"1700","installment":"1","due":"2026-09-14","receivedAt":"2026-09-14","received":30000,"commission":1500,"id":"206010087928485","seller":"MOHR","role":"Vendedor","legacyKey":"pedido:162|206010087928485|MOHR|Vendedor","paidAt":"2026-10-13T19:43:07.339Z","paidBy":"Jaison Batisti"},{"order":"152","client":"RBN NORDESTE - RIO BONITO NORDESTE FABRICACAO DE EMBALAGENS LTDA","invoice":"1620","installment":"3","due":"2026-09-26","receivedAt":"2026-09-26","received":8915.04,"commission":445.75,"id":"206010085265210","seller":"MOHR","role":"Vendedor","legacyKey":"pedido:152|206010085265210|MOHR|Vendedor","paidAt":"2026-10-13T19:43:13.298Z","paidBy":"Jaison Batisti"},{"order":"85","client":"REI - REIPEL S.A","invoice":"","installment":"","due":"2026-04-03","receivedAt":"2026-09-11","received":62500,"commission":3125,"id":"206010068231996","seller":"MOHR","role":"Vendedor","legacyKey":"pedido:85|206010068231996|MOHR|Vendedor","paidAt":"2026-10-13T19:43:23.945Z","paidBy":"Jaison Batisti"}],"totalCommission":8970.28};
+function commissionRecoveryMatchesRev667(row){
+  const group=commissionGroups().find(item=>String(item.number)===row.order);
+  if(!group)return [];
+  const candidates=group.items.map((item,index)=>({group,item,index,rawId:String(receberChave(item.raw||{},['id','tituloId','contaAReceberId','lancamentoId'])||''),invoice:commissionGroupItemInvoice(item,{invoiceNumbers:group.invoiceNumbers||[]})}));
+  const exact=candidates.filter(candidate=>candidate.rawId===row.id);
+  if(exact.length)return exact;
+  const invoice=row.invoice?candidates.filter(candidate=>candidate.invoice===row.invoice):candidates;
+  const parcel=row.installment?invoice.filter(candidate=>String(candidate.item.parcela?.numero||'')===row.installment):invoice;
+  const due=parcel.filter(candidate=>candidate.item.vencimento?.toISOString?.().slice(0,10)===row.due);
+  if(due.length===1)return due;
+  const byValue=parcel.filter(candidate=>Math.abs(Number(candidate.item.valorParcela)-row.received)<=.05);
+  return byValue;
+}
+async function commissionRecoverSeptemberRev667(){
+  if(!loggedUser){showToast('Entre no sistema antes de reconciliar as comissões.','err');return;}
+  if(!hasAccess('financeiro.comissoes')){showToast('Você não tem permissão para reconciliar comissões.','err');return;}
+  const resolved=COMMISSION_RECOVERY_REV667.rows.map(row=>({row,matches:commissionRecoveryMatchesRev667(row)}));
+  const ambiguous=resolved.filter(item=>item.matches.length>1);
+  if(ambiguous.length){showToast('A reconciliação foi interrompida: '+ambiguous.map(item=>'pedido '+item.row.order).join(', ')+' sem parcela única. Nenhum dado foi alterado.','err');return;}
+  const rows=resolved.map(({row,matches})=>{
+    const match=matches[0],group=match?.group||{key:'pedido:'+row.order,number:row.order,items:[]},item=match?.item||receberRegistro(commissionRecoveryRawRev667(row),receberMapaPedidos());
+    if(!match)group.items=[item];
+    const key=commissionInstallmentKey(group,item,match?.index||0)+'|'+row.seller+'|'+row.role;
+    return {row,key};
+  });
+  if(new Set(rows.map(item=>item.key)).size!==rows.length){showToast('Duas baixas apontam para a mesma parcela. Nenhum dado foi alterado.','err');return;}
+  const summary=rows.map(({row})=>'Pedido '+row.order+' · '+fmtBRL(row.commission)).join('\n');
+  if(!confirm('Recuperar as seis baixas comprovadas pelo PDF e pelo backup de 13/10/2026?\n\n'+summary+'\n\nTotal: '+fmtBRL(COMMISSION_RECOVERY_REV667.totalCommission)+'. As outras abas não serão alteradas.'))return;
+  try{
+    const result=await runTransaction(db,async transaction=>{
+      const snapshot=await transaction.get(COMMISSION_LEDGER_REF_REV667),data=snapshot.exists()?snapshot.data():{},payments={...(data.payments||{})};
+      let added=0,skipped=0;
+      for(const {row,key} of rows){
+        if(payments[key]){skipped++;continue;}
+        payments[key]={paid:true,paidAt:row.paidAt,paidBy:row.paidBy,received:row.received,receivedAt:row.receivedAt,legacyKey:row.legacyKey,sourceRow:row,source:'PDF e backup geral de 13/10/2026',restoredAt:new Date().toISOString()};added++;
+      }
+      if(added)transaction.set(COMMISSION_LEDGER_REF_REV667,{schemaVersion:1,payments,updatedAt:new Date().toISOString()});
+      return {payments,added,skipped};
+    });
+    commissionLedgerRev667={payments:result.payments};renderFinanceiroFiscal();showToast('Reconciliação concluída: '+result.added+' baixa(s) recuperada(s), '+result.skipped+' já registrada(s).','ok');
+  }catch(error){console.error('Reconciliação de comissões:',error);showToast('Não foi possível recuperar as baixas. Nenhum dado foi alterado.','err');}
+}
 function exportCommissionMonthPDF(){
   if(commissionMonth<0){showToast('Selecione um mês antes de gerar o relatório.','err');return;}
   const table=document.querySelector('.commission-month-table'),visibleRows=table?[...table.tBodies[0].rows].filter(row=>!row.hidden):[];
@@ -7496,7 +7618,7 @@ function renderCommissionsPage(target){
     if(metrics[1]){metrics[1].hidden=!!selectedSeller&&selectedSeller!=='EVANDRO';metrics[1].querySelector('span').textContent='Comissão Evandro';metrics[1].querySelector('strong').innerHTML=assigned?`${fmtBRL(evando.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(evando.earned)}</span>`:'—';}
     if(metrics[2]){metrics[2].hidden=!!selectedSeller&&selectedSeller!=='MOHR';metrics[2].querySelector('span').textContent='Comissão Mohr';metrics[2].querySelector('strong').innerHTML=assigned?`${fmtBRL(mohr.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(mohr.earned)}</span>`:'—';metrics[2].insertAdjacentHTML('afterend',`<div class="commission-order-metric"><span>${selectedSeller?`Total de ${esc(selectedSeller)}`:'Comissão total do pedido'}</span><strong style="color:var(--green)">${assigned?`${fmtBRL(totals.total)}<br><span style="color:var(--text2);font-size:10px">Recebido: ${fmtBRL(totals.received)}</span>`:'—'}</strong></div>`);const totalMetric=metrics[2].nextElementSibling;totalMetric?.insertAdjacentHTML('afterend',`<div class="commission-order-owner commission-custom-owner" onclick="event.stopPropagation()">${commissionOrderCustomRatesHtml(group,commissionYear,selectedSeller)}</div>`);}
   });
-  if(commissionMonth>=0){const list=target.querySelector('.commission-order-list');if(list){list.innerHTML=commissionMonthlyTableV2(groups,commissionYear,commissionMonth);const title=list.querySelector('.commission-month-title'),count=title?.querySelector('#commissionMonthCount');if(title&&count){const actions=document.createElement('div');actions.style.cssText='display:flex;align-items:center;gap:10px';count.replaceWith(actions);actions.append(count);const pdf=document.createElement('button');pdf.type='button';pdf.className='btn btn-ghost';pdf.innerHTML='<span class="msi msi-sm">picture_as_pdf</span> Relatório PDF';pdf.onclick=exportCommissionMonthPDF;actions.append(pdf);}}}
+  if(commissionMonth>=0){const list=target.querySelector('.commission-order-list');if(list){list.innerHTML=commissionMonthlyTableV2(groups,commissionYear,commissionMonth);const title=list.querySelector('.commission-month-title'),count=title?.querySelector('#commissionMonthCount');if(title&&count){const actions=document.createElement('div');actions.style.cssText='display:flex;align-items:center;gap:10px';count.replaceWith(actions);actions.append(count);const pdf=document.createElement('button');pdf.type='button';pdf.className='btn btn-ghost';pdf.innerHTML='<span class="msi msi-sm">picture_as_pdf</span> Relatório PDF';pdf.onclick=exportCommissionMonthPDF;actions.append(pdf);if(commissionYear===2026&&commissionMonth===8){const restore=document.createElement('button');restore.type='button';restore.className='btn btn-ghost';restore.textContent='Conferir 6 baixas do backup';restore.onclick=commissionRecoverSeptemberRev667;actions.append(restore);}}}}
 }
 function pagarFornecedor(row){
   const detalhe=receberChave(row,['fornecedorDetalhe']);
@@ -8887,7 +9009,7 @@ async function backupPilotRestoreEngineeringDrawings(module){
   const workflow=module.workflowDocument&&typeof module.workflowDocument==='object'?module.workflowDocument:null;if(workflow)await setDoc(ENGINEERING_DRAWING_WORKFLOW_REF,{...workflow,_entity:'engineeringDrawingWorkflow'});else await deleteDoc(ENGINEERING_DRAWING_WORKFLOW_REF).catch(()=>{});
 }
 async function backupPilotCollect(reason='manual'){
-  const cloudRefs={database:DB_REF,schedule:SCHEDULE_REF,costsShared:SHARED_COSTS_REF,commercialBudgets:COMMERCIAL_BUDGETS_REF,notifications:NOTIFICATIONS_REF,controladoria:CONTROLADORIA_REF,salesTravelCalendars:SALES_TRAVEL_CALENDARS_REF,receipts:RECEIPTS_REF},cloud={};
+  const cloudRefs={database:DB_REF,schedule:SCHEDULE_REF,costsShared:SHARED_COSTS_REF,commercialBudgets:COMMERCIAL_BUDGETS_REF,notifications:NOTIFICATIONS_REF,controladoria:CONTROLADORIA_REF,salesTravelCalendars:SALES_TRAVEL_CALENDARS_REF,receipts:RECEIPTS_REF,commissionLedger:COMMISSION_LEDGER_REF_REV667},cloud={};
   backupPilotStatus('Lendo os módulos centrais do Firebase…','busy');
   const documents=await Promise.all(Object.entries(cloudRefs).map(async([key,ref])=>[key,await backupPilotRead(ref)]));documents.forEach(([key,value])=>{cloud[key]=key==='database'&&value?mainDocumentPayload(value):value;});if(!cloud.receipts)cloud.receipts={schemaVersion:1,nextNumber:1,items:{}};
   backupPilotStatus('Lendo os dados e status das listas multinível…','busy');
@@ -8907,8 +9029,8 @@ async function backupPilotCollect(reason='manual'){
   return {format:BACKUP_PILOT_FORMAT,schemaVersion:BACKUP_PILOT_SCHEMA,applicationRevision:'rev595',reason,createdAt,createdBy,manifest:{receipts:Object.keys(cloud.receipts?.items||{}).length,cloudDocuments:Object.values(cloud).filter(value=>value&&typeof value==='object').length,budgets:Array.isArray(cloud.commercialBudgets?.items)?cloud.commercialBudgets.items.length:0,purchaseMultilevelRecords:cloud.purchaseMultilevel.records.length,engineeringDrawingLots:cloud.engineeringDrawings.records.length,salesTravelCalendarEntries:backupPilotCountSalesTravelEntries(cloud.salesTravelCalendars||cloud.database),commercialCalendars:Object.keys(cloud.salesTravelCalendars?.sellers||{}).length,customCommercialCompanies:(cloud.salesTravelCalendars?.customCompanies||[]).length,companyStatuses:Object.keys(cloud.salesTravelCalendars?.companyStatuses||{}).length,preventiveMaintenanceBaseline:cloud.controladoria?.baselineDate||'2026-10-05',costStructures:costStructures.length,attachmentReferences,localEntries:Object.keys(local).length,excluded:['Cache regenerável da integração MaxiProd','Preferências visuais locais do navegador','Tokens e vínculos push dos celulares','Arquivos Excel originais das listas multinível','Planilhas originais das listas de desenhos','Planilha original RG 023','Arquivos físicos de anexos já armazenados nas pastas corporativas']},cloud,costStructures,local};
 }
 async function exportSystemBackupPilot(){if(!isMaster(loggedUser)){showToast('Somente usuários mestres podem gerar backups.','err');return;}backupPilotBusy(true);try{const payload=await backupPilotCollect('manual');backupPilotValidate(payload,true);const bytes=backupPilotDownload(payload);backupPilotStatus(`Backup completo validado · ${(bytes/1024/1024).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} MB · ${payload.manifest.budgets} orçamento(s) · ${payload.manifest.purchaseMultilevelRecords} lista(s) · ${payload.manifest.engineeringDrawingLots} lote(s) de desenhos · ${payload.manifest.receipts} recibo(s).`,'ok');showToast('Backup completo e validado baixado. Guarde o arquivo em local seguro.');}catch(error){console.error('Exportação do backup:',error);backupPilotStatus(`Falha ao gerar backup: ${error?.message||'erro desconhecido'}. Nenhum arquivo parcial foi baixado.`,'error');showToast('Não foi possível gerar o backup completo.','err');}finally{backupPilotBusy(false);}}
-function backupPilotValidate(payload,requireComplete=false){if(!payload||payload.format!==BACKUP_PILOT_FORMAT)throw new Error('Este arquivo não é um backup válido do CARTAMAC.');if(Number(payload.schemaVersion)!==BACKUP_PILOT_SCHEMA)throw new Error(`Versão de backup incompatível: ${payload.schemaVersion||'não informada'}.`);if(!payload.cloud||typeof payload.cloud!=='object')throw new Error('O backup não contém os módulos centrais.');if(payload.cloud.database&&(!Array.isArray(payload.cloud.database.admins)||payload.cloud.database.admins.length===0))throw new Error('Restauração bloqueada: o banco do backup não contém administradores.');const moduleKeys=['database','schedule','costsShared','commercialBudgets','notifications','purchaseMultilevel','engineeringDrawings','controladoria','salesTravelCalendars','receipts'],available=moduleKeys.filter(key=>payload.cloud[key]&&typeof payload.cloud[key]==='object');if(!available.length)throw new Error('Nenhum módulo restaurável foi encontrado.');if(requireComplete){const essential=['database','schedule','commercialBudgets','purchaseMultilevel','engineeringDrawings','controladoria','salesTravelCalendars'],missing=essential.filter(key=>!available.includes(key));if(missing.length)throw new Error(`Backup parcial bloqueado. Módulos essenciais ausentes: ${missing.join(', ')}.`);if(!Array.isArray(payload.cloud.commercialBudgets.items))throw new Error('A lista completa de orçamentos não foi confirmada.');if(!Array.isArray(payload.cloud.purchaseMultilevel.records))throw new Error('As listas multinível não foram confirmadas.');if(!Array.isArray(payload.cloud.engineeringDrawings.records))throw new Error('Os desenhos liberados não foram confirmados.');if(!payload.cloud.receipts||!payload.cloud.receipts.items||typeof payload.cloud.receipts.items!=='object'||Array.isArray(payload.cloud.receipts.items))throw new Error('Os recibos não foram confirmados no backup.');}return available;}
-async function importSystemBackupPilot(file){if(!file)return;if(!isMaster(loggedUser)){showToast('Somente usuários mestres podem restaurar backups.','err');return;}backupPilotBusy(true);try{backupPilotStatus('Validando o arquivo selecionado…','busy');const raw=JSON.parse(await file.text()),payload=backupPilotDecode(raw),available=backupPilotValidate(payload),budgets=Array.isArray(payload.cloud?.commercialBudgets?.items)?payload.cloud.commercialBudgets.items.length:0,structures=Array.isArray(payload.costStructures)?payload.costStructures.length:0,multilevelRecords=Array.isArray(payload.cloud?.purchaseMultilevel?.records)?payload.cloud.purchaseMultilevel.records.length:0,drawingLots=Array.isArray(payload.cloud?.engineeringDrawings?.records)?payload.cloud.engineeringDrawings.records.length:0,maintenanceBaseline=payload.cloud?.controladoria?.baselineDate||'não informado',date=payload.createdAt?new Date(payload.createdAt).toLocaleString('pt-BR'):'data não informada';if(!confirm(`Backup de ${date}, gerado por ${payload.createdBy||'usuário não informado'}.\n\nMódulos: ${available.length}\nOrçamentos: ${budgets}\nRegistros multinível: ${multilevelRecords}\nLotes de desenhos: ${drawingLots}\nRecibos: ${Object.keys(payload.cloud?.receipts?.items||{}).length}\nÚltima verificação considerada na Controladoria: ${maintenanceBaseline}\nEstruturas de custo: ${structures}\n\nA restauração substituirá os dados atuais desses módulos. Deseja continuar?`)){backupPilotStatus('Restauração cancelada; nenhum dado foi alterado.');return;}backupPilotStatus('Criando backup automático antes da restauração…','busy');const safety=await backupPilotCollect('pre-restauracao');backupPilotDownload(safety,'CARTAMAC_ANTES_DA_RESTAURACAO');try{localStorage.setItem(BACKUP_PILOT_SAFETY_KEY,JSON.stringify({createdAt:safety.createdAt,createdBy:safety.createdBy,manifest:safety.manifest,note:'A cópia completa foi baixada em arquivo antes da restauração.'}));}catch(error){console.warn('O registro local da cópia de segurança não pôde ser salvo.',error);}await new Promise(resolve=>setTimeout(resolve,0));const cloudRefs={database:DB_REF,schedule:SCHEDULE_REF,costsShared:SHARED_COSTS_REF,commercialBudgets:COMMERCIAL_BUDGETS_REF,notifications:NOTIFICATIONS_REF,controladoria:CONTROLADORIA_REF,salesTravelCalendars:SALES_TRAVEL_CALENDARS_REF,receipts:RECEIPTS_REF};for(let index=0;index<available.length;index++){const key=available[index];backupPilotStatus(`Restaurando módulos ${index+1}/${available.length}: ${key}…`,'busy');if(key==='purchaseMultilevel')await backupPilotRestorePurchaseMultilevel(payload.cloud[key]);else if(key==='engineeringDrawings')await backupPilotRestoreEngineeringDrawings(payload.cloud[key]);else if(key==='commercialBudgets'&&commercialBudgetsStorageMode==='v2')await commercialBudgetV2RestoreSnapshot(payload.cloud[key]);else await setDoc(cloudRefs[key],key==='database'?mainDocumentPayload(payload.cloud[key]):payload.cloud[key]);await new Promise(resolve=>setTimeout(resolve,0));}if(Array.isArray(payload.costStructures)){for(let index=0;index<payload.costStructures.length;index++){const row=payload.costStructures[index];if(!row||row.orderId===undefined||!Array.isArray(row.structure))continue;backupPilotStatus(`Restaurando estruturas de custo ${index+1}/${payload.costStructures.length}…`,'busy');await saveCostStructureDocument(row.orderId,row.itemCode,row.structure);if(index%8===7)await new Promise(resolve=>setTimeout(resolve,0));}}if(payload.local&&typeof payload.local==='object'){const allowedLocal=new Set([FORMATION_IMPORT_KEY,PARTS_PRICE_QUOTE_STORAGE_KEY,MACRO_LOCAL_KEY]);Object.entries(payload.local).forEach(([key,value])=>{if(allowedLocal.has(key)&&typeof value==='string')localStorage.setItem(key,value);});}backupPilotStatus('Backup restaurado. Recarregando o sistema…','ok');showToast('Restauração concluída. O sistema será recarregado.');setTimeout(()=>location.reload(),1400);}catch(error){console.error('Restauração do backup:',error);backupPilotStatus(`Restauração interrompida: ${error?.message||'erro desconhecido'}. Use o arquivo de segurança baixado para retornar ao estado anterior.`,'error');showToast('A restauração não foi concluída. Nenhuma nova tentativa será feita automaticamente.','err');}finally{backupPilotBusy(false);}}
+function backupPilotValidate(payload,requireComplete=false){if(!payload||payload.format!==BACKUP_PILOT_FORMAT)throw new Error('Este arquivo não é um backup válido do CARTAMAC.');if(Number(payload.schemaVersion)!==BACKUP_PILOT_SCHEMA)throw new Error(`Versão de backup incompatível: ${payload.schemaVersion||'não informada'}.`);if(!payload.cloud||typeof payload.cloud!=='object')throw new Error('O backup não contém os módulos centrais.');if(payload.cloud.database&&(!Array.isArray(payload.cloud.database.admins)||payload.cloud.database.admins.length===0))throw new Error('Restauração bloqueada: o banco do backup não contém administradores.');const moduleKeys=['database','schedule','costsShared','commercialBudgets','notifications','purchaseMultilevel','engineeringDrawings','controladoria','salesTravelCalendars','receipts','commissionLedger'],available=moduleKeys.filter(key=>payload.cloud[key]&&typeof payload.cloud[key]==='object');if(!available.length)throw new Error('Nenhum módulo restaurável foi encontrado.');if(requireComplete){const essential=['database','schedule','commercialBudgets','purchaseMultilevel','engineeringDrawings','controladoria','salesTravelCalendars'],missing=essential.filter(key=>!available.includes(key));if(missing.length)throw new Error(`Backup parcial bloqueado. Módulos essenciais ausentes: ${missing.join(', ')}.`);if(!Array.isArray(payload.cloud.commercialBudgets.items))throw new Error('A lista completa de orçamentos não foi confirmada.');if(!Array.isArray(payload.cloud.purchaseMultilevel.records))throw new Error('As listas multinível não foram confirmadas.');if(!Array.isArray(payload.cloud.engineeringDrawings.records))throw new Error('Os desenhos liberados não foram confirmados.');if(!payload.cloud.receipts||!payload.cloud.receipts.items||typeof payload.cloud.receipts.items!=='object'||Array.isArray(payload.cloud.receipts.items))throw new Error('Os recibos não foram confirmados no backup.');}return available;}
+async function importSystemBackupPilot(file){if(!file)return;if(!isMaster(loggedUser)){showToast('Somente usuários mestres podem restaurar backups.','err');return;}backupPilotBusy(true);try{backupPilotStatus('Validando o arquivo selecionado…','busy');const raw=JSON.parse(await file.text()),payload=backupPilotDecode(raw),available=backupPilotValidate(payload),budgets=Array.isArray(payload.cloud?.commercialBudgets?.items)?payload.cloud.commercialBudgets.items.length:0,structures=Array.isArray(payload.costStructures)?payload.costStructures.length:0,multilevelRecords=Array.isArray(payload.cloud?.purchaseMultilevel?.records)?payload.cloud.purchaseMultilevel.records.length:0,drawingLots=Array.isArray(payload.cloud?.engineeringDrawings?.records)?payload.cloud.engineeringDrawings.records.length:0,maintenanceBaseline=payload.cloud?.controladoria?.baselineDate||'não informado',date=payload.createdAt?new Date(payload.createdAt).toLocaleString('pt-BR'):'data não informada';if(!confirm(`Backup de ${date}, gerado por ${payload.createdBy||'usuário não informado'}.\n\nMódulos: ${available.length}\nOrçamentos: ${budgets}\nRegistros multinível: ${multilevelRecords}\nLotes de desenhos: ${drawingLots}\nRecibos: ${Object.keys(payload.cloud?.receipts?.items||{}).length}\nÚltima verificação considerada na Controladoria: ${maintenanceBaseline}\nEstruturas de custo: ${structures}\n\nA restauração substituirá os dados atuais desses módulos. Deseja continuar?`)){backupPilotStatus('Restauração cancelada; nenhum dado foi alterado.');return;}backupPilotStatus('Criando backup automático antes da restauração…','busy');const safety=await backupPilotCollect('pre-restauracao');backupPilotDownload(safety,'CARTAMAC_ANTES_DA_RESTAURACAO');try{localStorage.setItem(BACKUP_PILOT_SAFETY_KEY,JSON.stringify({createdAt:safety.createdAt,createdBy:safety.createdBy,manifest:safety.manifest,note:'A cópia completa foi baixada em arquivo antes da restauração.'}));}catch(error){console.warn('O registro local da cópia de segurança não pôde ser salvo.',error);}await new Promise(resolve=>setTimeout(resolve,0));const cloudRefs={database:DB_REF,schedule:SCHEDULE_REF,costsShared:SHARED_COSTS_REF,commercialBudgets:COMMERCIAL_BUDGETS_REF,notifications:NOTIFICATIONS_REF,controladoria:CONTROLADORIA_REF,salesTravelCalendars:SALES_TRAVEL_CALENDARS_REF,receipts:RECEIPTS_REF,commissionLedger:COMMISSION_LEDGER_REF_REV667};for(let index=0;index<available.length;index++){const key=available[index];backupPilotStatus(`Restaurando módulos ${index+1}/${available.length}: ${key}…`,'busy');if(key==='purchaseMultilevel')await backupPilotRestorePurchaseMultilevel(payload.cloud[key]);else if(key==='engineeringDrawings')await backupPilotRestoreEngineeringDrawings(payload.cloud[key]);else if(key==='commercialBudgets'&&commercialBudgetsStorageMode==='v2')await commercialBudgetV2RestoreSnapshot(payload.cloud[key]);else await setDoc(cloudRefs[key],key==='database'?mainDocumentPayload(payload.cloud[key]):payload.cloud[key]);await new Promise(resolve=>setTimeout(resolve,0));}if(Array.isArray(payload.costStructures)){for(let index=0;index<payload.costStructures.length;index++){const row=payload.costStructures[index];if(!row||row.orderId===undefined||!Array.isArray(row.structure))continue;backupPilotStatus(`Restaurando estruturas de custo ${index+1}/${payload.costStructures.length}…`,'busy');await saveCostStructureDocument(row.orderId,row.itemCode,row.structure);if(index%8===7)await new Promise(resolve=>setTimeout(resolve,0));}}if(payload.local&&typeof payload.local==='object'){const allowedLocal=new Set([FORMATION_IMPORT_KEY,PARTS_PRICE_QUOTE_STORAGE_KEY,MACRO_LOCAL_KEY]);Object.entries(payload.local).forEach(([key,value])=>{if(allowedLocal.has(key)&&typeof value==='string')localStorage.setItem(key,value);});}backupPilotStatus('Backup restaurado. Recarregando o sistema…','ok');showToast('Restauração concluída. O sistema será recarregado.');setTimeout(()=>location.reload(),1400);}catch(error){console.error('Restauração do backup:',error);backupPilotStatus(`Restauração interrompida: ${error?.message||'erro desconhecido'}. Use o arquivo de segurança baixado para retornar ao estado anterior.`,'error');showToast('A restauração não foi concluída. Nenhuma nova tentativa será feita automaticamente.','err');}finally{backupPilotBusy(false);}}
 
 const importSystemBackupPilotLegacy=importSystemBackupPilot;
 importSystemBackupPilot=async function(file){
